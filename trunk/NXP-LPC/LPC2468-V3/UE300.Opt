@@ -1,0 +1,142 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (V3), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(uCOSII),0,0,0
+GRPOPT 2,(USER),0,0,0
+GRPOPT 3,(Main),0,0,0
+GRPOPT 4,(Hardware),0,0,0
+GRPOPT 5,(Common),0,0,0
+GRPOPT 6,(MBX),0,0,0
+GRPOPT 7,(GUI),0,0,0
+GRPOPT 8,(LwIP),0,0,0
+GRPOPT 9,(LwIP_netif),0,0,0
+GRPOPT 10,(LwIP_core),0,0,0
+GRPOPT 11,(LwIP_api),0,0,0
+GRPOPT 12,(LwIP_arch),0,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<.\uCOSII\OS_CORE.c><OS_CORE.c> 
+OPTFFF 1,2,1,0,0,0,0,0,<.\uCOSII\OS_DBG_R.c><OS_DBG_R.c> 
+OPTFFF 1,3,1,0,0,0,0,0,<.\uCOSII\OS_FLAG.c><OS_FLAG.c> 
+OPTFFF 1,4,1,0,0,0,0,0,<.\uCOSII\OS_MBOX.c><OS_MBOX.c> 
+OPTFFF 1,5,1,0,0,0,0,0,<.\uCOSII\OS_MEM.c><OS_MEM.c> 
+OPTFFF 1,6,1,0,0,0,0,0,<.\uCOSII\OS_MUTEX.c><OS_MUTEX.c> 
+OPTFFF 1,7,1,0,0,0,0,0,<.\uCOSII\OS_Q.c><OS_Q.c> 
+OPTFFF 1,8,1,0,0,0,0,0,<.\uCOSII\OS_SEM.c><OS_SEM.c> 
+OPTFFF 1,9,1,0,0,0,0,0,<.\uCOSII\OS_TASK.c><OS_TASK.c> 
+OPTFFF 1,10,1,0,0,0,0,0,<.\uCOSII\OS_TIME.c><OS_TIME.c> 
+OPTFFF 1,11,1,0,0,0,0,0,<.\uCOSII\OS_TMR.c><OS_TMR.c> 
+OPTFFF 2,12,1,0,0,0,0,0,<.\USER\BSP.c><BSP.c> 
+OPTFFF 2,13,1,0,0,0,0,0,<.\USER\Main.c><Main.c> 
+OPTFFF 2,14,1,0,0,0,0,0,<.\USER\OS_CPU_C.c><OS_CPU_C.c> 
+OPTFFF 2,15,2,0,0,0,0,0,<.\USER\OS_CPU_A.s><OS_CPU_A.s> 
+OPTFFF 2,16,2,0,0,0,0,0,<.\USER\OS_INT_A.s><OS_INT_A.s> 
+OPTFFF 2,17,2,0,0,0,0,0,<.\USER\LPC2400.s><LPC2400.s> 
+OPTFFF 2,18,2,0,0,0,0,0,<.\USER\vicControl.s><vicControl.s> 
+OPTFFF 3,19,1,0,0,0,0,0,<.\Main\IoAdapter.c><IoAdapter.c> 
+OPTFFF 3,20,1,0,0,0,0,0,<.\Main\MainTask.c><MainTask.c> 
+OPTFFF 3,21,1,0,0,0,0,0,<.\Main\MemData.c><MemData.c> 
+OPTFFF 3,22,1,0,0,0,0,0,<.\Main\AdvCalc.c><AdvCalc.c> 
+OPTFFF 3,23,1,0,0,0,0,0,<.\Main\FileData.c><FileData.c> 
+OPTFFF 3,24,1,0,0,0,0,0,<.\Main\DataRecorder.c><DataRecorder.c> 
+OPTFFF 3,25,1,0,0,0,0,0,<.\Main\FlashApiWrapper.c><FlashApiWrapper.c> 
+OPTFFF 3,26,1,0,0,0,0,0,<.\Main\IoScan.c><IoScan.c> 
+OPTFFF 3,27,1,0,0,0,0,0,<.\Main\Ram.c><Ram.c> 
+OPTFFF 3,28,1,0,0,0,0,0,<.\Main\FRamMgr.c><FRamMgr.c> 
+OPTFFF 3,29,1,0,0,0,0,0,<.\Main\UEInit.c><UEInit.c> 
+OPTFFF 4,30,1,0,0,0,0,0,<.\Hardware\hd_drive.c><hd_drive.c> 
+OPTFFF 4,31,1,0,0,0,0,0,<.\Hardware\hd_Init.c><hd_Init.c> 
+OPTFFF 4,32,1,0,0,0,0,0,<.\Hardware\IAP.c><IAP.c> 
+OPTFFF 4,33,1,0,0,0,0,0,<.\Hardware\uart.c><uart.c> 
+OPTFFF 4,34,1,0,0,0,0,0,<.\Hardware\LcdDriver.c><LcdDriver.c> 
+OPTFFF 4,35,1,0,0,0,0,0,<.\Hardware\I2cHook.c><I2cHook.c> 
+OPTFFF 4,36,1,0,0,0,0,0,<.\Hardware\I2c.c><I2c.c> 
+OPTFFF 4,37,1,0,0,0,0,0,<.\Hardware\hd_ISR.c><hd_ISR.c> 
+OPTFFF 4,38,1,0,0,0,0,0,<.\Hardware\emac.c><emac.c> 
+OPTFFF 5,39,1,0,0,0,0,0,<.\Common\Queue.c><Queue.c> 
+OPTFFF 5,40,1,0,0,0,0,0,<.\Common\Func.c><Func.c> 
+OPTFFF 5,41,1,0,0,0,0,0,<.\Common\ClockMgr.c><ClockMgr.c> 
+OPTFFF 5,42,1,0,0,0,0,0,<.\Common\TimerMgr.c><TimerMgr.c> 
+OPTFFF 6,43,1,0,0,0,0,0,<.\MBX\MBFunc.c><MBFunc.c> 
+OPTFFF 6,44,1,0,0,0,0,0,<.\MBX\MBCommon.c><MBCommon.c> 
+OPTFFF 6,45,1,0,0,0,0,0,<.\MBX\MBSlave.c><MBSlave.c> 
+OPTFFF 7,46,1,0,0,0,0,0,<.\GUI\WordStock.c><WordStock.c> 
+OPTFFF 7,47,1,0,0,0,0,0,<.\GUI\asc8_8.c><asc8_8.c> 
+OPTFFF 7,48,1,0,0,0,0,0,<.\GUI\ascil_8_16.c><ascil_8_16.c> 
+OPTFFF 7,49,1,0,0,0,0,0,<.\GUI\CtrlBase.c><CtrlBase.c> 
+OPTFFF 7,50,1,0,0,0,0,0,<.\GUI\DC.c><DC.c> 
+OPTFFF 7,51,1,0,0,0,0,0,<.\GUI\DeviceCfgScreen.c><DeviceCfgScreen.c> 
+OPTFFF 7,52,1,0,0,0,0,0,<.\GUI\global.c><global.c> 
+OPTFFF 7,53,1,0,0,0,0,0,<.\GUI\Gui.c><Gui.c> 
+OPTFFF 7,54,1,0,0,0,0,0,<.\GUI\Icon.c><Icon.c> 
+OPTFFF 7,55,1,0,0,0,0,0,<.\GUI\Key.c><Key.c> 
+OPTFFF 7,56,1,0,0,0,0,0,<.\GUI\LogoScreen.c><LogoScreen.c> 
+OPTFFF 7,57,1,0,0,0,0,0,<.\GUI\Message.c><Message.c> 
+OPTFFF 7,58,1,0,0,0,0,0,<.\GUI\MsgBox.c><MsgBox.c> 
+OPTFFF 7,59,1,0,0,0,0,0,<.\GUI\ScreenBase.c><ScreenBase.c> 
+OPTFFF 7,60,1,0,0,0,0,0,<.\GUI\ScreenEdit.c><ScreenEdit.c> 
+OPTFFF 7,61,1,0,0,0,0,0,<.\GUI\StringTable.c><StringTable.c> 
+OPTFFF 8,62,1,0,0,0,0,0,<.\LwIP\LwIPEntry.c><LwIPEntry.c> 
+OPTFFF 9,63,1,0,0,0,0,0,<.\LwIP\netif\etharp.c><etharp.c> 
+OPTFFF 9,64,1,0,0,0,0,0,<.\LwIP\netif\ethernetif.c><ethernetif.c> 
+OPTFFF 9,65,1,0,0,0,0,0,<.\LwIP\netif\loopif.c><loopif.c> 
+OPTFFF 9,66,1,0,0,0,0,0,<.\LwIP\netif\slipif.c><slipif.c> 
+OPTFFF 10,67,1,0,0,0,0,0,<.\LwIP\core\ipv4\autoip.c><autoip.c> 
+OPTFFF 10,68,1,0,0,0,0,0,<.\LwIP\core\ipv4\icmp.c><icmp.c> 
+OPTFFF 10,69,1,0,0,0,0,0,<.\LwIP\core\ipv4\igmp.c><igmp.c> 
+OPTFFF 10,70,1,0,0,0,0,0,<.\LwIP\core\ipv4\inet.c><inet.c> 
+OPTFFF 10,71,1,0,0,0,0,0,<.\LwIP\core\ipv4\inet_chksum.c><inet_chksum.c> 
+OPTFFF 10,72,1,0,0,0,0,0,<.\LwIP\core\ipv4\ip.c><ip.c> 
+OPTFFF 10,73,1,0,0,0,0,0,<.\LwIP\core\ipv4\ip_addr.c><ip_addr.c> 
+OPTFFF 10,74,1,0,0,0,0,0,<.\LwIP\core\ipv4\ip_frag.c><ip_frag.c> 
+OPTFFF 10,75,1,0,0,0,0,0,<.\LwIP\core\udp.c><udp.c> 
+OPTFFF 10,76,1,0,0,0,0,0,<.\LwIP\core\dhcp.c><dhcp.c> 
+OPTFFF 10,77,1,0,0,0,0,0,<.\LwIP\core\dns.c><dns.c> 
+OPTFFF 10,78,1,0,0,0,0,0,<.\LwIP\core\mem.c><mem.c> 
+OPTFFF 10,79,1,0,0,0,0,0,<.\LwIP\core\memp.c><memp.c> 
+OPTFFF 10,80,1,0,0,0,0,0,<.\LwIP\core\netif.c><netif.c> 
+OPTFFF 10,81,1,0,0,0,0,0,<.\LwIP\core\pbuf.c><pbuf.c> 
+OPTFFF 10,82,1,0,0,0,0,0,<.\LwIP\core\raw.c><raw.c> 
+OPTFFF 10,83,1,0,0,0,0,0,<.\LwIP\core\stats.c><stats.c> 
+OPTFFF 10,84,1,0,0,0,0,0,<.\LwIP\core\sys.c><sys.c> 
+OPTFFF 10,85,1,0,0,0,0,0,<.\LwIP\core\tcp.c><tcp.c> 
+OPTFFF 10,86,1,0,0,0,0,0,<.\LwIP\core\tcp_in.c><tcp_in.c> 
+OPTFFF 10,87,1,0,0,0,0,0,<.\LwIP\core\tcp_out.c><tcp_out.c> 
+OPTFFF 10,88,1,0,0,0,0,0,<.\LwIP\core\init.c><init.c> 
+OPTFFF 11,89,1,0,0,0,0,0,<.\LwIP\api\api_lib.c><api_lib.c> 
+OPTFFF 11,90,1,0,0,0,0,0,<.\LwIP\api\api_msg.c><api_msg.c> 
+OPTFFF 11,91,1,0,0,0,0,0,<.\LwIP\api\err.c><err.c> 
+OPTFFF 11,92,1,0,0,0,0,0,<.\LwIP\api\netbuf.c><netbuf.c> 
+OPTFFF 11,93,1,0,0,0,0,0,<.\LwIP\api\netdb.c><netdb.c> 
+OPTFFF 11,94,1,0,0,0,0,0,<.\LwIP\api\netifapi.c><netifapi.c> 
+OPTFFF 11,95,1,0,0,0,0,0,<.\LwIP\api\sockets.c><sockets.c> 
+OPTFFF 11,96,1,0,0,0,0,0,<.\LwIP\api\tcpip.c><tcpip.c> 
+OPTFFF 12,97,1,0,0,0,0,0,<.\LwIP\arch\sys_arch.c><sys_arch.c> 
+
+
+TARGOPT 1, (V3)
+ ADSCLK=12000000
+  OPTTT 0,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\OutPut\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 0,0,1
+  OPTAX 0
+  OPTDL (SARM.DLL)(-cLPC24xx)(DARMP.DLL)(-pLPC2468)(SARM.DLL)()(TARMP.DLL)(-pLPC2468)
+  OPTDBG 48126,2,()()()()()()()()()() (BIN\AGDIRDI.DLL)()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
