@@ -1,0 +1,23 @@
+[Global]
+CurrentProject=LPC2468-V3.vpj
+[ActiveConfig]
+LPC2468-V3.vpj=
+[ProjectDates]
+LPC2468-V3.vcproj=20090405150016000
+[TreeExpansion2]
+- LPC2468-V3.vcproj
+scroll:0
+[State]
+SCREEN: 1400 1050 22 22 1050 747 0 0 M 0 0 0 0 1201 862 0
+CWD: ..\Vc
+FILEHIST: 9
+..\..\..\..\Modbus 软件包\freemodbus-v1.4.0\demo\WIN32\demo.cpp
+..\..\..\..\Modbus 软件包\freemodbus-v1.4.0\modbus\functions\mbfuncother.c
+..\..\..\..\Modbus 软件包\freemodbus-v1.4.0\modbus\mb.c
+D:\Qt\3.3.2\examples\thread\prodcons\prodcons.cpp
+\ipacs5000-src\iPACS5000_release7.0\iPACS5000_win_application\wfdata\WFOpnoteDataModel\WfOpnoteDataModel.cpp
+\ipacs5000-src\iPACS5000_release7.0\iPACS5000_win_application\wfdata\WFOpnoteDataModel\WfOpnoteDataModel.h
+..\..\V2\Main\main.c
+\ipacs5000-src\iPACS5000_release5.0\iPACS5000_win_application\wfoptab_interface\usb\复件 WfKeyCommu\KeyCom.cpp
+PROJECT_CACHE: 0
+TBCLASS: 0 0
