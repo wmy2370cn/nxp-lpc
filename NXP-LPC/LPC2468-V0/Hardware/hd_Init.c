@@ -13,12 +13,10 @@
 #include "hd_Init.h"
 #include "hd_const.h"
 #include "lpc2400.h" 
-#include "hd_isr.h"
+ 
 #include "VICControl.h" 
 
-
-OS_EVENT *g_pEvtI2C1Sem;
-OS_EVENT *g_pEvtI2C1Mbox;
+ 
 /****************************************************************************
 * 名	称：CPU_PIN_Init()
 * 功	能：I/O模式初始化
@@ -87,16 +85,7 @@ void SetupHardware(void)
 #endif 
 	OS_ENTER_CRITICAL();
 
-#if 0
-	//判断编码器模块类型，决定是否初始化外部中断
-	s_nEncoderType = Encoder_Init();
-	//定时器初始化
-	Timer3_Init();//毫秒中断
-	//SPI初始化，for AD DA 
-	EINT12_Init();
-	SPI0_Init();
-	SPI1_Init();
-#endif
+ 
 //    SetVICIRQ(VIC_TIMER3, 5, (INT32U)Timer3_Exception);
 //   DisableVICIRQ(VIC_TIMER3);
 	
@@ -126,21 +115,4 @@ void SetupHardware(void)
 // 	VICIntEnable 	= (1 << 4);
 
 }
-
-/****************************************************************************
-* 名	称：
-* 功	能：硬软件初始化完之后，打开被关闭的中断
-* 入口参数：无
-* 出口参数：无
-****************************************************************************/
-void Enable_Interupt(void)
-{
-	EXTINT = 1<<2 | 1<<3;
-	ReEnableVICIRQ(VIC_EINT1);
-	ReEnableVICIRQ(VIC_EINT2);
-	ReEnableVICIRQ(VIC_TIMER3);
-	ReEnableVICIRQ(VIC_UART0);
-	ReEnableVICIRQ(VIC_UART3);
-
-	ReEnableVICIRQ(VIC_EINT3);
-}
+ 
