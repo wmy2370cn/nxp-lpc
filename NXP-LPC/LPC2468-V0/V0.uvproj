@@ -514,11 +514,6 @@
               <FilePath>.\Hardware\hd_Init.c</FilePath>
             </File>
             <File>
-              <FileName>IAP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\IAP.c</FilePath>
-            </File>
-            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\uart.c</FilePath>
