@@ -76,7 +76,6 @@ typedef struct tagTI2C
 //}UART_MODE;
 
 extern void CPU_PIN_Init(void);
-extern void SetupHardware(void);
-extern void Enable_Interupt(void);
+extern void SetupHardware(void); 
 #endif
 
