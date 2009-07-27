@@ -372,7 +372,7 @@
       <Focus>0</Focus>
       <ColumnNumber>6</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>65</TopLine>
+      <TopLine>67</TopLine>
       <CurrentLine>91</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\BSP.c</PathWithFileName>
@@ -386,7 +386,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>9</TopLine>
+      <TopLine>11</TopLine>
       <CurrentLine>35</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\Main.c</PathWithFileName>
@@ -489,10 +489,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>152</TopLine>
-      <CurrentLine>152</CurrentLine>
+      <CurrentLine>180</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main\MainTask.c</PathWithFileName>
       <FilenameWithoutPath>MainTask.c</FilenameWithoutPath>
@@ -1694,7 +1694,7 @@
 
   <AlienFiles>
     <PathWithFilename>E:\WORK\svn\EcPro2008\LPC2468-V3\Main\TaskDef.h</PathWithFilename>
-    <TopLine>2</TopLine>
+    <TopLine>4</TopLine>
     <CurrentLine>28</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
@@ -2815,9 +2815,9 @@
       <Documents>
         <Doc>
           <Name>.\Main\MainTask.c</Name>
-          <ColumnNumber>0</ColumnNumber>
+          <ColumnNumber>32</ColumnNumber>
           <TopLine>152</TopLine>
-          <CurrentLine>152</CurrentLine>
+          <CurrentLine>180</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\Main\UEInit.c</Name>
@@ -2846,7 +2846,7 @@
         <Doc>
           <Name>E:\WORK\svn\EcPro2008\LPC2468-V3\Main\TaskDef.h</Name>
           <ColumnNumber>47</ColumnNumber>
-          <TopLine>2</TopLine>
+          <TopLine>4</TopLine>
           <CurrentLine>28</CurrentLine>
         </Doc>
         <Doc>
@@ -2888,13 +2888,13 @@
         <Doc>
           <Name>.\USER\BSP.c</Name>
           <ColumnNumber>6</ColumnNumber>
-          <TopLine>65</TopLine>
+          <TopLine>67</TopLine>
           <CurrentLine>91</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\USER\Main.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>9</TopLine>
+          <TopLine>11</TopLine>
           <CurrentLine>35</CurrentLine>
         </Doc>
         <Doc>

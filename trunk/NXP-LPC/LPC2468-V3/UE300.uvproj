@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\uCOSII;.\USER;.\Hardware;.\Common;.\MBX;.\Main;.\GUI;..\;.\LwIP\include;.\LwIP\include\ipv4;</IncludePath>
+              <IncludePath>.\uCOSII;.\USER;.\Hardware;.\Common;.\MBX;.\Main;.\GUI;..\;.\LwIP\include;.\LwIP\include\ipv4;.\lwip\arch\include;.\LwIP\;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
