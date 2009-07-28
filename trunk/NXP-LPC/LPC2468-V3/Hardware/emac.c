@@ -27,6 +27,152 @@ static INT8S	*__pbFrom;
 
 static INT16U	__u16TotalLenInRxBToRead;										//* EMAC接收缓冲区中已经读了多少字节的数据
 static INT16U 	__u16TxBIndex;		                                            //* 对已使用的发送缓冲区进行索引计数
+
+
+//  function added to initialize Rx Descriptors
+void RxDescrInit (void)
+{
+	unsigned int i;
+
+	for (i = 0; i < NUM_RX_FRAG; i++)
+	{
+		RX_DESC_PACKET(i)  = RX_BUF(i);
+		RX_DESC_CTRL(i)    = RCTRL_INT | (ETH_FRAG_SIZE-1);
+		RX_STAT_INFO(i)    = 0;
+		RX_STAT_HASHCRC(i) = 0;
+	}
+
+	/* Set EMAC Receive Descriptor Registers. */
+	MAC_RXDESCRIPTOR    = RX_DESC_BASE;
+	MAC_RXSTATUS        = RX_STAT_BASE;
+	MAC_RXDESCRIPTORNUM = NUM_RX_FRAG-1;
+
+	/* Rx Descriptors Point to 0 */
+	MAC_RXCONSUMEINDEX  = 0;
+}
+
+
+//  function added to initialize Tx Descriptors
+void TxDescrInit (void) 
+{
+	unsigned int i;
+
+	for (i = 0; i < NUM_TX_FRAG; i++) 
+	{
+		TX_DESC_PACKET(i) = TX_BUF(i);
+		TX_DESC_CTRL(i)   = 0;
+		TX_STAT_INFO(i)   = 0;
+	}
+
+	/* Set EMAC Transmit Descriptor Registers. */
+	MAC_TXDESCRIPTOR    = TX_DESC_BASE;
+	MAC_TXSTATUS        = TX_STAT_BASE;
+	MAC_TXDESCRIPTORNUM = NUM_TX_FRAG-1;
+
+	/* Tx Descriptors Point to 0 */
+	MAC_TXPRODUCEINDEX  = 0;
+}
+/*********************************************************************************************************
+** 函数名称: WritePHY
+** 函数名称: WritePHY
+**
+** 功能描述：  写PHY端口
+**
+** 输　入:  INT32U PHYReg
+** 输　入:  INT32U PHYData
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月28日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void WritePHY( INT32U PHYReg, INT32U PHYData )
+{
+	MAC_MCMD = 0x0000;			/* write command */
+	MAC_MADR = 0X0300 | PHYReg;	/* [12:8] == PHY addr, [4:0]=0x00(BMCR) register addr */
+	MAC_MWTD = PHYData;
+	while ( MAC_MIND != 0 );
+	return;
+}
+
+void Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
+{
+	unsigned int tout;
+
+	MAC_MADR = (phyadd<<8) | PhyReg;
+	MAC_MWTD = Value;
+
+	/* Wait utill operation completed */
+	tout = 0;
+	for (tout = 0; tout < MII_WR_TOUT; tout++)
+	{
+		if ((MAC_MIND & 1) == 0)
+		{
+			break;
+		}
+	}
+}
+/*********************************************************************************************************
+** 函数名称: ReadPHY
+** 函数名称: ReadPHY
+**
+** 功能描述：  从PHY端口读取数据
+**
+** 输　入:  INT16U phyadd   
+** 输　入:  INT32U PHYReg
+**          
+** 输　出:   INT32U  PHY data
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月28日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT32U ReadPHY( INT16U phyadd,INT32U PHYReg )
+{
+	INT32U i32;
+	MAC_MCMD = 0x0001;			/* read command */
+	i32 = (phyadd<<8) | PHYReg;	/* [12:8] == PHY addr, [4:0]=0x00(BMCR) register addr */ 
+	MAC_MADR = i32;
+	while ( MAC_MIND != 0 );
+	MAC_MCMD = 0x0000;
+	return( MAC_MRDD );
+}
+INT16U Read_PHY ( INT16U phyadd ,INT8U  PhyReg) 
+{
+	INT32U tout = 0;
+
+	MAC_MADR = (phyadd<<8) | PhyReg;
+	MAC_MCMD = 1;
+
+	/* Wait until operation completed */
+	for (tout = 0; tout < MII_RD_TOUT; tout++) 
+	{
+		if ((MAC_MIND & MIND_BUSY) == 0) 
+		{
+			break;
+		}
+	}
+	MAC_MCMD = 0;
+	return (MAC_MRDD);
+}
+
 //*-------------------------------------- 函数原型声明 --------------------------------------------
 //*================================================================================================
 //*　　　　　　　　　　　　　　　　　　　　　函　数　区
@@ -321,12 +467,38 @@ void EMACInit(void)
 #if OS_CRITICAL_METHOD == 3                     
     OS_CPU_SR  		cpu_sr = 0;
 #endif	
+	// Initializes the EMAC ethernet controller
+	unsigned int regv,tout,id1,id2;
+
+	/* Power Up the EMAC controller. */
+	PCONP |= 0x40000000;
+
+	/* Reset all EMAC internal modules. */
+	MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX | MAC1_SIM_RES | MAC1_SOFT_RES;
+	MAC_COMMAND = CR_REG_RES | CR_TX_RES | CR_RX_RES;
+	/* A short delay after reset. */
+	for (tout = 100; tout; tout--);
+
+	/* Initialize MAC control registers. */
+	MAC_MAC1 = MAC1_PASS_ALL;
+	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
+	MAC_MAXF = ETH_MAX_FLEN;
+	MAC_CLRT = CLRT_DEF;
+	MAC_IPGR = IPGR_DEF;
+
+	/* Enable Reduced MII interface. */
+	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
+
+	/* Reset Reduced MII Logic. */
+	MAC_SUPP = SUPP_RES_RMII;
+	for (tout = 100; tout; tout--);
+	MAC_SUPP = 0;
 
 	//* 复位PHY芯片，使其进入UTP模式
 	__ResetPHY();
-	
+
 	//* 等待一段指定的时间，使PHY就绪
-	OSTimeDlyHMSM(0, 0, 3, 0);
+	OSTimeDlyHMSM(0, 0, 1, 0);
 #if 0
 	//* 设置PIOB引脚为外设A引脚（即EMAC引脚），禁止PIOB控制，改为外设控制
 	AT91C_BASE_PIOB->PIO_ASR = EMAC_MII_PINS;
