@@ -368,6 +368,14 @@
 			Name="Hardware"
 			>
 			<File
+				RelativePath="..\Hardware\emac.c"
+				>
+			</File>
+			<File
+				RelativePath="..\Hardware\emac.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Hardware\hd_Const.h"
 				>
 			</File>
