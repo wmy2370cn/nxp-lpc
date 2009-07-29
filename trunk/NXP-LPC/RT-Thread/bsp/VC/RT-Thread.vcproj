@@ -395,16 +395,56 @@
 				RelativePath="..\..\net\lwip\src\core\udp.c"
 				>
 			</File>
+			<Filter
+				Name="Inc"
+				>
+				<File
+					RelativePath="..\..\net\lwip\src\include\netif\etharp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\netif\ethernetif.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\netif\loopif.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\netif\ppp_oe.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\netif\slipif.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="App"
 			>
 			<File
-				RelativePath=".\applib.h"
+				RelativePath="..\..\app\applib.h"
 				>
 			</File>
 			<File
-				RelativePath=".\main.c"
+				RelativePath="..\..\app\main.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Inc"
+			>
+			<File
+				RelativePath="..\..\include\rtdef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\rthw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\rtthread.h"
 				>
 			</File>
 		</Filter>
