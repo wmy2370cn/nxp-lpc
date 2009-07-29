@@ -1057,8 +1057,7 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, SWI_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
-                NOP                            ; Reserved Vector 
-              ; LDR     PC, IRQ_Addr
+	            DCD     0xB8A06F58                            ; Reserved Vector 
                 LDR     PC, [PC, #-0x0120]     ; Vector from VicVectAddr
                 LDR     PC, FIQ_Addr
 
@@ -1068,7 +1067,6 @@ SWI_Addr        DCD     SoftwareInterruptAdd
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
                 DCD     0                      ; Reserved Address 
-;			    DCD     0xB8A06F58
 IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 
