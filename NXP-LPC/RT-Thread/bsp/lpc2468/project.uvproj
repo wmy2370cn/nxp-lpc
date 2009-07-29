@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\src;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -752,6 +752,16 @@
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\arch\sys_arch.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\main.c</FilePath>
             </File>
           </Files>
         </Group>
