@@ -123,7 +123,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JLTAgdi</Key>
-          <Name>-O1070 -J1 -Y500 -Z1 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
+          <Name>-O1070 -J1 -Y600 -Z1 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <DebugFlag>
@@ -331,7 +331,7 @@
       <Focus>0</Focus>
       <ColumnNumber>43</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>25</TopLine>
+      <TopLine>30</TopLine>
       <CurrentLine>54</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\BSP.c</PathWithFileName>
@@ -345,7 +345,7 @@
       <Focus>0</Focus>
       <ColumnNumber>9</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>4</TopLine>
+      <TopLine>9</TopLine>
       <CurrentLine>33</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\Main.c</PathWithFileName>
@@ -371,10 +371,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>38</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>88</TopLine>
+      <CurrentLine>102</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\OS_CPU_A.s</PathWithFileName>
       <FilenameWithoutPath>OS_CPU_A.s</FilenameWithoutPath>
@@ -385,10 +385,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>29</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>17</TopLine>
+      <CurrentLine>41</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\OS_INT_A.s</PathWithFileName>
       <FilenameWithoutPath>OS_INT_A.s</FilenameWithoutPath>
@@ -434,10 +434,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>14</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>106</TopLine>
-      <CurrentLine>119</CurrentLine>
+      <TopLine>108</TopLine>
+      <CurrentLine>132</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main\IoAdapter.c</PathWithFileName>
       <FilenameWithoutPath>IoAdapter.c</FilenameWithoutPath>
@@ -448,10 +448,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>49</ColumnNumber>
+      <ColumnNumber>42</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>137</TopLine>
-      <CurrentLine>162</CurrentLine>
+      <CurrentLine>158</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main\MainTask.c</PathWithFileName>
       <FilenameWithoutPath>MainTask.c</FilenameWithoutPath>
@@ -460,12 +460,12 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>21</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>45</ColumnNumber>
+      <ColumnNumber>24</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>898</TopLine>
-      <CurrentLine>898</CurrentLine>
+      <TopLine>901</TopLine>
+      <CurrentLine>925</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main\MemData.c</PathWithFileName>
       <FilenameWithoutPath>MemData.c</FilenameWithoutPath>
@@ -511,17 +511,17 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>51</ColumnNumber>
+      <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>37</TopLine>
-      <CurrentLine>37</CurrentLine>
+      <TopLine>74</TopLine>
+      <CurrentLine>81</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Hardware\hd_Init.c</PathWithFileName>
       <FilenameWithoutPath>hd_Init.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>26</FileNumber>
+      <FileNumber>25</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -535,7 +535,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <FileNumber>26</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -549,7 +549,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>28</FileNumber>
+      <FileNumber>27</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -563,7 +563,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>29</FileNumber>
+      <FileNumber>28</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -584,7 +584,7 @@
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>30</FileNumber>
+      <FileNumber>29</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -598,7 +598,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>31</FileNumber>
+      <FileNumber>30</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -612,7 +612,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>32</FileNumber>
+      <FileNumber>31</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -626,7 +626,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>33</FileNumber>
+      <FileNumber>32</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -639,6 +639,32 @@
       <FilenameWithoutPath>TimerMgr.c</FilenameWithoutPath>
     </File>
   </Group>
+
+  <AlienFiles>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\LPC2468-V0\Main\MemData.h</PathWithFilename>
+    <TopLine>7</TopLine>
+    <CurrentLine>29</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
 
   <AlienFiles>
     <PathWithFilename>E:\WORK\svn\NXP-LPC\LPC2468-V0\Hardware\hd_Init.h</PathWithFilename>
@@ -1707,8 +1733,20 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>2</ActiveTab>
+      <ActiveTab>0</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>.\USER\OS_INT_A.s</Name>
+          <ColumnNumber>29</ColumnNumber>
+          <TopLine>17</TopLine>
+          <CurrentLine>41</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\USER\OS_CPU_A.s</Name>
+          <ColumnNumber>38</ColumnNumber>
+          <TopLine>88</TopLine>
+          <CurrentLine>102</CurrentLine>
+        </Doc>
         <Doc>
           <Name>.\Main\Ram.c</Name>
           <ColumnNumber>33</ColumnNumber>
@@ -1717,27 +1755,27 @@
         </Doc>
         <Doc>
           <Name>.\Main\MemData.c</Name>
-          <ColumnNumber>45</ColumnNumber>
-          <TopLine>898</TopLine>
-          <CurrentLine>898</CurrentLine>
+          <ColumnNumber>24</ColumnNumber>
+          <TopLine>901</TopLine>
+          <CurrentLine>925</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\Main\MainTask.c</Name>
-          <ColumnNumber>49</ColumnNumber>
+          <ColumnNumber>42</ColumnNumber>
           <TopLine>137</TopLine>
-          <CurrentLine>162</CurrentLine>
+          <CurrentLine>158</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\Main\IoAdapter.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>106</TopLine>
-          <CurrentLine>119</CurrentLine>
+          <ColumnNumber>14</ColumnNumber>
+          <TopLine>108</TopLine>
+          <CurrentLine>132</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\Hardware\hd_Init.c</Name>
-          <ColumnNumber>51</ColumnNumber>
-          <TopLine>37</TopLine>
-          <CurrentLine>37</CurrentLine>
+          <ColumnNumber>5</ColumnNumber>
+          <TopLine>74</TopLine>
+          <CurrentLine>81</CurrentLine>
         </Doc>
         <Doc>
           <Name>E:\WORK\svn\NXP-LPC\LPC2468-V0\Hardware\hd_Init.h</Name>
@@ -1748,14 +1786,20 @@
         <Doc>
           <Name>.\USER\BSP.c</Name>
           <ColumnNumber>43</ColumnNumber>
-          <TopLine>25</TopLine>
+          <TopLine>30</TopLine>
           <CurrentLine>54</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\USER\Main.c</Name>
           <ColumnNumber>9</ColumnNumber>
-          <TopLine>4</TopLine>
+          <TopLine>9</TopLine>
           <CurrentLine>33</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\LPC2468-V0\Main\MemData.h</Name>
+          <ColumnNumber>78</ColumnNumber>
+          <TopLine>7</TopLine>
+          <CurrentLine>29</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
