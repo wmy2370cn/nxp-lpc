@@ -41,6 +41,11 @@ extern void finsh_system_init(void);
 #endif
 extern int  rt_application_init(void);
 
+#ifdef RT_USING_LWIP
+#include <netif/ethernetif.h>
+#include "dm9161.h"
+#endif
+
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -77,7 +82,12 @@ void rtthread_startup(void)
 
 	/* init scheduler system */
 	rt_system_scheduler_init();
-	
+
+#ifdef RT_USING_LWIP
+	eth_system_device_init();
+	/* register ethernetif device */
+	rt_hw_dm9161_init();
+#endif
 	/* init application */
 	rt_application_init();
 	
@@ -94,7 +104,9 @@ void rtthread_startup(void)
 
 	/* start scheduler */
 	rt_system_scheduler_start();	
-	
+
+
+
 	/* never reach here */
 	return ;
 }

@@ -164,7 +164,48 @@ INT16U Read_PHY ( INT16U phyadd ,INT8U  PhyReg)
 	MAC_MCMD = 0;
 	return (MAC_MRDD);
 }
+/******************************************************************************
+** Function name:		EMAC_RxEnable/EMAC_RxDisable
+**
+** Descriptions:		EMAC RX API modules
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+void EMAC_RxEnable( void )
+{
+	MAC_COMMAND |= 0x01;
+	MAC_MAC1 |= 0x01;
+	return;    
+}
 
+void EMAC_RxDisable( void )
+{
+	MAC_COMMAND &= ~0x01;
+	MAC_MAC1 &= ~0x01;
+	return;
+}
+/******************************************************************************
+** Function name:		EMAC_TxEnable/EMAC_TxDisable
+**
+** Descriptions:		EMAC TX API modules
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+void EMAC_TxEnable( void )
+{
+	MAC_COMMAND |= 0x02;
+	return;
+}
+
+void EMAC_TxDisable( void )
+{
+	MAC_COMMAND &= ~0x02;
+	return;
+}
 /* interrupt service routine */
 void rt_dm9000_isr(int irqno)
 {
@@ -247,6 +288,34 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//  复位PHY芯片
 	Write_PHY(PHYID, 0, 0x9200 );
 	//  等待一段指定的时间，使PHY就绪
+
+
+
+	//判断工作在10/100 半双工/全双工
+
+
+	 // Initialize Tx and Rx DMA Descriptors 
+	TxDescrInit();
+	RxDescrInit();
+
+	/* Receive Broadcast and Perfect Match Packets */
+	MAC_RXFILTERCTRL = RFC_UCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
+
+	/* Set up RX filter, accept broadcast and perfect station */
+	MAC_RXFILTERCTRL = 0x0022;	/* [1]-accept broadcast, [5]accept perfect */
+	MAC_RXFILTERCTRL |= 0x0005;//MULTICAST_UNICAST
+	MAC_RXFILTERCTRL |= 0x0018;//ENABLE_HASH
+
+
+	/* Enable EMAC interrupts. */
+	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
+
+	/* Reset all interrupts */
+	MAC_INTCLEAR  = 0xFFFF;
+
+	/* Enable receive and transmit mode of MAC Ethernet core */
+	MAC_COMMAND  |= (CR_RX_EN | CR_TX_EN);
+	MAC_MAC1     |= MAC1_REC_EN;
     return RT_EOK;
 }
 
