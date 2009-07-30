@@ -98,10 +98,12 @@ void rt_hw_board_init()
 {
 	extern void rt_serial_init(void);
 
+	CPU_PIN_Init(); 
+
 	VICIntEnClr 	= 0xFFFFFFFFL;
 
 	/* init hardware serial */
-	rt_serial_init();
+//	rt_serial_init();
 
 	T0IR 	= 0xff; 
 	T0TC 	= 0;
@@ -119,8 +121,6 @@ void rt_hw_board_init()
 	PCONP |= 1<<25;//使能Uart3
 	PCONP |= 1<<30;//使能Ethnet
 
-
-	CPU_PIN_Init(); 
  
 }
 
