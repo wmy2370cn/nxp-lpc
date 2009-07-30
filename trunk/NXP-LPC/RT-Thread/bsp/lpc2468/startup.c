@@ -87,8 +87,11 @@ void rtthread_startup(void)
 	/* register ethernetif device */ 
 	eth_system_device_init();
 
- 	rt_hw_dm9161_init();
+ 	rt_hw_eth_init();
 #endif	
+	/*init all registed devices*/
+	rt_device_init_all();
+
 	/* init application */
 	rt_application_init();
 

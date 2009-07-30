@@ -10,7 +10,7 @@
 INT16U PHYID;
  
 #define MAX_ADDR_LEN 6
-struct rt_dm9161_eth
+struct rt_lpc24xx_eth
 {
 	/* inherit from ethernet device */
 	struct eth_device parent;
@@ -18,8 +18,10 @@ struct rt_dm9161_eth
 	/* interface address info. */
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
 };
-static struct rt_dm9161_eth dm9161_device;
 
+static struct rt_lpc24xx_eth lpc24xx_device;
+
+static struct rt_semaphore tx_sem;
 
 //  function added to initialize Rx Descriptors
 void RxDescrInit (void)
@@ -216,7 +218,7 @@ void rt_dm9000_isr(int irqno)
         rt_err_t result;
 
         /* a frame has been received */
-        result = eth_device_ready(&(dm9161_device.parent));
+        result = eth_device_ready(&(lpc24xx_device.parent));
         RT_ASSERT(result == RT_EOK);
     }
 
@@ -224,7 +226,35 @@ void rt_dm9000_isr(int irqno)
     {
     }
 }
-
+/*********************************************************************************************************
+** 函数名称: SetMacID
+** 函数名称: SetMacID
+**
+** 功能描述：  设置芯片物理地址,物理地址已经存储在程序空间内 
+**
+** 输　入:  INT8U * mac_ptr
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月30日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void SetMacID(INT8U * mac_ptr)   
+{
+	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
+	MAC_SA1 = mac_ptr[2]*256+mac_ptr[3];
+	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
+	//把MAC地址写入MY——MAC——ID中
+}
 /* RT-Thread Device Interface */
 /*********************************************************************************************************
 ** 函数名称: rt_dm9161_init
@@ -251,6 +281,7 @@ void rt_dm9000_isr(int irqno)
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
+	INT32U  tempreg = 0;
 
 	/* Power Up the EMAC controller. */
 	PCONP |= 0x40000000;
@@ -290,8 +321,32 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//  等待一段指定的时间，使PHY就绪
 
 
+	//设置MAC地址
+
+
+
+	tempreg = Read_PHY(PHYID, 17 );
 
 	//判断工作在10/100 半双工/全双工
+	if(tempreg & 0x8000)//100fdx
+	{
+
+	}
+	else if(tempreg & 0x4000)//100hdx
+	{
+
+	}
+	else if(tempreg & 0x2000)//10fdx
+	{
+
+	}
+	else if(tempreg & 0x1000)//10hdx
+	{
+	}
+	else
+	{//出错啦
+
+	}
 
 
 	 // Initialize Tx and Rx DMA Descriptors 
@@ -347,7 +402,7 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	{
 	case NIOCTL_GADDR:
 		/* get mac address */
-		if(args) rt_memcpy(args, dm9161_device.dev_addr, 6);
+		if(args) rt_memcpy(args, lpc24xx_device.dev_addr, 6);
 		else return -RT_ERROR;
 		break;
 
@@ -416,18 +471,65 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     return p;
 }
 
-void rt_hw_dm9161_init()
+void rt_hw_eth_init()
 {
-	dm9161_device.parent.parent.init       = rt_dm9161_init;
-	dm9161_device.parent.parent.open       = rt_dm9000_open;
-	dm9161_device.parent.parent.close      = rt_dm9000_close;
-	dm9161_device.parent.parent.read       = rt_dm9000_read;
-	dm9161_device.parent.parent.write      = rt_dm9000_write;
-	dm9161_device.parent.parent.control    = rt_dm9000_control;
-	dm9161_device.parent.parent.private    = RT_NULL;
+	lpc24xxether_register("E0");
+	 
+//	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 
-	dm9161_device.parent.eth_rx     = rt_dm9000_rx;
-	dm9161_device.parent.eth_tx     = rt_dm9000_tx;
+//	result = eth_device_init(&(lpc24xx_device->parent), (char*)name);
+//	RT_ASSERT(result == RT_EOK);
+}
+/*********************************************************************************************************
+** 函数名称: lpc24xxether_register
+** 函数名称: lpc24xxether_register
+**
+** 功能描述：  注册MAC设备
+**
+** 输　入:  char * name
+**          
+** 输　出:   int
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月30日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+int lpc24xxether_register(char *name)
+{
+	rt_err_t result;
 
-	rt_device_register((rt_device_t)&dm9161_device,"E0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX);
+	/* init rt-thread device interface */
+	lpc24xx_device.parent.parent.init		= rt_dm9161_init;
+	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
+	lpc24xx_device.parent.parent.close		= rt_dm9000_close;
+	lpc24xx_device.parent.parent.read		= rt_dm9000_read;
+	lpc24xx_device.parent.parent.write		= rt_dm9000_write;
+	lpc24xx_device.parent.parent.control	= rt_dm9000_control;
+	lpc24xx_device.parent.parent.private    = RT_NULL;
+
+	lpc24xx_device.parent.eth_rx			= rt_dm9000_rx;
+	lpc24xx_device.parent.eth_tx			= rt_dm9000_tx;
+
+	/* Update MAC address */
+// 	lpc24xx_device.dev_addr[0] = 0x1e;
+// 	lpc24xx_device.dev_addr[1] = 0x30;
+// 	lpc24xx_device.dev_addr[2] = 0x6c;
+// 	lpc24xx_device.dev_addr[3] = 0xa2;
+// 	lpc24xx_device.dev_addr[4] = 0x45;
+// 	lpc24xx_device.dev_addr[5] = 0x5e;
+// 	/* update mac address */
+// 	update_mac_address(lpc24xx_device);
+
+	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
+	result = eth_device_init(&(lpc24xx_device.parent), (char*)name);
+	RT_ASSERT(result == RT_EOK);
+	return RT_EOK;
 }

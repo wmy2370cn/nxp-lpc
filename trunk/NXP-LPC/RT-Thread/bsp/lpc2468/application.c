@@ -23,13 +23,9 @@ char app_thread_stack[512];
 struct rt_thread app_thread;
 
 int rt_application_init()
-{
- 
+{ 
 	extern void app_thread_entry(void* parameter);
-	rt_thread_init(&app_thread,
-		"app_thread",
-		app_thread_entry, RT_NULL,
-		&app_thread_stack[0], sizeof(app_thread_stack),
+	rt_thread_init(&app_thread,"app_thread",app_thread_entry, RT_NULL,	&app_thread_stack[0], sizeof(app_thread_stack),
 		20, 10);
 
 	rt_thread_startup(&app_thread);
