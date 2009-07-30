@@ -107,9 +107,9 @@
         </DllOption>
         <DebugOption>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -118,7 +118,7 @@
             <LimitSpeedToRealTime>1</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\src;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -394,14 +394,14 @@
               <FilePath>.\startup.c</FilePath>
             </File>
             <File>
-              <FileName>dm9000.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\dm9000.c</FilePath>
-            </File>
-            <File>
               <FileName>rtconfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\rtconfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>dm9161.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\dm9161.c</FilePath>
             </File>
           </Files>
         </Group>
