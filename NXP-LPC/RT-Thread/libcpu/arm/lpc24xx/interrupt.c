@@ -29,7 +29,7 @@ rt_uint32_t rt_thread_switch_interrput_flag;
  */
 /*@{*/
 
-void rt_hw_interrupt_handle(int vector)
+void rt_hw_interrupt_handler(int vector)
 {
 	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
 }
@@ -45,12 +45,12 @@ void rt_hw_interrupt_init()
 	VICVectAddr = 0;
 	VICIntSelect = 0;
 
-    for ( i = 0; i < 32; i++ )
+    for ( i = 0; i < MAX_HANDLERS; i++ )
     {
-		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + i*4);
-		vect_cntl = (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + i*4);
-		*vect_addr = 0x0;	
-		*vect_cntl = 0xF;
+		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + (i<<2));
+		vect_cntl = (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (i<<2));
+		*vect_addr 	= (rt_uint32_t)rt_hw_interrupt_handler;
+		*vect_cntl 	= 0xF;
     }
     
 	
@@ -73,13 +73,22 @@ void rt_hw_interrupt_umask(int vector)
 
 void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, rt_isr_handler_t *old_handler)
 {
-	rt_uint32_t *vect_addr;
-	
-	if(vector < MAX_HANDLERS)
+//	rt_uint32_t *vect_addr;
+	if(vector >= 0 && vector < MAX_HANDLERS)
 	{
 		/* find first un-assigned VIC address for the handler */
-		vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + vector*4);
-		*vect_addr = (rt_uint32_t)new_handler;	/* set interrupt vector */
+	//	vect_addr = (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + vector<<2);
+	//	*vect_addr = (rt_uint32_t)new_handler;	/* set interrupt vector */
+
+		/* get VIC address */
+		rt_uint32_t* vect_addr 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x100 + (vector << 2));
+		rt_uint32_t* vect_ctl 	= (rt_uint32_t *)(VIC_BASE_ADDR + 0x200 + (vector << 2));
+
+		/* assign IRQ slot and enable this slot */
+		*vect_ctl = 0x20 | (vector & 0x1F);
+
+		if (old_handler != RT_NULL) *old_handler = (rt_isr_handler_t) *vect_addr;
+		if (new_handler != RT_NULL) *vect_addr = (rt_uint32_t) new_handler;	   
 	}
 }
 

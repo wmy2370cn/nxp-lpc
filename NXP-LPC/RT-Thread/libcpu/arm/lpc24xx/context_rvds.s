@@ -24,10 +24,19 @@ NOINT	EQU		0xc0	; disable interrupt in psr
 ; */
 rt_hw_interrupt_disable	PROC
 	EXPORT rt_hw_interrupt_disable
-	MRS r0, cpsr
-	ORR r1, r0, #NOINT
-	MSR cpsr_c, r1
-	BX	lr
+;	MRS r0, cpsr
+;	ORR r1, r0, #NOINT
+;	MSR cpsr_c, r1
+;	BX	lr
+	MRS 	R0,CPSR
+ 	ORR 	R1,R0,#NOINT
+ 	MSR 	CPSR_c,R1
+ 	MRS 	R1,CPSR				; Confirm that CPSR contains the proper interrupt disable flags
+ 	AND 	R1,R1,#NOINT
+ 	CMP 	R1,#NOINT
+ 	BNE 	rt_hw_interrupt_disable         ; Not properly disabled (try again)
+ 	BX		LR
+
 	ENDP
 
 ;/*

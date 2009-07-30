@@ -83,14 +83,15 @@ void rtthread_startup(void)
 	/* init scheduler system */
 	rt_system_scheduler_init();
 
-#ifdef RT_USING_LWIP
+ #ifdef RT_USING_LWIP
+	/* register ethernetif device */ 
 	eth_system_device_init();
-	/* register ethernetif device */
-	rt_hw_dm9161_init();
-#endif
+
+ 	rt_hw_dm9161_init();
+#endif	
 	/* init application */
 	rt_application_init();
-	
+
 #ifdef RT_USING_FINSH
 	/* init the finsh input */
 	rt_hw_finsh_init();

@@ -17,7 +17,7 @@
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#define RT_ETHERNETIF_THREAD_PREORITY	0x60
 static char eth_rx_thread_mb_pool[48 * 4];
 static char eth_rx_thread_stack[1024];
 #else
@@ -240,7 +240,7 @@ rt_err_t eth_system_device_init()
 
 	/* init tx thread */
 	/* init mailbox and create ethernet thread */
-	result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
+ 	result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
 		&eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
 		RT_IPC_FLAG_FIFO);
 	RT_ASSERT(result == RT_EOK);
