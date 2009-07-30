@@ -473,12 +473,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 
 void rt_hw_eth_init()
 {
-	lpc24xxether_register("E0");
-	 
-//	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
-
-//	result = eth_device_init(&(lpc24xx_device->parent), (char*)name);
-//	RT_ASSERT(result == RT_EOK);
+ 	lpc24xxether_register("E0");	 
 }
 /*********************************************************************************************************
 ** º¯ÊýÃû³Æ: lpc24xxether_register

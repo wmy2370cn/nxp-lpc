@@ -90,17 +90,68 @@ void SetLed( INT8U uLedID,INT8U bState)
 		hd_ClearOneLED(uLedID);
 	}
 }
- 
+
+void FlickerLed( )
+{
+	INT32U i = 0;
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,TRUE);	 
+	}
+	rt_thread_delay(100);
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,FALSE);	 
+	}
+
+	rt_thread_delay(100);
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,TRUE);	 
+	}
+	rt_thread_delay(100);
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,FALSE);	 
+	}
+	rt_thread_delay(100);
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,TRUE);	 
+	}
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,TRUE);
+		rt_thread_delay(100);
+		SetLed(i,FALSE);
+	}
+	rt_thread_delay(100);
+
+	for (i = 0; i < 12; i++)
+	{
+		SetLed(i,FALSE);	 
+	}
+	for (i = 11; ;i--)
+	{
+		SetLed(i,TRUE);
+		rt_thread_delay(100);
+		SetLed(i,FALSE);
+		if (i == 0)
+			break;
+	}
+} 
  
  void app_thread_entry(void* parameter)
  {
 	 int count = 0;
+	 FlickerLed( );
+
 	 while (1)
 	 {
 		 rt_kprintf("Thread2 count:%d\n", count++);
 		 rt_thread_delay(50);   
-		 SetLed(0,1);
+		 SetLed(0,TRUE);
 		 rt_thread_delay(50);
-		 SetLed(0,0);
+		 SetLed(0,FALSE);
 	 }
  }
