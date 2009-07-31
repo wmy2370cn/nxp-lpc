@@ -25,26 +25,78 @@ struct rt_lpc24xx_eth
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
 };
 
+#define RB_BUFFER_SIZE		8			/* max number of receive buffers */
+#define ETH_RX_BUF_SIZE		128
+
+#define TB_BUFFER_SIZE		4
+#define ETH_TX_BUF_SIZE		(PBUF_POOL_BUFSIZE)
+
+struct rbf_t
+{
+	rt_uint32_t addr;
+	rt_uint32_t status;
+};
+
+typedef struct {                        /* RX Descriptor struct              */
+	rt_uint32_t Packet;
+	rt_uint32_t Ctrl;
+} RX_Desc;
+
+typedef struct {                        /* RX Status struct                  */
+	rt_uint32_t Info;
+	rt_uint32_t HashCRC;
+} RX_Stat;
+
+typedef struct {                        /* TX Descriptor struct              */
+	rt_uint32_t Packet;
+	rt_uint32_t Ctrl;
+} TX_Desc;
+
+typedef struct {                        /* TX Status struct                  */
+	rt_uint32_t Info;
+} TX_Stat;
+
+
+
+static rt_uint32_t 	current_rb_index;						/* current receive buffer index */
+
+
+/* EMAC local DMA Descriptors. */ 
+/* EMAC local DMA Descriptors. */
+static            RX_Desc Rx_Desc[NUM_RX_FRAG];
+static            TX_Desc Tx_Desc[NUM_TX_FRAG];
+ 
+static __align(8) RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
+static __align(8) TX_Stat Tx_Stat[NUM_TX_FRAG];
+
+
+/* EMAC local DMA buffers. */
+static rt_uint32_t rx_buf[NUM_RX_FRAG][ETH_FRAG_SIZE>>2];
+static rt_uint32_t tx_buf[NUM_TX_FRAG][ETH_FRAG_SIZE>>2];
+
+
 static struct rt_lpc24xx_eth lpc24xx_device;
 
 static struct rt_semaphore tx_sem;
 
+
 //  function added to initialize Rx Descriptors
 void RxDescrInit (void)
 {
-	unsigned int i;
+	/* Initialize Receive Descriptor and Status array. */
+	unsigned int i = 0;
 
-	for (i = 0; i < NUM_RX_FRAG; i++)
-	{
-		RX_DESC_PACKET(i)  = RX_BUF(i);
-		RX_DESC_CTRL(i)    = RCTRL_INT | (ETH_FRAG_SIZE-1);
-		RX_STAT_INFO(i)    = 0;
-		RX_STAT_HASHCRC(i) = 0;
+	for (i = 0; i < NUM_RX_FRAG; i++) {
+		Rx_Desc[i].Packet  = (rt_uint32_t)&rx_buf[i];
+		Rx_Desc[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
+		Rx_Stat[i].Info    = 0;
+		Rx_Stat[i].HashCRC = 0;
 	}
 
 	/* Set EMAC Receive Descriptor Registers. */
-	MAC_RXDESCRIPTOR    = RX_DESC_BASE;
-	MAC_RXSTATUS        = RX_STAT_BASE;
+	MAC_RXDESCRIPTOR    = (rt_uint32_t)&Rx_Desc[0];
+	MAC_RXSTATUS        = (rt_uint32_t)&Rx_Stat[0];
+ 
 	MAC_RXDESCRIPTORNUM = NUM_RX_FRAG-1;
 
 	/* Rx Descriptors Point to 0 */
@@ -59,14 +111,14 @@ void TxDescrInit (void)
 
 	for (i = 0; i < NUM_TX_FRAG; i++) 
 	{
-		TX_DESC_PACKET(i) = TX_BUF(i);
-		TX_DESC_CTRL(i)   = 0;
-		TX_STAT_INFO(i)   = 0;
+		Tx_Desc[i].Packet = (rt_uint32_t)&tx_buf[i];
+		Tx_Desc[i].Ctrl   = 0;
+		Tx_Stat[i].Info   = 0;
 	}
 
 	/* Set EMAC Transmit Descriptor Registers. */
-	MAC_TXDESCRIPTOR    = TX_DESC_BASE;
-	MAC_TXSTATUS        = TX_STAT_BASE;
+	MAC_TXDESCRIPTOR    = (rt_uint32_t)&Tx_Desc[0];
+	MAC_TXSTATUS        = (rt_uint32_t)&Tx_Stat[0];
 	MAC_TXDESCRIPTORNUM = NUM_TX_FRAG-1;
 
 	/* Tx Descriptors Point to 0 */
@@ -276,6 +328,31 @@ void SetMacID(INT8U * mac_ptr)
 	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
 	//把MAC地址写入MY——MAC——ID中
 }
+
+static  void  AppInitTCPIP (void)
+{
+	NET_ERR  err;
+
+
+#if EMAC_CFG_MAC_ADDR_SEL == EMAC_CFG_MAC_ADDR_SEL_CFG
+	NetIF_MAC_Addr[0] = 0x00;
+	NetIF_MAC_Addr[1] = 0x50;
+	NetIF_MAC_Addr[2] = 0xC2;
+	NetIF_MAC_Addr[3] = 0x25;
+	NetIF_MAC_Addr[4] = 0x61;
+	NetIF_MAC_Addr[5] = 0x39;
+#endif
+
+	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
+
+	AppNetIP        = NetASCII_Str_to_IP("10.10.1.129",  &err);
+	AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
+	AppNetGateway   = NetASCII_Str_to_IP("10.10.1.1",   &err);
+
+//	err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
+//	err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
+}
+
 /* RT-Thread Device Interface */
 /*********************************************************************************************************
 ** 函数名称: rt_dm9161_init
@@ -397,8 +474,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//设置MAC地址
 
 	 // Initialize Tx and Rx DMA Descriptors 
-	TxDescrInit();
-	RxDescrInit();
+  	TxDescrInit();
+ 	RxDescrInit();
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
