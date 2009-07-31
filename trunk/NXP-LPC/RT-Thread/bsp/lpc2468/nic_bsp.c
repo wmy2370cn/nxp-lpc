@@ -7,6 +7,12 @@
 #include "applib.h"
 #include "LPC24xx.h"
 
+
+#define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
+
+#define  DM9161AE_OUI                   0x00606E
+#define  DM9161AE_VNDR_MDL                  0x08
+
 INT16U PHYID;
  
 #define MAX_ADDR_LEN 6
@@ -66,19 +72,25 @@ void TxDescrInit (void)
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
 }
+
+void  NetBSP_DlyMs (INT32U ms)
+{
+	rt_thread_delay(ms/10);
+//	OSTimeDlyHMSM(0, 0, ms / 1000, ms % 1000);
+}
 /*********************************************************************************************************
 ** 函数名称: WritePHY
 ** 函数名称: WritePHY
 **
 ** 功能描述：  写PHY端口
 **
-** 输　入:  INT32U PHYReg
+** 输　入:  INT32U PHYReg     
 ** 输　入:  INT32U PHYData
 **          
 ** 输　出:   void
 **         
 ** 全局变量:  
-** 调用模块: 无
+** 调用模块: EMAC_Init().
 **
 ** 作　者:  LiJin
 ** 日　期:  2009年7月28日
@@ -89,21 +101,37 @@ void TxDescrInit (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void WritePHY( INT32U PHYReg, INT32U PHYData )
-{
-	MAC_MCMD = 0x0000;			/* write command */
-	MAC_MADR = 0X0300 | PHYReg;	/* [12:8] == PHY addr, [4:0]=0x00(BMCR) register addr */
-	MAC_MWTD = PHYData;
-	while ( MAC_MIND != 0 );
-	return;
-}
-
-void Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
+/*********************************************************************************************************
+** 函数名称: Write_PHY
+** 函数名称: Write_PHY
+**
+** 功能描述：  
+**
+** 输　入:  INT32U phyadd   PHY address, normally 0.  
+** 输　入:  INT32S PhyReg   PHY register.
+** 输　入:  INT32S Value    Data to write to PHY register.
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月31日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
 {
 	unsigned int tout;
 
-	MAC_MADR = (phyadd<<8) | PhyReg;
-	MAC_MWTD = Value;
+	MAC_MCMD = 0x0000;			        // Issue a Write COMMAND     
+	MAC_MADR = (phyadd<<8) | PhyReg;    //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr
+	MAC_MWTD = Value;                   //Write the data to the Management Write Data register
 
 	/* Wait utill operation completed */
 	tout = 0;
@@ -111,9 +139,11 @@ void Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
 	{
 		if ((MAC_MIND & 1) == 0)
 		{
-			break;
+			return TRUE;
 		}
 	}
+	//超时
+	return FALSE;
 }
 /*********************************************************************************************************
 ** 函数名称: ReadPHY
@@ -121,10 +151,10 @@ void Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
 **
 ** 功能描述：  从PHY端口读取数据
 **
-** 输　入:  INT16U phyadd   
-** 输　入:  INT32U PHYReg
+** 输　入:  INT16U phyadd      PHY address, normally 0.
+** 输　入:  INT32U PHYReg      PHY register.
 **          
-** 输　出:   INT32U  PHY data
+** 输　出:   INT32U  PHY data  MRDD        PHY register data.
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -137,23 +167,14 @@ void Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
 ** 日　期:
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-INT32U ReadPHY( INT16U phyadd,INT32U PHYReg )
-{
-	INT32U i32;
-	MAC_MCMD = 0x0001;			/* read command */
-	i32 = (phyadd<<8) | PHYReg;	/* [12:8] == PHY addr, [4:0]=0x00(BMCR) register addr */ 
-	MAC_MADR = i32;
-	while ( MAC_MIND != 0 );
-	MAC_MCMD = 0x0000;
-	return( MAC_MRDD );
-}
+********************************************************************************************************/ 
 INT16U Read_PHY ( INT16U phyadd ,INT8U  PhyReg) 
 {
 	INT32U tout = 0;
 
-	MAC_MADR = (phyadd<<8) | PhyReg;
-	MAC_MCMD = 1;
+	MAC_MCMD = 0;                     // Clear the Read COMMAND    
+	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
+	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
 
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -266,7 +287,7 @@ void SetMacID(INT8U * mac_ptr)
 **          
 ** 输　出:   rt_err_t
 **         
-** 全局变量:            QQ83902112
+** 全局变量:            
 ** 调用模块: 无
 **
 ** 作　者:  LiJin
@@ -331,7 +352,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	//下面开始PHY设置
 	//  复位PHY芯片
-	Write_PHY(PHYID, 0, 0x9200 );
+	#define EMAC_CFG_PHY_ADDR 0 
+	Write_PHY(EMAC_CFG_PHY_ADDR, MII_BMCR, 0x9200 );
 
 	// probe phy address
 	for(i=0;i<32;i++)
@@ -491,10 +513,6 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
     return p;
 }
 
-void rt_hw_eth_init()
-{
- 	lpc24xxether_register("E0");	 
-}
 /*********************************************************************************************************
 ** 函数名称: lpc24xxether_register
 ** 函数名称: lpc24xxether_register
@@ -548,3 +566,10 @@ int lpc24xxether_register(char *name)
 	RT_ASSERT(result == RT_EOK);
 	return RT_EOK;
 }
+
+
+void rt_hw_eth_init()
+{
+	lpc24xxether_register("E0");	 
+}
+
