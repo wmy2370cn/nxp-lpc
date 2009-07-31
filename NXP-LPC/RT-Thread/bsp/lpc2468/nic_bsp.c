@@ -86,7 +86,8 @@ void RxDescrInit (void)
 	/* Initialize Receive Descriptor and Status array. */
 	unsigned int i = 0;
 
-	for (i = 0; i < NUM_RX_FRAG; i++) {
+	for (i = 0; i < NUM_RX_FRAG; i++) 
+	{
 		Rx_Desc[i].Packet  = (rt_uint32_t)&rx_buf[i];
 		Rx_Desc[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
 		Rx_Stat[i].Info    = 0;
@@ -131,29 +132,6 @@ void  NetBSP_DlyMs (INT32U ms)
 //	OSTimeDlyHMSM(0, 0, ms / 1000, ms % 1000);
 }
 /*********************************************************************************************************
-** 函数名称: WritePHY
-** 函数名称: WritePHY
-**
-** 功能描述：  写PHY端口
-**
-** 输　入:  INT32U PHYReg     
-** 输　入:  INT32U PHYData
-**          
-** 输　出:   void
-**         
-** 全局变量:  
-** 调用模块: EMAC_Init().
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月28日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-/*********************************************************************************************************
 ** 函数名称: Write_PHY
 ** 函数名称: Write_PHY
 **
@@ -166,7 +144,7 @@ void  NetBSP_DlyMs (INT32U ms)
 ** 输　出:   INT8U
 **         
 ** 全局变量:  
-** 调用模块: 无
+** 调用模块: EMAC_Init().
 **
 ** 作　者:  LiJin
 ** 日　期:  2009年7月31日
@@ -299,6 +277,21 @@ void rt_dm9000_isr(int irqno)
     {
     }
 }
+
+#define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
+#define  NET_IF_ADDR_SIZE_MAC                            NET_IF_ADDR_SIZE
+
+#define  NET_IF_ADDR_BROADCAST                0xFFFFFFFFFFFF
+#define  NET_IF_ADDR_BROADCAST_xx                       0xFF    /* ALL broadcast addr octet vals identical.             */
+#define  NET_IF_ADDR_BROADCAST_00                       0xFF
+#define  NET_IF_ADDR_BROADCAST_01                       0xFF
+#define  NET_IF_ADDR_BROADCAST_02                       0xFF
+#define  NET_IF_ADDR_BROADCAST_03                       0xFF
+#define  NET_IF_ADDR_BROADCAST_04                       0xFF
+#define  NET_IF_ADDR_BROADCAST_05                       0xFF
+rt_uint8_t   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.                                      */
+
+
 /*********************************************************************************************************
 ** 函数名称: SetMacID
 ** 函数名称: SetMacID
@@ -321,33 +314,36 @@ void rt_dm9000_isr(int irqno)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void SetMacID(INT8U * mac_ptr)   
+void SetMacID( )   
 {
-	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
-	MAC_SA1 = mac_ptr[2]*256+mac_ptr[3];
-	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
+	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
+		
+
+	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
+		
+
+	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
+
+//	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
+//	MAC_SA1 = mac_ptr[2]*256+mac_ptr[3];
+//	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
 	//把MAC地址写入MY——MAC——ID中
 }
 
 static  void  AppInitTCPIP (void)
-{
-	NET_ERR  err;
-
-
-#if EMAC_CFG_MAC_ADDR_SEL == EMAC_CFG_MAC_ADDR_SEL_CFG
+{  
 	NetIF_MAC_Addr[0] = 0x00;
 	NetIF_MAC_Addr[1] = 0x50;
 	NetIF_MAC_Addr[2] = 0xC2;
 	NetIF_MAC_Addr[3] = 0x25;
 	NetIF_MAC_Addr[4] = 0x61;
 	NetIF_MAC_Addr[5] = 0x39;
-#endif
 
-	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
-
-	AppNetIP        = NetASCII_Str_to_IP("10.10.1.129",  &err);
-	AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-	AppNetGateway   = NetASCII_Str_to_IP("10.10.1.1",   &err);
+// 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
+// 
+// 	AppNetIP        = NetASCII_Str_to_IP("10.10.1.129",  &err);
+// 	AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
+// 	AppNetGateway   = NetASCII_Str_to_IP("10.10.1.1",   &err);
 
 //	err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
 //	err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
@@ -647,6 +643,7 @@ int lpc24xxether_register(char *name)
 
 void rt_hw_eth_init()
 {
+	AppInitTCPIP();
 	lpc24xxether_register("E0");	 
 }
 
