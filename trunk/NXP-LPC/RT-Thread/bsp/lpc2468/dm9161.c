@@ -266,7 +266,7 @@ void SetMacID(INT8U * mac_ptr)
 **          
 ** 输　出:   rt_err_t
 **         
-** 全局变量:  
+** 全局变量:            QQ83902112
 ** 调用模块: 无
 **
 ** 作　者:  LiJin
@@ -285,12 +285,26 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	/* Power Up the EMAC controller. */
 	PCONP |= 0x40000000;
+ 	/* Set the PIN to RMII */
+	// PINSEL2 &= 0x0fc0ccf0;
+	//PINSEL2 |= 0X50151105; //PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
+	//PINSEL3 &= 0xfffffff0;
+	//PINSEL3 |= 0X00000005; //PINSEL3 = 0x00000005;	/* selects P1[17:16] */
+
+// 	i = rMAC_MODULEID;
+// 	if(i == OLD_EMAC_MODULE_ID)
+// 		PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
+// 	else
+
+	//是否需要设置?需要硬件部分确定?
+//	PINSEL2 = 0x50150105;
+// 	PINSEL3 = 0x00000005;	/* selects P1[17:16] */
 
 	/* Reset all EMAC internal modules. */
 	MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX | MAC1_SIM_RES | MAC1_SOFT_RES;
 	MAC_COMMAND = CR_REG_RES | CR_TX_RES | CR_RX_RES;
 	/* A short delay after reset. */
-	for (tout = 100; tout; tout--);
+	for (tout = 500; tout; tout--);
 
 	/* Initialize MAC control registers. */
 	MAC_MAC1 = MAC1_PASS_ALL;
@@ -299,13 +313,25 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	MAC_CLRT = CLRT_DEF;
 	MAC_IPGR = IPGR_DEF;
 
+	//????
+	/* Enable Reduced MII interface. */
+	MAC_MCFG = MCFG_CLK_DIV20 | MCFG_RES_MII;
+	for (tout = 100; tout; tout--);
+	MAC_MCFG = MCFG_CLK_DIV20;
+
+	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
+
 	/* Enable Reduced MII interface. */
 	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
 
 	/* Reset Reduced MII Logic. */
-	MAC_SUPP = SUPP_RES_RMII;
+	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
 	for (tout = 100; tout; tout--);
-	MAC_SUPP = 0;
+	MAC_SUPP = SUPP_SPEED;
+
+	//下面开始PHY设置
+	//  复位PHY芯片
+	Write_PHY(PHYID, 0, 0x9200 );
 
 	// probe phy address
 	for(i=0;i<32;i++)
@@ -314,14 +340,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 		if(PHYID == 0X0181)
 			break;
 	}
-	if(i >= 32)
-		while(1);
-	//  复位PHY芯片
-	Write_PHY(PHYID, 0, 0x9200 );
+//	if(i >= 32)
+//		while(1);
 	//  等待一段指定的时间，使PHY就绪
 
-
-	//设置MAC地址
 
 
 
@@ -349,18 +371,14 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 
 
+
+	//设置MAC地址
+
 	 // Initialize Tx and Rx DMA Descriptors 
 	TxDescrInit();
 	RxDescrInit();
-
-	/* Receive Broadcast and Perfect Match Packets */
-	MAC_RXFILTERCTRL = RFC_UCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
-
-	/* Set up RX filter, accept broadcast and perfect station */
-	MAC_RXFILTERCTRL = 0x0022;	/* [1]-accept broadcast, [5]accept perfect */
-	MAC_RXFILTERCTRL |= 0x0005;//MULTICAST_UNICAST
-	MAC_RXFILTERCTRL |= 0x0018;//ENABLE_HASH
-
+	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
+	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
 	/* Enable EMAC interrupts. */
 	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
@@ -371,6 +389,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	/* Enable receive and transmit mode of MAC Ethernet core */
 	MAC_COMMAND  |= (CR_RX_EN | CR_TX_EN);
 	MAC_MAC1     |= MAC1_REC_EN;
+
+
     return RT_EOK;
 }
 

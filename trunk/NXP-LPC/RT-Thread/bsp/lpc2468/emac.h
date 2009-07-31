@@ -252,3 +252,17 @@
 #define TINFO_ERR           0x80000000  /* Error Occured (OR of all errors)  */
 
 
+
+/* MII Management Configuration Register */
+#define MCFG_SCAN_INC       0x00000001  /* Scan Increment PHY Address        */
+#define MCFG_SUPP_PREAM     0x00000002  /* Suppress Preamble                 */
+#define MCFG_CLK_SEL        0x0000001C  /* Clock Select Mask                 */
+#define MCFG_RES_MII        0x00008000  /* Reset MII Management Hardware     */
+
+#define MCFG_CLK_DIV4       0x00000000  /* MDC = hclk / 4                    */
+#define MCFG_CLK_DIV6       0x00000008  /* MDC = hclk / 6                    */
+#define MCFG_CLK_DIV8       0x0000000C  /* MDC = hclk / 8                    */
+#define MCFG_CLK_DIV10      0x00000010  /* MDC = hclk / 10                   */
+#define MCFG_CLK_DIV14      0x00000014  /* MDC = hclk / 14                   */
+#define MCFG_CLK_DIV20      0x00000018  /* MDC = hclk / 20                   */
+#define MCFG_CLK_DIV28      0x0000001C  /* MDC = hclk / 28                   */
