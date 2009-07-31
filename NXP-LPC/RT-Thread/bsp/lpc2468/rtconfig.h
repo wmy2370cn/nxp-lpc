@@ -32,7 +32,7 @@
 #define RT_USING_EVENT
 
 /* Using Faset Event*/
-#define RT_USING_FASTEVENT
+//#define RT_USING_FASTEVENT
 
 /* Using MailBox*/
 #define RT_USING_MAILBOX

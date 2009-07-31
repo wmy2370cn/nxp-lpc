@@ -66,8 +66,8 @@ static rt_uint32_t 	current_rb_index;						/* current receive buffer index */
 static            RX_Desc Rx_Desc[NUM_RX_FRAG];
 static            TX_Desc Tx_Desc[NUM_TX_FRAG];
  
-static __align(8) RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
-static __align(8) TX_Stat Tx_Stat[NUM_TX_FRAG];
+static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
+static  TX_Stat Tx_Stat[NUM_TX_FRAG];
 
 
 /* EMAC local DMA buffers. */
@@ -464,10 +464,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 
 	//…Ë÷√MACµÿ÷∑
-	SetMacID();
+//	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
-  	TxDescrInit();
- 	RxDescrInit();
+ // 	TxDescrInit();
+ //	RxDescrInit();
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
