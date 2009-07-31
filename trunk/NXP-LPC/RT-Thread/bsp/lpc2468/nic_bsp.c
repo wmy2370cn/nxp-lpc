@@ -317,11 +317,7 @@ rt_uint8_t   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.          
 void SetMacID( )   
 {
 	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
-		
-
 	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
-		
-
 	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
 
 //	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
@@ -468,7 +464,7 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 
 	//ÉèÖÃMACµØÖ·
-
+	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
   	TxDescrInit();
  	RxDescrInit();
