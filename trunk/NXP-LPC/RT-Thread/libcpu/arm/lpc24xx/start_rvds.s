@@ -1055,8 +1055,8 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, SWI_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
-            ;    DCD    	0xB8A06F58                             ; Reserved Vector 
-             NOP
+                DCD    	0xB8A06F58                             ; Reserved Vector 
+            ; NOP
 			  	LDR     PC, IRQ_Addr
             ; 	LDR     PC, [PC, #-0x0120]                   
   			 	LDR     PC, FIQ_Addr
