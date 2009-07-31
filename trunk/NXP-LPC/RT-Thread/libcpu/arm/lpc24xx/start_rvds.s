@@ -84,11 +84,11 @@ DYN_MEM3_BASE   EQU     0xD0000000
 ;// </h>
 
 UND_Stack_Size  EQU     0x00000000
-SVC_Stack_Size  EQU     0x00000100
+SVC_Stack_Size  EQU     0x00000008
 ABT_Stack_Size  EQU     0x00000000
 FIQ_Stack_Size  EQU     0x00000000
 IRQ_Stack_Size  EQU     0x00000100
-USR_Stack_Size  EQU     0x00000400
+USR_Stack_Size  EQU     0x00000180
 
 ISR_Stack_Size  EQU     (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                          FIQ_Stack_Size + IRQ_Stack_Size)
@@ -1056,9 +1056,9 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, PAbt_Addr
                 LDR     PC, DAbt_Addr
                 DCD    	0xB8A06F58                             ; Reserved Vector 
-            ; NOP
-			  	LDR     PC, IRQ_Addr
-            ; 	LDR     PC, [PC, #-0x0120]                   
+              ; NOP
+		     	LDR     PC, IRQ_Addr
+           ;  	LDR     PC, [PC, #-0x0120]                   
   			 	LDR     PC, FIQ_Addr
 
 Reset_Addr      DCD     ResetInit
@@ -1066,7 +1066,7 @@ Undef_Addr      DCD     Undef_Handler
 SWI_Addr        DCD     SWI_Handler
 PAbt_Addr       DCD     PAbt_Handler
 DAbt_Addr       DCD     DAbt_Handler
-                DCD     0xB8A06F58                      ; Reserved Address 
+                DCD     0                      ; Reserved Address 
 IRQ_Addr        DCD     IRQ_Handler
 FIQ_Addr        DCD     FIQ_Handler
 

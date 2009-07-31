@@ -43,10 +43,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\objs\</OutputDirectory>
-          <OutputName>rtthread-lpc2468</OutputName>
+          <OutputName>lpc2468</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\objs\</ListingPath>
@@ -109,7 +109,7 @@
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -128,7 +128,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>6</TargetSelection>
+          <TargetSelection>2</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -142,7 +142,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>Segger\JLTAgdi.dll</Driver>
+            <Driver>BIN\AGDIRDI.DLL</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -182,8 +182,8 @@
             <AdsLsym>0</AdsLsym>
             <AdsLszi>1</AdsLszi>
             <AdsLtoi>1</AdsLtoi>
-            <AdsLsun>1</AdsLsun>
-            <AdsLven>1</AdsLven>
+            <AdsLsun>0</AdsLsun>
+            <AdsLven>0</AdsLven>
             <AdsLsxf>0</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
@@ -206,7 +206,7 @@
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>1</OptFeed>
+            <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\finsh;..\..\net\lwip\src;..\..\net\lwip\src\include;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -379,6 +379,11 @@
           <GroupName>Startup</GroupName>
           <Files>
             <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\startup.c</FilePath>
+            </File>
+            <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\application.c</FilePath>
@@ -389,25 +394,25 @@
               <FilePath>.\board.c</FilePath>
             </File>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>nic_bsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\startup.c</FilePath>
+              <FilePath>.\nic_bsp.c</FilePath>
             </File>
             <File>
               <FileName>rtconfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\rtconfig.h</FilePath>
             </File>
-            <File>
-              <FileName>nic_bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\nic_bsp.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Kernel</GroupName>
           <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
@@ -419,9 +424,29 @@
               <FilePath>..\..\src\device.c</FilePath>
             </File>
             <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+            <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
             </File>
             <File>
               <FileName>mempool.c</FileName>
@@ -434,26 +459,6 @@
               <FilePath>..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-            <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler.c</FilePath>
@@ -464,11 +469,6 @@
               <FilePath>..\..\src\slab.c</FilePath>
             </File>
             <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
@@ -476,8 +476,13 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>LPC2468</GroupName>
+          <GroupName>lpc2468</GroupName>
           <Files>
+            <File>
+              <FileName>trap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
+            </File>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
@@ -499,11 +504,6 @@
               <FilePath>..\..\libcpu\arm\lpc24xx\stack.c</FilePath>
             </File>
             <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
-            </File>
-            <File>
               <FileName>context_rvds.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\lpc24xx\context_rvds.s</FilePath>
@@ -516,17 +516,72 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\main.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>LwIP</GroupName>
           <Files>
             <File>
-              <FileName>etharp.c</FileName>
+              <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\netif\etharp.c</FilePath>
+              <FilePath>..\..\net\lwip\src\api\tcpip.c</FilePath>
             </File>
             <File>
-              <FileName>ethernetif.c</FileName>
+              <FileName>api_lib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\netif\ethernetif.c</FilePath>
+              <FilePath>..\..\net\lwip\src\api\api_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>api_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\api_msg.c</FilePath>
+            </File>
+            <File>
+              <FileName>err.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\err.c</FilePath>
+            </File>
+            <File>
+              <FileName>netbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\netbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\netdb.c</FilePath>
+            </File>
+            <File>
+              <FileName>netifapi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\netifapi.c</FilePath>
+            </File>
+            <File>
+              <FileName>sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\api\sockets.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_arch_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\arch\sys_arch_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\arch\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\arch\sys_arch.c</FilePath>
             </File>
             <File>
               <FileName>udp.c</FileName>
@@ -572,11 +627,6 @@
               <FileName>stats.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\core\stats.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\sys.c</FilePath>
             </File>
             <File>
               <FileName>tcp.c</FileName>
@@ -634,64 +684,49 @@
               <FilePath>..\..\net\lwip\src\core\ipv4\ip_addr.c</FilePath>
             </File>
             <File>
-              <FileName>tcpip.c</FileName>
+              <FileName>etharp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\tcpip.c</FilePath>
+              <FilePath>..\..\net\lwip\src\netif\etharp.c</FilePath>
             </File>
             <File>
-              <FileName>api_lib.c</FileName>
+              <FileName>ethernetif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\api_lib.c</FilePath>
+              <FilePath>..\..\net\lwip\src\netif\ethernetif.c</FilePath>
             </File>
             <File>
-              <FileName>api_msg.c</FileName>
+              <FileName>loopif.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\api_msg.c</FilePath>
+              <FilePath>..\..\net\lwip\src\netif\loopif.c</FilePath>
             </File>
             <File>
-              <FileName>err.c</FileName>
+              <FileName>msg_out.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\err.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\msg_out.c</FilePath>
             </File>
             <File>
-              <FileName>netbuf.c</FileName>
+              <FileName>asn1_dec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\netbuf.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\asn1_dec.c</FilePath>
             </File>
             <File>
-              <FileName>netdb.c</FileName>
+              <FileName>asn1_enc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\netdb.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\asn1_enc.c</FilePath>
             </File>
             <File>
-              <FileName>netifapi.c</FileName>
+              <FileName>mib2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\netifapi.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\mib2.c</FilePath>
             </File>
             <File>
-              <FileName>sockets.c</FileName>
+              <FileName>mib_structs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\api\sockets.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\mib_structs.c</FilePath>
             </File>
             <File>
-              <FileName>sys_arch_init.c</FileName>
+              <FileName>msg_in.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\arch\sys_arch_init.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\arch\sys_arch.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>app</GroupName>
-          <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\app\main.c</FilePath>
+              <FilePath>..\..\net\lwip\src\core\snmp\msg_in.c</FilePath>
             </File>
           </Files>
         </Group>

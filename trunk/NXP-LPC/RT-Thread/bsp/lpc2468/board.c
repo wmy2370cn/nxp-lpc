@@ -18,7 +18,7 @@
 #include <LPC24xx.h>
 #include "board.h"
 
-/* #define BOARD_DEBUG */
+/* #define RT_BOARD_DEBUG */
 
 #define DATA_COUNT 11059200/RT_TICK_PER_SECOND	/* T0MR0 = delayInMs * (Fpclk / 1000); */
 
