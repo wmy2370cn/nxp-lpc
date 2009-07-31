@@ -43,7 +43,7 @@ extern int  rt_application_init(void);
 
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
-#include "dm9161.h"
+#include "nic.h"
 #endif
 
 /**
