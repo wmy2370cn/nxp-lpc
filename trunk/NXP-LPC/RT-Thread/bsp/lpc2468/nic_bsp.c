@@ -466,8 +466,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//…Ë÷√MACµÿ÷∑
 //	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
- // 	TxDescrInit();
- //	RxDescrInit();
+ 	TxDescrInit();
+ 	RxDescrInit();
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
