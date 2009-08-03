@@ -140,8 +140,9 @@
 *                                   PHY ERROR CODES 12,000 -> 13,000
 *********************************************************************************************************
 */
-
+#define  NET_PHY_ERR_NONE                  12000
 #define  NET_PHY_ERR_REGRD_TIMEOUT         12010
 #define  NET_PHY_ERR_REGWR_TIMEOUT         12020
 #define  NET_PHY_ERR_AUTONEG_TIMEOUT       12030
+#define  NET_PHY_ERR_RESET_TIMEOUT         12040
 
