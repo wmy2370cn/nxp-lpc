@@ -118,13 +118,7 @@ void TxDescrInit (void)
 
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
-}
-
-void  NetBSP_DlyMs (INT32U ms)
-{
-	rt_thread_delay(ms/10);
-//	OSTimeDlyHMSM(0, 0, ms / 1000, ms % 1000);
-}
+} 
 /*********************************************************************************************************
 ** 函数名称: Write_PHY
 ** 函数名称: Write_PHY
@@ -207,6 +201,34 @@ INT16U Read_PHY ( INT16U phyadd ,INT8U  PhyReg)
 		{
 			break;
 		}
+	}
+	MAC_MCMD = 0;
+	return (MAC_MRDD);
+}
+
+INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
+{
+	INT32U tout = 0;
+
+	MAC_MCMD = 0;                     // Clear the Read COMMAND    
+	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
+	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+
+	/* Wait until operation completed */
+	for (tout = 0; tout < MII_RD_TOUT; tout++) 
+	{
+		if ((MAC_MIND & MIND_BUSY) == 0) 
+		{
+			break;
+		}
+	}
+	if (tout == MII_RD_TOUT)
+	{
+		*err = NET_PHY_ERR_REGRD_TIMEOUT;
+	}
+	else
+	{
+		*err = NET_PHY_ERR_NONE;
 	}
 	MAC_MCMD = 0;
 	return (MAC_MRDD);
@@ -362,10 +384,13 @@ static  void  AppInitTCPIP (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
+rt_uint16_t PHYREG[80];
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
-	INT32U  tempreg = 0;
+	rt_uint32_t  tempreg = 0;
+	rt_uint16_t  ret = 0;
+
 
 	/* Power Up the EMAC controller. */
 	PCONP |= 0x40000000;
@@ -397,27 +422,22 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	MAC_CLRT = CLRT_DEF;
 	MAC_IPGR = IPGR_DEF;
 
-	//????
 	/* Enable Reduced MII interface. */
 	MAC_MCFG = MCFG_CLK_DIV20 | MCFG_RES_MII;
 	for (tout = 100; tout; tout--);
 	MAC_MCFG = MCFG_CLK_DIV20;
 
-	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
-
 	/* Enable Reduced MII interface. */
+	//CR_PASS_RUNT_FRM 为“1”时，将小于64字节的短帧传递到存储器中，除非该短帧的CRC有误为“0”，则将短帧被滤除。
 	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
 
 	/* Reset Reduced MII Logic. */
+	//PHY支持寄存器???
 	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
 	for (tout = 100; tout; tout--);
 	MAC_SUPP = SUPP_SPEED;
 
 	//下面开始PHY设置
-	//  复位PHY芯片
-	#define EMAC_CFG_PHY_ADDR 0 
-	Write_PHY(EMAC_CFG_PHY_ADDR, MII_BMCR, 0x9200 );
-
 	// probe phy address
 	for(i=0;i<32;i++)
 	{
@@ -427,10 +447,18 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 //	if(i >= 32)
 //		while(1);
-	//  等待一段指定的时间，使PHY就绪
+	PHYID = i;
+	//  复位PHY芯片
+	//  等待一段指定的时间，使PHY就绪 
+	Write_PHY(PHYID, MII_BMCR, 0x9200 );
 
+//	Write_PHY (EMAC_CFG_PHY_ADDR, MII_BMCR, PHY_AUTO_NEG);
+	for ( i = 0; i < 0x4000; i++ );
 
-
+	for(i=0;i<32;i++)
+	{
+		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
+	}
 
 	tempreg = Read_PHY(PHYID, 17 );
 
