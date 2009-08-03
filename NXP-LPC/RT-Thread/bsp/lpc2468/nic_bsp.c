@@ -143,7 +143,7 @@ void TxDescrInit (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
+INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
 {
 	unsigned int tout;
 
@@ -186,7 +186,7 @@ INT8U Write_PHY (INT32U phyadd,INT32S PhyReg, INT32S Value)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/ 
-INT16U Read_PHY ( INT16U phyadd ,INT8U  PhyReg) 
+INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg) 
 {
 	INT32U tout = 0;
 
@@ -361,6 +361,56 @@ static  void  AppInitTCPIP (void)
 //	err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
 }
 
+rt_uint8_t  get_phy_autoneg_state(void)
+{
+	rt_uint16_t     err = 0;
+	rt_uint32_t  reg_val;
+	 
+	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+
+	if (err   != NET_PHY_ERR_NONE) 
+	{
+		reg_val = 0;
+	}
+	 /* DM9161AE register 0x01: Basic Status Register #1      */
+	     /* BIT 5 Signal the result of the auto negotiation   */  
+	if ((reg_val & BMSR_ANEGCOMPLETE) == BMSR_ANEGCOMPLETE)
+	{  
+		return (RT_TRUE);                                     
+	} 
+	else 
+	{                                                    /* 1 = complete, 0 = incomplete                          */
+		return (RT_FALSE);
+	}
+}
+rt_uint8_t  get_phy_link_state (void)
+{
+	rt_uint16_t     err = 0;
+	rt_uint32_t  reg_val;
+
+	/* DM9161AE register 0x01: Basic Status Register #1      */
+	/* BIT 2 , Link Status, 1 = linked, 0 = not linked.      */
+	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+
+	if (err   != NET_PHY_ERR_NONE)
+	{
+		reg_val  = 0;
+	}
+
+	reg_val     &= BMSR_LSTATUS;
+
+	if (reg_val == BMSR_LSTATUS)
+	{
+		return (RT_TRUE);
+	} 
+	else 
+	{
+		return (RT_FALSE);
+	}
+}
+
 /* RT-Thread Device Interface */
 /*********************************************************************************************************
 ** 函数名称: rt_dm9161_init
@@ -441,18 +491,24 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	// probe phy address
 	for(i=0;i<32;i++)
 	{
-		PHYID = Read_PHY(i , 2 );
-		if(PHYID == 0X0181)
+		ret = read_phy(i , PHY_REG_PHYID1 );
+		if(ret == 0X0181)
+		{
+			PHYID = i;
 			break;
+		}
 	}
-//	if(i >= 32)
-//		while(1);
-	PHYID = i;
+
+	if (PHYID == 0 || PHYID > 32)
+	{//出错
+
+	}
+ 
 	//  复位PHY芯片
 	//  等待一段指定的时间，使PHY就绪 
-	Write_PHY(PHYID, MII_BMCR, 0x9200 );
+	write_phy(PHYID, PHY_REG_BMCR, 0x9200 );
 
-//	Write_PHY (EMAC_CFG_PHY_ADDR, MII_BMCR, PHY_AUTO_NEG);
+//	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
 	for ( i = 0; i < 0x4000; i++ );
 
 	for(i=0;i<32;i++)
@@ -460,7 +516,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
 	}
 
-	tempreg = Read_PHY(PHYID, 17 );
+	tempreg = read_phy(PHYID, DM9161_DSCSR );
+	ret = get_phy_autoneg_state( );
+	ret = get_phy_link_state();
+
 
 	//判断工作在10/100 半双工/全双工
 	if(tempreg & 0x8000)//100fdx
