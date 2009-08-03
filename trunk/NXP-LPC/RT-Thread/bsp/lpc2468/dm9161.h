@@ -1,6 +1,6 @@
 
 #pragma  once 
-
+#include "applib.h"
 
 /*
 *********************************************************************************************************
@@ -36,13 +36,13 @@
 *********************************************************************************************************
 */
 /* ------- Generic MII registers ---------- */
-#define  MII_BMCR                           0x00                /* Basic mode control register              */
-#define  MII_BMSR                           0x01                /* Basic mode status register               */
-#define  MII_PHYSID1                        0x02                /* PHYS ID 1                                */
-#define  MII_PHYSID2                        0x03                /* PHYS ID 2                                */
-#define  MII_ANAR                           0x04                /* Advertisement control reg                */
-#define  MII_ANLPAR                         0x05                /* Link partner ability reg                 */
-#define  MII_ANER                           0x06                /* Expansion register                       */
+#define  PHY_REG_BMCR                       0x00                /* Basic mode control register              */
+#define  PHY_REG_BMSR                       0x01                /* Basic mode status register               */
+#define  PHY_REG_PHYID1                     0x02                /* PHYS ID 1                                */
+#define  PHY_REG_PHYID2                     0x03                /* PHYS ID 2                                */
+#define  PHY_REG_ANAR                       0x04                /* Advertisement control reg                */
+#define  PHY_REG_ANLPAR                     0x05                /* Link partner ability reg                 */
+#define  PHY_REG_ANER                       0x06                /* Expansion register                       */
 
 /* ---------- Extended registers ---------- */
 #define  DM9161_DSCR                        0x10                /* DAVICOM specified configuration          */
@@ -59,7 +59,7 @@
 *                                         DM9161AE REGISTER BITS
 *********************************************************************************************************
 */
-/* -------- MII_BMCR Register Bits -------- */
+/* -------- PHY_REG_BMCR Register Bits -------- */
 #define  BMCR_RESV                         0x007F               /* Unused...                                */
 #define  BMCR_CTST                       DEF_BIT_07             /* Collision test                           */
 #define  BMCR_FULLDPLX                   DEF_BIT_08             /* Full duplex                              */
@@ -71,7 +71,7 @@
 #define  BMCR_LOOPBACK                   DEF_BIT_14             /* TXD loopback bits                        */
 #define  BMCR_RESET                      DEF_BIT_15             /* Reset the DP83840                        */
 
-/* -------- MII_BMSR Register Bits -------- */
+/* -------- PHY_REG_BMSR Register Bits -------- */
 #define  BMSR_ERCAP                      DEF_BIT_00             /* Ext-reg capability                       */
 #define  BMSR_JCD                        DEF_BIT_01             /* Jabber detected                          */
 #define  BMSR_LSTATUS                    DEF_BIT_02             /* Link status                              */
@@ -85,7 +85,7 @@
 #define  BMSR_100FULL                    DEF_BIT_14             /* Can do 100mbps, full-duplex              */
 #define  BMSR_100BASE4                   DEF_BIT_15             /* Can do 100mbps, 4k packets               */
 
-/* -------- MII_ANAR Register Bits -------- */
+/* -------- PHY_REG_ANAR Register Bits -------- */
 #define  ANAR_SLCT                         0x001F               /* Selector bits                            */
 #define  ANAR_CSMA                       DEF_BIT_04             /* Only selector supported                  */
 #define  ANAR_10HALF                     DEF_BIT_05             /* Try for 10mbps half-duplex               */
@@ -101,7 +101,7 @@
 #define  ANAR_FULL       (ANAR_100FULL | ANAR_10FULL | ANAR_CSMA)
 #define  ANAR_ALL        (ANAR_100FULL | ANAR_10FULL | ANAR_100HALF | ANAR_10HALF)
 
-/* ------- MII_ANLPAR Register Bits ------- */
+/* ------- PHY_REG_ANLPAR Register Bits ------- */
 #define  ANLPAR_SLCT                       0x001F               /* Same as advertise selector               */
 #define  ANLPAR_10HALF                   DEF_BIT_05             /* Can do 10mbps half-duplex                */
 #define  ANLPAR_10FULL                   DEF_BIT_06             /* Can do 10mbps full-duplex                */
@@ -116,7 +116,7 @@
 #define  ANLPAR_DUPLEX   (ANLPAR_10FULL  | ANLPAR_100FULL)
 #define  ANLPAR_100	     (ANLPAR_100FULL | ANLPAR_100HALF | ANLPAR_100BASE4)
 
-/* -------- MII_ANER Register Bits -------- */
+/* -------- PHY_REG_ANER Register Bits -------- */
 #define  ANER_NWAY                       DEF_BIT_00             /* Can do N-way auto-nego                   */
 #define  ANER_LCWP                       DEF_BIT_01             /* Got new RX page code word                */
 #define  ANER_ENABLENPAGE                DEF_BIT_02             /* This enables npage words                 */
