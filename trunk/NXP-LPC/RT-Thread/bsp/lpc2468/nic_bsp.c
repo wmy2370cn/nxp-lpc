@@ -31,12 +31,6 @@ struct rt_lpc24xx_eth
 #define TB_BUFFER_SIZE		4
 #define ETH_TX_BUF_SIZE		(PBUF_POOL_BUFSIZE)
 
-struct rbf_t
-{
-	rt_uint32_t addr;
-	rt_uint32_t status;
-};
-
 typedef struct {                        /* RX Descriptor struct              */
 	rt_uint32_t Packet;
 	rt_uint32_t Ctrl;
@@ -63,8 +57,8 @@ static rt_uint32_t 	current_rb_index;						/* current receive buffer index */
 
 /* EMAC local DMA Descriptors. */ 
 /* EMAC local DMA Descriptors. */
-static            RX_Desc Rx_Desc[NUM_RX_FRAG];
-static            TX_Desc Tx_Desc[NUM_TX_FRAG];
+static            RX_Desc rb_descriptors[NUM_RX_FRAG];
+static            TX_Desc tb_descriptors[NUM_TX_FRAG];
  
 static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
 static  TX_Stat Tx_Stat[NUM_TX_FRAG];
@@ -88,14 +82,14 @@ void RxDescrInit (void)
 
 	for (i = 0; i < NUM_RX_FRAG; i++) 
 	{
-		Rx_Desc[i].Packet  = (rt_uint32_t)&rx_buf[i];
-		Rx_Desc[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
+		rb_descriptors[i].Packet  = (rt_uint32_t)&rx_buf[i];
+		rb_descriptors[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
 		Rx_Stat[i].Info    = 0;
 		Rx_Stat[i].HashCRC = 0;
 	}
 
 	/* Set EMAC Receive Descriptor Registers. */
-	MAC_RXDESCRIPTOR    = (rt_uint32_t)&Rx_Desc[0];
+	MAC_RXDESCRIPTOR    = (rt_uint32_t)&rb_descriptors[0];
 	MAC_RXSTATUS        = (rt_uint32_t)&Rx_Stat[0];
  
 	MAC_RXDESCRIPTORNUM = NUM_RX_FRAG-1;
@@ -112,13 +106,13 @@ void TxDescrInit (void)
 
 	for (i = 0; i < NUM_TX_FRAG; i++) 
 	{
-		Tx_Desc[i].Packet = (rt_uint32_t)&tx_buf[i];
-		Tx_Desc[i].Ctrl   = 0;
+		tb_descriptors[i].Packet = (rt_uint32_t)&tx_buf[i];
+		tb_descriptors[i].Ctrl   = 0;
 		Tx_Stat[i].Info   = 0;
 	}
 
 	/* Set EMAC Transmit Descriptor Registers. */
-	MAC_TXDESCRIPTOR    = (rt_uint32_t)&Tx_Desc[0];
+	MAC_TXDESCRIPTOR    = (rt_uint32_t)&tb_descriptors[0];
 	MAC_TXSTATUS        = (rt_uint32_t)&Tx_Stat[0];
 	MAC_TXDESCRIPTORNUM = NUM_TX_FRAG-1;
 
@@ -524,23 +518,199 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
+
+/* See the header file for descriptions of public functions. */
+void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof)
+{
+	rt_uint8_t *buf_ptr;
+	static rt_uint32_t current_tb_index = 0;
+	rt_uint32_t is_last, tx_offset = 0, remain, pdu_length;
+
+	while(tx_offset < length)
+	{
+		/* check whether buffer is available */
+		while(!(tb_descriptors[current_tb_index].Ctrl & TxDESC_STATUS_USED))
+		{
+			/* no buffer */
+			rt_thread_delay(5);
+		}
+
+		/* Get the address of the buffer from the descriptor, then copy
+		the data into the buffer. */
+		buf_ptr = (rt_uint8_t *)tb_descriptors[current_tb_index].Packet;
+
+		/* How much can we write to the buffer? */
+		remain = length - tx_offset;
+		pdu_length = (remain <= ETH_TX_BUF_SIZE)? remain : ETH_TX_BUF_SIZE;
+
+		/* Copy the data into the buffer. */
+		rt_memcpy(buf_ptr, &ptr[tx_offset], pdu_length );
+		tx_offset += pdu_length;
+
+		/* Is this the last data for the frame? */
+		if((eof == RT_TRUE) && ( tx_offset >= length )) is_last = TxDESC_STATUS_LAST_BUF;
+		else is_last = 0;
+
+		/* Fill out the necessary in the descriptor to get the data sent,
+		then move to the next descriptor, wrapping if necessary. */
+		if(current_tb_index >= (TB_BUFFER_SIZE - 1))
+		{
+			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
+				| is_last
+				| TxDESC_STATUS_WRAP;
+			current_tb_index = 0;
+		}
+		else
+		{
+			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
+				| is_last;
+			current_tb_index++;
+		}
+
+		/* If this is the last buffer to be sent for this frame we can start the transmission. */
+		if(is_last)
+		{
+			//AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
+		}
+	}
+}
 /* ethernet device interface */
-/* transmit packet. */
-rt_err_t rt_dm9000_tx( rt_device_t dev, struct pbuf* p)
+/*
+* Transmit packet.
+*/
+rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 {
 	struct pbuf* q;
-	rt_uint32_t len;
-	rt_uint8_t* ptr;
+
+	/* lock tx operation */
+	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
 
 	for (q = p; q != NULL; q = q->next)
 	{
-		len = q->len;
-		ptr = q->payload;
-
-		/* write data to device */
+		if (q->next == RT_NULL)
+			lpc24xxether_write_frame(q->payload, q->len, RT_TRUE);
+		else
+			lpc24xxether_write_frame(q->payload, q->len, RT_FALSE);
 	}
 
-	return RT_EOK;
+	rt_sem_release(&tx_sem);
+
+	return 0;
+}
+void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uint32_t total)
+{
+	static rt_uint8_t* src_ptr;
+	register rt_uint32_t buf_remain, section_remain;
+	static rt_uint32_t section_read = 0, buf_offset = 0, frame_read = 0;
+
+	if(ptr == RT_NULL)
+	{
+		/* Reset our state variables ready for the next read from this buffer. */
+		src_ptr = (rt_uint8_t *)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
+		frame_read = (rt_uint32_t)0;
+		buf_offset = (rt_uint32_t)0;
+	}
+	else
+	{
+		/* Loop until we have obtained the required amount of data. */
+		section_read = 0;
+		while( section_read < section_length )
+		{
+			buf_remain = (ETH_RX_BUF_SIZE - buf_offset);
+			section_remain = section_length - section_read;
+
+			if( section_remain > buf_remain )
+			{
+				/* more data on section than buffer size */
+				rt_memcpy(&ptr[ section_read ], &src_ptr[buf_offset], buf_remain);
+				section_read += buf_remain;
+				frame_read += buf_remain;
+
+				/* free buffer */
+				rb_descriptors[current_rb_index].Packet &= ~RxDESC_FLAG_OWNSHIP;
+
+				/* move to the next frame. */
+				current_rb_index++;
+				if(current_rb_index >= RB_BUFFER_SIZE) current_rb_index = 0;
+
+				/* Reset the variables for the new buffer. */
+				src_ptr = (rt_uint8_t *)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
+				buf_offset = 0;
+			}
+			else
+			{
+				/* more data on buffer than section size */
+				rt_memcpy(&ptr[section_read], &src_ptr[buf_offset], section_remain);
+				buf_offset += section_remain;
+				section_read += section_remain;
+				frame_read += section_remain;
+
+				/* finish this read */
+				if((buf_offset >= ETH_RX_BUF_SIZE) || (frame_read >= total))
+				{
+					/* free buffer */
+					rb_descriptors[current_rb_index].Packet &= ~(RxDESC_FLAG_OWNSHIP);
+
+					/* move to the next frame. */
+					current_rb_index++;
+					if( current_rb_index >= RB_BUFFER_SIZE ) current_rb_index = 0;
+
+					src_ptr = (rt_uint8_t*)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
+					buf_offset = 0;
+				}
+			}
+		}
+	}
+}
+
+struct pbuf *lpc24xxether_rx(rt_device_t dev)
+{
+	struct pbuf *p = RT_NULL;
+	/* skip fragment frame */
+	while((rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_OWNSHIP)&& !(rb_descriptors[current_rb_index].Ctrl & RxDESC_STATUS_FRAME_START))
+	{
+		rb_descriptors[current_rb_index].Packet &= (~RxDESC_FLAG_OWNSHIP);
+
+		current_rb_index++;
+		if(current_rb_index >= RB_BUFFER_SIZE) current_rb_index = 0;
+	}
+	if ((rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_OWNSHIP))
+	{
+		struct pbuf* q;
+		rt_uint32_t index, pkt_len = 0;
+
+		/* first of all, find the frame length */
+		index = current_rb_index;
+		while (rb_descriptors[index].Packet & RxDESC_FLAG_OWNSHIP)
+		{
+			pkt_len = rb_descriptors[index].Ctrl & RxDESC_STATUS_BUF_SIZE;
+			if (pkt_len > 0) 
+				break;
+
+			index ++;
+			if (index > RB_BUFFER_SIZE) index = 0;
+		}
+
+		if (pkt_len)
+		{
+			p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+			if(p != RT_NULL)
+			{
+				lpc24xxether_read_frame(RT_NULL, 0, pkt_len);
+				for(q = p; q != RT_NULL; q= q->next)
+					lpc24xxether_read_frame(q->payload, q->len, pkt_len);
+			}
+			else
+			{
+				rt_kprintf("no memory in pbuf\n");
+			}
+		}
+	}
+
+	/* enable interrupt */
+//	AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP;
+
+
 }
 
 /* reception packet. */
@@ -617,8 +787,8 @@ int lpc24xxether_register(char *name)
 	lpc24xx_device.parent.parent.control	= rt_dm9000_control;
 	lpc24xx_device.parent.parent.private    = RT_NULL;
 
-	lpc24xx_device.parent.eth_rx			= rt_dm9000_rx;
-	lpc24xx_device.parent.eth_tx			= rt_dm9000_tx;
+	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;
+	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
 
 	/* Update MAC address */
 // 	lpc24xx_device.dev_addr[0] = 0x1e;

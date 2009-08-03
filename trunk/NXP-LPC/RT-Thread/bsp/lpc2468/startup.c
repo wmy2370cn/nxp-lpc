@@ -39,6 +39,8 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
+//__align(4) char HeapMem[1024] __attribute__((at(0X40002000)))	  = {0};
+//  char HeapMem[1024];
 /**
  * This function will startup RT-Thread RTOS.
  */
@@ -65,6 +67,8 @@ void rtthread_startup(void)
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
 	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit), (void*)0x40010000);
+// 	rt_system_heap_init((void*)(&HeapMem), (void*)(0x40001134));
+
 #else
 	rt_system_heap_init((void*)&__bss_end, (void*)0x40010000);
 #endif
