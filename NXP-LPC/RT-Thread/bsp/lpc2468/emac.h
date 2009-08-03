@@ -266,3 +266,22 @@
 #define MCFG_CLK_DIV14      0x00000014  /* MDC = hclk / 14                   */
 #define MCFG_CLK_DIV20      0x00000018  /* MDC = hclk / 20                   */
 #define MCFG_CLK_DIV28      0x0000001C  /* MDC = hclk / 28                   */
+
+
+#define RxDESC_FLAG_ADDR_MASK		0xfffffffc
+#define	RxDESC_FLAG_WARP			0x00000002
+#define	RxDESC_FLAG_OWNSHIP			0x00000001
+
+#define RxDESC_STATUS_BUF_SIZE		(0x00000FFF)
+#define RxDESC_STATUS_FRAME_START	(1U << 14)
+#define RxDESC_STATUS_FRAME_END		(1U << 15)
+
+
+#define TxDESC_STATUS_BUF_SIZE		(0x000007FF)
+#define TxDESC_STATUS_LAST_BUF		(1U << 15)
+#define	TxDESC_STATUS_NO_CRC		(1U << 16)
+#define	TxDESC_STATUS_BUF_EXHAUSTED	(1U << 27)
+#define	TxDESC_STATUS_Tx_UNDERRUN	(1U << 28)
+#define	TxDESC_STATUS_Tx_ERROR		(1U << 29)
+#define	TxDESC_STATUS_WRAP			(1U << 30)
+#define	TxDESC_STATUS_USED			(1U << 31)
