@@ -6,7 +6,7 @@
 #include "emac.h"
 #include "applib.h"
 #include "LPC24xx.h"
-
+#include "emac.h"
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
 
@@ -190,10 +190,10 @@ INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg)
 {
 	INT32U tout = 0;
 
-	MAC_MCMD = 0;                     // Clear the Read COMMAND    
-	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
 	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
-
+	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
+	MAC_MCMD = 0;                     // Clear the Read COMMAND    
+	
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
 	{
@@ -210,9 +210,9 @@ INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
 {
 	INT32U tout = 0;
 
-	MAC_MCMD = 0;                     // Clear the Read COMMAND    
-	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
 	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
+	MAC_MCMD = 0;                     // Clear the Read COMMAND    
 
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -532,7 +532,7 @@ void  set_phy_autoneg  (void)
 	rt_uint16_t   reg_val;
 	rt_uint8_t  link;
 	rt_uint16_t      err;
-
+	rt_uint32_t  tout = 0;
 
 	i               = DM9161AE_INIT_AUTO_NEG_RETRIES;                   /* Set the # of retries before declaring a timeout  */
 	link            = get_phy_link_state();                            /* Get the current link state. 1=linked, 0=no link  */
@@ -547,7 +547,8 @@ void  set_phy_autoneg  (void)
 // #endif
 
 		do {                                                            /* Do while auto-neg incomplete, or retries expired */
-			DM9161AE_DlyAutoNegAck();                                   /* Wait for a while auto-neg to proceed (net_bsp.c) */
+			for (tout = 5000; tout; tout--);
+                              /* Wait for a while auto-neg to proceed (net_bsp.c) */
 			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
 			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
 			i--;
@@ -579,13 +580,84 @@ void  set_phy_autoneg  (void)
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 rt_uint16_t PHYREG[80];
+/* ----------------- MCFG bits ---------------- */
+#define  MCFG_CLKSEL_DIV4                             0x0000
+#define  MCFG_CLKSEL_DIV6                             0x0008
+#define  MCFG_CLKSEL_DIV8                             0x000C
+#define  MCFG_CLKSEL_DIV10                            0x0010
+#define  MCFG_CLKSEL_DIV14                            0x0014
+#define  MCFG_CLKSEL_DIV20                            0x0018
+#define  MCFG_CLKSEL_DIV28                            0x001C
+
+static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
+{6,  MCFG_CLKSEL_DIV6},
+{8,  MCFG_CLKSEL_DIV8},
+{10, MCFG_CLKSEL_DIV10},
+{14, MCFG_CLKSEL_DIV14},
+{20, MCFG_CLKSEL_DIV20},
+{28, MCFG_CLKSEL_DIV28}};
+
+
+#define  MAIN_OSC_FRQ              11059200L
+#define  IRC_OSC_FRQ               11059200L
+#define  RTC_OSC_FRQ                  32768L
+
+
+rt_uint32_t  BSP_CPU_ClkFreq (void)
+{
+	rt_uint32_t  msel;
+	rt_uint32_t  nsel;
+	rt_uint32_t  fin;
+	rt_uint32_t  pll_clk_feq;                                    /* When the PLL is enabled, this is Fcco                    */
+	rt_uint32_t  clk_div;
+	rt_uint32_t  clk_freq;
+
+
+	switch (CLKSRCSEL & 0x03)
+	{                                 /* Determine the current clock source                       */
+		case 0:
+			fin        =  IRC_OSC_FRQ;
+			break;
+
+		case 1:
+			fin        =  MAIN_OSC_FRQ;
+			break;
+
+		case 2:
+			fin        =  RTC_OSC_FRQ;
+			break;
+
+		default:
+			fin        =  IRC_OSC_FRQ;
+			break;
+	}
+
+	if ((PLLSTAT & (1 << 25)) > 0) 
+	{                                                              /* If the PLL is currently enabled and connected        */
+		msel        = (rt_uint32_t)(PLLSTAT & 0x3FFF) + 1;           /* Obtain the PLL multiplier                            */
+		nsel        = (rt_uint32_t)((PLLSTAT >>   16) & 0x0F) + 1;   /* Obtain the PLL divider                               */
+		pll_clk_feq = (2 * msel * fin / nsel);                      /* Compute the PLL output frequency                     */
+	} 
+	else
+	{
+		pll_clk_feq = (fin);                                        /* The PLL is bypassed                                  */
+	}
+
+	clk_div         = (rt_uint8_t)(CCLKCFG & 0x0F) + 1;             /* Obtain the CPU core clock divider                    */
+	clk_freq        = (rt_uint32_t)(pll_clk_feq / clk_div);          /* Compute the ARM Core clock frequency                 */
+
+	return (clk_freq);
+}
+
+
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
 	rt_uint32_t  tempreg = 0;
 	rt_uint16_t  ret = 0;
 
-
+	rt_uint32_t clk_freq            =   BSP_CPU_ClkFreq();  
+	clk_freq           /=   100000;        
 	/* Power Up the EMAC controller. */
 	PCONP |= 0x40000000;
  	/* Set the PIN to RMII */
@@ -609,27 +681,45 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	/* A short delay after reset. */
 	for (tout = 500; tout; tout--);
 
+	//Deassert all prior resets
+	MAC_MAC1 = 0;
+	EMAC_RxDisable();
+	EMAC_TxDisable();
+ 
+	MAC_COMMAND            |=   COMMAND_RMII;  
+	MAC_SUPP = 0;
+	for (tout = 5000; tout; tout--);
+
+	MAC_TEST                =   0;     
 	/* Initialize MAC control registers. */
-	MAC_MAC1 = MAC1_PASS_ALL;
+	MAC_MAC1 |= MAC1_PASS_ALL;
 	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
 	MAC_MAXF = ETH_MAX_FLEN;
 	MAC_CLRT = CLRT_DEF;
 	MAC_IPGR = IPGR_DEF;
+	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
 
 	/* Enable Reduced MII interface. */
-	MAC_MCFG = MCFG_CLK_DIV20 | MCFG_RES_MII;
-	for (tout = 100; tout; tout--);
-	MAC_MCFG = MCFG_CLK_DIV20;
+	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
+	MAC_COMMAND                =   0;                                          /* Clear MII command register                               */
 
+	for (tout = 100; tout; tout--);
+//	MAC_MCFG = MCFG_CLK_DIV20;
+	for (i = 0; i < 7; i++) {                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
+		if ((clk_freq / MII_Dividers[i][0]) <=  25) {                   /* Index [i][0] = decimal div value, [i][1] = MCFG reg val  */
+			MAC_MCFG        =   MII_Dividers[i][1];                         /* Remove reset, set proper MIIM divider                    */
+			break;
+		}
+	}
 	/* Enable Reduced MII interface. */
 	//CR_PASS_RUNT_FRM 为“1”时，将小于64字节的短帧传递到存储器中，除非该短帧的CRC有误为“0”，则将短帧被滤除。
 	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
 
 	/* Reset Reduced MII Logic. */
 	//PHY支持寄存器???
-	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
-	for (tout = 100; tout; tout--);
-	MAC_SUPP = SUPP_SPEED;
+//	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
+//	for (tout = 100; tout; tout--);
+	MAC_SUPP = 0;
 
 	//下面开始PHY设置
 	// probe phy address
@@ -648,25 +738,31 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	}
  
+//	PHYID = 0;
 	//  复位PHY芯片
 	//  等待一段指定的时间，使PHY就绪 
-	write_phy(PHYID, PHY_REG_BMCR, 0x9200 );
+	write_phy(PHYID, PHY_REG_BMCR, BMCR_ANRESTART|BMCR_ANENABLE|BMCR_RESET );
 
 //	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
-	for ( i = 0; i < 0x4000; i++ );
+	for ( i = 0; i < 0x90000; i++ );
 
 	for(i=0;i<32;i++)
 	{
 		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
 	}
 
+
+	set_phy_autoneg( );
 	tempreg = read_phy(PHYID, DM9161_DSCSR );
 	ret = get_phy_autoneg_state( );
 	ret = get_phy_link_state();
+	ret = get_phy_link_speed();
 
-	tempreg = get_phy_link_speed();
 
-
+  	for(i=0;i<32;i++)
+	{
+		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
+	}
 	//判断工作在10/100 半双工/全双工
 	if(tempreg & 0x8000)//100fdx
 	{

@@ -6,8 +6,12 @@
 #define MYMAC_2         0x30            /* (MUST be unique in LAN!)          */
 #define MYMAC_3         0x6C
 #define MYMAC_4         0x00
-#define MYMAC_5         0x00
+#define MYMAC_5         0x09
 #define MYMAC_6         0x02
+
+#define  ACCEPT_BROADCAST                           DEF_BIT_01
+#define  ACCEPT_PERFECT                             DEF_BIT_05
+
 
 /* EMAC Memory Buffer configuration for 16K Ethernet RAM. */
 #define NUM_RX_FRAG         4           /* Num.of RX Fragments 4*1536= 6.0kB */
