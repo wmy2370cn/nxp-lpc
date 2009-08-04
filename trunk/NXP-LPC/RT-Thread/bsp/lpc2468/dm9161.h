@@ -24,6 +24,16 @@
 *                                               DEFINES
 *********************************************************************************************************
 */
+#define  COMMAND_RX_EN                              DEF_BIT_00
+#define  COMMAND_TX_EN                              DEF_BIT_01
+#define  COMMAND_RESET_REG                          DEF_BIT_03
+#define  COMMAND_RESET_TX                           DEF_BIT_04
+#define  COMMAND_RESET_RX                           DEF_BIT_05
+#define  COMMAND_PASS_RUNT_FRAMES                   DEF_BIT_06
+#define  COMMAND_PASS_ALL_FRAMES                    DEF_BIT_07
+#define  COMMAND_RMII                               DEF_BIT_09
+#define  COMMAND_FULL_DUPLEX                        DEF_BIT_10
+
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
 
@@ -64,12 +74,12 @@
 #define  BMCR_CTST                       DEF_BIT_07             /* Collision test                           */
 #define  BMCR_FULLDPLX                   DEF_BIT_08             /* Full duplex                              */
 #define  BMCR_ANRESTART                  DEF_BIT_09             /* Auto negotiation restart                 */
-#define  BMCR_ISOLATE                    DEF_BIT_10             /* Disconnect DP83840 from MII              */
-#define  BMCR_PDOWN                      DEF_BIT_11             /* Powerdown the DP83840                    */
+#define  BMCR_ISOLATE                    DEF_BIT_10             /* Disconnect DM9161 from MII              */
+#define  BMCR_PDOWN                      DEF_BIT_11             /* Powerdown the DM9161                    */
 #define  BMCR_ANENABLE                   DEF_BIT_12             /* Enable auto negotiation                  */
 #define  BMCR_SPEED100                   DEF_BIT_13             /* Select 100Mbps                           */
 #define  BMCR_LOOPBACK                   DEF_BIT_14             /* TXD loopback bits                        */
-#define  BMCR_RESET                      DEF_BIT_15             /* Reset the DP83840                        */
+#define  BMCR_RESET                      DEF_BIT_15             /* Reset the DM9161                        */
 
 /* -------- PHY_REG_BMSR Register Bits -------- */
 #define  BMSR_ERCAP                      DEF_BIT_00             /* Ext-reg capability                       */
