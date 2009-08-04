@@ -147,7 +147,7 @@ INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
 {
 	unsigned int tout;
 
-	MAC_MCMD = 0x0000;			        // Issue a Write COMMAND     
+	//MAC_MCMD = 0x0000;			        // Issue a Write COMMAND     
 	MAC_MADR = (phyadd<<8) | PhyReg;    //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr
 	MAC_MWTD = Value;                   //Write the data to the Management Write Data register
 
@@ -190,9 +190,9 @@ INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg)
 {
 	INT32U tout = 0;
 
-	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 0;                     // Clear the Read COMMAND    
+	MAC_MCMD = 1;                     // Clear the Read COMMAND    
 	
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -210,9 +210,9 @@ INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
 {
 	INT32U tout = 0;
 
-	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 0;                     // Clear the Read COMMAND    
+	MAC_MCMD = 1;                     // Clear the Read COMMAND    
 
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -752,11 +752,13 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 
 
-	set_phy_autoneg( );
+	//set_phy_autoneg( );
+	write_phy(PHYID, PHY_REG_ANAR, ANAR_10HALF);
+
 	tempreg = read_phy(PHYID, DM9161_DSCSR );
-	ret = get_phy_autoneg_state( );
-	ret = get_phy_link_state();
-	ret = get_phy_link_speed();
+	//ret = get_phy_autoneg_state( );
+	//ret = get_phy_link_state();
+	//ret = get_phy_link_speed();
 
 
   	for(i=0;i<32;i++)
@@ -778,6 +780,11 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 	else if(tempreg & 0x1000)//10hdx
 	{
+    	MAC_MAC2 = 0x30;		/* half duplex, CRC and PAD enabled. */
+		MAC_SUPP = 0;	/* RMII Support Reg. speed is set to 10M */
+		MAC_COMMAND |= 0x0240;
+		/* back to back int-packet gap */
+		MAC_IPGT = 0x0012;		/* IPG setting in half duplex mode */ 
 	}
 	else
 	{//³ö´íÀ²
@@ -804,7 +811,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	MAC_COMMAND  |= (CR_RX_EN | CR_TX_EN);
 	MAC_MAC1     |= MAC1_REC_EN;
 
-
+	EMAC_RxEnable();
+	EMAC_TxEnable();
     return RT_EOK;
 }
 
