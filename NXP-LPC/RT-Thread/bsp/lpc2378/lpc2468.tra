@@ -1,0 +1,82 @@
+*** Creating Trace Output File 'lpc2468.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"startup.o"'
+### List of Objects: adding '"application.o"'
+### List of Objects: adding '"board.o"'
+### List of Objects: adding '"nic_bsp.o"'
+### List of Objects: adding '"timer.o"'
+### List of Objects: adding '"clock.o"'
+### List of Objects: adding '"device.o"'
+### List of Objects: adding '"idle.o"'
+### List of Objects: adding '"ipc.o"'
+### List of Objects: adding '"irq.o"'
+### List of Objects: adding '"kservice.o"'
+### List of Objects: adding '"mem.o"'
+### List of Objects: adding '"mempool.o"'
+### List of Objects: adding '"object.o"'
+### List of Objects: adding '"scheduler.o"'
+### List of Objects: adding '"slab.o"'
+### List of Objects: adding '"thread.o"'
+### List of Objects: adding '"trap.o"'
+### List of Objects: adding '"cpu.o"'
+### List of Objects: adding '"interrupt.o"'
+### List of Objects: adding '"serial.o"'
+### List of Objects: adding '"stack.o"'
+### List of Objects: adding '".\context_rvds.o"'
+### List of Objects: adding '".\start_rvds.o"'
+### List of Objects: adding '"main.o"'
+### List of Objects: adding '"tcpip.o"'
+### List of Objects: adding '"api_lib.o"'
+### List of Objects: adding '"api_msg.o"'
+### List of Objects: adding '"err.o"'
+### List of Objects: adding '"netbuf.o"'
+### List of Objects: adding '"netdb.o"'
+### List of Objects: adding '"netifapi.o"'
+### List of Objects: adding '"sockets.o"'
+### List of Objects: adding '"sys_arch_init.o"'
+### List of Objects: adding '"sys.o"'
+### List of Objects: adding '"sys_arch.o"'
+### List of Objects: adding '"udp.o"'
+### List of Objects: adding '"dhcp.o"'
+### List of Objects: adding '"dns.o"'
+### List of Objects: adding '"init.o"'
+### List of Objects: adding '"memp_tiny.o"'
+### List of Objects: adding '"netif.o"'
+### List of Objects: adding '"pbuf.o"'
+### List of Objects: adding '"raw.o"'
+### List of Objects: adding '"stats.o"'
+### List of Objects: adding '"tcp.o"'
+### List of Objects: adding '"tcp_in.o"'
+### List of Objects: adding '"tcp_out.o"'
+### List of Objects: adding '"ip_frag.o"'
+### List of Objects: adding '"autoip.o"'
+### List of Objects: adding '"icmp.o"'
+### List of Objects: adding '"igmp.o"'
+### List of Objects: adding '"inet.o"'
+### List of Objects: adding '"inet_chksum.o"'
+### List of Objects: adding '"ip.o"'
+### List of Objects: adding '"ip_addr.o"'
+### List of Objects: adding '"etharp.o"'
+### List of Objects: adding '"ethernetif.o"'
+### List of Objects: adding '"loopif.o"'
+### List of Objects: adding '"msg_out.o"'
+### List of Objects: adding '"asn1_dec.o"'
+### List of Objects: adding '"asn1_enc.o"'
+### List of Objects: adding '"mib2.o"'
+### List of Objects: adding '"mib_structs.o"'
+### List of Objects: adding '"msg_in.o"'
+### ADS-LD Command completed:
+--device DARMP "startup.o" "application.o" "board.o" "nic_bsp.o" "timer.o" "clock.o" "device.o" "idle.o" "ipc.o" "irq.o" "kservice.o" "mem.o" "mempool.o" "object.o" "scheduler.o" "slab.o" "thread.o" "trap.o" "cpu.o" "interrupt.o" "serial.o" "stack.o" ".\context_rvds.o" ".\start_rvds.o" "main.o" "tcpip.o" "api_lib.o" "api_msg.o" "err.o" "netbuf.o" "netdb.o" "netifapi.o" "sockets.o" "sys_arch_init.o" "sys.o" "sys_arch.o" "udp.o" "dhcp.o" "dns.o" "init.o" "memp_tiny.o" "netif.o" "pbuf.o" "raw.o" "stats.o" "tcp.o" "tcp_in.o" "tcp_out.o" "ip_frag.o" "autoip.o" "icmp.o" "igmp.o" "inet.o" "inet_chksum.o" "ip.o" "ip_addr.o" "etharp.o" "ethernetif.o" "loopif.o" "msg_out.o" "asn1_dec.o" "asn1_enc.o" "mib2.o" "mib_structs.o" "msg_in.o" --strict --scatter "lpc2468.sct" 
+--autoat --summary_stderr --info summarysizes --info sizes --info totals 
+ --list ".\lpc2468.map" -o "lpc2468.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'lpc2468.axf'
+### ADS-LD Command File: 'lpc2468.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'lpc2468.lnp', Handle=0x00000394
+### Writing '.lnp' file
+### ADS-LD Command file 'lpc2468.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.
