@@ -46,10 +46,6 @@
 */
 
 static  OS_STK          AppTaskStartStk[APP_TASK_START_STK_SIZE];
-static  OS_STK          AppTaskKbdStk[APP_TASK_KBD_STK_SIZE];
-
-static  void           *AppKbdQStorage[16];
-static  OS_EVENT       *AppKbdQ;
 
 #if uC_TCPIP_MODULE > 0
         NET_IP_ADDR     AppNetIP;
@@ -92,8 +88,7 @@ static  void            AppDispScr_VersionTickRate  (void);
 static  void            AppDispScr_CPU              (void);
 static  void            AppDispScr_CtxSw            (void);
 static  void            AppDispScr_Tcpip            (void);
-
-static  void            AppFormatDec                (CPU_INT08U *s, CPU_INT32U value, CPU_INT08U digits);
+																										   
 #endif
 
 /*
@@ -170,30 +165,16 @@ static  void  AppTaskStart (void *p_arg)
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif
-
-#if OS_VIEW_MODULE > 0
-    OSView_Init(115200);                                        /* OSView Init, baud rate = 115200                          */
-    OSView_TerminalRxSetCallback(AppTerminalRx);
-    OSView_RxIntEn();                                           /* Enable Rx Interrupts                                     */
-#endif
-
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-    Ser_Init();
-    AppUserIFState  = 0;
-    AppUserIFMbox   = OSMboxCreate((void *)0);                  /* Create MBOX for communication between Kbd and Ser        */
-#endif
-
+  
 #if uC_TCPIP_MODULE > 0
     AppInitTCPIP();                                             /* Initialize uC/TCP-IP and associated appliations          */
 #endif
 
     LED_Off(0);                                                 /* Turn OFF all the LEDs                                    */
 
-    AppKbdQ         = OSQCreate(AppKbdQStorage, 16);            /* Create Q for communication between Kbd and Ser           */
-    AppTaskCreate();                                            /* Create application tasks                                 */
-
-
-    while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.           */
+    
+    while (DEF_TRUE)
+	{                                          /* Task body, always written as an infinite loop.           */
 
         for (i = 1; i <= 4; i++) {                              /* Turn on each LED, one by one, delaying between           */
             LED_On(i);
@@ -208,14 +189,7 @@ static  void  AppTaskStart (void *p_arg)
                                                                 /* Determine what buttons have been pressed                 */
         leds        = 0;
         while (1) {
-            msg     = OSQAccept(AppKbdQ, &err);
-
-            if (err == OS_Q_EMPTY || msg == (void *)0) {
-                break;
-            }
-
-            led     = (CPU_INT32U)msg;
-
+       
             if (led > 4) {
                 break;
             }
@@ -271,85 +245,14 @@ static  void  AppInitTCPIP (void)
 
     err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 
-    AppNetIP        = NetASCII_Str_to_IP("10.10.1.129",  &err);
+    AppNetIP        = NetASCII_Str_to_IP("192.9.200.128",  &err);
     AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-    AppNetGateway   = NetASCII_Str_to_IP("10.10.1.1",   &err);
+    AppNetGateway   = NetASCII_Str_to_IP("192.9.200.128",   &err);
 
     err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
     err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
 }
 #endif
-
-/*
-*********************************************************************************************************
-*                                         RS-232 OUTPUT TASK
-*
-* Description : This task outputs information through the RS-232 port.
-*
-* Arguments   : p_arg   is the argument passed to 'AppTaskSer()' by 'OSTaskCreate()'.
-*
-* Returns     : none
-*********************************************************************************************************
-*/
-
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-static  void  AppTaskSer (void *p_arg)
-{
-    CPU_INT08U     *msg;
-    CPU_INT08U      err;
-    CPU_INT32U      pstate;
-    CPU_INT32U      nstate;
-
-
-    (void)p_arg;
-
-    Ser_WrStr("\n\n\r");
-    AppDispScr_SignOn();
-    OSTimeDlyHMSM(0, 0, 1, 0);
-    Ser_WrStr("\n\n\r");
-    nstate               = 1;
-
-
-    while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.           */
-        pstate           = nstate;
-
-        msg = (CPU_INT08U *)(OSMboxPend(AppUserIFMbox, OS_TICKS_PER_SEC / 10, &err));
-        if (err == OS_NO_ERR) {
-            if (msg != (CPU_INT08U *)0) {
-                nstate = *msg;
-            }
-        }
-
-        if (nstate != pstate) {
-            Ser_WrStr("\n\n");
-        }
-
-        switch (nstate) {
-            case 1:
-                 AppDispScr_VersionTickRate();
-                 break;
-
-            case 2:
-                 AppDispScr_CPU();
-                 break;
-
-            case 3:
-                 AppDispScr_CtxSw();
-                 break;
-
-            case 4:
-                 AppDispScr_Tcpip();
-                 break;
-
-            case 0:
-            default:
-                 AppDispScr_SignOn();
-                 break;
-        }
-    }
-}
-#endif
-
 /*
 *********************************************************************************************************
 *                                            DISPLAY SCREENS
@@ -380,7 +283,7 @@ static  void  AppDispScr_VersionTickRate (void)
     AppSerStr[13]   = (value %  10)      + '0';
 
     value           = (CPU_INT32U)OS_TICKS_PER_SEC;
-    AppFormatDec(&AppSerStr[26], value, 4);
+//    AppFormatDec(&AppSerStr[26], value, 4);
     Ser_WrStr(AppSerStr);
 }
 
@@ -397,21 +300,6 @@ static  void  AppDispScr_CPU (void)
     value           = (CPU_INT32U)BSP_CPU_ClkFreq() / 1000000L;
     AppSerStr[32]   = (value / 10) + '0';
     AppSerStr[33]   = (value % 10) + '0';
-    Ser_WrStr(AppSerStr);
-}
-
-static  void  AppDispScr_CtxSw (void)
-{
-    CPU_INT32U    value;
-
-
-    Str_Copy(AppSerStr, "#Ticks = xxxxxxxx; #CtxSw = xxxxxxxx \r");
-    value   = (CPU_INT32U)OSTime;
-    AppFormatDec(&AppSerStr[9], value, 8);
-
-    value   = (CPU_INT32U)OSCtxSwCtr;
-    AppFormatDec(&AppSerStr[28], value, 8);
-
     Ser_WrStr(AppSerStr);
 }
 
@@ -440,184 +328,10 @@ static  void  AppDispScr_Tcpip (void)
         }
     }
 
-    AppFormatDec(&AppSerStr[33],  NetNIC_StatTxPktCtr, 6);
-    AppFormatDec(&AppSerStr[51],  NetNIC_StatTxPktCtr, 6);
+  //  AppFormatDec(&AppSerStr[33],  NetNIC_StatTxPktCtr, 6);
+  //  AppFormatDec(&AppSerStr[51],  NetNIC_StatTxPktCtr, 6);
 
     Ser_WrStr(AppSerStr);
 }
-#endif
-
-/*
-*********************************************************************************************************
-*                                    KEYBOARD RESPONSE TASK
-*
-* Description : This task monitors the state of the push buttons and passes messages to AppTaskStart()
-*
-* Arguments   : p_arg   is the argument passed to 'AppStartKbd()' by 'OSTaskCreate()'.
-*
-* Returns     : none
-*********************************************************************************************************
-*/
-
-static  void  AppTaskKbd (void *p_arg)
-{
-    CPU_BOOLEAN  b1;                                            /* State of Push Button #1                                  */
-    CPU_BOOLEAN  b1_prev;
-    CPU_BOOLEAN  b2;                                            /* State of Push Button #2                                  */
-    CPU_BOOLEAN  b2_prev;
-    CPU_BOOLEAN  b3;                                            /* State of Push Button #3                                  */
-    CPU_BOOLEAN  b3_prev;
-    CPU_BOOLEAN  b4;                                            /* State of Push Button #4                                  */
-    CPU_BOOLEAN  b4_prev;
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-    CPU_BOOLEAN  b5;                                            /* State of Push Button #5                                  */
-    CPU_BOOLEAN  b5_prev;
-    CPU_INT08U   key;
-#endif
-
-    (void)p_arg;
-
-    b1_prev     = DEF_FALSE;
-    b2_prev     = DEF_FALSE;
-    b3_prev     = DEF_FALSE;
-    b4_prev     = DEF_FALSE;
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-    b5_prev     = DEF_FALSE;
-    key         = 1;
-#endif
-
-    while (DEF_TRUE) {
-
-        b1      = PB_GetStatus(1);
-        b2      = PB_GetStatus(2);
-        b3      = PB_GetStatus(3);
-        b4      = PB_GetStatus(4);
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-        b5      = PB_GetStatus(5);
-#endif
-
-        if (b1 == DEF_TRUE && b1_prev == DEF_FALSE) {
-
-            OSQPost(AppKbdQ, (CPU_INT32U *)1);
-        }
-
-        if (b2 == DEF_TRUE && b2_prev == DEF_FALSE) {
-
-            OSQPost(AppKbdQ, (CPU_INT32U *)2);
-        }
-
-        if (b3 == DEF_TRUE && b3_prev == DEF_FALSE) {
-
-            OSQPost(AppKbdQ, (CPU_INT32U *)3);
-        }
-
-        if (b4 == DEF_TRUE && b4_prev == DEF_FALSE) {
-
-            OSQPost(AppKbdQ, (CPU_INT32U *)4);
-        }
-
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-        if (b5 == DEF_TRUE && b5_prev == DEF_FALSE) {
-            if (key == 4) {
-                key = 0;
-            } else {
-                key++;
-            }
-            AppUserIFState  = key;
-
-            OSMboxPost(AppUserIFMbox, &AppUserIFState);
-        }
-#endif
-
-        b1_prev = b1;
-        b2_prev = b2;
-        b3_prev = b3;
-        b4_prev = b4;
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-        b5_prev = b5;
-#endif
-
-        OSTimeDly(OS_TICKS_PER_SEC / 20);
-
-    }
-}
-
-/*
-*********************************************************************************************************
-*                                      CREATE APPLICATION TASKS
-*
-* Description:  This function creates the application tasks.
-*
-* Arguments  :  none
-*
-* Returns    :  none
-*********************************************************************************************************
-*/
-
-static  void  AppTaskCreate (void)
-{
-    CPU_INT08U      err;
-
-
-    OSTaskCreateExt(AppTaskKbd,
-                    (void *)0,
-                    (OS_STK *)&AppTaskKbdStk[APP_TASK_KBD_STK_SIZE - 1],
-                    APP_TASK_KBD_PRIO,
-                    APP_TASK_KBD_PRIO,
-                    (OS_STK *)&AppTaskKbdStk[0],
-                    APP_TASK_KBD_STK_SIZE,
-                    (void *)0,
-                    OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
-
-#if (OS_TASK_NAME_SIZE > 9)
-    OSTaskNameSet(APP_TASK_KBD_PRIO, "Keyboard", &err);
-#endif
-
-}
-
-/*
-*********************************************************************************************************
-*                                          uC/OS-VIew Terminal Window Callback
-*
-* Description : This is the callback function for uC/OS-View
-*
-* Arguments   : rx_data   is the received data.
-*
-* Returns     : none
-*********************************************************************************************************
-*/
-
-
-/*
-*********************************************************************************************************
-*                                      FORMAT A DECIMAL VALUE
-*
-* Description: This function converts a decimal value to ASCII (with leading zeros)
-*
-* Arguments  : s       is a pointer to the destination ASCII string
-*              value   is the value to convert (assumes an unsigned value)
-*              digits  is the desired number of digits
-*
-* Returns    : none
-*********************************************************************************************************
-*/
-
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-static  void  AppFormatDec (CPU_INT08U *s, CPU_INT32U value, CPU_INT08U digits)
-{
-    CPU_INT08U      i;
-    CPU_INT32U      mult;
-
-
-    mult        = 1;
-    for (i = 0; i < (digits - 1); i++) {
-        mult   *= 10;
-    }
-    while (mult > 0) {
-        *s++    = value / mult + '0';
-        value  %= mult;
-        mult   /= 10;
-    }
-}
-#endif
-
+#endif 
+  
