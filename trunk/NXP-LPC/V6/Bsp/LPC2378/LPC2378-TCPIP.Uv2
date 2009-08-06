@@ -145,7 +145,7 @@ Options 1,0,0  // Target 'Flash'
  HexSel=1
  MG32K=0
  TGMORE=0
- RunUsr 0 0 <>
+ RunUsr 0 1 <fromelf .\OutPut\LPC2378-OS-TCPIP.axf --output .\OutPut\LPC2378-OS-TCPIP.elf>
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>
@@ -192,9 +192,9 @@ Options 1,0,0  // Target 'Flash'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARM.DLL)(-cLPC237x)(DARMP.DLL)(-pLPC2378)(SARM.DLL)()(TARMP.DLL)(-pLPC2378)
-  OPTDBG 49150,6,()()()()()()()()()() (Segger\JLTAgdi.dll)()()()
- FLASH1 { 9,0,0,0,1,0,0,0,4,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (Segger\JLTAgdi.dll)
+  OPTDBG 49150,2,()()()()()()()()()() (BIN\AGDIRDI.DLL)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,2,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\AGDIRDI.DLL)
  FLASH3 ("LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1))
  FLASH4 ()
 EndOpt

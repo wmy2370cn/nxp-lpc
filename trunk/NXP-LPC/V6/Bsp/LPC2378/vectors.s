@@ -55,7 +55,7 @@ Undef_Addr      dcd     OS_CPU_ARM_ExceptUndefInstrHndlr
 SWI_Addr        dcd     OS_CPU_ARM_ExceptSwiHndlr
 Prefetch_Addr   dcd     OS_CPU_ARM_ExceptPrefetchAbortHndlr
 Abort_Addr      dcd     OS_CPU_ARM_ExceptDataAbortHndlr
-                nop
+                DCD     0xB8A06F58
 IRQ_Addr        dcd     OS_CPU_ARM_ExceptIrqHndlr
 FIQ_Addr        dcd     OS_CPU_ARM_ExceptFiqHndlr
 

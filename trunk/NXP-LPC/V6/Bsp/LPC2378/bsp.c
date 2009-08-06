@@ -29,102 +29,7 @@
 #define  BSP_GLOBALS
 #include <includes.h>
 #include "iolpc23xx.h"
-
-/*
-*********************************************************************************************************
-*                                          #DEFINE CONSTANTS
-*********************************************************************************************************
-*/
-                                                                /* ---------------------- GPIO0 Pins ---------------------- */
-#define  GPIO0_CANRD1                  DEF_BIT_00               /* CAN Transceiver                                          */
-#define  GPIO0_CANTD1                  DEF_BIT_01               /* CAN Transceiver                                          */
-#define  GPIO0_TXD0                    DEF_BIT_02               /* UART #0: Over Serial Bridge                              */
-#define  GPIO0_RXD0                    DEF_BIT_03               /* UART #0: Over Serial Bridge                              */
-#define  GPIO0_CANRD2                  DEF_BIT_05               /* CAN Transceiver                                          */
-#define  GPIO0_LCD_CS_SEL              DEF_BIT_06               /* LCD (Can be selected)                                    */
-#define  GPIO0_CANTD2                  DEF_BIT_07               /* CAN Transceiver                                          */
-#define  GPIO0_LCD_RS_SEL              DEF_BIT_07               /* LCD (Can be selected)                                    */
-#define  GPIO0_LCD_WE_SEL              DEF_BIT_08               /* LCD (Can be selected)                                    */
-#define  GPIO0_USBB_PORT_PWR           DEF_BIT_12               /* USB Channel B                                            */
-#define  GPIO0_USBB_LED                DEF_BIT_13               /* USB Channel B                                            */
-#define  GPIO0_USBB_HOST_DEV_EN        DEF_BIT_14               /* USB Channel B                                            */
-#define  GPIO0_LCD_SCK                 DEF_BIT_15               /* LCD (Can be selected for serial interface)               */
-#define  GPIO0_LCD_MISO                DEF_BIT_17               /* LCD (Can be selected for serial interface)               */
-#define  GPIO0_LCD_MOSI                DEF_BIT_18               /* LCD (Can be selected for serial interface)               */
-#define  GPIO0_PHY_PRWDN_SEL           DEF_BIT_20
-#define  GPIO0_LCD_RSTOUT_SEL          DEF_BIT_21               /* LCD (Can be selected)                                    */
-#define  GPIO0_MCIDAT0_SEL             DEF_BIT_22               /* SD/MMC (Because of silicon errata)                       */
-#define  GPIO0_AD00                    DEF_BIT_23
-#define  GPIO0_AD01                    DEF_BIT_24
-#define  GPIO0_PBLED_SDA0              DEF_BIT_27               /* PCA9532                                                  */
-#define  GPIO0_PBLED_SCL0              DEF_BIT_28               /* PCA9532                                                  */
-#define  GPIO0_USBA_DP                 DEF_BIT_29
-#define  GPIO0_USBA_DM                 DEF_BIT_30
-#define  GPIO0_USBB_DP                 DEF_BIT_31
-
-                                                                /* ---------------------- GPIO1 Pins ---------------------- */
-#define  GPIO1_E_TXD0                  DEF_BIT_00
-#define  GPIO1_E_TXD1                  DEF_BIT_01
-#define  GPIO1_MCICLK                  DEF_BIT_02               /* SD/MMC                                                   */
-#define  GPIO1_MCICMD                  DEF_BIT_03               /* SD/MMC                                                   */
-#define  GPIO1_E_TX_EN                 DEF_BIT_04
-#define  GPIO1_MCIPWR                  DEF_BIT_05               /* SD/MMC                                                   */
-#define  GPIO1_MCIDAT0                 DEF_BIT_06               /* SD/MMC (Cannot be used due to errata)                    */
-#define  GPIO1_MCIDAT1                 DEF_BIT_07               /* SD/MMC                                                   */
-#define  GPIO1_E_CRS0                  DEF_BIT_08
-#define  GPIO1_E_RXD0                  DEF_BIT_09
-#define  GPIO1_E_RXD1                  DEF_BIT_10
-#define  GPIO1_MCIDAT2                 DEF_BIT_11               /* SD/MMC                                                   */
-#define  GPIO1_MCIDAT3                 DEF_BIT_12               /* SD/MMC                                                   */
-#define  GPIO1_E_RX_ER                 DEF_BIT_14
-#define  GPIO1_E_RX_CLK                DEF_BIT_15
-#define  GPIO1_E_MDC                   DEF_BIT_16
-#define  GPIO1_E_MDIO                  DEF_BIT_17
-#define  GPIO1_USBA_LED                DEF_BIT_18               /* USB Channel A (OTG)                                      */
-#define  GPIO1_USBA_SDA                DEF_BIT_27
-#define  GPIO1_USBA_SCL                DEF_BIT_28
-#define  GPIO1_USBA_INT                DEF_BIT_29
-#define  GPIO1_USBB_PWR_VBUS           DEF_BIT_30               /* USB Channel B                                            */
-#define  GPIO1_USBB_OVERCRNT           DEF_BIT_31               /* USB Channel B                                            */
-
-                                                                /* ---------------------- GPIO2 Pins ---------------------- */
-#define  GPIO2_ETM              ((CPU_INT32U)(0x000000FF))
-#define  GPIO2_EINT0                   DEF_BIT_10
-#define  GPIO2_PHY_INT_SEL             DEF_BIT_11               /* PHY Interrupt output                                     */
-#define  GPIO2_NAND_BUSY_SEL           DEF_BIT_12
-#define  GPIO2_CS2                     DEF_BIT_14               /* DBUS_EN                                                  */
-#define  GPIO2_RAS                     DEF_BIT_16
-#define  GPIO2_CAS                     DEF_BIT_17
-#define  GPIO2_CLKOUT0                 DEF_BIT_18
-#define  GPIO2_CLKOUT1                 DEF_BIT_19
-#define  GPIO2_DYCS0                   DEF_BIT_20
-#define  GPIO2_DYCS1                   DEF_BIT_21               /* DBUS_EN                                                  */
-#define  GPIO2_CKE0                    DEF_BIT_24
-#define  GPIO2_CKE1                    DEF_BIT_25
-#define  GPIO2_DQM0                    DEF_BIT_28
-#define  GPIO2_DQM1                    DEF_BIT_29
-
-                                                                /* ---------------------- GPIO4 Pins ---------------------- */
-#define  GPIO3_LCD_D            ((CPU_INT32U)(0x0000FFFF))      /* LCD Data Bus                                             */
-#define  GPIO3_TXD1                    DEF_BIT_16               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_RXD1                    DEF_BIT_17               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_CTS1                    DEF_BIT_18               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_DCD1                    DEF_BIT_19               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_DSR1                    DEF_BIT_20               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_DTR1                    DEF_BIT_21               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_RI1                     DEF_BIT_22               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-#define  GPIO3_LCD_LIGHT               DEF_BIT_28               /* LCD Backlight                                            */
-#define  GPIO3_RTS1                    DEF_BIT_30               /* UART #1: RS232 Full Modem or WLAN Add-On Module          */
-
-
-                                                                /* ---------------------- GPIO4 Pins ---------------------- */
-#define  GPIO4_LCD_A            ((CPU_INT32U)(0x00FFFFFF))      /* LCD address bus                                          */
-#define  GPIO4_LCD_OE                  DEF_BIT_24               /* LCD RD_E Input                                           */
-#define  GPIO4_LCD_WE                  DEF_BIT_25               /* LCD WR_RW Input                                          */
-#define  GPIO4_BLS0                    DEF_BIT_26
-#define  GPIO4_BLS1                    DEF_BIT_27
-#define  GPIO4_CS0                     DEF_BIT_30
-#define  GPIO4_CS1                     DEF_BIT_31
+#include "smartarm2300.h"
 
 /*
 *********************************************************************************************************
@@ -488,209 +393,6 @@ CPU_BOOLEAN  PB_GetStatus (CPU_INT08U pb)
     return (status);
 }
 
-/*
-*********************************************************************************************************
-*                                             LED ON
-*
-* Description : This function is used to control any or all the LEDs on the board.
-*
-* Arguments   : led    is the number of the LED to control
-*                      0    indicates that you want ALL the LEDs to be ON
-*                      1    turns ON LED1  on the board
-*                      .
-*                      .
-*                      4    turns ON LED4 on the board
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LED_On (CPU_INT08U led)
-{
-    CPU_INT08U  reg;
-    CPU_INT08U  data;
-    CPU_INT08U  buf[2];
-
-
-    reg     = 0x08;
-    data    = 0xFF;
-
-    I2C_ReadReg(&data, 1, reg);
-
-    switch (led) {
-        case 0:
-             data   =  0x55;
-             break;
-
-        case 1:
-             data  &= ~0x03;
-             data  |=  0x01;
-             break;
-
-        case 2:
-             data  &= ~0x0C;
-             data  |=  0x04;
-             break;
-
-        case 3:
-             data  &= ~0x30;
-             data  |=  0x10;
-             break;
-
-        case 4:
-             data  &= ~0xC0;
-             data  |=  0x40;
-             break;
-
-        default:
-             return;
-    }
-
-    buf[0]          = 0x08;
-    buf[1]          = data;
-
-    I2C_Write(buf, 2);
-}
-
-/*
-*********************************************************************************************************
-*                                             LED OFF
-*
-* Description : This function is used to control any or all the LEDs on the board.
-*
-* Arguments   : led    is the number of the LED to turn OFF
-*                      0    indicates that you want ALL the LEDs to be OFF
-*                      1    turns OFF LED1  on the board
-*                      .
-*                      .
-*                      4    turns OFF LED4 on the board
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LED_Off (CPU_INT08U led)
-{
-    CPU_INT08U  reg;
-    CPU_INT08U  data;
-    CPU_INT08U  buf[2];
-
-
-    reg     = 0x08;
-    data    = 0xFF;
-
-    I2C_ReadReg(&data, 1, reg);
-
-    switch (led) {
-        case 0:
-             data   =  0x00;
-             break;
-
-        case 1:
-             data  &= ~0x03;
-             break;
-
-        case 2:
-             data  &= ~0x0C;
-             break;
-
-        case 3:
-             data  &= ~0x30;
-             break;
-
-        case 4:
-             data  &= ~0xC0;
-             break;
-
-        default:
-             return;
-    }
-
-    buf[0]          = 0x08;
-    buf[1]          = data;
-
-    I2C_Write(buf, 2);
-}
-
-/*
-*********************************************************************************************************
-*                                             LED TOGGLE
-*
-* Description : This function is used to toggle any or all the LEDs on the board.
-*
-* Arguments   : led    is the number of the LED to control
-*                      0    indicates that you want to toggle ALL the LEDs
-*                      1    toggles LED1  on the board
-*                      .
-*                      .
-*                      8    toggles LED8 on the board
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LED_Toggle (CPU_INT08U led)
-{
-    CPU_INT08U  reg;
-    CPU_INT08U  data;
-    CPU_INT08U  buf[2];
-
-
-    reg     = 0x08;
-    data    = 0xFF;
-
-    I2C_ReadReg(&data, 1, reg);
-
-    switch (led) {
-        case 0:
-             data  ^=  0x55;
-             break;
-
-        case 1:
-             if ((data & 0x03) == 0) {
-                 data  &= ~0x03;
-                 data  |=  0x01;
-             } else {
-                 data  &= ~0x03;
-             }
-             break;
-
-        case 2:
-             if ((data & 0x0C) == 0) {
-                 data  &= ~0x0C;
-                 data  |=  0x04;
-             } else {
-                 data  &= ~0x0C;
-             }
-             break;
-
-        case 3:
-             if ((data & 0x30) == 0) {
-                 data  &= ~0x30;
-                 data  |=  0x10;
-             } else {
-                 data  &= ~0x30;
-             }
-             break;
-
-        case 4:
-             if ((data & 0xC0) == 0) {
-                 data  &= ~0xC0;
-                 data  |=  0x40;
-             } else {
-                 data  &= ~0xC0;
-             }
-             break;
-
-        default:
-             return;
-    }
-
-    buf[0]          = 0x08;
-    buf[1]          = data;
-
-    I2C_Write(buf, 2);
-}
 
 /*
 *********************************************************************************************************
@@ -1418,66 +1120,82 @@ static  void  MAM_Init (void)
 
 static  void  GPIO_Init (void)
 {
-    CPU_INT32U  pinsel;
+	CPU_INT32U  pinsel;
 
 
-    IO0DIR      =  0;
-    IO1DIR      =  0;
-    FIO0DIR     =  0;
-    FIO1DIR     =  0;
-    FIO2DIR     =  0;
-    FIO3DIR     =  0;
-    FIO4DIR     =  0;
+	//    IO0DIR      =  0;
+	//    IO1DIR      =  0;
+	IODIR0      =  0;	  // zhaoyk20081124
+	IODIR1      =  0;	  // zhaoyk20081124
+	FIO0DIR     =  0;
+	FIO1DIR     =  0;
+	FIO2DIR     =  0;
+	FIO3DIR     =  0;
+	FIO4DIR     =  0;
 
-    FIO0MASK    =  0;
-    FIO1MASK    =  0;
-    FIO2MASK    =  0;
-    FIO3MASK    =  0;
-    FIO4MASK    =  0;
+	FIO0MASK    =  0;
+	FIO1MASK    =  0;
+	FIO2MASK    =  0;
+	FIO3MASK    =  0;
+	FIO4MASK    =  0;
 
-    PINSEL0     =  0;
-    PINSEL1     =  0;
-    PINSEL2     =  0;
-    PINSEL3     =  0;
-    PINSEL4     =  0;
-    PINSEL5     =  0;
-    PINSEL6     =  0;
-    PINSEL7     =  0;
-    PINSEL8     =  0;
-    PINSEL9     =  0;
-    PINSEL10    =  0;
+	PINSEL0     =  0;
+	PINSEL1     =  0;
+	PINSEL2     =  0;
+	PINSEL3     =  0;
+	PINSEL4     =  0;
+	PINSEL5     =  0;
+	PINSEL6     =  0;
+	PINSEL7     =  0;
+	PINSEL8     =  0;
+	PINSEL9     =  0;
+	PINSEL10    =  0;
 
 #if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_0)
-                                                                /* Configure P3.16 & P3.17 for UART1                        */
-    pinsel          = PINSEL7;
-    pinsel         &= 0xFFFFFFF0;
-    pinsel         |= 0x0000000F;
-    PINSEL7         = pinsel;
+	/* Configure P3.16 & P3.17 for UART1                        */
+	pinsel          = PINSEL7;
+	pinsel         &= 0xFFFFFFF0;
+	pinsel         |= 0x0000000F;
+	PINSEL7         = pinsel;
 #endif
 
 #if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_1)
-                                                                /* Configure P3.16 & P3.17 for UART1                        */
-    pinsel          = PINSEL7;
-    pinsel         &= 0xFFFFFFF0;
-    pinsel         |= 0x0000000F;
-    PINSEL7         = pinsel;
+	/* Configure P3.16 & P3.17 for UART1                        */
+	pinsel          = PINSEL7;
+	pinsel         &= 0xFFFFFFF0;
+	pinsel         |= 0x0000000F;
+	PINSEL7         = pinsel;
 #endif
 
-                                                                /* Configure P0.28 & P0.27 for I2C0                         */
-    pinsel          = PINSEL1;
-    pinsel         &= 0xFC3FFFFF;
-    pinsel         |= 0x01400000;
-    PINSEL1         = pinsel;
+	/* Configure P0.28 & P0.27 for I2C0                         */
+	pinsel          = PINSEL1;
+	pinsel         &= 0xFC3FFFFF;
+	pinsel         |= 0x01400000;
+	PINSEL1         = pinsel;
 
-                                                                /* Configure P2.10 for GPIO                                 */
-    pinsel          = PINSEL4;
-    pinsel         &= 0xFFCFFFFF;
-    PINSEL4         = pinsel;
-    FIO2DIR        &= ~DEF_BIT_10;
+	/* Configure P2.10 for GPIO                                 */
+	pinsel          = PINSEL4;
+	pinsel         &= 0xFFCFFFFF;
+	PINSEL4         = pinsel;
+	FIO2DIR        &= ~DEF_BIT_10;
 
 
-    FIO3DIR         = GPIO3_LCD_LIGHT;
-    FIO3CLR         = GPIO3_LCD_LIGHT;
+	FIO3DIR         = GPIO3_LCD_LIGHT;
+	FIO3CLR         = GPIO3_LCD_LIGHT;
+	/*********************************************************************************************/
+
+	PINSEL0 = PINSEL0 | 0x50;  //设置引脚P0.2,P0.3为通讯口UART0, for LPC22xx
+
+	/* Configure P1.20 output, P1.21 output, P1.23 input, P1.24 output, for GPIO output for LEDS         */
+	IOSET1      =  GPIO1_SPInCS;	  // zhaoyk20081124
+	IOCLR1      =  GPIO1_SPICLK;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPICLK;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPInCS;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPIMOSI;	  // zhaoyk20081124
+
+	/* Configure P1.27 for GPIO output for Buzzer               */
+	IODIR1      =  IODIR1 | GPIO1_BUZZER;	  // zhaoyk20081124
+	IOSET1      =  GPIO1_BUZZER;	  // zhaoyk20081124
 }
 
 /*
@@ -1739,4 +1457,94 @@ static  void  VIC_DummyI2S (void)
 {
     VIC_SpuriousInt = VIC_I2S;
     VIC_Dummy();
+}
+
+
+static void LED_HC595SendByte(INT8U dat)
+{
+	INT32U i = 0;
+
+	IOCLR1 = GPIO1_SPInCS;
+
+	for(i=0; i<8; i++)
+	{
+		IOCLR1 = GPIO1_SPICLK;
+		if((dat & 0x80) == 0)
+		{
+			IOSET1 = GPIO1_SPIMOSI;
+		}
+		else
+		{
+			IOCLR1 = GPIO1_SPIMOSI;
+		}
+		dat = dat << 1;
+		IOSET1 = GPIO1_SPICLK; 
+	}
+
+	IOSET1 = GPIO1_SPInCS;	 
+}
+
+/*
+*********************************************************************************************************
+*                                             LED ON
+*
+* Description : This function is used to control any or all the LEDs on the board.
+*
+* Arguments   : led    is the number of the LED to control
+*                      0    indicates that you want ALL the LEDs to be ON
+*                      1    turns ON LED1  on the board
+*                      .
+*                      .
+*                      8    turns ON LED8 on the board
+*
+* Returns     : None
+*********************************************************************************************************
+*/
+static INT8U LEDS_stat = (0);	
+void  LED_On (CPU_INT08U led)
+{
+	if(led == 0)
+	{
+		LEDS_stat = ~0;
+	}
+	else if(led < 9)
+	{
+		led--;
+		LEDS_stat = LEDS_stat | (0x01 <<led);
+	}
+
+	LED_HC595SendByte(LEDS_stat);
+}
+
+/*
+*********************************************************************************************************
+*                                             LED OFF
+*
+* Description : This function is used to control any or all the LEDs on the board.
+*
+* Arguments   : led    is the number of the LED to turn OFF
+*                      0    indicates that you want ALL the LEDs to be OFF
+*                      1    turns OFF LED1  on the board
+*                      .
+*                      .
+*                      8    turns OFF LED8 on the board
+*
+* Returns     : None
+*********************************************************************************************************
+*/
+
+void  LED_Off (CPU_INT08U led)
+{
+	if(led == 0)
+	{
+		LEDS_stat = 0;
+	}
+	else if(led < 9)
+	{
+		led--;
+		LEDS_stat = LEDS_stat & ~(0x01 <<led);
+	}
+
+	LED_HC595SendByte(LEDS_stat);
+
 }
