@@ -92,14 +92,14 @@
 */
 
                                                                 /* -------------------- TASK NAMES -------------------- */
-#define  NET_TMR_TASK_NAME                  "Net Timer Task"
-#define  NET_IF_RX_TASK_NAME                "Net IF Rx Task"
+#define  NET_TMR_TASK_NAME                  "TmTsk"
+#define  NET_IF_RX_TASK_NAME                "RxTsk"
 
 
 #define  NET_TMR_TASK_NAME_SIZE                  (sizeof(NET_TMR_TASK_NAME))
 #define  NET_IF_RX_TASK_NAME_SIZE                (sizeof(NET_IF_RX_TASK_NAME))
 
-#define  NET_TASK_NAME_SIZE_MAX                           15    /* Max of ALL net task name sizes.                      */
+#define  NET_TASK_NAME_SIZE_MAX                           7    /* Max of ALL net task name sizes.                      */
 
 
 

@@ -31,7 +31,7 @@
 #define OS_ARG_CHK_EN             1    /* Enable (1) or Disable (0) argument checking                  */
 #define OS_CPU_HOOKS_EN           1    /* uC/OS-II hooks are found in the processor port files         */
 
-#define OS_DEBUG_EN               1    /* Enable(1) debug variables                                    */
+#define OS_DEBUG_EN               0    /* Enable(1) debug variables                                    */
 
 #define OS_EVENT_MULTI_EN         1    /* Include code for OSEventPendMulti()                          */
 #define OS_EVENT_NAME_EN         16    /* Enable names for Sem, Mutex, Mbox and Q                      */
@@ -39,11 +39,11 @@
 #define OS_LOWEST_PRIO           63    /* Defines the lowest priority that can be assigned ...         */
                                        /* ... MUST NEVER be higher than 254!                           */
 
-#define OS_MAX_EVENTS            256    /* Max. number of event control blocks in your application      */
+#define OS_MAX_EVENTS            100    /* Max. number of event control blocks in your application      */
 #define OS_MAX_FLAGS             16    /* Max. number of Event Flag Groups    in your application      */
 #define OS_MAX_MEM_PART           5    /* Max. number of memory partitions                             */
 #define OS_MAX_QS                 8   /* Max. number of queue control blocks in your application      */
-#define OS_MAX_TASKS             40    /* Max. number of tasks in your application, MUST be >= 2       */
+#define OS_MAX_TASKS             30    /* Max. number of tasks in your application, MUST be >= 2       */
 
 #define OS_SCHED_LOCK_EN          1    /* Include code for OSSchedLock() and OSSchedUnlock()           */
 
@@ -52,9 +52,9 @@
 
 
                                        /* --------------------- TASK STACK SIZE ---------------------- */
-#define OS_TASK_TMR_STK_SIZE    128    /* Timer      task stack size (# of OS_STK wide entries)        */
-#define OS_TASK_STAT_STK_SIZE   128    /* Statistics task stack size (# of OS_STK wide entries)        */
-#define OS_TASK_IDLE_STK_SIZE   128    /* Idle       task stack size (# of OS_STK wide entries)        */
+#define OS_TASK_TMR_STK_SIZE    80    /* Timer      task stack size (# of OS_STK wide entries)        */
+#define OS_TASK_STAT_STK_SIZE   80    /* Statistics task stack size (# of OS_STK wide entries)        */
+#define OS_TASK_IDLE_STK_SIZE   80    /* Idle       task stack size (# of OS_STK wide entries)        */
 
 
                                        /* --------------------- TASK MANAGEMENT ---------------------- */
@@ -62,7 +62,7 @@
 #define OS_TASK_CREATE_EN         1    /*     Include code for OSTaskCreate()                          */
 #define OS_TASK_CREATE_EXT_EN     1    /*     Include code for OSTaskCreateExt()                       */
 #define OS_TASK_DEL_EN            1    /*     Include code for OSTaskDel()                             */
-#define OS_TASK_NAME_EN          16    /*     Enable task names                                        */
+#define OS_TASK_NAME_EN          8    /*     Enable task names                                        */
 #define OS_TASK_PROFILE_EN        1    /*     Include variables in OS_TCB for profiling                */
 #define OS_TASK_QUERY_EN          1    /*     Include code for OSTaskQuery()                           */
 #define OS_TASK_STAT_EN           1    /*     Enable (1) or Disable(0) the statistics task             */

@@ -268,8 +268,8 @@
 
                                                                 /* Configure total number of       BUFFERs ...          */
                                                                 /* ... (see Note #1) :                                  */
-#define  NET_BUF_CFG_NBR_SMALL                            50    /* Configure total number of SMALL BUFFERs.             */
-#define  NET_BUF_CFG_NBR_LARGE                            50    /* Configure total number of LARGE BUFFERs.             */
+#define  NET_BUF_CFG_NBR_SMALL                            3    /* Configure total number of SMALL BUFFERs.             */
+#define  NET_BUF_CFG_NBR_LARGE                            3    /* Configure total number of LARGE BUFFERs.             */
 
                                                                 /* Configure size of       BUFFER DATA areas ...        */
                                                                 /* ... (see Note #2) :                                  */
@@ -533,14 +533,14 @@
 *********************************************************************************************************
 */
 
-#define  NET_TCP_CFG_NBR_CONN                             10    /* Configure total number of TCP connections.           */
+#define  NET_TCP_CFG_NBR_CONN                             5    /* Configure total number of TCP connections.           */
 
 
                                                                 /* Configure TCP connections' window sizes ...          */
                                                                 /* ... in integer number of octets (see Note #2) :      */
 
-#define  NET_TCP_CFG_RX_WIN_SIZE_OCTET            ( 4 * 1460)   /* Configure TCP connection receive  window size.       */
-#define  NET_TCP_CFG_TX_WIN_SIZE_OCTET            ( 6 * 1460)   /* Configure TCP connection transmit window size.       */
+#define  NET_TCP_CFG_RX_WIN_SIZE_OCTET            ( 2 * 1460)   /* Configure TCP connection receive  window size.       */
+#define  NET_TCP_CFG_TX_WIN_SIZE_OCTET            ( 3 * 1460)   /* Configure TCP connection transmit window size.       */
 
 
                                                                 /* Configure TCP connections' default maximum ...       */
@@ -580,7 +580,7 @@
                                                                 /* Configure socket family type (see Note #2) :         */
 #define  NET_SOCK_CFG_FAMILY                    NET_SOCK_FAMILY_IP_V4
 
-#define  NET_SOCK_CFG_NBR_SOCK                            10    /* Configure total number of sockets.                   */
+#define  NET_SOCK_CFG_NBR_SOCK                            5    /* Configure total number of sockets.                   */
 
                                                                 /* Configure socket blocking/non-blocking behavior :    */
 #define  NET_SOCK_CFG_BLOCK_SEL                 NET_SOCK_BLOCK_SEL_BLOCK
@@ -597,7 +597,7 @@
                                                                 /*   DEF_ENABLED   Socket select   ENABLED              */
 
                                                                 /* Configure maximum number of socket select ...        */
-#define  NET_SOCK_CFG_SEL_NBR_EVENTS_MAX                  10    /* ... operations/events to wait on (see Note #3).      */
+#define  NET_SOCK_CFG_SEL_NBR_EVENTS_MAX                  6    /* ... operations/events to wait on (see Note #3).      */
 
 
                                                                 /* Configure stream-type sockets' accept queue ...      */
@@ -612,6 +612,8 @@
 #define  NET_SOCK_CFG_TIMEOUT_CONN_ACCEPT_MS            3000    /* Configure socket connection accept  timeout.         */
 #define  NET_SOCK_CFG_TIMEOUT_CONN_CLOSE_MS             1000    /* Configure socket connection close   timeout.         */
 
+
+//#define  NET_SOCK_CFG_SEL_EN                           DEF_DISABLED     /*  zhaoyk                */
 
 /*
 *********************************************************************************************************
@@ -645,4 +647,4 @@
                                                                 /* Configure connection family type      (see Note #2). */
 #define  NET_CONN_CFG_FAMILY                    NET_CONN_FAMILY_IP_V4_SOCK
 
-#define  NET_CONN_CFG_NBR_CONN                            20    /* Configure total number of connections (see Note #3). */
+#define  NET_CONN_CFG_NBR_CONN                            10    /* Configure total number of connections (see Note #3). */

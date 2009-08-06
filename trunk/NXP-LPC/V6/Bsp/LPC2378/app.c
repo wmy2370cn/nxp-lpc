@@ -373,7 +373,7 @@ static  void  AppDispScr_VersionTickRate (void)
     CPU_INT32U    value;
 
 
-    OS_StrCopy(AppSerStr, "uC/OS-II Vx.yy running at xxxx ticks/sec \r");
+    Str_Copy(AppSerStr, "uC/OS-II Vx.yy running at xxxx ticks/sec \r");
     value           = (CPU_INT32U)OSVersion();
     AppSerStr[10]   =  value / 100       + '0';
     AppSerStr[12]   = (value % 100) / 10 + '0';
@@ -389,7 +389,7 @@ static  void  AppDispScr_CPU (void)
     CPU_INT32U    value;
 
 
-    OS_StrCopy(AppSerStr, "CPU Usage = xxx% at CPU Speed = xx MHz  \r");
+    Str_Copy(AppSerStr, "CPU Usage = xxx% at CPU Speed = xx MHz  \r");
     value           = (CPU_INT32U)OSCPUUsage;
     AppSerStr[12]   = (value / 100)      + '0';
     AppSerStr[13]   = (value /  10) % 10 + '0';
@@ -405,7 +405,7 @@ static  void  AppDispScr_CtxSw (void)
     CPU_INT32U    value;
 
 
-    OS_StrCopy(AppSerStr, "#Ticks = xxxxxxxx; #CtxSw = xxxxxxxx \r");
+    Str_Copy(AppSerStr, "#Ticks = xxxxxxxx; #CtxSw = xxxxxxxx \r");
     value   = (CPU_INT32U)OSTime;
     AppFormatDec(&AppSerStr[9], value, 8);
 
@@ -422,9 +422,9 @@ static  void  AppDispScr_Tcpip (void)
 
 
     if (NetNIC_ConnStatusGet() == DEF_OFF) {
-        OS_StrCopy(AppSerStr, "NO LINK DETECTED     : RX Pkts = xxxxxx; TX Pkts = xxxxxx \r");
+        Str_Copy(AppSerStr, "NO LINK DETECTED     : RX Pkts = xxxxxx; TX Pkts = xxxxxx \r");
     } else {
-        OS_StrCopy(AppSerStr, "100 Mbps, Full Duplex: RX Pkts = xxxxxx; TX Pkts = xxxxxx \r");
+        Str_Copy(AppSerStr, "100 Mbps, Full Duplex: RX Pkts = xxxxxx; TX Pkts = xxxxxx \r");
 
         link_duplex = NetNIC_PhyLinkDuplex();
         link_speed  = NetNIC_PhyLinkSpeed();
@@ -573,21 +573,6 @@ static  void  AppTaskCreate (void)
     OSTaskNameSet(APP_TASK_KBD_PRIO, "Keyboard", &err);
 #endif
 
-#if (OS_VIEW_MODULE == 0) || (OS_VIEW_COMM_SEL != SER_COMM_SEL)
-    OSTaskCreateExt(AppTaskSer,
-                    (void *)0,
-                    (OS_STK *)&AppTaskSerStk[APP_TASK_SER_STK_SIZE - 1],
-                    APP_TASK_SER_PRIO,
-                    APP_TASK_SER_PRIO,
-                    (OS_STK *)&AppTaskSerStk[0],
-                    APP_TASK_SER_STK_SIZE,
-                    (void *)0,
-                    OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
-
-#if (OS_TASK_NAME_SIZE > 13)
-    OSTaskNameSet(APP_TASK_SER_PRIO, "RS-232 Output", &err);
-#endif
-#endif
 }
 
 /*
@@ -602,12 +587,6 @@ static  void  AppTaskCreate (void)
 *********************************************************************************************************
 */
 
-#if OS_VIEW_MODULE > 0
-static  void  AppTerminalRx (CPU_INT08U rx_data)
-{
-
-}
-#endif
 
 /*
 *********************************************************************************************************
