@@ -183,7 +183,7 @@ static  void  AppInitTCPIP (void)
 
     AppNetIP        = NetASCII_Str_to_IP("192.9.200.128",  &err);
     AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-    AppNetGateway   = NetASCII_Str_to_IP("192.9.200.128",   &err);
+    AppNetGateway   = NetASCII_Str_to_IP("192.9.200.1",   &err);
 
     err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
     err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
