@@ -60,9 +60,8 @@
 *********************************************************************************************************
 */
 
-#define  APP_TASK_START_STK_SIZE             256
-#define  APP_TASK_KBD_STK_SIZE               256
-#define  OS_VIEW_TASK_STK_SIZE               256
+#define  APP_TASK_START_STK_SIZE             128
+#define  APP_TASK_KBD_STK_SIZE               128 
 #define  APP_TASK_SER_STK_SIZE               256
 #define  APP_TASK_PHY_STK_SIZE               128
 #define  NET_OS_CFG_TMR_TASK_STK_SIZE       1024

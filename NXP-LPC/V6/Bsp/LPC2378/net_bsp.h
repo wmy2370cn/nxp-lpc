@@ -96,9 +96,9 @@
 #define  EMAC_RX_BUF_SIZE                            1536               /* Configure the size of the Rx buffers                     */
 
 #if NEW_SILICON > 0
-#define  EMAC_NUM_RX_DESC                               8               /* Configure  8 Rx descriptors / buffers placed in AHB2 RAM */
+#define  EMAC_NUM_RX_DESC                               4               /* Configure  8 Rx descriptors / buffers placed in AHB2 RAM */
 #else
-#define  EMAC_NUM_RX_DESC                               4               /* Configure  4 Rx descriptors to avoid old silicon errata  */
+#define  EMAC_NUM_RX_DESC                               2               /* Configure  4 Rx descriptors to avoid old silicon errata  */
 #endif
 
 #define  EMAC_NUM_TX_DESC                               2               /* Configure  2 Tx descriptors / buffers placed in AHB2 RAM */

@@ -721,6 +721,96 @@ void  NetNIC_RxPktDiscard (CPU_INT16U   size,
 
    *perr = NET_NIC_ERR_NONE;
 }
+/*
+*********************************************************************************************************
+*                                    AT91RM9200_EMAC_TxPktPrepare()
+*
+* Description : (1) Copy packet into local NIC TX buffer prior to the end of the transmission of the last
+                    packet.
+*
+* Argument(s) : ppkt        Pointer to memory buffer to transmit NIC packet.
+*               ----        Argument checked in NetNIC_TxPkt().
+*
+*               size        Number of packet frame octets to write to frame.
+*
+*               perr        Pointer to variable that will hold the return error code from this function :
+*
+*                               NET_NIC_ERR_NONE                Packet successfully transmitted.
+* Return(s)   : none.
+*
+* Caller(s)   : NetNIC_TxPktPrepare().
+*********************************************************************************************************
+*/
+
+static void  EMAC_TxPktPrepare (void        *ppkt,
+                                           CPU_INT16U   size,
+                                           NET_ERR     *perr)
+{
+              CPU_INT32U   tx_ix;
+    volatile  CPU_INT08U  *pbuf;
+
+
+//    tx_ix  = AT91RM9200_EMAC_TxBufNbr * AT91RM9200_EMAC_TX_BUF_SIZE;
+//    tx_ix += NET_IF_RX_IX;
+
+//    pbuf   = AT91RM9200_EMAC_TxBuf;
+//    pbuf  += tx_ix;
+
+    Mem_Copy((void *)pbuf, ppkt, size);
+
+   *perr = NET_NIC_ERR_NONE;
+}
+/*
+*********************************************************************************************************
+*                                         NetNIC_TxPktPrepare()
+*
+* Description : Prepare to transmit data packets from network driver layer to network interface card.
+*
+* Argument(s) : ppkt        Pointer to memory buffer to transmit NIC packet.
+*
+*               size        Number of packet frame octets to write to frame.
+*
+*               perr        Pointer to variable that will hold the return error code from this function :
+*
+*                               NET_NIC_ERR_NONE            Packet successfully transmitted.
+*                               NET_ERR_INIT_INCOMPLETE     Network initialization NOT complete.
+*
+*                                                           - RETURNED BY NetNIC_TxPktDiscard() : -
+*                               NET_ERR_TX                  Transmit error; packet discarded.
+*
+* Return(s)   : none.
+*
+* Caller(s)   : NetIF_Pkt_Tx().
+*
+* Note(s)     : (1) NetNIC_TxPktPrepare() blocked until network initialization completes; perform NO action.
+*********************************************************************************************************
+*/
+
+void  NetNIC_TxPktPrepare (void        *ppkt,
+                           CPU_INT16U   size,
+                           NET_ERR     *perr)
+{
+    if (Net_InitDone != DEF_YES) {                                      /* If init NOT complete, exit tx (see Note #1).        */
+       *perr = NET_ERR_INIT_INCOMPLETE;
+        return;
+    }
+
+#if (NET_ERR_CFG_ARG_CHK_DBG_EN == DEF_ENABLED)                         /* ------------------- VALIDATE PTR ------------------ */
+    if (ppkt == (void *)0) {
+        NetNIC_TxPktDiscard(perr);
+        return;
+    }
+#endif
+
+    EMAC_TxPktPrepare(ppkt, size, perr);                     /* Preparte to tx pkt to AT91RM9200.                   */
+
+    if (*perr != NET_NIC_ERR_NONE) {
+        NetNIC_TxPktDiscard(perr);
+        return;
+    }
+
+    *perr = NET_NIC_ERR_NONE;
+}
 
 /*
 *********************************************************************************************************
@@ -1344,6 +1434,7 @@ static  void  EMAC_TxDis (void)
 {
     COMMAND    &= ~COMMAND_TX_EN;                                       /* Disable the transmitter                                  */
 }
+
 
 /*
 *********************************************************************************************************

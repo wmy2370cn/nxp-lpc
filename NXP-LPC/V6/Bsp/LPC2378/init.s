@@ -42,16 +42,16 @@ I_BIT           EQU     0x80
 F_BIT           EQU     0x40
 
                                                       	    ; Define stack sizes                                        ;
-IRQ_STK_SIZE    EQU     0x00000400
+IRQ_STK_SIZE    EQU     0x00000200
 FIQ_STK_SIZE    EQU     0x00000100
-SVC_STK_SIZE    EQU     0x00000400
-ABT_STK_SIZE    EQU     0x00000080
-UND_STK_SIZE    EQU     0x00000080
-SYS_STK_SIZE    EQU     0x00000100
+SVC_STK_SIZE    EQU     0x00000200
+ABT_STK_SIZE    EQU     0x00000200
+UND_STK_SIZE    EQU     0x00000200
+SYS_STK_SIZE    EQU     0x00000200
 
 MEMMAP          EQU     0xE01FC040
 
-                                                         	; Define stack pointers                                     ;
+                                                        	; Define stack pointers                                     ;
 
 ;******************************************************************************
 ;                             PERFORM ROM/RAM REMAPPING
