@@ -266,7 +266,7 @@ void         NetNIC_IntInit          (void);                            /* Init 
 #ifndef  NET_NIC_CFG_TX_PKT_PREPARE_EN
 #error  "NET_NIC_CFG_TX_PKT_PREPARE_EN             not #define'd in 'net_cfg.h'"
 #error  "                            [MUST be  DEF_DISABLED]"
-#elif   (NET_NIC_CFG_TX_PKT_PREPARE_EN != DEF_ENABLED)
+#elif   (NET_NIC_CFG_TX_PKT_PREPARE_EN != DEF_DISABLED)
 #error  "NET_NIC_CFG_TX_PKT_PREPARE_EN       illegally #define'd in 'net_cfg.h'"
 #error  "                            [MUST be  DEF_DISABLED]"
 #endif

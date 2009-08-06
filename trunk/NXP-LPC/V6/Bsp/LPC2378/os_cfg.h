@@ -34,16 +34,16 @@
 #define OS_DEBUG_EN               0    /* Enable(1) debug variables                                    */
 
 #define OS_EVENT_MULTI_EN         1    /* Include code for OSEventPendMulti()                          */
-#define OS_EVENT_NAME_EN         16    /* Enable names for Sem, Mutex, Mbox and Q                      */
+#define OS_EVENT_NAME_EN         1    /* Enable names for Sem, Mutex, Mbox and Q                      */
 
 #define OS_LOWEST_PRIO           63    /* Defines the lowest priority that can be assigned ...         */
                                        /* ... MUST NEVER be higher than 254!                           */
 
-#define OS_MAX_EVENTS            100    /* Max. number of event control blocks in your application      */
-#define OS_MAX_FLAGS             16    /* Max. number of Event Flag Groups    in your application      */
+#define OS_MAX_EVENTS            80    /* Max. number of event control blocks in your application      */
+#define OS_MAX_FLAGS             5    /* Max. number of Event Flag Groups    in your application      */
 #define OS_MAX_MEM_PART           5    /* Max. number of memory partitions                             */
 #define OS_MAX_QS                 8   /* Max. number of queue control blocks in your application      */
-#define OS_MAX_TASKS             30    /* Max. number of tasks in your application, MUST be >= 2       */
+#define OS_MAX_TASKS             20    /* Max. number of tasks in your application, MUST be >= 2       */
 
 #define OS_SCHED_LOCK_EN          1    /* Include code for OSSchedLock() and OSSchedUnlock()           */
 

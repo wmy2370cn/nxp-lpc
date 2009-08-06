@@ -126,7 +126,7 @@
                                                                 /*   DEF_ENABLED   Debug information ENABLED            */
 
                                                                 /* Configure debug status functions (see Note #2) :     */
-#define  NET_DBG_CFG_STATUS_EN                  DEF_ENABLED
+#define  NET_DBG_CFG_STATUS_EN                  DEF_DISABLED 
                                                                 /*   DEF_DISABLED  Debug status functions DISABLED      */
                                                                 /*   DEF_ENABLED   Debug status functions ENABLED       */
 
@@ -165,7 +165,7 @@
 */
                                                                 /* Configure external argument check feature ...        */
                                                                 /* ... (see Note #1) :                                  */
-#define  NET_ERR_CFG_ARG_CHK_EXT_EN             DEF_ENABLED
+#define  NET_ERR_CFG_ARG_CHK_EXT_EN             DEF_DISABLED 
                                                                 /*   DEF_DISABLED     Argument check DISABLED           */
                                                                 /*   DEF_ENABLED      Argument check ENABLED            */
 
@@ -269,7 +269,7 @@
                                                                 /* Configure total number of       BUFFERs ...          */
                                                                 /* ... (see Note #1) :                                  */
 #define  NET_BUF_CFG_NBR_SMALL                            3    /* Configure total number of SMALL BUFFERs.             */
-#define  NET_BUF_CFG_NBR_LARGE                            3    /* Configure total number of LARGE BUFFERs.             */
+#define  NET_BUF_CFG_NBR_LARGE                            2    /* Configure total number of LARGE BUFFERs.             */
 
                                                                 /* Configure size of       BUFFER DATA areas ...        */
                                                                 /* ... (see Note #2) :                                  */
@@ -347,7 +347,7 @@
 #define  NET_NIC_CFG_TX_RDY_INIT_VAL                       1    /* Configure transmit ready initial value (see Note #4).*/
 
                                                                 /* Configure transmit preparation feature (see Note #5):*/
-#define  NET_NIC_CFG_TX_PKT_PREPARE_EN          DEF_ENABLED
+#define  NET_NIC_CFG_TX_PKT_PREPARE_EN          DEF_DISABLED 
                                                                 /*   DEF_DISABLED   Transmit packets NOT pre-prepared   */
                                                                 /*   DEF_ENABLED    Transmit packets     pre-prepared   */
 
@@ -411,7 +411,7 @@
                                                                 /*   DEF_DISABLED  ICMP Transmit Source Quench DISABLED */
                                                                 /*   DEF_ENABLED   ICMP Transmit Source Quench ENABLED  */
 
-#define  NET_ICMP_CFG_TX_SRC_QUENCH_SIZE                  10    /* Configure ICMP transmit source quench list size.     */
+#define  NET_ICMP_CFG_TX_SRC_QUENCH_SIZE                  20    /* Configure ICMP transmit source quench list size.     */
 
 
 /*$PAGE*/
@@ -533,19 +533,19 @@
 *********************************************************************************************************
 */
 
-#define  NET_TCP_CFG_NBR_CONN                             5    /* Configure total number of TCP connections.           */
+#define  NET_TCP_CFG_NBR_CONN                             10    /* Configure total number of TCP connections.           */
 
 
                                                                 /* Configure TCP connections' window sizes ...          */
                                                                 /* ... in integer number of octets (see Note #2) :      */
 
-#define  NET_TCP_CFG_RX_WIN_SIZE_OCTET            ( 2 * 1460)   /* Configure TCP connection receive  window size.       */
-#define  NET_TCP_CFG_TX_WIN_SIZE_OCTET            ( 3 * 1460)   /* Configure TCP connection transmit window size.       */
+#define  NET_TCP_CFG_RX_WIN_SIZE_OCTET                  4096    /* Configure TCP connection receive  window size.       */
+#define  NET_TCP_CFG_TX_WIN_SIZE_OCTET                  8192    /* Configure TCP connection transmit window size.       */
 
 
                                                                 /* Configure TCP connections' default maximum ...       */
                                                                 /* ... segment lifetime timeout (MSL) value,  ...       */
-#define  NET_TCP_CFG_TIMEOUT_CONN_MAX_SEG_SEC              1    /* ... in integer seconds (see Note #3).                */
+#define  NET_TCP_CFG_TIMEOUT_CONN_MAX_SEG_SEC              3    /* ... in integer seconds (see Note #3).                */
 
 
                                                                 /* Configure TCP acknowledgement delay ...              */
@@ -580,7 +580,7 @@
                                                                 /* Configure socket family type (see Note #2) :         */
 #define  NET_SOCK_CFG_FAMILY                    NET_SOCK_FAMILY_IP_V4
 
-#define  NET_SOCK_CFG_NBR_SOCK                            5    /* Configure total number of sockets.                   */
+#define  NET_SOCK_CFG_NBR_SOCK                            10    /* Configure total number of sockets.                   */
 
                                                                 /* Configure socket blocking/non-blocking behavior :    */
 #define  NET_SOCK_CFG_BLOCK_SEL                 NET_SOCK_BLOCK_SEL_BLOCK
@@ -647,4 +647,4 @@
                                                                 /* Configure connection family type      (see Note #2). */
 #define  NET_CONN_CFG_FAMILY                    NET_CONN_FAMILY_IP_V4_SOCK
 
-#define  NET_CONN_CFG_NBR_CONN                            10    /* Configure total number of connections (see Note #3). */
+#define  NET_CONN_CFG_NBR_CONN                            20    /* Configure total number of connections (see Note #3). */
