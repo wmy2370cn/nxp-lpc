@@ -158,36 +158,7 @@ static  void  GPIO_Init (void)
 
 }
 
-
-void CPU_PIN_Init(void)
-{	
-	SCS |= 0x01;				
-    PINSEL0 = 0x000aa05f;		//PIN设置
-    PINSEL1 = 0x01400000;
-    PINSEL2 = 0x50150105;
-    PINSEL3 = 0x00000005;
-    PINSEL4 = 0x05500000;
-    PINSEL5 = 0x00c0f000;
-    PINSEL9 = 0x0f000a00;
-    PINSEL10 = 0x00000000;	    //要保留
-   
-    PINMODE0=0x00000000;
-    PINMODE1=0x00000000;
-    PINMODE2=0x00000000;
-    PINMODE3=0x00000000;
-    PINMODE4=0x00000000;
-    PINMODE5=0x00000000;
-    PINMODE6=0x00000000;
-    PINMODE7=0x00000000;
-    PINMODE8=0x00000000;
-    PINMODE9=0x00000000;
-     
-    FIO0DIR = 0xe0019c00;
-    FIO1DIR = 0x1c000000;
-    FIO2DIR = 0x130c8380;    					 
-    FIO3DIR = 0x07270080;
-    FIO4DIR = 0x08857000;
-}
+		
 
 /**
  * This function will init LPC2478 board
@@ -196,7 +167,7 @@ void rt_hw_board_init()
 {
 	extern void rt_serial_init(void);
 
-	CPU_PIN_Init(); 
+	GPIO_Init();
 
 	VICIntEnClr 	= 0xFFFFFFFFL;
 
@@ -215,9 +186,9 @@ void rt_hw_board_init()
 
 
 	
-	PCONP |= 3<<22;//使能定时器2，3
-	PCONP |= 1<<25;//使能Uart3
-	PCONP |= 1<<30;//使能Ethnet
+//	PCONP |= 3<<22;//使能定时器2，3
+//	PCONP |= 1<<25;//使能Uart3
+//	PCONP |= 1<<30;//使能Ethnet
 
  
 }

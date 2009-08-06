@@ -327,7 +327,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>12</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>43</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -670,6 +670,58 @@
     <PathWithFilename>E:\WORK\svn\NXP-LPC\LPC2468-V0\Hardware\hd_Init.h</PathWithFilename>
     <TopLine>67</TopLine>
     <CurrentLine>82</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\LPC2468-V0\USER\OS_CPU.h</PathWithFilename>
+    <TopLine>1</TopLine>
+    <CurrentLine>22</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\LPC2468-V0\USER\includes.h</PathWithFilename>
+    <TopLine>1</TopLine>
+    <CurrentLine>10</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1736,6 +1788,12 @@
       <ActiveTab>0</ActiveTab>
       <Documents>
         <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\LPC2468-V0\USER\includes.h</Name>
+          <ColumnNumber>24</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>10</CurrentLine>
+        </Doc>
+        <Doc>
           <Name>.\USER\OS_INT_A.s</Name>
           <ColumnNumber>29</ColumnNumber>
           <TopLine>17</TopLine>
@@ -1761,9 +1819,9 @@
         </Doc>
         <Doc>
           <Name>.\Main\MainTask.c</Name>
-          <ColumnNumber>42</ColumnNumber>
+          <ColumnNumber>36</ColumnNumber>
           <TopLine>137</TopLine>
-          <CurrentLine>158</CurrentLine>
+          <CurrentLine>153</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\Main\IoAdapter.c</Name>
@@ -1800,6 +1858,12 @@
           <ColumnNumber>78</ColumnNumber>
           <TopLine>7</TopLine>
           <CurrentLine>29</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\LPC2468-V0\USER\OS_CPU.h</Name>
+          <ColumnNumber>23</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>22</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

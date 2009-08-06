@@ -74,6 +74,220 @@
       <OPTFL>
         <tvExp>1</tvExp>
         <tvExpOptDlg>0</tvExpOptDlg>
+        <IsCurrentTarget>0</IsCurrentTarget>
+      </OPTFL>
+      <CpuCode>0</CpuCode>
+      <DllOpt>
+        <SimDllName>SARM.DLL</SimDllName>
+        <SimDllArguments>-cLPC24xx</SimDllArguments>
+        <SimDlgDllName>DARMP.DLL</SimDlgDllName>
+        <SimDlgDllArguments>-pLPC2468</SimDlgDllArguments>
+        <TargetDllName>SARM.DLL</TargetDllName>
+        <TargetDllArguments></TargetDllArguments>
+        <TargetDlgDllName>TARMP.DLL</TargetDlgDllName>
+        <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
+      </DllOpt>
+      <DebugOpt>
+        <uSim>0</uSim>
+        <uTrg>1</uTrg>
+        <sLdApp>1</sLdApp>
+        <sGomain>1</sGomain>
+        <sRbreak>1</sRbreak>
+        <sRwatch>1</sRwatch>
+        <sRmem>1</sRmem>
+        <sRfunc>1</sRfunc>
+        <sRbox>1</sRbox>
+        <tLdApp>1</tLdApp>
+        <tGomain>1</tGomain>
+        <tRbreak>1</tRbreak>
+        <tRwatch>1</tRwatch>
+        <tRmem>1</tRmem>
+        <tRfunc>0</tRfunc>
+        <tRbox>1</tRbox>
+        <sRunDeb>0</sRunDeb>
+        <sLrtime>1</sLrtime>
+        <nTsel>2</nTsel>
+        <sDll></sDll>
+        <sDllPa></sDllPa>
+        <sDlgDll></sDlgDll>
+        <sDlgPa></sDlgPa>
+        <sIfile></sIfile>
+        <tDll></tDll>
+        <tDllPa></tDllPa>
+        <tDlgDll></tDlgDll>
+        <tDlgPa></tDlgPa>
+        <tIfile></tIfile>
+        <pMon>BIN\AGDIRDI.DLL</pMon>
+      </DebugOpt>
+      <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>DLGDARM</Key>
+          <Name>(135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(167=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>JLTDLG</Key>
+          <Name></Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>DLGTARM</Key>
+          <Name>(135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(167=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>ARMDBGFLAGS</Key>
+          <Name>-T5F</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>AGDIRDI</Key>
+          <Name>-O6 -P(D:\Program Files\SEGGER\JLinkARM_V408i\JLinkRDI.dll) -T() -J0 -FO7 -FD40000000 -FC800 -FN0</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>JLTAgdi</Key>
+          <Name>-O1070 -J1 -Y500 -Z1 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>UL2ARM</Key>
+          <Name>-UV0704M0Z -O47 -S1 -C0 -N00("ARM7TDMI-S Core") -D00(4F1F0F0F) -L00(4) -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
+        </SetRegEntry>
+      </TargetDriverDllRegistry>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>68</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>836</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>startup.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>686</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>3712</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>nic_bsp.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>768</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>4188</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>nic_bsp.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+      </Breakpoint>
+      <DebugFlag>
+        <trace>0</trace>
+        <periodic>0</periodic>
+        <aLwin>0</aLwin>
+        <aCover>0</aCover>
+        <aSer1>0</aSer1>
+        <aSer2>0</aSer2>
+        <aPa>0</aPa>
+        <viewmode>1</viewmode>
+        <vrSel>0</vrSel>
+        <aSym>0</aSym>
+        <aTbox>0</aTbox>
+        <AscS1>0</AscS1>
+        <AscS2>0</AscS2>
+        <AscS3>0</AscS3>
+        <aSer3>0</aSer3>
+        <eProf>0</eProf>
+        <aLa>0</aLa>
+        <aPa1>0</aPa1>
+        <AscS4>0</AscS4>
+        <aSer4>0</aSer4>
+        <StkLoc>0</StkLoc>
+        <TrcWin>0</TrcWin>
+        <newCpu>0</newCpu>
+        <uProt>0</uProt>
+      </DebugFlag>
+      <LintExecutable></LintExecutable>
+      <LintConfigFile></LintConfigFile>
+    </TargetOption>
+  </Target>
+
+  <Target>
+    <TargetName>RT-Thread/LPC2378-U</TargetName>
+    <ToolsetNumber>0x4</ToolsetNumber>
+    <ToolsetName>ARM-ADS</ToolsetName>
+    <TargetOption>
+      <CLKADS>12000000</CLKADS>
+      <OPTTT>
+        <gFlags>1</gFlags>
+        <BeepAtEnd>1</BeepAtEnd>
+        <RunSim>1</RunSim>
+        <RunTarget>0</RunTarget>
+      </OPTTT>
+      <OPTHX>
+        <HexSelection>1</HexSelection>
+        <FlashByte>65535</FlashByte>
+        <HexRangeLowAddress>0</HexRangeLowAddress>
+        <HexRangeHighAddress>0</HexRangeHighAddress>
+        <HexOffset>0</HexOffset>
+      </OPTHX>
+      <OPTLEX>
+        <PageWidth>79</PageWidth>
+        <PageLength>66</PageLength>
+        <TabStop>8</TabStop>
+        <ListingPath>.\objs\</ListingPath>
+      </OPTLEX>
+      <Oh166RecLen>16</Oh166RecLen>
+      <ListingPage>
+        <CreateCListing>1</CreateCListing>
+        <CreateAListing>1</CreateAListing>
+        <CreateLListing>1</CreateLListing>
+        <CreateIListing>0</CreateIListing>
+        <AsmCond>1</AsmCond>
+        <AsmSymb>1</AsmSymb>
+        <AsmXref>0</AsmXref>
+        <CCond>1</CCond>
+        <CCode>0</CCode>
+        <CListInc>0</CListInc>
+        <CSymb>0</CSymb>
+        <LinkerCodeListing>0</LinkerCodeListing>
+      </ListingPage>
+      <OPTXL>
+        <LMap>1</LMap>
+        <LComments>1</LComments>
+        <LGenerateSymbols>1</LGenerateSymbols>
+        <LLibSym>1</LLibSym>
+        <LLines>1</LLines>
+        <LLocSym>1</LLocSym>
+        <LPubSym>1</LPubSym>
+        <LXref>0</LXref>
+        <LExpSel>0</LExpSel>
+      </OPTXL>
+      <OPTFL>
+        <tvExp>1</tvExp>
+        <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
       <CpuCode>0</CpuCode>
@@ -122,8 +336,38 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGDARM</Key>
+          <Name>(135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(167=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>JLTDLG</Key>
+          <Name></Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>DLGTARM</Key>
+          <Name>(135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(167=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>ARMDBGFLAGS</Key>
+          <Name>-T5F</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>AGDIRDI</Key>
+          <Name>-O6 -P(D:\Program Files\SEGGER\JLinkARM_V408i\JLinkRDI.dll) -T() -J0 -FO7 -FD40000000 -FC800 -FN0</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>JLTAgdi</Key>
+          <Name>-O1070 -J1 -Y500 -Z1 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>UL2ARM</Key>
-          <Name>-UV0704M0Z -O47 -S1 -C0 -N00("ARM7TDMI-S Core") -D00(4F1F0F0F) -L00(4) -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
+          <Name>-UV0704M0Z -O39 -S1 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -132,12 +376,12 @@
           <Type>0</Type>
           <LineNumber>768</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>4188</Address>
           <ByteObject>0</ByteObject>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
+          <BreakIfRCount>1</BreakIfRCount>
           <Filename>nic_bsp.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
@@ -146,12 +390,12 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>0</viewmode>
+        <viewmode>1</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
@@ -187,8 +431,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>59</TopLine>
+      <CurrentLine>75</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup.c</PathWithFileName>
       <FilenameWithoutPath>startup.c</FilenameWithoutPath>
@@ -213,10 +457,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>131</TopLine>
-      <CurrentLine>150</CurrentLine>
+      <TopLine>243</TopLine>
+      <CurrentLine>261</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\board.c</PathWithFileName>
       <FilenameWithoutPath>board.c</FilenameWithoutPath>
@@ -227,9 +471,9 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>41</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>751</TopLine>
+      <TopLine>755</TopLine>
       <CurrentLine>768</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\nic_bsp.c</PathWithFileName>
@@ -253,7 +497,7 @@
 
   <Group>
     <GroupName>Kernel</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -360,10 +604,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>163</TopLine>
+      <CurrentLine>163</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\src\mem.c</PathWithFileName>
       <FilenameWithoutPath>mem.c</FilenameWithoutPath>
@@ -441,8 +685,8 @@
   </Group>
 
   <Group>
-    <GroupName>lpc2468</GroupName>
-    <tvExp>0</tvExp>
+    <GroupName>lpc2378</GroupName>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -535,10 +779,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>72</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1045</TopLine>
+      <CurrentLine>1075</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\lpc24xx\start_rvds.s</PathWithFileName>
       <FilenameWithoutPath>start_rvds.s</FilenameWithoutPath>
@@ -1133,6 +1377,58 @@
     </File>
   </Group>
 
+  <AlienFiles>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\objs\lpc2468.Map</PathWithFilename>
+    <TopLine>1</TopLine>
+    <CurrentLine>1</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\board.h</PathWithFilename>
+    <TopLine>169</TopLine>
+    <CurrentLine>169</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
   <WinLayout>
     <sActiveDebugView>Default</sActiveDebugView>
     <iActiveDebugViewLocation>1</iActiveDebugViewLocation>
@@ -1461,7 +1757,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1486,7 +1782,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>1</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1511,7 +1807,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1536,7 +1832,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1561,7 +1857,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1586,7 +1882,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1611,7 +1907,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1636,7 +1932,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1661,7 +1957,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1686,7 +1982,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>44</ContainerPercent>
+        <ContainerPercent>36</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -2174,13 +2470,49 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>4</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\board.c</Name>
-          <ColumnNumber>31</ColumnNumber>
-          <TopLine>131</TopLine>
-          <CurrentLine>149</CurrentLine>
+          <ColumnNumber>5</ColumnNumber>
+          <TopLine>243</TopLine>
+          <CurrentLine>261</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\board.h</Name>
+          <ColumnNumber>51</ColumnNumber>
+          <TopLine>169</TopLine>
+          <CurrentLine>169</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\nic_bsp.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>755</TopLine>
+          <CurrentLine>768</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\startup.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>59</TopLine>
+          <CurrentLine>75</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\libcpu\arm\lpc24xx\start_rvds.s</Name>
+          <ColumnNumber>72</ColumnNumber>
+          <TopLine>1045</TopLine>
+          <CurrentLine>1075</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\objs\lpc2468.Map</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\src\mem.c</Name>
+          <ColumnNumber>5</ColumnNumber>
+          <TopLine>163</TopLine>
+          <CurrentLine>163</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
