@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\smartarm2300.h"
+				>
+			</File>
+			<File
 				RelativePath="..\vectors.s"
 				>
 			</File>
