@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>RT-Thread/LPC2468</TargetName>
+      <TargetName>RT-Thread/LPC2378</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -128,7 +128,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>0</TargetSelection>
+          <TargetSelection>6</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -142,7 +142,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\UL2ARM.DLL</Driver>
+            <Driver>Segger\JLTAgdi.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -152,9 +152,9 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>4100</DriverSelection>
           </Flash1>
-          <Flash2>BIN\UL2ARM.DLL</Flash2>
+          <Flash2>Segger\JLTAgdi.dll</Flash2>
           <Flash3>"LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1)</Flash3>
           <Flash4></Flash4>
         </Utilities>
@@ -476,7 +476,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>lpc2468</GroupName>
+          <GroupName>lpc2378</GroupName>
           <Files>
             <File>
               <FileName>trap.c</FileName>

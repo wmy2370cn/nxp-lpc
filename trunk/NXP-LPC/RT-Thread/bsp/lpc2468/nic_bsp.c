@@ -526,7 +526,8 @@ rt_uint32_t  get_phy_link_speed (void)
 		}
 	}
 }
-void  set_phy_autoneg  (void)
+
+static void  set_phy_autoneg  (void)
 {
 	rt_uint16_t   i;
 	rt_uint16_t   reg_val;
@@ -612,21 +613,17 @@ rt_uint32_t  BSP_CPU_ClkFreq (void)
 	rt_uint32_t  clk_div;
 	rt_uint32_t  clk_freq;
 
-
 	switch (CLKSRCSEL & 0x03)
 	{                                 /* Determine the current clock source                       */
 		case 0:
 			fin        =  IRC_OSC_FRQ;
 			break;
-
 		case 1:
 			fin        =  MAIN_OSC_FRQ;
 			break;
-
 		case 2:
 			fin        =  RTC_OSC_FRQ;
 			break;
-
 		default:
 			fin        =  IRC_OSC_FRQ;
 			break;
@@ -648,8 +645,17 @@ rt_uint32_t  BSP_CPU_ClkFreq (void)
 
 	return (clk_freq);
 }
-
-
+ 
+static void hd_DelayMS(rt_uint32_t ms)
+{
+	//执行11059200次语句，花时3.570S，差不多每ms计算3097条语句
+	rt_uint32_t count=3339*ms;
+	rt_uint32_t i;
+	for (i=0;i<count;i++)
+	{
+		__asm{ NOP };
+	}
+}
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
@@ -705,8 +711,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	for (tout = 100; tout; tout--);
 //	MAC_MCFG = MCFG_CLK_DIV20;
-	for (i = 0; i < 7; i++) {                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
-		if ((clk_freq / MII_Dividers[i][0]) <=  25) {                   /* Index [i][0] = decimal div value, [i][1] = MCFG reg val  */
+	for (i = 0; i < 7; i++) 
+	{                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
+		if ((clk_freq / MII_Dividers[i][0]) <=  25) 
+		{                   /* Index [i][0] = decimal div value, [i][1] = MCFG reg val  */
 			MAC_MCFG        =   MII_Dividers[i][1];                         /* Remove reset, set proper MIIM divider                    */
 			break;
 		}
@@ -738,14 +746,16 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 	}
  
-//	PHYID = 0;
+    //	PHYID = 0;
 	//  复位PHY芯片
 	//  等待一段指定的时间，使PHY就绪 
-	write_phy(PHYID, PHY_REG_BMCR, BMCR_ANRESTART|BMCR_ANENABLE|BMCR_RESET );
-
+	write_phy(PHYID, PHY_REG_BMCR,  BMCR_RESET|BMCR_ANRESTART|BMCR_ANENABLE  );
 //	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
-	for ( i = 0; i < 0x90000; i++ );
-
+	for ( i = 0; i < 5; i++ )
+	{
+		hd_DelayMS(1000);
+	}
+	 
 	for(i=0;i<32;i++)
 	{
 		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
@@ -753,12 +763,12 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 
 	//set_phy_autoneg( );
-	write_phy(PHYID, PHY_REG_ANAR, ANAR_10HALF);
+//	write_phy(PHYID, PHY_REG_ANAR, ANAR_10HALF);
 
 	tempreg = read_phy(PHYID, DM9161_DSCSR );
-	//ret = get_phy_autoneg_state( );
-	//ret = get_phy_link_state();
-	//ret = get_phy_link_speed();
+	ret = get_phy_autoneg_state( );
+	ret = get_phy_link_state();
+	ret = get_phy_link_speed();
 
 
   	for(i=0;i<32;i++)
@@ -814,6 +824,11 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	EMAC_RxEnable();
 	EMAC_TxEnable();
     return RT_EOK;
+}
+
+static  void  rt_emac_init (rt_uint16_t *perr)
+{
+
 }
 
 static rt_err_t rt_dm9000_open(rt_device_t dev, rt_uint16_t oflag)
