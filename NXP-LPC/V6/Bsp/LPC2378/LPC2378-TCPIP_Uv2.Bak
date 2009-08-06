@@ -145,7 +145,7 @@ Options 1,0,0  // Target 'Flash'
  HexSel=1
  MG32K=0
  TGMORE=0
- RunUsr 0 0 <>
+ RunUsr 0 1 <fromelf .\OutPut\LPC2378-OS-TCPIP.axf --output .\OutPut\LPC2378-OS-TCPIP.elf>
  RunUsr 1 0 <>
  BrunUsr 0 0 <>
  BrunUsr 1 0 <>
