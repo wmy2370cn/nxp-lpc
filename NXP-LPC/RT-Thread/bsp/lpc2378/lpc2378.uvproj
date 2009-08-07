@@ -12,13 +12,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC2468</Device>
+          <Device>LPC2378</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x40000000-0x4000FFFF) IRAM2(0x7FE00000-0x7FE03FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI)</Cpu>
+          <Cpu>IRAM(0x40000000-0x40007FFF) IRAM2(0x7FE00000-0x7FE03FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI)</Cpu>
           <FlashUtilSpec>LPC210x_ISP.EXE ("#H" ^X $D COM1: 38400 1)</FlashUtilSpec>
-          <StartupFile>"STARTUP\Philips\LPC2400.s" ("Philips LPC2400 Startup Code")</StartupFile>
+          <StartupFile>"STARTUP\Philips\LPC2300.s" ("Philips LPC2300 Startup Code")</StartupFile>
           <FlashDriverDll>UL2ARM(-U268761108 -O7 -S0 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07E000)</FlashDriverDll>
-          <DeviceId>4181</DeviceId>
+          <DeviceId>4153</DeviceId>
           <RegisterFile>LPC23xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -43,10 +43,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\objs\</OutputDirectory>
-          <OutputName>lpc2468</OutputName>
+          <OutputName>lpc2378</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\objs\</ListingPath>
@@ -97,19 +97,19 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARM.DLL</SimDllName>
-          <SimDllArguments>-cLPC24xx</SimDllArguments>
+          <SimDllArguments>-cLPC237x</SimDllArguments>
           <SimDlgDll>DARMP.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pLPC2468</SimDlgDllArguments>
+          <SimDlgDllArguments>-pLPC2378</SimDlgDllArguments>
           <TargetDllName>SARM.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMP.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pLPC2378</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -177,14 +177,14 @@
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
             <AdsLLst>1</AdsLLst>
-            <AdsLmap>0</AdsLmap>
-            <AdsLcgr>0</AdsLcgr>
-            <AdsLsym>0</AdsLsym>
+            <AdsLmap>1</AdsLmap>
+            <AdsLcgr>1</AdsLcgr>
+            <AdsLsym>1</AdsLsym>
             <AdsLszi>1</AdsLszi>
             <AdsLtoi>1</AdsLtoi>
-            <AdsLsun>0</AdsLsun>
-            <AdsLven>0</AdsLven>
-            <AdsLsxf>0</AdsLsxf>
+            <AdsLsun>1</AdsLsun>
+            <AdsLven>1</AdsLven>
+            <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>ARM7TDMI</AdsCpuType>
@@ -206,7 +206,7 @@
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>0</OptFeed>
+            <OptFeed>1</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -256,7 +256,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x40000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -311,7 +311,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x40000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -738,13 +738,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>LPC2468</Device>
+          <Device>LPC2378</Device>
           <Vendor>NXP (founded by Philips)</Vendor>
-          <Cpu>IRAM(0x40000000-0x4000FFFF) IRAM2(0x7FE00000-0x7FE03FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI)</Cpu>
+          <Cpu>IRAM(0x40000000-0x40007FFF) IRAM2(0x7FE00000-0x7FE03FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI)</Cpu>
           <FlashUtilSpec>LPC210x_ISP.EXE ("#H" ^X $D COM1: 38400 1)</FlashUtilSpec>
-          <StartupFile>"STARTUP\Philips\LPC2400.s" ("Philips LPC2400 Startup Code")</StartupFile>
+          <StartupFile>"STARTUP\Philips\LPC2300.s" ("Philips LPC2300 Startup Code")</StartupFile>
           <FlashDriverDll>UL2ARM(-U268761108 -O7 -S0 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07E000)</FlashDriverDll>
-          <DeviceId>4181</DeviceId>
+          <DeviceId>4153</DeviceId>
           <RegisterFile>LPC23xx.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -769,10 +769,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\objs\</OutputDirectory>
-          <OutputName>lpc2468</OutputName>
+          <OutputName>lpc2378</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\objs\</ListingPath>
@@ -823,13 +823,13 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARM.DLL</SimDllName>
-          <SimDllArguments>-cLPC24xx</SimDllArguments>
+          <SimDllArguments>-cLPC237x</SimDllArguments>
           <SimDlgDll>DARMP.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pLPC2468</SimDlgDllArguments>
+          <SimDlgDllArguments>-pLPC2378</SimDlgDllArguments>
           <TargetDllName>SARM.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMP.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pLPC2378</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <Simulator>
@@ -903,14 +903,14 @@
             <AdsANop>0</AdsANop>
             <AdsANot>0</AdsANot>
             <AdsLLst>1</AdsLLst>
-            <AdsLmap>0</AdsLmap>
-            <AdsLcgr>0</AdsLcgr>
-            <AdsLsym>0</AdsLsym>
+            <AdsLmap>1</AdsLmap>
+            <AdsLcgr>1</AdsLcgr>
+            <AdsLsym>1</AdsLsym>
             <AdsLszi>1</AdsLszi>
             <AdsLtoi>1</AdsLtoi>
-            <AdsLsun>0</AdsLsun>
-            <AdsLven>0</AdsLven>
-            <AdsLsxf>0</AdsLsxf>
+            <AdsLsun>1</AdsLsun>
+            <AdsLven>1</AdsLven>
+            <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>ARM7TDMI</AdsCpuType>
@@ -928,11 +928,11 @@
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>0</EndSel>
-            <uLtcg>0</uLtcg>
+            <uLtcg>1</uLtcg>
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>0</OptFeed>
+            <OptFeed>1</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -982,7 +982,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x40000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -1037,7 +1037,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x40000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
