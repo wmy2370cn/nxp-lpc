@@ -39,6 +39,7 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #endif
 
+static unsigned char MEM_POOL[8*1024] = {0};
  
 /**
  * This function will startup RT-Thread RTOS.
@@ -65,7 +66,8 @@ void rtthread_startup(void)
 	/* init memory system */
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit), (void*)0x40008000) ;
+//	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit), (void*)0x40008000) ;
+//		rt_system_heap_init((void*)MEM_POOL, (void*)(&MEM_POOL[6*1024-1])) ;
 #else
 	rt_system_heap_init((void*)&__bss_end, (void*)0x40008000);
 #endif
