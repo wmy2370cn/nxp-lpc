@@ -5,7 +5,7 @@
 #include "lwipopts.h"
 #include "emac.h"
 #include "applib.h"
-#include "LPC24xx.h"
+#include "iolpc23xx.h"
 #include "emac.h"
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
@@ -656,6 +656,38 @@ static void hd_DelayMS(rt_uint32_t ms)
 		__asm{ NOP };
 	}
 }
+
+/*********************************************************************************************************
+** 函数名称: phy_hw_init
+** 函数名称: phy_hw_init
+**
+** 功能描述：  
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月8日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void  phy_hw_init (void)
+{ /* Configure I/O and the RMII / MII interface pins          */
+ 	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
+ 	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
+}
+/* ENET Device Revision ID */
+#define OLD_EMAC_MODULE_ID  0x39022000  /* Rev. ID for first rev '-'         */
+#define  COMMAND                    (*((volatile  unsigned  int *)0xFFE00100))  /* Command Register                             */
+
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
@@ -663,54 +695,42 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	rt_uint16_t  ret = 0;
 
 	rt_uint32_t clk_freq            =   BSP_CPU_ClkFreq();  
-	clk_freq           /=   100000;        
+
+ 	clk_freq           /=   100000;        
 	/* Power Up the EMAC controller. */
 	PCONP |= 0x40000000;
- 	/* Set the PIN to RMII */
-	// PINSEL2 &= 0x0fc0ccf0;
-	//PINSEL2 |= 0X50151105; //PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
-	//PINSEL3 &= 0xfffffff0;
-	//PINSEL3 |= 0X00000005; //PINSEL3 = 0x00000005;	/* selects P1[17:16] */
-
-// 	i = rMAC_MODULEID;
-// 	if(i == OLD_EMAC_MODULE_ID)
-// 		PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
-// 	else
-
-	//是否需要设置?需要硬件部分确定?
-//	PINSEL2 = 0x50150105;
-// 	PINSEL3 = 0x00000005;	/* selects P1[17:16] */
+	phy_hw_init();
 
 	/* Reset all EMAC internal modules. */
-	MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX | MAC1_SIM_RES | MAC1_SOFT_RES;
+ 	MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX | MAC1_SIM_RES | MAC1_SOFT_RES;
+ 
 	MAC_COMMAND = CR_REG_RES | CR_TX_RES | CR_RX_RES;
+ 
 	/* A short delay after reset. */
-	for (tout = 500; tout; tout--);
+ 	for (tout = 0; tout <5000; tout++);
 
 	//Deassert all prior resets
-	MAC_MAC1 = 0;
+ 	MAC_MAC1 = 0;
 	EMAC_RxDisable();
 	EMAC_TxDisable();
- 
-	MAC_COMMAND            |=   COMMAND_RMII;  
-	MAC_SUPP = 0;
-	for (tout = 5000; tout; tout--);
+ /* Configure EMAC / PHY communication to RMII mode          */
+  	MAC_COMMAND            |=   COMMAND_RMII;  
+ /* Assume and configure RMII link speed logic for 10Mbit    */
+  	MAC_SUPP = 0;
+ 	for (tout = 0; tout <5000; tout++);
 
-	MAC_TEST                =   0;     
-	/* Initialize MAC control registers. */
-	MAC_MAC1 |= MAC1_PASS_ALL;
-	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
-	MAC_MAXF = ETH_MAX_FLEN;
-	MAC_CLRT = CLRT_DEF;
-	MAC_IPGR = IPGR_DEF;
-	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
+ 	MAC_TEST                =   0;     
+  	/* Initialize MAC control registers. */
+  	MAC_MAC1 |= MAC1_PASS_ALL;
+  	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
+ 	MAC_MAXF = ETH_MAX_FLEN;
+   	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
+// 
+// 	/* Enable Reduced MII interface. */
+ 	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
+  	MAC_MCMD                =   0;                                          /* Clear MII command register                               */
 
-	/* Enable Reduced MII interface. */
-	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
-	MAC_COMMAND                =   0;                                          /* Clear MII command register                               */
-
-	for (tout = 100; tout; tout--);
-//	MAC_MCFG = MCFG_CLK_DIV20;
+	for (tout = 0; tout <5000; tout++);
 	for (i = 0; i < 7; i++) 
 	{                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
 		if ((clk_freq / MII_Dividers[i][0]) <=  25) 
@@ -721,14 +741,11 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 	/* Enable Reduced MII interface. */
 	//CR_PASS_RUNT_FRM 为“1”时，将小于64字节的短帧传递到存储器中，除非该短帧的CRC有误为“0”，则将短帧被滤除。
-	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
+//	COMMAND |=  CR_PASS_RUNT_FRM;
 
 	/* Reset Reduced MII Logic. */
 	//PHY支持寄存器???
-//	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
-//	for (tout = 100; tout; tout--);
-	MAC_SUPP = 0;
-
+ 
 	//下面开始PHY设置
 	// probe phy address
 	for(i=0;i<32;i++)
@@ -771,6 +788,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	ret = get_phy_link_speed();
 
 
+	MAC_CLRT = CLRT_DEF;
+	MAC_IPGR = IPGR_DEF;
+
+
   	for(i=0;i<32;i++)
 	{
 		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
@@ -806,8 +827,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//设置MAC地址
 //	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
- 	TxDescrInit();
- 	RxDescrInit();
+ //	TxDescrInit();
+ //	RxDescrInit();
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
@@ -1131,16 +1152,16 @@ int lpc24xxether_register(char *name)
 	rt_err_t result;
 
 	/* init rt-thread device interface */
-	lpc24xx_device.parent.parent.init		= rt_dm9161_init;
-	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
-	lpc24xx_device.parent.parent.close		= rt_dm9000_close;
-	lpc24xx_device.parent.parent.read		= rt_dm9000_read;
+  	lpc24xx_device.parent.parent.init		= rt_dm9161_init;
+  	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
+  	lpc24xx_device.parent.parent.close		= rt_dm9000_close;
+  	lpc24xx_device.parent.parent.read		= rt_dm9000_read;
 	lpc24xx_device.parent.parent.write		= rt_dm9000_write;
 	lpc24xx_device.parent.parent.control	= rt_dm9000_control;
 	lpc24xx_device.parent.parent.private    = RT_NULL;
 
-	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;
-	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
+  	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;
+  	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
 
 	/* Update MAC address */
 // 	lpc24xx_device.dev_addr[0] = 0x1e;
