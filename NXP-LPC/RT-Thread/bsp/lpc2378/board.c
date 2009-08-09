@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#include <LPC24xx.h>
+#include <LPC23xx.h>
 #include "applib.h"
 #include "board.h"
 /* #define RT_BOARD_DEBUG */

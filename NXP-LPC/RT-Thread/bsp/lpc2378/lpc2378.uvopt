@@ -103,7 +103,7 @@
         <uSim>0</uSim>
         <uTrg>1</uTrg>
         <sLdApp>1</sLdApp>
-        <sGomain>0</sGomain>
+        <sGomain>1</sGomain>
         <sRbreak>1</sRbreak>
         <sRwatch>1</sRwatch>
         <sRmem>1</sRmem>
@@ -168,10 +168,39 @@
           <Name>-U268761108 -O7 -S0 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07E000)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>705</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>3008</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>nic_bsp.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+      </Breakpoint>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>ptr</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>heap_ptr</ItemText>
+        </Ww>
+      </WatchWindow1>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -408,8 +437,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>105</TopLine>
-      <CurrentLine>115</CurrentLine>
+      <TopLine>69</TopLine>
+      <CurrentLine>82</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup.c</PathWithFileName>
       <FilenameWithoutPath>startup.c</FilenameWithoutPath>
@@ -420,7 +449,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>41</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -434,10 +463,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>37</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>243</TopLine>
-      <CurrentLine>251</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\board.c</PathWithFileName>
       <FilenameWithoutPath>board.c</FilenameWithoutPath>
@@ -450,8 +479,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>755</TopLine>
-      <CurrentLine>768</CurrentLine>
+      <TopLine>709</TopLine>
+      <CurrentLine>722</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\nic_bsp.c</PathWithFileName>
       <FilenameWithoutPath>nic_bsp.c</FilenameWithoutPath>
@@ -511,7 +540,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>9</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -527,7 +556,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>47</TopLine>
+      <TopLine>52</TopLine>
       <CurrentLine>65</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\src\idle.c</PathWithFileName>
@@ -583,8 +612,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>163</TopLine>
-      <CurrentLine>163</CurrentLine>
+      <TopLine>311</TopLine>
+      <CurrentLine>324</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\src\mem.c</PathWithFileName>
       <FilenameWithoutPath>mem.c</FilenameWithoutPath>
@@ -672,7 +701,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>35</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -742,10 +771,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>35</ColumnNumber>
+      <ColumnNumber>20</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>8</TopLine>
-      <CurrentLine>31</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\lpc24xx\context_rvds.s</PathWithFileName>
       <FilenameWithoutPath>context_rvds.s</FilenameWithoutPath>
@@ -756,10 +785,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>40</ColumnNumber>
+      <ColumnNumber>60</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1066</TopLine>
-      <CurrentLine>1080</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\libcpu\arm\lpc24xx\start_rvds.s</PathWithFileName>
       <FilenameWithoutPath>start_rvds.s</FilenameWithoutPath>
@@ -777,10 +806,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>25</ColumnNumber>
+      <ColumnNumber>11</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>18</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\app\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -1232,10 +1261,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>30</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>411</TopLine>
-      <CurrentLine>416</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\net\lwip\src\netif\etharp.c</PathWithFileName>
       <FilenameWithoutPath>etharp.c</FilenameWithoutPath>
@@ -1248,8 +1277,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\net\lwip\src\netif\ethernetif.c</PathWithFileName>
       <FilenameWithoutPath>ethernetif.c</FilenameWithoutPath>
@@ -1355,9 +1384,9 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\board.h</PathWithFilename>
-    <TopLine>169</TopLine>
-    <CurrentLine>169</CurrentLine>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\src\kservice.h</PathWithFilename>
+    <TopLine>71</TopLine>
+    <CurrentLine>95</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1381,9 +1410,9 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\objs\lpc2378.Map</PathWithFilename>
-    <TopLine>2501</TopLine>
-    <CurrentLine>2502</CurrentLine>
+    <PathWithFilename>E:\WORK\svn\NXP-LPC\RT-Thread\libcpu\arm\lpc24xx\LPC24xx.h</PathWithFilename>
+    <TopLine>1068</TopLine>
+    <CurrentLine>1068</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1560,7 +1589,7 @@
         <FloatingRect_bottom>250</FloatingRect_bottom>
         <FloatingRect_right>600</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
+        <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
@@ -1585,8 +1614,8 @@
         <FloatingRect_bottom>250</FloatingRect_bottom>
         <FloatingRect_right>600</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>0</ActiveTab>
-        <Visible>0</Visible>
+        <ActiveTab>1</ActiveTab>
+        <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
@@ -1611,7 +1640,7 @@
         <FloatingRect_right>600</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
         <ActiveTab>0</ActiveTab>
-        <Visible>0</Visible>
+        <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
@@ -1734,7 +1763,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1759,8 +1788,8 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
+        <ContainerPercent>26</ContainerPercent>
+        <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
@@ -1784,7 +1813,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1809,8 +1838,8 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
-        <ActiveTab>0</ActiveTab>
+        <ContainerPercent>26</ContainerPercent>
+        <ActiveTab>1</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
@@ -1834,7 +1863,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1859,7 +1888,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -1884,7 +1913,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1909,7 +1938,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1934,7 +1963,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>0</Visible>
         <Dynamic>0</Dynamic>
@@ -1959,7 +1988,7 @@
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>54</ContainerPercent>
+        <ContainerPercent>26</ContainerPercent>
         <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
@@ -2351,17 +2380,17 @@
         <DockType>2</DockType>
         <DockLocation>3</DockLocation>
         <Pinned>0</Pinned>
-        <DockedRect_top>76</DockedRect_top>
-        <DockedRect_left>214</DockedRect_left>
-        <DockedRect_bottom>224</DockedRect_bottom>
-        <DockedRect_right>1400</DockedRect_right>
+        <DockedRect_top>0</DockedRect_top>
+        <DockedRect_left>0</DockedRect_left>
+        <DockedRect_bottom>212</DockedRect_bottom>
+        <DockedRect_right>1186</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>250</FloatingRect_bottom>
         <FloatingRect_right>600</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
-        <Visible>1</Visible>
+        <ActiveTab>0</ActiveTab>
+        <Visible>0</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
@@ -2376,10 +2405,10 @@
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
         <Pinned>0</Pinned>
-        <DockedRect_top>76</DockedRect_top>
-        <DockedRect_left>214</DockedRect_left>
-        <DockedRect_bottom>224</DockedRect_bottom>
-        <DockedRect_right>1400</DockedRect_right>
+        <DockedRect_top>0</DockedRect_top>
+        <DockedRect_left>0</DockedRect_left>
+        <DockedRect_bottom>212</DockedRect_bottom>
+        <DockedRect_right>1186</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>250</FloatingRect_bottom>
@@ -2401,10 +2430,10 @@
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
         <Pinned>0</Pinned>
-        <DockedRect_top>76</DockedRect_top>
-        <DockedRect_left>214</DockedRect_left>
-        <DockedRect_bottom>224</DockedRect_bottom>
-        <DockedRect_right>1400</DockedRect_right>
+        <DockedRect_top>0</DockedRect_top>
+        <DockedRect_left>0</DockedRect_left>
+        <DockedRect_bottom>212</DockedRect_bottom>
+        <DockedRect_right>1186</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>250</FloatingRect_bottom>
@@ -2447,73 +2476,49 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>6</ActiveTab>
+      <ActiveTab>5</ActiveTab>
       <Documents>
         <Doc>
-          <Name>.\board.c</Name>
-          <ColumnNumber>37</ColumnNumber>
-          <TopLine>243</TopLine>
-          <CurrentLine>251</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\board.h</Name>
-          <ColumnNumber>51</ColumnNumber>
-          <TopLine>169</TopLine>
-          <CurrentLine>169</CurrentLine>
+          <Name>.\startup.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>69</TopLine>
+          <CurrentLine>82</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\nic_bsp.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>755</TopLine>
-          <CurrentLine>768</CurrentLine>
+          <TopLine>709</TopLine>
+          <CurrentLine>722</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\startup.c</Name>
+          <Name>..\..\net\lwip\src\netif\ethernetif.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>105</TopLine>
-          <CurrentLine>115</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\libcpu\arm\lpc24xx\start_rvds.s</Name>
-          <ColumnNumber>40</ColumnNumber>
-          <TopLine>1066</TopLine>
-          <CurrentLine>1080</CurrentLine>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\src\mem.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>163</TopLine>
-          <CurrentLine>163</CurrentLine>
+          <TopLine>311</TopLine>
+          <CurrentLine>324</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\src\kservice.h</Name>
+          <ColumnNumber>18</ColumnNumber>
+          <TopLine>71</TopLine>
+          <CurrentLine>95</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\src\idle.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>47</TopLine>
+          <TopLine>52</TopLine>
           <CurrentLine>65</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\app\main.c</Name>
-          <ColumnNumber>25</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>18</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\libcpu\arm\lpc24xx\context_rvds.s</Name>
-          <ColumnNumber>35</ColumnNumber>
-          <TopLine>8</TopLine>
-          <CurrentLine>31</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\bsp\lpc2378\objs\lpc2378.Map</Name>
-          <ColumnNumber>8</ColumnNumber>
-          <TopLine>2501</TopLine>
-          <CurrentLine>2502</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\net\lwip\src\netif\etharp.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>411</TopLine>
-          <CurrentLine>416</CurrentLine>
+          <Name>E:\WORK\svn\NXP-LPC\RT-Thread\libcpu\arm\lpc24xx\LPC24xx.h</Name>
+          <ColumnNumber>74</ColumnNumber>
+          <TopLine>1068</TopLine>
+          <CurrentLine>1068</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

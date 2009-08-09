@@ -411,6 +411,38 @@
 				Name="Inc"
 				>
 				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\api.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\api_msg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\arch.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\debug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\def.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\dhcp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\dns.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\err.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\net\lwip\src\include\netif\etharp.h"
 					>
 				</File>
@@ -419,7 +451,47 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\init.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\net\lwip\src\include\netif\loopif.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\mem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\memp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\memp_std.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\netbuf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\netdb.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\netif.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\netifapi.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\opt.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\pbuf.h"
 					>
 				</File>
 				<File
@@ -427,7 +499,55 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\raw.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\sio.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\net\lwip\src\include\netif\slipif.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\snmp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\snmp_asn1.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\snmp_msg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\snmp_structs.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\sockets.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\stats.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\sys.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\tcp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\tcpip.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\lwip\udp.h"
 					>
 				</File>
 			</Filter>
@@ -457,6 +577,18 @@
 			</File>
 			<File
 				RelativePath="..\..\include\rtthread.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="libcpu"
+			>
+			<File
+				RelativePath="..\..\libcpu\arm\lpc24xx\context_rvds.s"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libcpu\arm\lpc24xx\start_rvds.s"
 				>
 			</File>
 		</Filter>
