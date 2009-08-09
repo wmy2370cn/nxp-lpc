@@ -184,10 +184,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\iolpc23xx.h"
-				>
-			</File>
-			<File
 				RelativePath="..\LPC2378_Flash.scat"
 				>
 			</File>
@@ -209,10 +205,6 @@
 			</File>
 			<File
 				RelativePath="..\os_cfg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\smartarm2300.h"
 				>
 			</File>
 			<File

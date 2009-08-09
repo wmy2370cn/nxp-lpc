@@ -27,11 +27,8 @@
 */
 
 #define  BSP_GLOBALS
-#include <includes.h>
-#include "iolpc23xx.h"
-#include "smartarm2300.h"
-//#include <lpc24XX.h>
-
+#include <includes.h> 
+#include <lpc24XX.h>
 
 /*
 *********************************************************************************************************
@@ -282,7 +279,7 @@ CPU_INT32U  BSP_CPU_PclkFreq (CPU_INT08U  pclk)
 
 void  BSP_IntDisAll (void)
 {
-    VICIntEnClear = 0xFFFFFFFFL;                                        /* Disable ALL interrupts                                   */
+    VICIntEnClr = 0xFFFFFFFFL;                                        /* Disable ALL interrupts                                   */
 }
 
 /*
@@ -311,10 +308,10 @@ void  OS_CPU_ExceptHndlr (CPU_DATA ID)
 
                                                                         /* If this exception is either an IRQ or FIQ                */
     if ((ID == OS_CPU_ARM_EXCEPT_IRQ) || (ID == OS_CPU_ARM_EXCEPT_FIQ)) {
-        pfnct = (BSP_FNCT_PTR)VICAddress;                               /* Read the interrupt vector from the VIC                   */
+        pfnct = (BSP_FNCT_PTR)VICVectAddr;                               /* Read the interrupt vector from the VIC                   */
         if (pfnct != (BSP_FNCT_PTR)0) {                                 /* Make sure we don't have a NULL pointer                   */
           (*pfnct)();                                                   /* Execute the ISR for the interrupting device              */
-            VICAddress  =  1;                                           /* Acknowlege the VIC interrupt                             */
+            VICVectAddr  =  1;                                           /* Acknowlege the VIC interrupt                             */
         }
     }
 }
@@ -450,13 +447,14 @@ static  void  ADC_Init (void)
 
 CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
 {
-    if (adc == 0) {
-        return ((ADDR0 >> 6) & 0x03FF);
-    } else if (adc == 1) {
-        return ((ADDR1 >> 6) & 0x03FF);
-    } else {
-        return (0);
-    }
+	return (0);
+//    if (adc == 0) {
+//        return ((ADDR0 >> 6) & 0x03FF);
+//    } else if (adc == 1) {
+//        return ((ADDR1 >> 6) & 0x03FF);
+//    } else {
+//       return (0);
+//    }
 }
 
 /*
@@ -481,7 +479,7 @@ CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
 
 void  LCD_LightOn (void)
 {
-    FIO3SET     = GPIO3_LCD_LIGHT;
+ //   FIO3SET     = GPIO3_LCD_LIGHT;
 }
 
 /*
@@ -498,7 +496,7 @@ void  LCD_LightOn (void)
 
 void  LCD_LightOff (void)
 {
-    FIO3CLR     = GPIO3_LCD_LIGHT;
+//    FIO3CLR     = GPIO3_LCD_LIGHT;
 }
 
 /*
@@ -515,7 +513,7 @@ void  LCD_LightOff (void)
 
 void  LCD_LightToggle (void)
 {
-    CPU_INT32U  pin;
+ /*   CPU_INT32U  pin;
 
 
     pin         = FIO3PIN & GPIO3_LCD_LIGHT;
@@ -527,7 +525,7 @@ void  LCD_LightToggle (void)
     } else {
 
         FIO3SET = GPIO3_LCD_LIGHT;
-    }
+    }  */
 }
 
 /*
@@ -878,82 +876,6 @@ static  void  MAM_Init (void)
 
 static  void  GPIO_Init (void)
 {
-	CPU_INT32U  pinsel;
-
-
-	//    IO0DIR      =  0;
-	//    IO1DIR      =  0;
-	IODIR0      =  0;	  // zhaoyk20081124
-	IODIR1      =  0;	  // zhaoyk20081124
-	FIO0DIR     =  0;
-	FIO1DIR     =  0;
-	FIO2DIR     =  0;
-	FIO3DIR     =  0;
-	FIO4DIR     =  0;
-
-	FIO0MASK    =  0;
-	FIO1MASK    =  0;
-	FIO2MASK    =  0;
-	FIO3MASK    =  0;
-	FIO4MASK    =  0;
-
-	PINSEL0     =  0;
-	PINSEL1     =  0;
-	PINSEL2     =  0;
-	PINSEL3     =  0;
-	PINSEL4     =  0;
-	PINSEL5     =  0;
-	PINSEL6     =  0;
-	PINSEL7     =  0;
-	PINSEL8     =  0;
-	PINSEL9     =  0;
-	PINSEL10    =  0;
-
-#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_0)
-	/* Configure P3.16 & P3.17 for UART1                        */
-	pinsel          = PINSEL7;
-	pinsel         &= 0xFFFFFFF0;
-	pinsel         |= 0x0000000F;
-	PINSEL7         = pinsel;
-#endif
-
-#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_1)
-	/* Configure P3.16 & P3.17 for UART1                        */
-	pinsel          = PINSEL7;
-	pinsel         &= 0xFFFFFFF0;
-	pinsel         |= 0x0000000F;
-	PINSEL7         = pinsel;
-#endif
-
-	/* Configure P0.28 & P0.27 for I2C0                         */
-	pinsel          = PINSEL1;
-	pinsel         &= 0xFC3FFFFF;
-	pinsel         |= 0x01400000;
-	PINSEL1         = pinsel;
-
-	/* Configure P2.10 for GPIO                                 */
-	pinsel          = PINSEL4;
-	pinsel         &= 0xFFCFFFFF;
-	PINSEL4         = pinsel;
-	FIO2DIR        &= ~DEF_BIT_10;
-
-
-	FIO3DIR         = GPIO3_LCD_LIGHT;
-	FIO3CLR         = GPIO3_LCD_LIGHT;
-	/*********************************************************************************************/
-
-	PINSEL0 = PINSEL0 | 0x50;  //设置引脚P0.2,P0.3为通讯口UART0, for LPC22xx
-
-	/* Configure P1.20 output, P1.21 output, P1.23 input, P1.24 output, for GPIO output for LEDS         */
-	IOSET1      =  GPIO1_SPInCS;	  // zhaoyk20081124
-	IOCLR1      =  GPIO1_SPICLK;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPICLK;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPInCS;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPIMOSI;	  // zhaoyk20081124
-
-	/* Configure P1.27 for GPIO output for Buzzer               */
-	IODIR1      =  IODIR1 | GPIO1_BUZZER;	  // zhaoyk20081124
-	IOSET1      =  GPIO1_BUZZER;	  // zhaoyk20081124
 }
 
 /*
@@ -972,8 +894,8 @@ static  void  GPIO_Init (void)
 
 static  void  VIC_Init (void)
 {
-    VICIntEnClear =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
-    VICAddress    =  0;                                         /* Acknowlege any pending VIC interrupt                     */
+    VICSoftIntClr =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
+    VICVectAddr    =  0;                                         /* Acknowlege any pending VIC interrupt                     */
     VICProtection =  0;                                         /* Allow VIC register access in User of Priviledged modes   */
 
     VICVectAddr0  = (CPU_INT32U)VIC_DummyWDT;                   /* Set the vector address                                   */

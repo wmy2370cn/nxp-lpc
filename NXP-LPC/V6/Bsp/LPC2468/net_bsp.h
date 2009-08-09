@@ -87,7 +87,7 @@
 
                                                                         /* ------------------ PHY CONFIGURATION ------------------- */
 
-#define  EMAC_CFG_PHY_ADDR                              0               /* PHY Address                                              */
+#define  EMAC_CFG_PHY_ADDR                           0x13               /* PHY Address                                              */
 #define  EMAC_CFG_PHY_INT                          DEF_ON               /* Use PHY interrupt                                        */
 
 

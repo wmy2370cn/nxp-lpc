@@ -120,12 +120,12 @@ static  void  VIC_DummyI2S      (void);
 
 void  BSP_Init (void)
 {
-    PLL_Init();                                                 /* Initialize the PLL                                       */
-    MAM_Init();                                                 /* Initialize the Memory Acceleration Module                */
+  //  PLL_Init();                                                 /* Initialize the PLL                                       */
+  //  MAM_Init();                                                 /* Initialize the Memory Acceleration Module                */
     GPIO_Init();                                                /* Initialize the board's I/Os                              */
-    ADC_Init();                                                 /* Initialize the board's ADCs                              */
+ //   ADC_Init();                                                 /* Initialize the board's ADCs                              */
     VIC_Init();                                                 /* Initialize the Vectored Interrupt Controller             */
-    I2C_Init();                                                 /* Initialize the I2C                                       */
+ //   I2C_Init();                                                 /* Initialize the I2C                                       */
 
     Tmr_TickInit();                                             /* Initialize the uC/OS-II tick interrupt                   */
 }

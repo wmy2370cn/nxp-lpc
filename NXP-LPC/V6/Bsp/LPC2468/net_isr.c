@@ -36,7 +36,8 @@
 #include  <includes.h>
 #include  <net.h>
 #include  <net_phy.h>
-#include "iolpc23xx.h"
+#include <LPC24xx.H>
+#include <bsp.h>
 /*
 *********************************************************************************************************
 *                                   NETWORK INTERRUPT INITIALIZATION
@@ -72,8 +73,8 @@ void  NetNIC_IntInit  (void)
 #if (EMAC_CFG_PHY_INT == DEF_ON)
 void  NetNIC_PhyIntInit  (void)
 {
-    IO1INTCLR              |=  DEF_BIT_11;
-    IO1INTENR              |=  DEF_BIT_11;
+//    IO1INTCLR              |=  DEF_BIT_11;
+//    IO1INTENR              |=  DEF_BIT_11;
 
     VICIntSelect           &= ~(1 << VIC_EINT3);                        /* Enable interrupts                                        */
     VICVectAddr17           = (CPU_INT32U)NetNIC_PhyISR_Handler;        /* Set the vector address                                   */
@@ -96,6 +97,6 @@ void  NetNIC_PhyIntInit  (void)
 #if (EMAC_CFG_PHY_INT == DEF_ON)
 void  NetNIC_PhyIntClr (void)
 {
-    IO1INTCLR               =  DEF_BIT_11;
+ //   IO1INTCLR               =  DEF_BIT_11;
 }
 #endif
