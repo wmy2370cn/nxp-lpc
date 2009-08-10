@@ -54,19 +54,30 @@ typedef struct {                        /* TX Status struct                  */
 
 static rt_uint32_t 	current_rb_index;						/* current receive buffer index */
 
-
-/* EMAC local DMA Descriptors. */ 
-/* EMAC local DMA Descriptors. */
-static            RX_Desc rb_descriptors[NUM_RX_FRAG];
-static            TX_Desc tb_descriptors[NUM_TX_FRAG];
  
-static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
-static  TX_Stat Tx_Stat[NUM_TX_FRAG];
+//static            RX_Desc rb_descriptors[NUM_RX_FRAG];
+//static            TX_Desc tb_descriptors[NUM_TX_FRAG];
 
+static            RX_Desc *rb_descriptors ;
+static            TX_Desc *tb_descriptors ;
+
+// static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
+// static  TX_Stat Tx_Stat[NUM_TX_FRAG];
+static  RX_Stat *Rx_Stat ; /* Must be 8-Byte alligned   */
+static  TX_Stat *Tx_Stat ;
+static  rt_uint8_t       *RxBufBaseAddr;
+static  rt_uint8_t       *TxBufBaseAddr;
+
+#define  EMAC_RX_DESC_BASE_ADDR                (EMAC_RAM_BASE_ADDR)
+#define  EMAC_RX_STATUS_BASE_ADDR              (EMAC_RX_DESC_BASE_ADDR   + (NUM_RX_FRAG * sizeof(RX_Desc)))
+#define  EMAC_TX_DESC_BASE_ADDR                (EMAC_RX_STATUS_BASE_ADDR + (NUM_RX_FRAG * sizeof(RX_Stat)))
+#define  EMAC_TX_STATUS_BASE_ADDR              (EMAC_TX_DESC_BASE_ADDR   + (NUM_TX_FRAG * sizeof(TX_Desc)))
+#define  EMAC_RX_BUFF_BASE_ADDR                (EMAC_TX_STATUS_BASE_ADDR + (NUM_TX_FRAG * sizeof(TX_Stat)))
+#define  EMAC_TX_BUFF_BASE_ADDR                (EMAC_RX_BUFF_BASE_ADDR   + (NUM_RX_FRAG * ETH_FRAG_SIZE))
 
 /* EMAC local DMA buffers. */
-static rt_uint32_t rx_buf[NUM_RX_FRAG][ETH_FRAG_SIZE>>2];
-static rt_uint32_t tx_buf[NUM_TX_FRAG][ETH_FRAG_SIZE>>2];
+//static rt_uint32_t rx_buf[NUM_RX_FRAG][ETH_FRAG_SIZE>>2];
+//static rt_uint32_t tx_buf[NUM_TX_FRAG][ETH_FRAG_SIZE>>2];
 
 
 static struct rt_lpc24xx_eth lpc24xx_device;
@@ -80,9 +91,13 @@ void RxDescrInit (void)
 	/* Initialize Receive Descriptor and Status array. */
 	unsigned int i = 0;
 
+	rb_descriptors      =  (RX_Desc *)(EMAC_RX_DESC_BASE_ADDR);
+ 	Rx_Stat            =  (RX_Stat  *)(EMAC_RX_STATUS_BASE_ADDR);
+ 	RxBufBaseAddr       =  (rt_uint8_t *)(EMAC_RX_BUFF_BASE_ADDR);
+ 
 	for (i = 0; i < NUM_RX_FRAG; i++) 
-	{
-		rb_descriptors[i].Packet  = (rt_uint32_t)&rx_buf[i];
+	{ 
+		rb_descriptors[i].Packet  = (rt_uint32_t)(RxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		rb_descriptors[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
 		Rx_Stat[i].Info    = 0;
 		Rx_Stat[i].HashCRC = 0;
@@ -104,9 +119,13 @@ void TxDescrInit (void)
 {
 	unsigned int i;
 
+	tb_descriptors      =  (TX_Desc *)(EMAC_TX_DESC_BASE_ADDR);
+	Tx_Stat            =  (TX_Stat  *)(EMAC_TX_STATUS_BASE_ADDR);
+	TxBufBaseAddr       =  (rt_uint8_t *)(EMAC_TX_BUFF_BASE_ADDR);
+
 	for (i = 0; i < NUM_TX_FRAG; i++) 
 	{
-		tb_descriptors[i].Packet = (rt_uint32_t)&tx_buf[i];
+		tb_descriptors[i].Packet =  (rt_uint32_t)(TxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		tb_descriptors[i].Ctrl   = 0;
 		Tx_Stat[i].Info   = 0;
 	}
@@ -1063,8 +1082,8 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	//ÉèÖÃMACµØÖ·
  	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
- //	TxDescrInit();
- //	RxDescrInit();
+  	TxDescrInit();
+ 	RxDescrInit();
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 

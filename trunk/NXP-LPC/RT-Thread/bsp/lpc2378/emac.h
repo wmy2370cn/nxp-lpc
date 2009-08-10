@@ -12,6 +12,7 @@
 #define  ACCEPT_BROADCAST                           DEF_BIT_01
 #define  ACCEPT_PERFECT                             DEF_BIT_05
 
+#define  EMAC_RAM_BASE_ADDR                   (0x7FE00000)              /* Base address of dedicated AHB2 Ethernet RAM              */
 
 /* EMAC Memory Buffer configuration for 16K Ethernet RAM. */
 #define NUM_RX_FRAG         4           /* Num.of RX Fragments 4*1536= 6.0kB */
