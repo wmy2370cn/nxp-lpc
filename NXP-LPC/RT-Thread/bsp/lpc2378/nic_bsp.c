@@ -206,9 +206,9 @@ INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg)
 	return (MAC_MRDD);
 }
 
-INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
+rt_uint16_t read_phy_ex ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg,rt_uint16_t *err)
 {
-	INT32U tout = 0;
+	rt_uint32_t tout = 0;
 
 	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
@@ -526,8 +526,78 @@ rt_uint32_t  get_phy_link_speed (void)
 		}
 	}
 }
+ 
+/*********************************************************************************************************
+** 函数名称: get_phy_link_duplex
+** 函数名称: get_phy_link_duplex
+**
+** 功能描述：  Returns the duplex mode of the current Ethernet link
+**            his probes the Davicom DM9161AE '3.3V Dual-Speed Fast Ethernet Transceiver'
+** 输　入:  void
+**          
+** 输　出:   rt_uint32_t  0 = Unknown (Auto-Neg in progress), 1 = Half Duplex, 2 = Full Duplex
+**         
+** 全局变量:  
+** 调用模块: EMAC_Init()
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+rt_uint32_t  get_phy_link_duplex (void)
+{
+	rt_uint32_t  bmcr;
+	rt_uint32_t  bmsr;
+	rt_uint32_t  lpa;
+	rt_uint16_t     err;
 
-static void  set_phy_autoneg  (void)
+	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+
+	if ((bmsr & BMSR_LSTATUS) == 0)
+	{
+		return (NET_PHY_DUPLEX_UNKNOWN);   /* No link, return 'Duplex Uknown'                          */
+	}
+
+	bmcr    = read_phy_ex(PHYID, PHY_REG_BMCR, &err);       /* Read the PHY Control Register      */
+
+	if ((bmcr & BMCR_ANENABLE) == BMCR_ANENABLE)
+	{	/* If AutoNegotiation is enabled   */
+		if ((bmsr & BMSR_ANEGCOMPLETE) == 0) 
+		{     /* If AutoNegotiation is not complete                       */
+			return (NET_PHY_DUPLEX_UNKNOWN);   /* AutoNegotitation in progress       */
+		}
+
+		lpa = read_phy_ex(PHYID, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
+
+		if (((lpa & ANLPAR_100FULL) == ANLPAR_100FULL) || ((lpa & ANLPAR_10FULL) == ANLPAR_10FULL)) 
+		{
+			return (NET_PHY_DUPLEX_FULL);
+		}
+		else 
+		{
+			return (NET_PHY_DUPLEX_HALF);
+		}
+	} 
+	else
+	{  /* Auto-negotiation not enabled, get duplex from BMCR       */
+		if ((bmcr & BMCR_FULLDPLX) == BMCR_FULLDPLX)
+		{
+			return (NET_PHY_DUPLEX_FULL);
+		} 
+		else
+		{
+			return (NET_PHY_DUPLEX_HALF);
+		}
+	}
+}
+
+static void  phy_auto_nego  (void)
 {
 	rt_uint16_t   i;
 	rt_uint16_t   reg_val;
@@ -554,6 +624,138 @@ static void  set_phy_autoneg  (void)
 			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
 			i--;
 		} while (((reg_val & BMSR_LSTATUS) == 0) && (i > 0));           /* While link not established and retries remain    */
+	}
+} 
+/*********************************************************************************************************
+** 函数名称: nic_link_change
+** 函数名称: nic_link_change
+**
+** 功能描述：  This function is called by NetNIC_Init and the PHY ISR in order to update the
+**             speed and duplex settings for the EMAC. 
+** 输　入:  rt_uint32_t link_speed
+** 输　入:  rt_uint32_t link_duplex
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
+{
+	switch (link_speed)
+	{
+		case NET_PHY_SPD_0:                                             /* Assume 10Mbps operation until linked                     */
+		case NET_PHY_SPD_10:
+			MAC_SUPP      &=  ~SUPP_SPEED;                                 /* Configure the RMII logic (if used) for 10MBps operation  */
+			break;
+
+		case NET_PHY_SPD_100:
+			MAC_SUPP      |=   SUPP_SPEED;                                 /* Configure the RMII logic (if uses) for 100MBps operation */
+			break;
+	}
+
+	switch (link_duplex) 
+	{
+		case NET_PHY_DUPLEX_UNKNOWN:                                    /* Assume half duplex until link duplex is known            */
+		case NET_PHY_DUPLEX_HALF:
+			MAC_MAC2      &=  ~MAC2_FULL_DUP;                           /* Configure the EMAC to run in HALF duplex mode            */
+			MAC_COMMAND   &=  ~COMMAND_FULL_DUPLEX;                        /* Configure the MII logic for a Half Duplex PHY Link       */
+			MAC_IPGT       =   IPGT_HALF_DUP;	                            /* Set inter packet gap to the recommended Half Duplex      */
+			break;
+
+		case NET_PHY_DUPLEX_FULL:
+			MAC_MAC2      |=   MAC2_FULL_DUP;                           /* Configure the EMAC to run in FULL duplex mode            */
+			MAC_COMMAND   |=   COMMAND_FULL_DUPLEX;                        /* Configure the MII logic for a Full Duplex PHY Link       */
+			MAC_IPGT       =   IPGT_FULL_DUP;	                            /* Set inter packet gap to the recommended Full Duplex      */
+			break;
+	}
+}
+
+/*********************************************************************************************************
+** 函数名称: nic_linkup
+** 函数名称: nic_linkup
+**
+** 功能描述：  Message from NIC that the ethernet link is up.
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  WARNING: Called in interruption context most of the time.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void  nic_linkup (void)
+{
+	rt_uint32_t  link_speed;
+	rt_uint32_t  link_duplex;
+
+	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
+	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
+
+	if (link_speed == NET_PHY_SPD_0 || link_duplex == NET_PHY_DUPLEX_UNKNOWN) 
+	{   /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(NET_PHY_SPD_0, NET_PHY_DUPLEX_UNKNOWN);    
+	}
+	else
+	{                /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(link_speed,    link_duplex);  
+	}
+}
+/*********************************************************************************************************
+** 函数名称: nic_linkdown
+** 函数名称: nic_linkdown
+**
+** 功能描述：  Message from NIC that the ethernet link is down.
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  WARNING: Called in interruption context most of the time.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void  nic_linkdown (void)
+{
+	rt_uint32_t  link_speed;
+	rt_uint32_t  link_duplex;
+
+	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
+	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
+
+	if (link_speed == NET_PHY_SPD_0 || link_duplex == NET_PHY_DUPLEX_UNKNOWN)
+	{    /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(NET_PHY_SPD_0, NET_PHY_DUPLEX_UNKNOWN);   
+	} 
+	else
+	{  /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(link_speed,    link_duplex);                
 	}
 }
 
@@ -684,10 +886,49 @@ static void  phy_hw_init (void)
  	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
  	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
 }
-/* ENET Device Revision ID */
-#define OLD_EMAC_MODULE_ID  0x39022000  /* Rev. ID for first rev '-'         */
-#define  COMMAND                    (*((volatile  unsigned  int *)0xFFE00100))  /* Command Register                             */
+/*
+*********************************************************************************************************
+*                                         NetNIC_PhyInit()
+*
+* Description : Initialize phyter (ethernet link controller)
+*               This instance configures the Davicom DM9161AE PHY
+*
+* Argument(s) : none.
+*
+* Return(s)   : 1 for OK, 0 for error
+*
+* Caller(s)   : EMAC_Init()
+*
+* Note(s)     : Assumes the MDI port as already been enabled for the PHY.
+*********************************************************************************************************
+*/
+rt_uint16_t  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
+void  nic_phy_init   (rt_uint16_t *perr)
+{
+	volatile  rt_uint32_t  reg_val;
 
+ 
+	phy_auto_nego();                                                /* Perform auto-negotiation                                 */
+
+	NetNIC_ConnStatus = get_phy_link_state();      /* Set NetNIC_ConnStatus according to link state            */
+
+	if (NetNIC_ConnStatus == RT_TRUE)
+	{
+		nic_linkup();
+	} 
+	else
+	{
+		nic_linkdown();
+	}
+	//挂接中断 
+//	NetNIC_PhyIntInit();
+
+// 	reg_val     = NetNIC_PhyRegRd(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, perr); /* Clear interrupts                                         */
+// 	reg_val    |= MDINTER_FDX_MSK | MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK;
+// 	reg_val    &= ~(MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK);
+
+//	NetNIC_PhyRegWr(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, reg_val, perr);   /* Enable link change interrupt                             */
+ }
 static rt_err_t rt_dm9161_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;
@@ -725,7 +966,7 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
   	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
  	MAC_MAXF = ETH_MAX_FLEN;
    	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
-// 
+ 
 // 	/* Enable Reduced MII interface. */
  	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
   	MAC_MCMD                =   0;                                          /* Clear MII command register                               */
@@ -778,15 +1019,10 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
 	}
 
-
-	//set_phy_autoneg( );
-//	write_phy(PHYID, PHY_REG_ANAR, ANAR_10HALF);
+	nic_phy_init(&ret); 
 
 	tempreg = read_phy(PHYID, DM9161_DSCSR );
-	ret = get_phy_autoneg_state( );
-	ret = get_phy_link_state();
-	ret = get_phy_link_speed();
-
+	
 
 	MAC_CLRT = CLRT_DEF;
 	MAC_IPGR = IPGR_DEF;
@@ -825,7 +1061,7 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 
 
 	//设置MAC地址
-//	SetMacID();
+ 	SetMacID();
 	 // Initialize Tx and Rx DMA Descriptors 
  //	TxDescrInit();
  //	RxDescrInit();
