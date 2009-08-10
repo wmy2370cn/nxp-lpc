@@ -15,8 +15,8 @@
 #define  EMAC_RAM_BASE_ADDR                   (0x7FE00000)              /* Base address of dedicated AHB2 Ethernet RAM              */
 
 /* EMAC Memory Buffer configuration for 16K Ethernet RAM. */
-#define NUM_RX_FRAG         4           /* Num.of RX Fragments 4*1536= 6.0kB */
-#define NUM_TX_FRAG         2           /* Num.of TX Fragments 2*1536= 3.0kB */
+#define NUM_RX_FRAG         8          /* Num.of RX Fragments 4*1536= 6.0kB */
+#define NUM_TX_FRAG         4           /* Num.of TX Fragments 2*1536= 3.0kB */
 #define ETH_FRAG_SIZE       1536        /* Packet Fragment size 1536 Bytes   */
 
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
@@ -39,6 +39,9 @@
 #define TX_STAT_INFO(i)     (*(unsigned int *)(TX_STAT_BASE   + 4*i))
 #define RX_BUF(i)           (RX_BUF_BASE + ETH_FRAG_SIZE*i)
 #define TX_BUF(i)           (TX_BUF_BASE + ETH_FRAG_SIZE*i)
+
+#define  PHY_RDWR_RETRIES                  8                            /* Attempt to read or write the PHY 8 times             */
+
 
 /* MAC Configuration Register 1 */
 #define MAC1_REC_EN         0x00000001  /* Receive Enable                    */
@@ -96,6 +99,8 @@
 /* MII Management Command Register */
 #define MCMD_READ           0x00000001  /* MII Read                          */
 #define MCMD_SCAN           0x00000002  /* MII Scan continuously             */
+#define MCMD_WRITE          0x00000000
+ 
 
 #define MII_WR_TOUT         0x00050000  /* MII Write timeout count           */
 #define MII_RD_TOUT         0x00050000  /* MII Read timeout count            */
@@ -237,6 +242,13 @@
 #define RINFO_ERR_MASK     (RINFO_FAIL_FILT | RINFO_CRC_ERR   | RINFO_SYM_ERR | \
 	RINFO_LEN_ERR   | RINFO_ALIGN_ERR | RINFO_OVERRUN)
 
+#define  EMAC_TX_DESC_INT                       0x80000000              /* EMAC Descriptor Tx and Rx Control bits                   */
+#define  EMAC_TX_DESC_LAST                      0x40000000
+#define  EMAC_TX_DESC_CRC                       0x20000000
+#define  EMAC_TX_DESC_PAD                       0x10000000
+#define  EMAC_TX_DESC_HUGE                      0x08000000
+#define  EMAC_TX_DESC_OVERRIDE                  0x04000000
+
 /* TX Descriptor Control Word */
 #define TCTRL_SIZE          0x000007FF  /* Size of data buffer in bytes      */
 #define TCTRL_OVERRIDE      0x04000000  /* Override Default MAC Registers    */
@@ -271,24 +283,3 @@
 #define MCFG_CLK_DIV14      0x00000014  /* MDC = hclk / 14                   */
 #define MCFG_CLK_DIV20      0x00000018  /* MDC = hclk / 20                   */
 #define MCFG_CLK_DIV28      0x0000001C  /* MDC = hclk / 28                   */
-
-
-#define RxDESC_FLAG_ADDR_MASK		0xfffffffc
-#define	RxDESC_FLAG_WARP			0x00000002
-#define	RxDESC_FLAG_OWNSHIP			0x00000001
-
-#define RxDESC_STATUS_BUF_SIZE		(0x00000FFF)
-#define RxDESC_STATUS_FRAME_START	(1U << 14)
-#define RxDESC_STATUS_FRAME_END		(1U << 15)
-
-
-#define TxDESC_STATUS_BUF_SIZE		(0x000007FF)
-#define TxDESC_STATUS_LAST_BUF		(1U << 15)
-#define	TxDESC_STATUS_NO_CRC		(1U << 16)
-#define	TxDESC_STATUS_BUF_EXHAUSTED	(1U << 27)
-#define	TxDESC_STATUS_Tx_UNDERRUN	(1U << 28)
-#define	TxDESC_STATUS_Tx_ERROR		(1U << 29)
-#define	TxDESC_STATUS_WRAP			(1U << 30)
-#define	TxDESC_STATUS_USED			(1U << 31)
-
-
