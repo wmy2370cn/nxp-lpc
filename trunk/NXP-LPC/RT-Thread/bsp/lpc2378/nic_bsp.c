@@ -25,6 +25,8 @@ struct rt_lpc24xx_eth
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
 };
 
+
+//此处需要再确认下要不要??????
 #define RB_BUFFER_SIZE		8			/* max number of receive buffers */
 #define ETH_RX_BUF_SIZE		128
 
@@ -162,11 +164,11 @@ void TxDescrInit (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
+rt_uint8_t write_phy (rt_uint32_t phyadd,rt_uint32_t PhyReg, rt_uint32_t Value)
 {
 	unsigned int tout;
 
-	//MAC_MCMD = 0x0000;			        // Issue a Write COMMAND     
+	MAC_MCMD = MCMD_WRITE;			        // Issue a Write COMMAND     
 	MAC_MADR = (phyadd<<8) | PhyReg;    //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr
 	MAC_MWTD = Value;                   //Write the data to the Management Write Data register
 
@@ -181,6 +183,36 @@ INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
 	}
 	//超时
 	return FALSE;
+}
+void  write_phy_ex (rt_uint8_t  phy, rt_uint8_t  reg, rt_uint16_t  val, rt_uint16_t  *perr)
+{
+	rt_uint8_t  retries;
+	volatile  rt_uint32_t  i;
+
+
+	retries     =   0;                                                  /* Initialize retries to 0                                  */
+
+	MAC_MCMD        =   MCMD_WRITE;                                         /* Issue a Write COMMAND                                    */
+	MAC_MADR        =  (phy << 8) | reg;                                    /* [12:8] == PHY addr, [4:0]=0x00(BMCR) register addr       */
+	MAC_MWTD        =   val;                                                /* Write the data to the Management Write Data register     */
+
+	while ((MAC_MIND != 0) && (retries < PHY_RDWR_RETRIES))
+	{               /* Read the Management Indicator register, MII busy if > 0  */
+		for (i = 0; i < 1000; i++)
+		{                                    /* Delay while the read is in progress                      */
+			;
+		}
+		retries++;
+	}
+
+	if (retries >= PHY_RDWR_RETRIES)
+	{                                  /* If there are no retries remaining                        */
+		*perr     = NET_PHY_ERR_REGWR_TIMEOUT;                           /* Return an error code if the PHY Read timed out           */
+	}
+	else 
+	{
+		*perr     = NET_PHY_ERR_NONE;
+	}
 }
 /*********************************************************************************************************
 ** 函数名称: ReadPHY
@@ -205,13 +237,13 @@ INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/ 
-INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg) 
+rt_uint16_t read_phy ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg) 
 {
-	INT32U tout = 0;
+	rt_uint32_t tout = 0;
 
-	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+	MAC_MCMD =  0;            // Clear the Read COMMAND   
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 1;                     // Clear the Read COMMAND    
+	MAC_MCMD = MCMD_READ;             //   Issue a Read COMMAND 
 	
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -221,7 +253,6 @@ INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg)
 			break;
 		}
 	}
-	MAC_MCMD = 0;
 	return (MAC_MRDD);
 }
 
@@ -229,9 +260,9 @@ rt_uint16_t read_phy_ex ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg,rt_uint16_t *er
 {
 	rt_uint32_t tout = 0;
 
-	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
+	MAC_MCMD = 0;                     // Clear the Read COMMAND    
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 1;                     // Clear the Read COMMAND    
+	MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
 
 	/* Wait until operation completed */
 	for (tout = 0; tout < MII_RD_TOUT; tout++) 
@@ -249,7 +280,6 @@ rt_uint16_t read_phy_ex ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg,rt_uint16_t *er
 	{
 		*err = NET_PHY_ERR_NONE;
 	}
-	MAC_MCMD = 0;
 	return (MAC_MRDD);
 }
 /******************************************************************************
@@ -295,11 +325,11 @@ void EMAC_TxDisable( void )
 	return;
 }
 /* interrupt service routine */
-void rt_dm9000_isr(int irqno)
+void nic_isr_handler( void )
 {
-    rt_uint32_t status;
+    rt_uint32_t status   =  (MAC_INTSTATUS & MAC_INTENABLE);
 
-    if (status) // if receive packet
+    if (status & INT_RX_DONE) // if receive packet
     {
         rt_err_t result;
 
@@ -308,9 +338,14 @@ void rt_dm9000_isr(int irqno)
         RT_ASSERT(result == RT_EOK);
     }
 
-    if (status) // if finished packet transmission
-    {
-    }
+	if ((status & (INT_RX_OVERRUN)) > 0) 
+	{                           /* If a fator Overrun error has occured                     */
+		MAC_INTCLEAR            = (INT_RX_OVERRUN);                         /* Clear the overrun interrupt flag                         */
+		MAC_COMMAND            |=  COMMAND_RESET_RX;                        /* Soft reset the Rx datapath, this disables the receiver   */
+		MAC_COMMAND            |=  COMMAND_RX_EN;                           /* Re-enable the reciever                                   */
+		MAC_MAC1               |=  MAC1_REC_EN;                             /* Re-enable the reciever                                   */
+	}
+
 }
 
 #define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
@@ -325,8 +360,6 @@ void rt_dm9000_isr(int irqno)
 #define  NET_IF_ADDR_BROADCAST_04                       0xFF
 #define  NET_IF_ADDR_BROADCAST_05                       0xFF
 rt_uint8_t   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.                                      */
-
-
 /*********************************************************************************************************
 ** 函数名称: SetMacID
 ** 函数名称: SetMacID
@@ -1066,11 +1099,11 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 	}
 	else if(tempreg & 0x1000)//10hdx
 	{
-    	MAC_MAC2 = 0x30;		/* half duplex, CRC and PAD enabled. */
-		MAC_SUPP = 0;	/* RMII Support Reg. speed is set to 10M */
-		MAC_COMMAND |= 0x0240;
-		/* back to back int-packet gap */
-		MAC_IPGT = 0x0012;		/* IPG setting in half duplex mode */ 
+//     	MAC_MAC2 = 0x30;		/* half duplex, CRC and PAD enabled. */
+// 		MAC_SUPP = 0;	/* RMII Support Reg. speed is set to 10M */
+// 		MAC_COMMAND |= 0x0240;
+// 		/* back to back int-packet gap */
+// 		MAC_IPGT = 0x0012;		/* IPG setting in half duplex mode */ 
 	}
 	else
 	{//出错啦
@@ -1154,17 +1187,22 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 	static rt_uint32_t current_tb_index = 0;
 	rt_uint32_t is_last, tx_offset = 0, remain, pdu_length;
 
+	rt_uint32_t TxProduceIndex = MAC_TXPRODUCEINDEX;
+	rt_uint32_t TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+
 	while(tx_offset < length)
 	{
 		/* check whether buffer is available */
-		while(!(tb_descriptors[current_tb_index].Ctrl & TxDESC_STATUS_USED))
-		{
-			/* no buffer */
+		while( TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
+		{	/* no buffer */
 			rt_thread_delay(5);
+			TxProduceIndex = MAC_TXPRODUCEINDEX;
+			TxConsumeIndex = MAC_TXCONSUMEINDEX;
 		}
 
 		/* Get the address of the buffer from the descriptor, then copy
 		the data into the buffer. */
+		current_tb_index = MAC_TXPRODUCEINDEX;
 		buf_ptr = (rt_uint8_t *)tb_descriptors[current_tb_index].Packet;
 
 		/* How much can we write to the buffer? */
@@ -1176,30 +1214,28 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 		tx_offset += pdu_length;
 
 		/* Is this the last data for the frame? */
-		if((eof == RT_TRUE) && ( tx_offset >= length )) is_last = TxDESC_STATUS_LAST_BUF;
-		else is_last = 0;
+		if((eof == RT_TRUE) && ( tx_offset >= length ))
+			is_last = RT_TRUE;
+		else 
+			is_last = RT_FALSE;
 
 		/* Fill out the necessary in the descriptor to get the data sent,
 		then move to the next descriptor, wrapping if necessary. */
-		if(current_tb_index >= (TB_BUFFER_SIZE - 1))
-		{
-			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
-				| is_last
-				| TxDESC_STATUS_WRAP;
-			current_tb_index = 0;
-		}
-		else
-		{
-			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
-				| is_last;
-			current_tb_index++;
-		}
 
-		/* If this is the last buffer to be sent for this frame we can start the transmission. */
 		if(is_last)
-		{
-			//AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
-		}
+		tb_descriptors[current_tb_index].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
+			EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
+			EMAC_TX_DESC_LAST       |        /* No additional descriptors to follow, this is the last    */
+			EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
+			(pdu_length - 1);                       /* Write the size of the frame, starting from 0             */
+		else
+			tb_descriptors[current_tb_index].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
+			EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
+			EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
+			(pdu_length - 1);               /* Write the size of the frame, starting from 0             */
+
+
+		MAC_TXPRODUCEINDEX      =   (MAC_TXPRODUCEINDEX + 1) % NUM_TX_FRAG;    /* Increment the produce Ix register, initiate Tx of frame  */
 	}
 }
 /* ethernet device interface */
@@ -1230,7 +1266,7 @@ void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uin
 	static rt_uint8_t* src_ptr;
 	register rt_uint32_t buf_remain, section_remain;
 	static rt_uint32_t section_read = 0, buf_offset = 0, frame_read = 0;
-
+#if 0
 	if(ptr == RT_NULL)
 	{
 		/* Reset our state variables ready for the next read from this buffer. */
@@ -1289,11 +1325,13 @@ void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uin
 			}
 		}
 	}
+#endif
 }
 
 struct pbuf *lpc24xxether_rx(rt_device_t dev)
 {
 	struct pbuf *p = RT_NULL;
+#if 0
 	/* skip fragment frame */
 	while((rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_OWNSHIP)&& !(rb_descriptors[current_rb_index].Ctrl & RxDESC_STATUS_FRAME_START))
 	{
@@ -1339,6 +1377,7 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 //	AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP;
 
 
+#endif
 }
 
 /* reception packet. */
