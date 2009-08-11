@@ -4,6 +4,8 @@
 #include "iolpc23xx.h"
 #include "emac_def.h"
 #include "dm9161_def.h"
+#include "dm9161.h"
+#include "net_bsp.h"
 
 
 /*********************************************************************************************************
@@ -203,7 +205,48 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 		break;
 	}
 }
+/******************************************************************************
+** Function name:		emac_rx_enanble/emac_rx_disable
+**
+** Descriptions:		EMAC RX API modules
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+void emac_rx_enanble( void )
+{
+	MAC_COMMAND |= CR_RX_EN;
+	MAC_MAC1 |= MAC1_REC_EN;
+	return;    
+}
 
+void emac_rx_disable( void )
+{
+	MAC_COMMAND &= ~CR_RX_EN;
+	MAC_MAC1 &= ~MAC1_REC_EN;
+	return;
+}
+/******************************************************************************
+** Function name:		emac_tx_enable/emac_tx_disable
+**
+** Descriptions:		EMAC TX API modules
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+void emac_tx_enable( void )
+{
+	MAC_COMMAND |= 0x02;
+	return;
+}
+
+void emac_tx_disable( void )
+{
+	MAC_COMMAND &= ~0x02;
+	return;
+}
 /* ----------------- MCFG bits ---------------- */
 #define  MCFG_CLKSEL_DIV4                             0x0000
 #define  MCFG_CLKSEL_DIV6                             0x0008
@@ -246,11 +289,11 @@ rt_uint16_t PHYREG[80];
 INT16U PHYID;
 rt_err_t rt_emac_init(rt_device_t dev)
 {
-	unsigned int regv,tout,id1,id2 ,i = 0;
+	unsigned int  tout, i = 0;
 	rt_uint32_t  tempreg = 0;
 	rt_uint16_t  ret = 0;
 
-	rt_uint32_t clk_freq            =   BSP_CPU_ClkFreq();  
+	rt_uint32_t clk_freq            =   bsp_cpu_clk_freq();  
 
 	clk_freq           /=   100000;        
 	/* Power Up the EMAC controller. */
@@ -267,8 +310,8 @@ rt_err_t rt_emac_init(rt_device_t dev)
 
 	//Deassert all prior resets
 	MAC_MAC1 = 0;
-	EMAC_RxDisable();
-	EMAC_TxDisable();
+	emac_rx_disable();
+	emac_tx_disable();
 	/* Configure EMAC / PHY communication to RMII mode          */
 	MAC_COMMAND            |=   COMMAND_RMII;  
 	/* Assume and configure RMII link speed logic for 10Mbit    */
@@ -326,7 +369,7 @@ rt_err_t rt_emac_init(rt_device_t dev)
 	//	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
 	for ( i = 0; i < 5; i++ )
 	{
-		hd_DelayMS(1000);
+		rt_delayms(1000);
 	}
 
 	for(i=0;i<32;i++)
@@ -355,8 +398,8 @@ rt_err_t rt_emac_init(rt_device_t dev)
 	//ÉèÖÃMACµØÖ·
 	SetMacID();
 	// Initialize Tx and Rx DMA Descriptors 
-	TxDescrInit();
-	RxDescrInit();
+	tx_descr_init();
+	rx_descr_init();
 	/* Enable EMAC interrupts. */
 	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
 
@@ -369,14 +412,14 @@ rt_err_t rt_emac_init(rt_device_t dev)
 		INT_RX_DONE      |
 		INT_TX_UNDERRUN  |
 		INT_TX_ERR       |
-		INT_TX_FIN  |
+		INT_TX_FIN       |
 		INT_TX_DONE      |
-		INT_SOFT_INT         |
+		INT_SOFT_INT     |
 		INT_WAKEUP);
 
 	nic_int_init();
 	/* Enable receive and transmit mode of MAC Ethernet core */
-	EMAC_RxEnable();
-	EMAC_TxEnable();
+	emac_rx_enanble();
+	emac_tx_enable();
 	return RT_EOK;
 }
