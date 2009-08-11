@@ -5,6 +5,8 @@
 
 #include "applib.h"
 #include "dm9161.h"
+#include "net_bsp.h"
+#include "emac.h"
  
 
 /*********************************************************************************************************
@@ -35,8 +37,8 @@ rt_uint8_t  get_phy_autoneg_state(void)
 	rt_uint16_t     err = 0;
 	rt_uint32_t  reg_val;
 
-	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
+	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
 
 	if (err   != NET_PHY_ERR_NONE) 
 	{
@@ -83,8 +85,8 @@ rt_uint8_t  get_phy_link_state (void)
 
 	/* DM9161AE register 0x01: Basic Status Register #1      */
 	/* BIT 2 , Link Status, 1 = linked, 0 = not linked.      */
-	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
+	reg_val      = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
+	reg_val      = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
 
 	if (err   != NET_PHY_ERR_NONE)
 	{
@@ -132,15 +134,15 @@ rt_uint32_t  get_phy_link_speed (void)
 	rt_uint32_t  lpa;
 	rt_uint16_t   err;
 
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
 
 	if ((bmsr & BMSR_LSTATUS) == 0)
 	{
 		return (NET_PHY_SPD_0);                                         /* No link                                                  */
 	}
 
-	bmcr    = read_phy_ex(PHYID, PHY_REG_BMCR, &err);       /* Read the PHY Control Register                            */
+	bmcr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, &err);       /* Read the PHY Control Register                            */
 
 	if ((bmcr & BMCR_ANENABLE) == BMCR_ANENABLE)
 	{	/* If AutoNegotiation is enabled                            */
@@ -149,7 +151,7 @@ rt_uint32_t  get_phy_link_speed (void)
 			return (NET_PHY_SPD_0);       					            /* AutoNegotitation in progress                             */
 		}
 
-		lpa = read_phy_ex(PHYID, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
+		lpa = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
 
 		if (((lpa & ANLPAR_100FULL) == ANLPAR_100FULL) || ((lpa & ANLPAR_100HALF) == ANLPAR_100HALF))
 		{
@@ -202,15 +204,15 @@ rt_uint32_t  get_phy_link_duplex (void)
 	rt_uint32_t  lpa;
 	rt_uint16_t     err;
 
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
 
 	if ((bmsr & BMSR_LSTATUS) == 0)
 	{
 		return (NET_PHY_DUPLEX_UNKNOWN);   /* No link, return 'Duplex Uknown'                          */
 	}
 
-	bmcr    = read_phy_ex(PHYID, PHY_REG_BMCR, &err);       /* Read the PHY Control Register      */
+	bmcr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, &err);       /* Read the PHY Control Register      */
 
 	if ((bmcr & BMCR_ANENABLE) == BMCR_ANENABLE)
 	{	/* If AutoNegotiation is enabled   */
@@ -219,7 +221,7 @@ rt_uint32_t  get_phy_link_duplex (void)
 			return (NET_PHY_DUPLEX_UNKNOWN);   /* AutoNegotitation in progress       */
 		}
 
-		lpa = read_phy_ex(PHYID, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
+		lpa = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
 
 		if (((lpa & ANLPAR_100FULL) == ANLPAR_100FULL) || ((lpa & ANLPAR_10FULL) == ANLPAR_10FULL)) 
 		{
@@ -266,9 +268,52 @@ static void  phy_auto_nego  (void)
 		do {                                                            /* Do while auto-neg incomplete, or retries expired */
 			for (tout = 5000; tout; tout--);
 			/* Wait for a while auto-neg to proceed (net_bsp.c) */
-			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
-			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
+			reg_val = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
+			reg_val = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
 			i--;
 		} while (((reg_val & BMSR_LSTATUS) == 0) && (i > 0));           /* While link not established and retries remain    */
 	}
 } 
+/*
+*********************************************************************************************************
+*                                         NetNIC_PhyInit()
+*
+* Description : Initialize phyter (ethernet link controller)
+*               This instance configures the Davicom DM9161AE PHY
+*
+* Argument(s) : none.
+*
+* Return(s)   : 1 for OK, 0 for error
+*
+* Caller(s)   : EMAC_Init()
+*
+* Note(s)     : Assumes the MDI port as already been enabled for the PHY.
+*********************************************************************************************************
+*/
+rt_uint16_t  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
+void  nic_phy_init   (rt_uint16_t *perr)
+{
+	volatile  rt_uint32_t  reg_val;
+
+
+	phy_auto_nego();                                                /* Perform auto-negotiation                                 */
+
+	NetNIC_ConnStatus = get_phy_link_state();      /* Set NetNIC_ConnStatus according to link state            */
+
+	if (NetNIC_ConnStatus == RT_TRUE)
+	{
+		nic_linkup();
+	} 
+	else
+	{
+		nic_linkdown();
+	}
+	//π“Ω”÷–∂œ 
+	//	NetNIC_PhyIntInit();
+
+	// 	reg_val     = NetNIC_PhyRegRd(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, perr); /* Clear interrupts                                         */
+	// 	reg_val    |= MDINTER_FDX_MSK | MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK;
+	// 	reg_val    &= ~(MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK);
+
+	//	NetNIC_PhyRegWr(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, reg_val, perr);   /* Enable link change interrupt                             */
+}

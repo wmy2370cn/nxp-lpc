@@ -1,4 +1,5 @@
 
+  
 
 #pragma  once
 
@@ -100,7 +101,7 @@
 #define MCMD_READ           0x00000001  /* MII Read                          */
 #define MCMD_SCAN           0x00000002  /* MII Scan continuously             */
 #define MCMD_WRITE          0x00000000
- 
+
 
 #define MII_WR_TOUT         0x00050000  /* MII Write timeout count           */
 #define MII_RD_TOUT         0x00050000  /* MII Read timeout count            */
