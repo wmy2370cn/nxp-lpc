@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\emac_def.h"
+				>
+			</File>
+			<File
 				RelativePath="..\lpc2378\nic.h"
 				>
 			</File>
