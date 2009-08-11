@@ -15,8 +15,8 @@
 #define  EMAC_RAM_BASE_ADDR                   (0x7FE00000)              /* Base address of dedicated AHB2 Ethernet RAM              */
 
 /* EMAC Memory Buffer configuration for 16K Ethernet RAM. */
-#define NUM_RX_FRAG         8          /* Num.of RX Fragments 4*1536= 6.0kB */
-#define NUM_TX_FRAG         4           /* Num.of TX Fragments 2*1536= 3.0kB */
+#define NUM_RX_FRAG         6          /* Num.of RX Fragments 6*1536= 9.0kB */
+#define NUM_TX_FRAG         4           /* Num.of TX Fragments 4*1536= 6.0kB */
 #define ETH_FRAG_SIZE       1536        /* Packet Fragment size 1536 Bytes   */
 
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */

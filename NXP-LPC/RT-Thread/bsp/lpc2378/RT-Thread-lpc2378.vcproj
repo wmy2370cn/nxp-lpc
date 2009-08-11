@@ -168,7 +168,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dm9161.c"
+				>
+			</File>
+			<File
 				RelativePath="..\lpc2378\dm9161.h"
+				>
+			</File>
+			<File
+				RelativePath=".\emac.c"
 				>
 			</File>
 			<File
