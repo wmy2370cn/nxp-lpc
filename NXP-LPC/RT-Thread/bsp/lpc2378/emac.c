@@ -217,15 +217,13 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 void emac_rx_enanble( void )
 {
 	MAC_COMMAND |= CR_RX_EN;
-	MAC_MAC1 |= MAC1_REC_EN;
-	return;    
+    return;    
 }
 
 void emac_rx_disable( void )
 {
 	MAC_COMMAND &= ~CR_RX_EN;
-	MAC_MAC1 &= ~MAC1_REC_EN;
-	return;
+	 return;
 }
 /******************************************************************************
 ** Function name:		emac_tx_enable/emac_tx_disable
@@ -238,13 +236,13 @@ void emac_rx_disable( void )
 ******************************************************************************/
 void emac_tx_enable( void )
 {
-	MAC_COMMAND |= 0x02;
+	MAC_COMMAND |= CR_TX_EN;
 	return;
 }
 
 void emac_tx_disable( void )
 {
-	MAC_COMMAND &= ~0x02;
+	MAC_COMMAND &= ~CR_TX_EN;
 	return;
 }
 /* ----------------- MCFG bits ---------------- */
@@ -357,16 +355,11 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 		}
 	}
 
-	if (PHYID == 0 || PHYID > 32)
-	{//出错
-
-	}
-
+	
 	//	PHYID = 0;
 	//  复位PHY芯片
 	//  等待一段指定的时间，使PHY就绪 
 	//	write_phy(PHYID, PHY_REG_BMCR,  BMCR_RESET|BMCR_ANRESTART|BMCR_ANENABLE  );
-	//	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
 	for ( i = 0; i < 5; i++ )
 	{
 		rt_delayms(1000);
