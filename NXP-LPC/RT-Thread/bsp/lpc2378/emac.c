@@ -287,7 +287,7 @@ static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
 ********************************************************************************************************/ 
 rt_uint16_t PHYREG[80];
 INT16U PHYID;
-rt_err_t rt_emac_init(rt_device_t dev)
+rt_err_t lpc24xxether_init(rt_device_t dev)
 {
 	unsigned int  tout, i = 0;
 	rt_uint32_t  tempreg = 0;
@@ -396,7 +396,7 @@ rt_err_t rt_emac_init(rt_device_t dev)
 	}
 
 	//…Ë÷√MACµÿ÷∑
-	SetMacID();
+ 	set_mac_id();
 	// Initialize Tx and Rx DMA Descriptors 
 	tx_descr_init();
 	rx_descr_init();
@@ -416,6 +416,8 @@ rt_err_t rt_emac_init(rt_device_t dev)
 		INT_TX_DONE      |
 		INT_SOFT_INT     |
 		INT_WAKEUP);
+	/* update mac address */
+//	update_mac_address(&lpc24xx_device);
 
 	nic_int_init();
 	/* Enable receive and transmit mode of MAC Ethernet core */
@@ -423,3 +425,4 @@ rt_err_t rt_emac_init(rt_device_t dev)
 	emac_tx_enable();
 	return RT_EOK;
 }
+

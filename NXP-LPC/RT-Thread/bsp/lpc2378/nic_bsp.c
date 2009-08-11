@@ -69,16 +69,10 @@ static  rt_uint8_t       *TxBufBaseAddr;
 #define  EMAC_TX_STATUS_BASE_ADDR              (EMAC_TX_DESC_BASE_ADDR   + (NUM_TX_FRAG * sizeof(TX_Desc)))
 #define  EMAC_RX_BUFF_BASE_ADDR                (EMAC_TX_STATUS_BASE_ADDR + (NUM_TX_FRAG * sizeof(TX_Stat)))
 #define  EMAC_TX_BUFF_BASE_ADDR                (EMAC_RX_BUFF_BASE_ADDR   + (NUM_RX_FRAG * ETH_FRAG_SIZE))
-
-/* EMAC local DMA buffers. */
-//static rt_uint32_t rx_buf[NUM_RX_FRAG][ETH_FRAG_SIZE>>2];
-//static rt_uint32_t tx_buf[NUM_TX_FRAG][ETH_FRAG_SIZE>>2];
-
-
+ 
 static struct rt_lpc24xx_eth lpc24xx_device;
 
 static struct rt_semaphore tx_sem;
-
 
 //  function added to initialize Rx Descriptors
 void rx_descr_init (void)
@@ -191,7 +185,7 @@ rt_uint8_t   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.          
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void SetMacID( )   
+void set_mac_id( )   
 {
 	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
 	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
@@ -205,12 +199,20 @@ void SetMacID( )
 
 static  void  AppInitTCPIP (void)
 {  
-	NetIF_MAC_Addr[0] = 0x3e;
-	NetIF_MAC_Addr[1] = 0x50;
-	NetIF_MAC_Addr[2] = 0xC2;
-	NetIF_MAC_Addr[3] = 0x25;
-	NetIF_MAC_Addr[4] = 0x61;
-	NetIF_MAC_Addr[5] = 0x39;
+	NetIF_MAC_Addr[0] = 0x7e;
+	NetIF_MAC_Addr[1] = 0x38;
+	NetIF_MAC_Addr[2] = 0x6c;
+	NetIF_MAC_Addr[3] = 0xa2;
+	NetIF_MAC_Addr[4] = 0x45;
+	NetIF_MAC_Addr[5] = 0x5e;
+
+	/* Update MAC address */
+	lpc24xx_device.dev_addr[0] = 0x7e;
+	lpc24xx_device.dev_addr[1] = 0x38;
+	lpc24xx_device.dev_addr[2] = 0x6c;
+	lpc24xx_device.dev_addr[3] = 0xa2;
+	lpc24xx_device.dev_addr[4] = 0x45;
+	lpc24xx_device.dev_addr[5] = 0x5e;
 
 // 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 // 
@@ -327,11 +329,6 @@ void  nic_linkdown (void)
 	}
 }
 
-/* RT-Thread Device Interface */
-
-
-
-
 #define  MAIN_OSC_FRQ              11059200L
 #define  IRC_OSC_FRQ               11059200L
 #define  RTC_OSC_FRQ                  32768L
@@ -398,30 +395,30 @@ void  nic_int_init  (void)
 }
 
 
-
-static rt_err_t rt_dm9000_open(rt_device_t dev, rt_uint16_t oflag)
+/* RT-Thread Device Interface */
+static rt_err_t lpc24xxether_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	return RT_EOK;
 }
 
-static rt_err_t rt_dm9000_close(rt_device_t dev)
+static rt_err_t lpc24xxether_close(rt_device_t dev)
 {
 	return RT_EOK;
 }
 
-static rt_size_t rt_dm9000_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t lpc24xxether_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
 
-static rt_size_t rt_dm9000_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t lpc24xxether_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
 
-static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	switch(cmd)
 	{
@@ -529,16 +526,16 @@ rt_uint16_t get_nic_rx_pkt_size (void)
 	rxstatus        =  Rx_Stat[MAC_RXCONSUMEINDEX].Info;             /* Accquire the status word for this desciptor              */
 
 	rxstatus       &= (RINFO_NO_DESCR    |                       /* Obtain the descriptor error bits                         */
-		RINFO_OVERRUN   |
-		RINFO_ALIGN_ERR   |
+		RINFO_OVERRUN    |
+		RINFO_ALIGN_ERR  |
 		RINFO_LEN_ERR    |
 		RINFO_SYM_ERR    |
 		RINFO_CRC_ERR    |
 		RINFO_FAIL_FILT);
 
 	if (rxstatus > 0)
-	{                                                 /* If any receive errors (except range error) occured       */
-		size        =  0;                                               /* then return 0 so upper layer call NetNIC_RxPktDiscard()  */
+	{                      /* If any receive errors (except range error) occured       */
+		size        =  0;  /* then return 0 so upper layer call NetNIC_RxPktDiscard()  */
 	}
 	else
 	{
@@ -672,45 +669,12 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 	return p;
 }
 
-/* reception packet. */
-struct pbuf *rt_dm9000_rx(rt_device_t dev)
+rt_inline void update_mac_address(struct rt_lpc24xx_eth* device)
 {
-    struct pbuf* p;
-	rt_uint32_t len;
-
-    /* init p pointer */
-    p = RT_NULL;
-
-    if (1) // if there is packet in device
-    {
-        /* get one packet length */
-        len = 0; // packet length
-
-        /* allocate buffer */
-        p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
-
-        if (p != RT_NULL)
-        {
-            rt_uint8_t* data;
-            struct pbuf* q;
-
-            for (q = p; q != RT_NULL; q= q->next)
-            {
-                data = q->payload;
-                len = q->len;
-
-                /* read data from device */
-            }
-        }
-    }
-    else
-    {
-        /* restore interrupt */
-    }
-
-    return p;
+	MAC_SA0 = (device->dev_addr[1] << 8) | (device->dev_addr[0]);
+	MAC_SA1 = (device->dev_addr[3] << 8)  | (device->dev_addr[2]);
+	MAC_SA2 = (device->dev_addr[5] << 8)  | (device->dev_addr[4]);
 }
-
 /*********************************************************************************************************
 ** 函数名称: lpc24xxether_register
 ** 函数名称: lpc24xxether_register
@@ -737,27 +701,17 @@ int lpc24xxether_register(char *name)
 {
  	rt_err_t result;	   
 	/* init rt-thread device interface */
-  	lpc24xx_device.parent.parent.init		= rt_emac_init;
-  	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
-  	lpc24xx_device.parent.parent.close		= rt_dm9000_close;
-  	lpc24xx_device.parent.parent.read		= rt_dm9000_read;
-	lpc24xx_device.parent.parent.write		= rt_dm9000_write;
-	lpc24xx_device.parent.parent.control	= rt_dm9000_control;
+  	lpc24xx_device.parent.parent.init		= lpc24xxether_init;
+  	lpc24xx_device.parent.parent.open		= lpc24xxether_open;
+  	lpc24xx_device.parent.parent.close		= lpc24xxether_close;
+  	lpc24xx_device.parent.parent.read		= lpc24xxether_read;
+	lpc24xx_device.parent.parent.write		= lpc24xxether_write;
+	lpc24xx_device.parent.parent.control	= lpc24xxether_control;
 	lpc24xx_device.parent.parent.private    = RT_NULL;
 
   	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;
   	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
-
-	/* Update MAC address */
-// 	lpc24xx_device.dev_addr[0] = 0x1e;
-// 	lpc24xx_device.dev_addr[1] = 0x30;
-// 	lpc24xx_device.dev_addr[2] = 0x6c;
-// 	lpc24xx_device.dev_addr[3] = 0xa2;
-// 	lpc24xx_device.dev_addr[4] = 0x45;
-// 	lpc24xx_device.dev_addr[5] = 0x5e;
-// 	/* update mac address */
-// 	update_mac_address(lpc24xx_device);
-
+ 
 	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 	result = eth_device_init(&(lpc24xx_device.parent), (char*)name);
 	RT_ASSERT(result == RT_EOK);
@@ -767,7 +721,7 @@ int lpc24xxether_register(char *name)
 
 void rt_hw_eth_init()
 {
-	AppInitTCPIP();
+    AppInitTCPIP();
 	lpc24xxether_register("E0");	 
 }
 

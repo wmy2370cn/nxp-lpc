@@ -16,30 +16,12 @@
 #define  EMAC_RAM_BASE_ADDR                   (0x7FE00000)              /* Base address of dedicated AHB2 Ethernet RAM              */
 
 /* EMAC Memory Buffer configuration for 16K Ethernet RAM. */
-#define NUM_RX_FRAG         6          /* Num.of RX Fragments 6*1536= 9.0kB */
+#define NUM_RX_FRAG         6         /* Num.of RX Fragments 6*1536= 9.0kB */
 #define NUM_TX_FRAG         4           /* Num.of TX Fragments 4*1536= 6.0kB */
 #define ETH_FRAG_SIZE       1536        /* Packet Fragment size 1536 Bytes   */
 
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
 
-/* EMAC variables located in 16K Ethernet SRAM */
-#define RX_DESC_BASE        0x7FE00000
-#define RX_STAT_BASE        (RX_DESC_BASE + NUM_RX_FRAG*8)
-#define TX_DESC_BASE        (RX_STAT_BASE + NUM_RX_FRAG*8)
-#define TX_STAT_BASE        (TX_DESC_BASE + NUM_TX_FRAG*8)
-#define RX_BUF_BASE         (TX_STAT_BASE + NUM_TX_FRAG*4)
-#define TX_BUF_BASE         (RX_BUF_BASE  + NUM_RX_FRAG*ETH_FRAG_SIZE)
-
-/* RX and TX descriptor and status definitions. */
-#define RX_DESC_PACKET(i)   (*(unsigned int *)(RX_DESC_BASE   + 8*i))
-#define RX_DESC_CTRL(i)     (*(unsigned int *)(RX_DESC_BASE+4 + 8*i))
-#define RX_STAT_INFO(i)     (*(unsigned int *)(RX_STAT_BASE   + 8*i))
-#define RX_STAT_HASHCRC(i)  (*(unsigned int *)(RX_STAT_BASE+4 + 8*i))
-#define TX_DESC_PACKET(i)   (*(unsigned int *)(TX_DESC_BASE   + 8*i))
-#define TX_DESC_CTRL(i)     (*(unsigned int *)(TX_DESC_BASE+4 + 8*i))
-#define TX_STAT_INFO(i)     (*(unsigned int *)(TX_STAT_BASE   + 4*i))
-#define RX_BUF(i)           (RX_BUF_BASE + ETH_FRAG_SIZE*i)
-#define TX_BUF(i)           (TX_BUF_BASE + ETH_FRAG_SIZE*i)
 
 #define  PHY_RDWR_RETRIES                  8                            /* Attempt to read or write the PHY 8 times             */
 

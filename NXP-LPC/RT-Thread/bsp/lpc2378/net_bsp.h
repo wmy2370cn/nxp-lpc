@@ -15,3 +15,5 @@ void rx_descr_init(void);
 rt_uint32_t  bsp_cpu_clk_freq (void);
 void  nic_int_init  (void);
  
+void set_mac_id( void )   ;
+
