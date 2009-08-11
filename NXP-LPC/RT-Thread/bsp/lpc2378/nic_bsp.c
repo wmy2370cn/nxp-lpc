@@ -81,7 +81,7 @@ static struct rt_semaphore tx_sem;
 
 
 //  function added to initialize Rx Descriptors
-void RxDescrInit (void)
+void rx_descr_init (void)
 {
 	/* Initialize Receive Descriptor and Status array. */
 	unsigned int i = 0;
@@ -110,7 +110,7 @@ void RxDescrInit (void)
 
 
 //  function added to initialize Tx Descriptors
-void TxDescrInit (void) 
+void tx_descr_init (void) 
 {
 	unsigned int i;
 
@@ -133,50 +133,8 @@ void TxDescrInit (void)
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
 } 
-/******************************************************************************
-** Function name:		EMAC_RxEnable/EMAC_RxDisable
-**
-** Descriptions:		EMAC RX API modules
-**
-** parameters:			None
-** Returned value:		None
-** 
-******************************************************************************/
-void EMAC_RxEnable( void )
-{
-	MAC_COMMAND |= CR_RX_EN;
-	MAC_MAC1 |= MAC1_REC_EN;
-	return;    
-}
-
-void EMAC_RxDisable( void )
-{
-	MAC_COMMAND &= ~CR_RX_EN;
-	MAC_MAC1 &= ~MAC1_REC_EN;
-	return;
-}
-/******************************************************************************
-** Function name:		EMAC_TxEnable/EMAC_TxDisable
-**
-** Descriptions:		EMAC TX API modules
-**
-** parameters:			None
-** Returned value:		None
-** 
-******************************************************************************/
-void EMAC_TxEnable( void )
-{
-	MAC_COMMAND |= 0x02;
-	return;
-}
-
-void EMAC_TxDisable( void )
-{
-	MAC_COMMAND &= ~0x02;
-	return;
-}
 /* interrupt service routine */
-void nic_isr_handler( void )
+void nic_isr_handler( int vector )
 {
     rt_uint32_t status   =  (MAC_INTSTATUS & MAC_INTENABLE);
 
@@ -285,7 +243,7 @@ static  void  AppInitTCPIP (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static void  phy_hw_init (void)
+void  phy_hw_init (void)
 { /* Configure I/O and the RMII / MII interface pins          */
 	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
 	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
@@ -379,7 +337,7 @@ void  nic_linkdown (void)
 #define  RTC_OSC_FRQ                  32768L
 
 
-rt_uint32_t  BSP_CPU_ClkFreq (void)
+rt_uint32_t  bsp_cpu_clk_freq (void)
 {
 	rt_uint32_t  msel;
 	rt_uint32_t  nsel;
@@ -421,7 +379,7 @@ rt_uint32_t  BSP_CPU_ClkFreq (void)
 	return (clk_freq);
 }
  
-static void hd_DelayMS(rt_uint32_t ms)
+void rt_delayms(rt_uint32_t ms)
 {
 	//执行11059200次语句，花时3.570S，差不多每ms计算3097条语句
 	rt_uint32_t count=3339*ms;
@@ -672,7 +630,7 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 	rt_uint32_t RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
 	struct pbuf* q;
-	rt_uint32_t index, pkt_len = 0;
+	rt_uint32_t  pkt_len = 0;
 
 	while(RxProduceIndex == RxConsumeIndex  )
 	{ //缓冲区为空
@@ -777,8 +735,7 @@ struct pbuf *rt_dm9000_rx(rt_device_t dev)
 ********************************************************************************************************/
 int lpc24xxether_register(char *name)
 {
-	rt_err_t result;
-
+ 	rt_err_t result;	   
 	/* init rt-thread device interface */
   	lpc24xx_device.parent.parent.init		= rt_emac_init;
   	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
