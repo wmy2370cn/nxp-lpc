@@ -3,6 +3,7 @@
 #include "emac.h"
 #include "iolpc23xx.h"
 #include "emac_def.h"
+#include "dm9161_def.h"
 
 
 /*********************************************************************************************************
@@ -202,6 +203,23 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 		break;
 	}
 }
+
+/* ----------------- MCFG bits ---------------- */
+#define  MCFG_CLKSEL_DIV4                             0x0000
+#define  MCFG_CLKSEL_DIV6                             0x0008
+#define  MCFG_CLKSEL_DIV8                             0x000C
+#define  MCFG_CLKSEL_DIV10                            0x0010
+#define  MCFG_CLKSEL_DIV14                            0x0014
+#define  MCFG_CLKSEL_DIV20                            0x0018
+#define  MCFG_CLKSEL_DIV28                            0x001C
+
+static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
+{6,  MCFG_CLKSEL_DIV6},
+{8,  MCFG_CLKSEL_DIV8},
+{10, MCFG_CLKSEL_DIV10},
+{14, MCFG_CLKSEL_DIV14},
+{20, MCFG_CLKSEL_DIV20},
+{28, MCFG_CLKSEL_DIV28}};
 /*********************************************************************************************************
 ** 函数名称: rt_dm9161_init
 ** 函数名称: rt_dm9161_init
@@ -224,6 +242,8 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/ 
+rt_uint16_t PHYREG[80];
+INT16U PHYID;
 rt_err_t rt_emac_init(rt_device_t dev)
 {
 	unsigned int regv,tout,id1,id2 ,i = 0;

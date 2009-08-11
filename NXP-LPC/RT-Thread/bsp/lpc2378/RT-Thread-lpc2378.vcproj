@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dm9161_def.h"
+				>
+			</File>
+			<File
 				RelativePath=".\emac.c"
 				>
 			</File>
@@ -185,6 +189,10 @@
 			</File>
 			<File
 				RelativePath=".\emac_def.h"
+				>
+			</File>
+			<File
+				RelativePath=".\net_bsp.h"
 				>
 			</File>
 			<File
