@@ -4,7 +4,7 @@
 #include <rtthread.h>
 
 #include "applib.h"
-#include "dm9161.h"
+#include "dm9161_def.h"
 #include "net_bsp.h"
 #include "emac.h"
  
@@ -104,7 +104,6 @@ rt_uint8_t  get_phy_link_state (void)
 		return (RT_FALSE);
 	}
 }
-
 /*********************************************************************************************************
 ** 函数名称: get_phy_link_speed
 ** 函数名称: get_phy_link_speed
@@ -174,7 +173,6 @@ rt_uint32_t  get_phy_link_speed (void)
 		}
 	}
 }
-
 /*********************************************************************************************************
 ** 函数名称: get_phy_link_duplex
 ** 函数名称: get_phy_link_duplex

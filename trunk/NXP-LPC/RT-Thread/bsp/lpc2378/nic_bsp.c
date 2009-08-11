@@ -1,10 +1,13 @@
 #include <rtthread.h>
-#include "dm9161.h"
 
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
-#include "emac_def.h"
+
 #include "applib.h"
+#include "emac.h"
+#include "emac_def.h"
+#include "dm9161.h"	
+#include "dm9161_def.h"
 #include "iolpc23xx.h" 
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
@@ -12,7 +15,6 @@
 #define  DM9161AE_OUI                   0x00606E
 #define  DM9161AE_VNDR_MDL                  0x08
 
-INT16U PHYID;
  
 #define MAX_ADDR_LEN 6
 struct rt_lpc24xx_eth
@@ -180,7 +182,7 @@ void nic_isr_handler( void )
 
     if (status & INT_RX_DONE) // if receive packet
     {
-//        rt_err_t result;
+        rt_err_t result;
 
         /* a frame has been received */
         result = eth_device_ready(&(lpc24xx_device.parent));
@@ -369,23 +371,7 @@ void  nic_linkdown (void)
 
 /* RT-Thread Device Interface */
 
-rt_uint16_t PHYREG[80];
-/* ----------------- MCFG bits ---------------- */
-#define  MCFG_CLKSEL_DIV4                             0x0000
-#define  MCFG_CLKSEL_DIV6                             0x0008
-#define  MCFG_CLKSEL_DIV8                             0x000C
-#define  MCFG_CLKSEL_DIV10                            0x0010
-#define  MCFG_CLKSEL_DIV14                            0x0014
-#define  MCFG_CLKSEL_DIV20                            0x0018
-#define  MCFG_CLKSEL_DIV28                            0x001C
 
-static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
-{6,  MCFG_CLKSEL_DIV6},
-{8,  MCFG_CLKSEL_DIV8},
-{10, MCFG_CLKSEL_DIV10},
-{14, MCFG_CLKSEL_DIV14},
-{20, MCFG_CLKSEL_DIV20},
-{28, MCFG_CLKSEL_DIV28}};
 
 
 #define  MAIN_OSC_FRQ              11059200L
