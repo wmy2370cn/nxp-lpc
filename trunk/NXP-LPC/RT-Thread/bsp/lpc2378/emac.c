@@ -1,11 +1,11 @@
 #include <rtthread.h>
 #include "applib.h"
-#include "emac.h"
-#include "iolpc23xx.h"
+#include "emac.h" 
 #include "emac_def.h"
 #include "dm9161_def.h"
 #include "dm9161.h"
 #include "net_bsp.h"
+#include <LPC23xx.H>
 
 
 /*********************************************************************************************************
@@ -83,8 +83,8 @@ void  write_phy_ex (rt_uint8_t  phy, rt_uint8_t  reg, rt_uint16_t  val, rt_uint1
 	}
 }
 /*********************************************************************************************************
-** 函数名称: ReadPHY
-** 函数名称: ReadPHY
+** 函数名称: read_phy
+** 函数名称: read_phy
 **
 ** 功能描述：  从PHY端口读取数据
 **
@@ -179,28 +179,28 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 {
 	switch (link_speed)
 	{
-	case NET_PHY_SPD_0:                                             /* Assume 10Mbps operation until linked                     */
+	case NET_PHY_SPD_0:                    /* Assume 10Mbps operation until linked                     */
 	case NET_PHY_SPD_10:
-		MAC_SUPP      &=  ~SUPP_SPEED;                                 /* Configure the RMII logic (if used) for 10MBps operation  */
+		MAC_SUPP      &=  ~SUPP_SPEED;    /* Configure the RMII logic (if used) for 10MBps operation  */
 		break;
 
 	case NET_PHY_SPD_100:
-		MAC_SUPP      |=   SUPP_SPEED;                                 /* Configure the RMII logic (if uses) for 100MBps operation */
+		MAC_SUPP      |=   SUPP_SPEED;    /* Configure the RMII logic (if uses) for 100MBps operation */
 		break;
 	}
 
 	switch (link_duplex) 
 	{
-	case NET_PHY_DUPLEX_UNKNOWN:                                    /* Assume half duplex until link duplex is known            */
+	case NET_PHY_DUPLEX_UNKNOWN:         /* Assume half duplex until link duplex is known            */
 	case NET_PHY_DUPLEX_HALF:
-		MAC_MAC2      &=  ~MAC2_FULL_DUP;                           /* Configure the EMAC to run in HALF duplex mode            */
-		MAC_COMMAND   &=  ~COMMAND_FULL_DUPLEX;                        /* Configure the MII logic for a Half Duplex PHY Link       */
+		MAC_MAC2      &=  ~MAC2_FULL_DUP;  /* Configure the EMAC to run in HALF duplex mode            */
+		MAC_COMMAND   &=  ~CR_FULL_DUP;                        /* Configure the MII logic for a Half Duplex PHY Link       */
 		MAC_IPGT       =   IPGT_HALF_DUP;	                            /* Set inter packet gap to the recommended Half Duplex      */
 		break;
 
 	case NET_PHY_DUPLEX_FULL:
 		MAC_MAC2      |=   MAC2_FULL_DUP;                           /* Configure the EMAC to run in FULL duplex mode            */
-		MAC_COMMAND   |=   COMMAND_FULL_DUPLEX;                        /* Configure the MII logic for a Full Duplex PHY Link       */
+		MAC_COMMAND   |=   CR_FULL_DUP;                        /* Configure the MII logic for a Full Duplex PHY Link       */
 		MAC_IPGT       =   IPGT_FULL_DUP;	                            /* Set inter packet gap to the recommended Full Duplex      */
 		break;
 	}
@@ -217,12 +217,15 @@ void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 void emac_rx_enanble( void )
 {
 	MAC_COMMAND |= CR_RX_EN;
+	MAC_MAC1    |=  CR_RX_EN;   
     return;    
 }
 
 void emac_rx_disable( void )
 {
 	MAC_COMMAND &= ~CR_RX_EN;
+	MAC_MAC1    &= ~ CR_RX_EN;   
+
 	 return;
 }
 /******************************************************************************
@@ -292,10 +295,12 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 	rt_uint16_t  ret = 0;
 
 	rt_uint32_t clk_freq            =   bsp_cpu_clk_freq();  
+	
+	clk_freq           /=   100000;     
+	nic_linkup();                                                    /* Set NetNIC_ConnStatus to TRUE by default (for uC/TCP-IP) */
 
-	clk_freq           /=   100000;        
 	/* Power Up the EMAC controller. */
-	PCONP |= 0x40000000;
+	PCONP |= (1 << 30);  
 	phy_hw_init();
 
 	/* Reset all EMAC internal modules. */
@@ -308,19 +313,20 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 
 	//Deassert all prior resets
 	MAC_MAC1 = 0;
-	emac_rx_disable();
 	emac_tx_disable();
+	emac_rx_disable();
 	/* Configure EMAC / PHY communication to RMII mode          */
-	MAC_COMMAND            |=   COMMAND_RMII;  
+	MAC_COMMAND            |=   CR_RMII;  
 	/* Assume and configure RMII link speed logic for 10Mbit    */
 	MAC_SUPP = 0;
 	for (tout = 0; tout <5000; tout++);
 
 	MAC_TEST                =   0;     
+	MAC_MAXF = ETH_MAX_FLEN;
+
 	/* Initialize MAC control registers. */
 	MAC_MAC1 |= MAC1_PASS_ALL;
 	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
-	MAC_MAXF = ETH_MAX_FLEN;
 	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
 
 	// 	/* Enable Reduced MII interface. */
@@ -367,34 +373,33 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 
 	for(i=0;i<32;i++)
 	{
-		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
+		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
 	}
 
 	nic_phy_init(&ret); 
 
 	tempreg = read_phy(PHYID, DM9161_DSCSR );
 
-
-	MAC_CLRT = CLRT_DEF;
 	MAC_IPGR = IPGR_DEF;
+	MAC_CLRT = CLRT_DEF;
 
+	//设置MAC地址
+	set_mac_id();
+	
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
-	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
+//	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
 
 
 
 	for(i=0;i<32;i++)
 	{
-		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
+		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
 	}
-
-	//设置MAC地址
- 	set_mac_id();
 	// Initialize Tx and Rx DMA Descriptors 
 	tx_descr_init();
 	rx_descr_init();
 	/* Enable EMAC interrupts. */
-	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
+//	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
 
 
 	/* Reset all interrupts */

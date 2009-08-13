@@ -2,7 +2,8 @@
 
 
 #include <rtthread.h>
-
+#include <LPC23xx.H>
+#include "iolpc23xx.h"
 #include "applib.h"
 #include "dm9161_def.h"
 #include "net_bsp.h"
@@ -272,6 +273,61 @@ static void  phy_auto_nego  (void)
 		} while (((reg_val & BMSR_LSTATUS) == 0) && (i > 0));           /* While link not established and retries remain    */
 	}
 } 
+static void  nic_phy_int_enter (void)
+{
+
+} 
+static void nic_phy_int_clr(void)
+{
+	IO2_INT_CLR               =  DEF_BIT_11;
+}
+/*
+*********************************************************************************************************
+*                                        NetNIC_ISR_Handler()
+*
+* Description : (1) Update NetNIC_ConnStatus according to link state
+*
+* Argument(s) : none.
+*
+* Return(s)   : none.
+*********************************************************************************************************
+*/
+rt_uint16_t  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
+
+void  nic_phy_isr_handler   (int vector)
+{
+	volatile rt_uint16_t reg_val;
+	rt_uint16_t     err;
+
+
+ 	nic_phy_int_enter();
+
+	NetNIC_ConnStatus = get_phy_link_state()  ;                          /* Set NetNIC_ConnStatus according to link state            */
+
+	if (NetNIC_ConnStatus == RT_TRUE)
+	{
+		nic_linkup();
+	} 
+	else 
+	{
+		nic_linkdown();
+	}
+
+	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, &err);  /* Clear interrupts                                     */
+	nic_phy_int_clr();
+} 
+
+void  nic_phy_int_init   (void)
+{
+	IO2_INT_CLR              |=  DEF_BIT_11;
+	IO2_INT_EN_R              |=  DEF_BIT_11;
+	rt_hw_interrupt_install(VIC_EINT3, nic_phy_isr_handler, RT_NULL);
+	rt_hw_interrupt_umask(VIC_EINT3);
+
+//	VICIntSelect           &= ~(1 << VIC_EINT3);                        /* Enable interrupts                                        */
+//	VICVectAddr17           = (CPU_INT32U)NetNIC_PhyISR_Handler;        /* Set the vector address                                   */
+//	VICIntEnable            =  (1 << VIC_EINT3);                        /* Enable Interrupts                                        */
+}
 /*
 *********************************************************************************************************
 *                                         NetNIC_PhyInit()
@@ -288,12 +344,10 @@ static void  phy_auto_nego  (void)
 * Note(s)     : Assumes the MDI port as already been enabled for the PHY.
 *********************************************************************************************************
 */
-rt_uint16_t  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
 void  nic_phy_init   (rt_uint16_t *perr)
 {
 	volatile  rt_uint32_t  reg_val;
-
-
+ 
 	phy_auto_nego();                                                /* Perform auto-negotiation                                 */
 
 	NetNIC_ConnStatus = get_phy_link_state();      /* Set NetNIC_ConnStatus according to link state            */
@@ -307,11 +361,11 @@ void  nic_phy_init   (rt_uint16_t *perr)
 		nic_linkdown();
 	}
 	//¹Ò½ÓÖÐ¶Ï 
-	//	NetNIC_PhyIntInit();
+	nic_phy_int_init();
 
-	// 	reg_val     = NetNIC_PhyRegRd(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, perr); /* Clear interrupts                                         */
-	// 	reg_val    |= MDINTER_FDX_MSK | MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK;
-	// 	reg_val    &= ~(MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK);
+	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, perr); /* Clear interrupts                                         */
+	reg_val    |= MDINTER_FDX_MSK | MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK;
+	reg_val    &= ~(MDINTER_SPD_MSK | MDINTER_LINK_MSK | MDINTER_INTR_MSK);
 
-	//	NetNIC_PhyRegWr(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, reg_val, perr);   /* Enable link change interrupt                             */
+	write_phy_ex(EMAC_CFG_PHY_ADDR, DM9161_MDINTR, reg_val, perr);   /* Enable link change interrupt                             */
 }

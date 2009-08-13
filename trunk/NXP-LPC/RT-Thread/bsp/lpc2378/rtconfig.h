@@ -112,7 +112,7 @@
 #define RT_LWIP_IPADDR0	192
 #define RT_LWIP_IPADDR1	9
 #define RT_LWIP_IPADDR2	200
-#define RT_LWIP_IPADDR3	168
+#define RT_LWIP_IPADDR3	128
 
 /* gateway address of target*/
 #define RT_LWIP_GWADDR0	192

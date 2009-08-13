@@ -1,7 +1,7 @@
 #pragma  once
 
 /* PHY Address */
-#define  EMAC_CFG_PHY_ADDR                              0           
+#define  EMAC_CFG_PHY_ADDR                              0x13           
 
 void  nic_linkup (void);
 void  nic_linkdown (void);

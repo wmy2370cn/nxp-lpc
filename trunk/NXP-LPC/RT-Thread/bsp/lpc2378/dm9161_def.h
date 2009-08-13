@@ -24,16 +24,7 @@
 *                                               DEFINES
 *********************************************************************************************************
 */
-#define  COMMAND_RX_EN                              DEF_BIT_00
-#define  COMMAND_TX_EN                              DEF_BIT_01
-#define  COMMAND_RESET_REG                          DEF_BIT_03
-#define  COMMAND_RESET_TX                           DEF_BIT_04
-#define  COMMAND_RESET_RX                           DEF_BIT_05
-#define  COMMAND_PASS_RUNT_FRAMES                   DEF_BIT_06
-#define  COMMAND_PASS_ALL_FRAMES                    DEF_BIT_07
-#define  COMMAND_RMII                               DEF_BIT_09
-#define  COMMAND_FULL_DUPLEX                        DEF_BIT_10
-
+ 
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
 

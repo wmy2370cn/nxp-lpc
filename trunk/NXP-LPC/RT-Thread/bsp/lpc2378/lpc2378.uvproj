@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc23xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,37 +491,37 @@
             <File>
               <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\trap.c</FilePath>
             </File>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\cpu.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\cpu.c</FilePath>
             </File>
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\interrupt.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\interrupt.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\serial.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\serial.c</FilePath>
             </File>
             <File>
               <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\stack.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\stack.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\context_rvds.s</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\context_rvds.s</FilePath>
             </File>
             <File>
               <FileName>start_rvds.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\start_rvds.s</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\start_rvds.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1074,7 +1074,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\libcpu\arm\lpc23xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1227,37 +1227,37 @@
             <File>
               <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\trap.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\trap.c</FilePath>
             </File>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\cpu.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\cpu.c</FilePath>
             </File>
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\interrupt.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\interrupt.c</FilePath>
             </File>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\serial.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\serial.c</FilePath>
             </File>
             <File>
               <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\stack.c</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\stack.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\context_rvds.s</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\context_rvds.s</FilePath>
             </File>
             <File>
               <FileName>start_rvds.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\lpc24xx\start_rvds.s</FilePath>
+              <FilePath>..\..\libcpu\arm\lpc23xx\start_rvds.s</FilePath>
             </File>
           </Files>
         </Group>
