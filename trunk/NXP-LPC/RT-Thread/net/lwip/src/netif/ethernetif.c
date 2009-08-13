@@ -195,10 +195,9 @@ void eth_rx_thread_entry(void* parameter)
 	while (1)
 	{
 		if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
- 		{
+ 		{	 		
 			struct pbuf *p;
-
-			/* receive all of buffer */
+		 	/* receive all of buffer */
 			while (1)
 			{
 				p = device->eth_rx(&(device->parent));
