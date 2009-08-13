@@ -11,9 +11,16 @@
  * Date           Author       Notes
  * 2008-12-11     XuXinming    first version
  */
-#include <rtthread.h>
-#include "LPC24xx.h"
+#include <rtthread.h> 
 
+#define USERMODE	0x10
+#define FIQMODE		0x11
+#define IRQMODE		0x12
+#define SVCMODE		0x13
+#define ABORTMODE	0x17
+#define UNDEFMODE	0x1b
+#define MODEMASK	0x1f
+#define NOINT		0xc0
 /**
  * @addtogroup LPC2478
  */
