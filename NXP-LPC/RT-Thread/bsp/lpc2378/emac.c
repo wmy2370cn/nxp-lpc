@@ -248,6 +248,26 @@ void emac_tx_disable( void )
 	MAC_COMMAND &= ~CR_TX_EN;
 	return;
 }
+/*
+*********************************************************************************************************
+*                                       EMAC_RxIntEn()
+*
+* Description : Enable EMAC Receiver Interrupts.
+*
+* Argument(s) : none.
+*
+* Return(s)   : none.
+*
+* Caller(s)   : NetNIC_IntEn(), NetNIC_RxPktGetSize(), NetNIC_RxPkt().
+*
+* Notes       : 1) The RxDone interrupt occurs when a Rx descriptor has been produced by the EMAC.
+*********************************************************************************************************
+*/
+
+static  void  EMAC_RxIntEn (void)
+{
+	MAC_INTENABLE  |= (INT_RX_DONE | INT_RX_OVERRUN|INT_RX_FIN);                       /* Enable RxDone interrupts and Rx Overrun interrupts       */
+}
 /* ----------------- MCFG bits ---------------- */
 #define  MCFG_CLKSEL_DIV4                             0x0000
 #define  MCFG_CLKSEL_DIV6                             0x0008
@@ -294,10 +314,9 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 	rt_uint32_t  tempreg = 0;
 	rt_uint16_t  ret = 0;
 
-	rt_uint32_t clk_freq            =   bsp_cpu_clk_freq();  
-	
+	rt_uint32_t clk_freq  =   bsp_cpu_clk_freq();  	
 	clk_freq           /=   100000;     
-	nic_linkup();                                                    /* Set NetNIC_ConnStatus to TRUE by default (for uC/TCP-IP) */
+	nic_linkup();     /* Set NetNIC_ConnStatus to TRUE by default (for uC/TCP-IP) */
 
 	/* Power Up the EMAC controller. */
 	PCONP |= (1 << 30);  
@@ -396,15 +415,14 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
 	}
 	// Initialize Tx and Rx DMA Descriptors 
-	tx_descr_init();
 	rx_descr_init();
+	tx_descr_init();
 	/* Enable EMAC interrupts. */
 //	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
 
 
 	/* Reset all interrupts */
-
-	MAC_INTCLEAR            =  (INT_RX_OVERRUN   |                          /* Clear all EMAC interrupt sources                         */
+ 	MAC_INTCLEAR            =  (INT_RX_OVERRUN   |                          /* Clear all EMAC interrupt sources                         */
 		INT_RX_ERR       |
 		INT_RX_FIN       |
 		INT_RX_DONE      |
@@ -414,6 +432,7 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 		INT_TX_DONE      |
 		INT_SOFT_INT     |
 		INT_WAKEUP);
+ 
 	/* update mac address */
 //	update_mac_address(&lpc24xx_device);
 
@@ -421,6 +440,8 @@ rt_err_t lpc24xxether_init(rt_device_t dev)
 	/* Enable receive and transmit mode of MAC Ethernet core */
 	emac_rx_enanble();
 	emac_tx_enable();
+
+	EMAC_RxIntEn( );
 	return RT_EOK;
 }
 
