@@ -9,6 +9,7 @@
 #include "dm9161.h"	
 #include "dm9161_def.h"
 #include "iolpc23xx.h" 
+#include <LPC23xx.H>
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
 
@@ -56,8 +57,6 @@ typedef struct {                        /* TX Status struct                  */
 static            RX_Desc *rb_descriptors ;
 static            TX_Desc *tb_descriptors ;
 
-// static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
-// static  TX_Stat Tx_Stat[NUM_TX_FRAG];
 static  RX_Stat *Rx_Stat ; /* Must be 8-Byte alligned   */
 static  TX_Stat *Tx_Stat ;
 static  rt_uint8_t       *RxBufBaseAddr;
@@ -126,8 +125,29 @@ void tx_descr_init (void)
 
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
-} 
-/* interrupt service routine */
+}
+/*********************************************************************************************************
+** 函数名称: nic_isr_handler
+** 函数名称: nic_isr_handler
+**
+** 功能描述：  interrupt service routine
+**
+** 输　入:  int vector
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void nic_isr_handler( int vector )
 {
     rt_uint32_t status   =  (MAC_INTSTATUS & MAC_INTENABLE);
@@ -135,7 +155,6 @@ void nic_isr_handler( int vector )
     if (status & INT_RX_DONE) // if receive packet
     {
         rt_err_t result;
-
         /* a frame has been received */
         result = eth_device_ready(&(lpc24xx_device.parent));
         RT_ASSERT(result == RT_EOK);
@@ -145,10 +164,13 @@ void nic_isr_handler( int vector )
 	if ((status & (INT_RX_OVERRUN)) > 0) 
 	{                           /* If a fator Overrun error has occured                     */
 		MAC_INTCLEAR            = (INT_RX_OVERRUN);                         /* Clear the overrun interrupt flag                         */
-		MAC_COMMAND            |=  COMMAND_RESET_RX;                        /* Soft reset the Rx datapath, this disables the receiver   */
-		MAC_COMMAND            |=  COMMAND_RX_EN;                           /* Re-enable the reciever                                   */
+		MAC_COMMAND            |=  CR_RX_RES;                        /* Soft reset the Rx datapath, this disables the receiver   */
+		MAC_COMMAND            |=  CR_RX_EN;                           /* Re-enable the reciever                                   */
 		MAC_MAC1               |=  MAC1_REC_EN;                             /* Re-enable the reciever                                   */
 	}
+
+	//???????????
+	VICVectAddr = 0;            //interrupt close 通知中断控制器中断结束
 }
 
 #define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
@@ -190,16 +212,11 @@ void set_mac_id( )
 	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
 	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
 	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
-
-//	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
-//	MAC_SA1 = mac_ptr[2]*256+mac_ptr[3];
-//	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
-	//把MAC地址写入MY——MAC——ID中
-}
+ }
 
 static  void  AppInitTCPIP (void)
 {  
-	NetIF_MAC_Addr[0] = 0x7e;
+	NetIF_MAC_Addr[0] = 0x00;
 	NetIF_MAC_Addr[1] = 0x38;
 	NetIF_MAC_Addr[2] = 0x6c;
 	NetIF_MAC_Addr[3] = 0xa2;
@@ -207,7 +224,7 @@ static  void  AppInitTCPIP (void)
 	NetIF_MAC_Addr[5] = 0x5e;
 
 	/* Update MAC address */
-	lpc24xx_device.dev_addr[0] = 0x7e;
+	lpc24xx_device.dev_addr[0] = 0x00;
 	lpc24xx_device.dev_addr[1] = 0x38;
 	lpc24xx_device.dev_addr[2] = 0x6c;
 	lpc24xx_device.dev_addr[3] = 0xa2;
@@ -247,8 +264,8 @@ static  void  AppInitTCPIP (void)
 ********************************************************************************************************/
 void  phy_hw_init (void)
 { /* Configure I/O and the RMII / MII interface pins          */
-	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
-	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
+  	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
+  	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
 }
 /*********************************************************************************************************
 ** 函数名称: nic_linkup
@@ -329,8 +346,8 @@ void  nic_linkdown (void)
 	}
 }
 
-#define  MAIN_OSC_FRQ              11059200L
-#define  IRC_OSC_FRQ               11059200L
+#define  MAIN_OSC_FRQ              12000000L
+#define  IRC_OSC_FRQ               12000000L
 #define  RTC_OSC_FRQ                  32768L
 
 
@@ -391,7 +408,7 @@ void rt_delayms(rt_uint32_t ms)
 void  nic_int_init  (void)
 {
  	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
-	rt_hw_interrupt_umask(VIC_ETHERNET);
+ 	rt_hw_interrupt_umask(VIC_ETHERNET);
 }
 
 

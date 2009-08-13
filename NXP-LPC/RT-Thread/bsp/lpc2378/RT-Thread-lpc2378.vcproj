@@ -272,23 +272,23 @@
 			Name="lpc2378"
 			>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\cpu.c"
+				RelativePath="..\..\libcpu\arm\lpc23xx\cpu.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\interrupt.c"
+				RelativePath="..\..\libcpu\arm\lpc23xx\interrupt.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\serial.c"
+				RelativePath="..\..\libcpu\arm\lpc23xx\serial.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\stack.c"
+				RelativePath="..\..\libcpu\arm\lpc23xx\stack.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\trap.c"
+				RelativePath="..\..\libcpu\arm\lpc23xx\trap.c"
 				>
 			</File>
 		</Filter>
@@ -604,11 +604,11 @@
 			Name="libcpu"
 			>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\context_rvds.s"
+				RelativePath="..\..\libcpu\arm\lpc23xx\context_rvds.s"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libcpu\arm\lpc24xx\start_rvds.s"
+				RelativePath="..\..\libcpu\arm\lpc23xx\start_rvds.s"
 				>
 			</File>
 		</Filter>

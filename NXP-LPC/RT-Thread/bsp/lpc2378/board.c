@@ -167,7 +167,7 @@ void rt_hw_board_init()
 {
 	extern void rt_serial_init(void);
 
-	GPIO_Init();
+ 	GPIO_Init();
 
 	VICIntEnClr 	= 0xFFFFFFFFL;
 
