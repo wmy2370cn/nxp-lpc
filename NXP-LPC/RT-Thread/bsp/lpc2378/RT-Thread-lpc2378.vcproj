@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath="D:\Keil\ARM\INC\Philips\LPC23xx.h"
+				>
+			</File>
+			<File
 				RelativePath=".\net_bsp.h"
 				>
 			</File>

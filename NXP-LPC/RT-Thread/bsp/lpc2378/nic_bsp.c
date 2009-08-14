@@ -147,10 +147,11 @@ void nic_isr_handler( int vector )
     if (status & INT_RX_DONE) // if receive packet
     {
         rt_err_t result;
+		 MAC_INTCLEAR = status;
         /* a frame has been received */
         result = eth_device_ready(&(lpc24xx_device.parent));
         RT_ASSERT(result == RT_EOK);
-	    MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
+//	    MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
     }
 
 	if ((status & (INT_RX_OVERRUN)) > 0) 
@@ -449,7 +450,7 @@ static rt_err_t lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *args
 void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof)
 {
 	rt_uint8_t *buf_ptr;
-	static rt_uint32_t current_tb_index = 0;
+	rt_uint32_t current_tb_index = 0;
 	rt_uint32_t is_last, tx_offset = 0, remain, pdu_length;
 
 	rt_uint32_t TxProduceIndex = MAC_TXPRODUCEINDEX;
@@ -458,6 +459,8 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 	while(tx_offset < length)
 	{
 		/* check whether buffer is available */
+// 		if (TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
+// 			return;	
 		while( TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
 		{	/* no buffer */
 			rt_thread_delay(5);
@@ -465,8 +468,7 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 			TxConsumeIndex = MAC_TXCONSUMEINDEX;
 		}
 
-		/* Get the address of the buffer from the descriptor, then copy
-		the data into the buffer. */
+		/* Get the address of the buffer from the descriptor, then copy	the data into the buffer. */
 		current_tb_index = MAC_TXPRODUCEINDEX;
 		buf_ptr = (rt_uint8_t *)tb_descriptors[current_tb_index].Packet;
 
@@ -556,6 +558,73 @@ static  rt_uint16_t  get_rx_pkt_cnt (void)
 
 	return (n_rdy);
 }
+
+rt_uint16_t get_nic_rx_frame_size (void)
+{
+	rt_uint16_t     rxconsumeix;
+	rt_uint16_t     rxproduceix;
+	rt_uint16_t     desc_cnt=0 , i =0;
+	rt_uint16_t     rx_frame_size = 0;
+	rt_uint32_t   rxstatus;
+	rt_uint16_t   flag = RT_FALSE;
+
+	rxconsumeix =   MAC_RXCONSUMEINDEX;
+	rxproduceix =   MAC_RXPRODUCEINDEX;
+	if (rxconsumeix == rxproduceix )
+	{
+		return rx_frame_size;
+	}
+
+	if (rxproduceix < rxconsumeix) 
+	{ /* If the produce index has wrapped around                  */
+	 	desc_cnt   =   NUM_RX_FRAG - rxconsumeix + rxproduceix;
+	}
+	else
+	{ /* If consumeix is < produceix, then no wrap around occured */
+	 	desc_cnt   =   rxproduceix - rxconsumeix;	
+	}
+
+	for (i = rxconsumeix;  ; i++)
+	{
+		rxstatus   =  Rx_Stat[i].Info;   
+		rxstatus       &= (RINFO_NO_DESCR    |                       /* Obtain the descriptor error bits                         */
+			RINFO_OVERRUN    |
+			RINFO_ALIGN_ERR  |
+			RINFO_LEN_ERR    |
+			RINFO_SYM_ERR    |
+			RINFO_CRC_ERR    |
+			RINFO_FAIL_FILT);
+
+		if (rxstatus > 0)
+			break;			 
+		else
+		{
+			rx_frame_size  =  Rx_Stat[i].Info & RINFO_SIZE;
+			rx_frame_size  -= 3;
+
+			if (rxstatus | RINFO_LAST_FLAG)
+			{//最后一封
+				break;
+			}				 
+		}
+		if (rxproduceix > rxconsumeix)
+		{
+			if (i >= rxproduceix) //到头了
+				break;
+		}
+		else
+		{
+			if (i >= NUM_RX_FRAG-1)
+			{
+				i = 0;
+				flag = RT_TRUE;
+			}
+			if (flag && i >= rxproduceix)
+				break;		
+		}					
+	}
+	return rx_frame_size;
+}
 rt_uint16_t get_nic_rx_pkt_size (void)
 {
 	rt_int16_t   size;
@@ -577,7 +646,7 @@ rt_uint16_t get_nic_rx_pkt_size (void)
 	}
 	else
 	{
-		size        =  Rx_Stat[MAC_RXCONSUMEINDEX].Info & 0x7FF;     /* Obtain the fragment size from the status struct pointer  */
+		size        =  Rx_Stat[MAC_RXCONSUMEINDEX].Info & RINFO_SIZE;     /* Obtain the fragment size from the status struct pointer  */
 		size       -=  3;                                               /* +1 since the size is 0 based, -4 to ignore FCS           */
 	}
 
@@ -617,11 +686,12 @@ void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uin
 	register rt_uint32_t buf_remain, section_remain;
 	static rt_uint32_t section_read = 0, buf_offset = 0, frame_read = 0;
 	static rt_uint8_t* src_ptr = RT_NULL;
-//	rt_uint32_t RxProduceIndex = MAC_RXPRODUCEINDEX;
+
+	rt_uint32_t RxProduceIndex = MAC_RXPRODUCEINDEX;
 	rt_uint32_t RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
 	src_ptr = (rt_uint8_t *)(rb_descriptors[RxConsumeIndex].Packet );
-		/* Loop until we have obtained the required amount of data. */
+	/* Loop until we have obtained the required amount of data. */
 	section_read = 0;//
 	while( section_read < section_length )
 	{
@@ -655,7 +725,7 @@ void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uin
 			frame_read += section_remain;
 
 			/* finish this read */
-			if((buf_offset >= ETH_FRAG_SIZE) || (frame_read >= total))
+			if((frame_read >= total) || (buf_offset >= ETH_FRAG_SIZE))
 			{
 				/* free buffer */
 				Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
@@ -681,55 +751,41 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 	rt_uint32_t  pkt_len = 0;
 	rt_uint16_t  pkt_cnt = 0;
 
-	while(RxProduceIndex == RxConsumeIndex  )
-//	while( RxConsumeIndex == (RxProduceIndex+1)%NUM_RX_FRAG)
-	{ //缓冲区为空，继续等待
-		rt_thread_delay(5);
-		RxProduceIndex = MAC_RXPRODUCEINDEX;
-		RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
-	}
+	if (RxProduceIndex == RxConsumeIndex)
+		return RT_NULL;
+// 	while(RxProduceIndex == RxConsumeIndex  )
+//  { //缓冲区为空，继续等待
+// 		rt_thread_delay(5);
+// 		RxProduceIndex = MAC_RXPRODUCEINDEX;
+// 		RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+// 	}
 	
-	pkt_cnt = get_rx_pkt_cnt();
-	while ( pkt_cnt > 0 )
+	pkt_len = get_nic_rx_frame_size();
+	//判断一下 pkt_len 是否有效，如果无效，则丢弃
+
+	//
+	if (pkt_len)
 	{
-		pkt_len = get_nic_rx_pkt_size();
-		//判断一下 pkt_len 是否有效，如果无效，则丢弃
-
-		//
-		if (pkt_len)
+		p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+		if(p != RT_NULL)
 		{
-			p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
-			if(p != RT_NULL)
-			{
-				//	lpc24xxether_read_frame(RT_NULL, 0, pkt_len);
-				for(q = p; q != RT_NULL; q= q->next)
-					lpc24xxether_read_frame(q->payload, q->len, pkt_len);
-			}
-			else
-			{
-				rt_kprintf("no memory in pbuf\n");
-			}
+			for(q = p; q != RT_NULL; q= q->next)
+				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
 		}
-
-		pkt_cnt = get_rx_pkt_cnt();
-		RxProduceIndex = MAC_RXPRODUCEINDEX;
-		RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
-
+		else
+		{
+			rt_kprintf("no memory in pbuf\n");
+		}
 	}
- 	
-
-
- 
-
 	
 	return p;
 }
 
 rt_inline void update_mac_address(struct rt_lpc24xx_eth* device)
 {
-	MAC_SA0 = (device->dev_addr[1] << 8) | (device->dev_addr[0]);
+	MAC_SA0 = (device->dev_addr[5] << 8) | (device->dev_addr[4]);
 	MAC_SA1 = (device->dev_addr[3] << 8)  | (device->dev_addr[2]);
-	MAC_SA2 = (device->dev_addr[5] << 8)  | (device->dev_addr[4]);
+	MAC_SA2 = (device->dev_addr[1] << 8)  | (device->dev_addr[0]);
 }
 /*********************************************************************************************************
 ** 函数名称: lpc24xxether_register

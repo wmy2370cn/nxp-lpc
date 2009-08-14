@@ -2,6 +2,7 @@
 
 /* PHY Address */
 #define  EMAC_CFG_PHY_ADDR                              0x13           
+#define ETH_MTU         1514      /* Ethernet Frame Max Transfer Unit        */
 
 void  nic_linkup (void);
 void  nic_linkdown (void);
