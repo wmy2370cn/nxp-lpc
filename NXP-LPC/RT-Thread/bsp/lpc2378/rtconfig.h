@@ -9,7 +9,7 @@
 #define RT_ALIGN_SIZE	4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	128
+#define RT_THREAD_PRIORITY_MAX	256
 
 /* Tick per Second*/
 #define RT_TICK_PER_SECOND	100
@@ -87,6 +87,15 @@
 /* Using lighweight TCP/IP protocol stack*/
 #define RT_USING_LWIP
 
+/* LwIP tcp thread option */
+#define RT_LWIP_TCPTHREAD_PRIORITY	8
+#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE	32
+
+/* LwIP eth thread option */
+#define RT_LWIP_ETHTHREAD_PRIORITY	15
+#define RT_LWIP_ETHTHREAD_STACKSIZE	1024
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
 
@@ -102,6 +111,11 @@
 /* Enable TCP protocol*/
 #define RT_LWIP_TCP
 
+/* the number of simulatenously active TCP connections*/
+#define RT_LWIP_TCP_PCB_NUM	5
+
+/* TCP sender buffer space*/
+#define RT_LWIP_TCP_SND_BUF	1500
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
 

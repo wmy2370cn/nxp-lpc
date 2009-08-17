@@ -364,6 +364,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\net\lwip\src\lwipopts.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\net\lwip\src\core\memp_tiny.c"
 				>
 			</File>
