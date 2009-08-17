@@ -480,6 +480,11 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 	rt_uint32_t TxProduceIndex = MAC_TXPRODUCEINDEX;
 	rt_uint32_t TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
 	//需要增加一些参数检测
+	if (ptr == NULL || length == 0||length >= 65535)
+	{
+		SetLed(2,TRUE);
+		return;
+	}
 
 	while(tx_offset < length)
 	{
@@ -785,6 +790,11 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 	
 	pkt_len = get_nic_rx_frame_size();
 	//判断一下 pkt_len 是否有效，如果无效，则丢弃
+
+	if (pkt_len > 1023)
+	{
+		SetLed(3,TRUE);
+	}
 
 	//
 	if (pkt_len)
