@@ -447,6 +447,30 @@ static rt_err_t lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *args
 
 
 /* See the header file for descriptions of public functions. */
+/*********************************************************************************************************
+** 函数名称: lpc24xxether_write_frame
+** 函数名称: lpc24xxether_write_frame
+**
+** 功能描述：  
+**
+** 输　入:  rt_uint8_t * ptr
+** 输　入:  rt_uint32_t length
+** 输　入:  rt_bool_t eof
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月17日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof)
 {
 	rt_uint8_t *buf_ptr;
@@ -455,6 +479,7 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 
 	rt_uint32_t TxProduceIndex = MAC_TXPRODUCEINDEX;
 	rt_uint32_t TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+	//需要增加一些参数检测
 
 	while(tx_offset < length)
 	{
@@ -481,14 +506,12 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 		tx_offset += pdu_length;
 
 		/* Is this the last data for the frame? */
-		if((eof == RT_TRUE) && ( tx_offset >= length ))
+		if((eof == RT_TRUE) )
 			is_last = RT_TRUE;
 		else 
 			is_last = RT_FALSE;
 
-		/* Fill out the necessary in the descriptor to get the data sent,
-		then move to the next descriptor, wrapping if necessary. */
-
+		/* Fill out the necessary in the descriptor to get the data sent,then move to the next descriptor, wrapping if necessary. */
 		if(is_last)
 		tb_descriptors[current_tb_index].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
 			EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
@@ -501,7 +524,7 @@ void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof
 			EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
 			(pdu_length - 1);               /* Write the size of the frame, starting from 0             */
 
-		MAC_TXPRODUCEINDEX      =   (MAC_TXPRODUCEINDEX + 1) % NUM_TX_FRAG;    /* Increment the produce Ix register, initiate Tx of frame  */
+		MAC_TXPRODUCEINDEX      =   (current_tb_index + 1) % NUM_TX_FRAG;    /* Increment the produce Ix register, initiate Tx of frame  */
 	}
 }
 /* ethernet device interface */
