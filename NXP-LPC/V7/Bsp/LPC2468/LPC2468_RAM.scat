@@ -1,0 +1,23 @@
+;******************************************************************************
+;
+;                         SCATTER LOADING DESCRIPTION
+;                                    ARM
+;                             KEIL's uVision3 
+;                   (RealView Microprocessor Developer Kit)
+;
+; Filename      : LPC2468_RAM.scat
+;******************************************************************************
+
+LR_IRAM1 0x40000000 0x00007000 									;; Load region
+{
+    RW_IRAM1 0x40000000 0x0000F000
+    {
+        vectors.o (VECT, +First)
+        init.o (INIT)
+        * (+RO)
+        * (+RW,+ZI)
+    }                                                           ;; The following declarations select the "two region model" ;
+                                                                ;; A default __user_initial_stackheap() will be used        ;
+    ARM_LIB_HEAP  0x4000F000 EMPTY  0x00000100   {}
+    ARM_LIB_STACK 0x4000FF00 EMPTY -0x00000E00   {}
+}
