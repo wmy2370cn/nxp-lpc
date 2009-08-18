@@ -1,0 +1,222 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (Flash), 0x0004 // Tools: 'ARM-ADS'
+
+Group (APP)
+Group (BSP)
+Group (uC-CPU)
+Group (uC-OS-II/Source)
+Group (uC-OS-II/Port)
+Group (uC-LIB)
+Group (uC-TCPIP/IF)
+Group (uC-TCPIP/IF/Ether)
+Group (uC-TCPIP/NIC/ETHER/LPC2378)
+Group (uC-TCPIP/NIC/ETHER/PHY)
+Group (uC-TCPIP/NIC/ETHER/PHY/DM9161AEP)
+Group (uC-TCPIP/OS/uCOS-II)
+Group (uC-TCPIP/Port)
+Group (uC-TCPIP/Source)
+Group (Scatter)
+
+File 1,1,<.\app.c><app.c>
+File 1,5,<.\app_cfg.h><app_cfg.h>
+File 1,5,<.\includes.h><includes.h>
+File 1,5,<.\net_cfg.h><net_cfg.h>
+File 1,5,<.\os_cfg.h><os_cfg.h>
+File 2,1,<.\bsp.c><bsp.c>
+File 2,1,<.\bsp_i2c.c><bsp_i2c.c>
+File 2,1,<.\net_isr.c><net_isr.c>
+File 2,1,<.\net_bsp.c><net_bsp.c>
+File 2,5,<.\net_bsp.h><net_bsp.h>
+File 2,5,<.\bsp.h><bsp.h>
+File 2,5,<.\iolpc23xx.h><iolpc23xx.h>
+File 2,2,<.\LPC2300.s><LPC2300.s>
+File 3,5,<..\..\uC-CPU\cpu_def.h><cpu_def.h>
+File 3,5,<..\..\uC-CPU\cpu.h><cpu.h>
+File 3,2,<..\..\uC-CPU\cpu_a.s><cpu_a.s>
+File 4,1,<..\..\uCOS-II\Source\os_flag.c><os_flag.c>
+File 4,1,<..\..\uCOS-II\Source\os_mbox.c><os_mbox.c>
+File 4,1,<..\..\uCOS-II\Source\os_mem.c><os_mem.c>
+File 4,1,<..\..\uCOS-II\Source\os_mutex.c><os_mutex.c>
+File 4,1,<..\..\uCOS-II\Source\os_q.c><os_q.c>
+File 4,1,<..\..\uCOS-II\Source\os_sem.c><os_sem.c>
+File 4,1,<..\..\uCOS-II\Source\os_task.c><os_task.c>
+File 4,1,<..\..\uCOS-II\Source\os_time.c><os_time.c>
+File 4,1,<..\..\uCOS-II\Source\os_tmr.c><os_tmr.c>
+File 4,1,<..\..\uCOS-II\Source\os_core.c><os_core.c>
+File 5,5,<..\..\uCOS-II\Ports\os_cpu.h><os_cpu.h>
+File 5,2,<..\..\uCOS-II\Ports\os_cpu_a.asm><os_cpu_a.asm>
+File 5,1,<..\..\uCOS-II\Ports\os_cpu_c.c><os_cpu_c.c>
+File 6,5,<..\..\uC-LIB\lib_def.h><lib_def.h>
+File 6,1,<..\..\uC-LIB\lib_mem.c><lib_mem.c>
+File 6,5,<..\..\uC-LIB\lib_mem.h><lib_mem.h>
+File 6,2,<..\..\uC-LIB\lib_mem_a.asm><lib_mem_a.asm>
+File 6,1,<..\..\uC-LIB\lib_str.c><lib_str.c>
+File 6,5,<..\..\uC-LIB\lib_str.h><lib_str.h>
+File 7,1,<..\..\uC-TCPIP\IF\net_if_pkt.c><net_if_pkt.c>
+File 7,5,<..\..\uC-TCPIP\IF\net_if_pkt.h><net_if_pkt.h>
+File 8,5,<..\..\uC-TCPIP\IF\Ether\net_if.h><net_if.h>
+File 8,1,<..\..\uC-TCPIP\IF\Ether\net_if.c><net_if.c>
+File 9,5,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic_def.h><net_nic_def.h>
+File 9,5,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic.h><net_nic.h>
+File 9,1,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic.c><net_nic.c>
+File 10,5,<..\..\uC-TCPIP\NIC\ETHER\PHY\net_phy_def.h><net_phy_def.h>
+File 11,1,<..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE\net_phy.c><net_phy.c>
+File 11,5,<..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE\net_phy.h><net_phy.h>
+File 12,5,<..\..\uC-TCPIP\OS\uCOS-II\net_os.h><net_os.h>
+File 12,1,<..\..\uC-TCPIP\OS\uCOS-II\net_os.c><net_os.c>
+File 13,2,<..\..\uC-TCPIP\Ports\net_util_a.asm><net_util_a.asm>
+File 14,5,<..\..\uC-TCPIP\Source\net_sock.h><net_sock.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_stat.c><net_stat.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_stat.h><net_stat.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_tcp.c><net_tcp.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_tcp.h><net_tcp.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_tmr.c><net_tmr.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_tmr.h><net_tmr.h>
+File 14,5,<..\..\uC-TCPIP\Source\net_type.h><net_type.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_udp.c><net_udp.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_udp.h><net_udp.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_util.c><net_util.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_util.h><net_util.h>
+File 14,1,<..\..\uC-TCPIP\Source\net.c><net.c>
+File 14,5,<..\..\uC-TCPIP\Source\net.h><net.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_arp.c><net_arp.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_arp.h><net_arp.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_ascii.c><net_ascii.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_ascii.h><net_ascii.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_bsd.c><net_bsd.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_bsd.h><net_bsd.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_buf.c><net_buf.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_buf.h><net_buf.h>
+File 14,5,<..\..\uC-TCPIP\Source\net_cfg_net.h><net_cfg_net.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_conn.c><net_conn.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_conn.h><net_conn.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_ctr.c><net_ctr.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_ctr.h><net_ctr.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_dbg.c><net_dbg.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_dbg.h><net_dbg.h>
+File 14,5,<..\..\uC-TCPIP\Source\net_def.h><net_def.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_err.c><net_err.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_err.h><net_err.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_icmp.c><net_icmp.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_icmp.h><net_icmp.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_ip.c><net_ip.c>
+File 14,5,<..\..\uC-TCPIP\Source\net_ip.h><net_ip.h>
+File 14,1,<..\..\uC-TCPIP\Source\net_sock.c><net_sock.c>
+File 15,5,<.\LPC2378_RAM.ini><LPC2378_RAM.ini>
+File 15,2,<.\LPC2378_Flash.scat><LPC2378_Flash.scat>
+
+
+Options 1,0,0  // Target 'Flash'
+ Device (LPC2378)
+ Vendor (NXP (founded by Philips))
+ Cpu (IRAM(0x40000000-0x40007FFF) IRAM2(0x7FE00000-0x7FE03FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI))
+ FlashUt (LPC210x_ISP.EXE ("#H" ^X $D COM1: 38400 1))
+ StupF ("STARTUP\Philips\LPC2300.s" ("Philips LPC2300 Startup Code"))
+ FlashDR (UL2ARM(-U268761108 -O7 -S0 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07E000))
+ DevID (4153)
+ Rgf (LPC23xx.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (Philips\)
+ OrgReg (Philips\)
+ TgStat=16
+ OutDir (.\Output\)
+ OutName (LPC2378-OS-TCPIP)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\Flash\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 1 <fromelf .\OutPut\LPC2378-OS-TCPIP.axf --output .\OutPut\LPC2378-OS-TCPIP.elf>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 51,47,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP (ARM7TDMI)
+ RVDEV ()
+ ADSTFLGA { 0,12,16,2,163,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,64,0,128,0,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,8,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,128,0,0,0,0,0,224,127,0,56,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\IF;..\..\uC-TCPIP\IF\Ether;..\..\uC-TCPIP\NIC\ETHER\LPC2378;..\..\uC-TCPIP\NIC\ETHER\PHY;..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE;..\..\uC-TCPIP\OS\uCOS-II;..\..\uC-TCPIP\Source;..\..\..\..\..\uCOSView\Source)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x40000000)
+ ADSLDSC (.\LPC2378_Flash.scat)
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARM.DLL)(-cLPC237x)(DARMP.DLL)(-pLPC2378)(SARM.DLL)()(TARMP.DLL)(-pLPC2378)
+  OPTDBG 49142,2,()()()()()()()()()() (BIN\AGDIRDI.DLL)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,2,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (BIN\AGDIRDI.DLL)
+ FLASH3 ("LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1))
+ FLASH4 ()
+EndOpt
+
+Options 1,15,0  // Group 'Scatter'
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=0
+ AlwaysBuild=0
+ GenAsm=2
+ AsmAsm=2
+ PublicsOnly=2
+ StopCode=11
+ CustArgs ()
+ LibMods ()
+ ADSCCFLG { 2,84,85,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD ()
+ ADSASFLG { 170,42,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+EndOpt
+

@@ -1,0 +1,145 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (Flash), 0x0004 // Tools: 'ARM-ADS'
+GRPOPT 1,(APP),1,0,0
+GRPOPT 2,(BSP),1,0,0
+GRPOPT 3,(uC-CPU),1,0,0
+GRPOPT 4,(uC-OS-II/Source),1,0,0
+GRPOPT 5,(uC-OS-II/Port),1,0,0
+GRPOPT 6,(uC-LIB),1,0,0
+GRPOPT 7,(uC-TCPIP/IF),1,0,0
+GRPOPT 8,(uC-TCPIP/IF/Ether),1,0,0
+GRPOPT 9,(uC-TCPIP/NIC/ETHER/LPC2378),1,0,0
+GRPOPT 10,(uC-TCPIP/NIC/ETHER/PHY),1,0,0
+GRPOPT 11,(uC-TCPIP/NIC/ETHER/PHY/DM9161AEP),1,0,0
+GRPOPT 12,(uC-TCPIP/OS/uCOS-II),1,0,0
+GRPOPT 13,(uC-TCPIP/Port),1,0,0
+GRPOPT 14,(uC-TCPIP/Source),1,0,0
+GRPOPT 15,(Scatter),1,0,0
+
+OPTFFF 1,1,1,0,0,1,1,0,<.\app.c><app.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,233,255,255,255,66,0,0,0,66,0,0,0,188,3,0,0,3,2,0,0 }
+OPTFFF 1,2,5,150994944,0,0,0,0,<.\app_cfg.h><app_cfg.h> 
+OPTFFF 1,3,5,251658240,0,0,0,0,<.\includes.h><includes.h> 
+OPTFFF 1,4,5,1056964608,0,0,0,0,<.\net_cfg.h><net_cfg.h> 
+OPTFFF 1,5,5,503316480,0,0,0,0,<.\os_cfg.h><os_cfg.h> 
+OPTFFF 2,6,1,704643072,0,0,0,0,<.\bsp.c><bsp.c> 
+OPTFFF 2,7,1,385875968,0,0,0,0,<.\bsp_i2c.c><bsp_i2c.c> 
+OPTFFF 2,8,1,788529152,0,0,0,0,<.\net_isr.c><net_isr.c> 
+OPTFFF 2,9,1,889192450,0,364,364,0,<.\net_bsp.c><net_bsp.c> { 44,0,0,0,2,0,0,0,3,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,233,255,255,255,44,0,0,0,44,0,0,0,210,3,0,0,118,1,0,0 }
+OPTFFF 2,10,5,1392508928,0,0,0,0,<.\net_bsp.h><net_bsp.h> 
+OPTFFF 2,11,5,0,0,0,0,0,<.\bsp.h><bsp.h> 
+OPTFFF 2,12,5,134217728,0,0,0,0,<.\iolpc23xx.h><iolpc23xx.h> 
+OPTFFF 2,13,2,0,0,0,0,0,<.\LPC2300.s><LPC2300.s> 
+OPTFFF 3,14,5,0,0,0,0,0,<..\..\uC-CPU\cpu_def.h><cpu_def.h> 
+OPTFFF 3,15,5,536870912,0,0,0,0,<..\..\uC-CPU\cpu.h><cpu.h> 
+OPTFFF 3,16,2,0,0,0,0,0,<..\..\uC-CPU\cpu_a.s><cpu_a.s> 
+OPTFFF 4,17,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_flag.c><os_flag.c> 
+OPTFFF 4,18,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_mbox.c><os_mbox.c> 
+OPTFFF 4,19,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_mem.c><os_mem.c> 
+OPTFFF 4,20,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_mutex.c><os_mutex.c> 
+OPTFFF 4,21,1,385875968,0,0,0,0,<..\..\uCOS-II\Source\os_q.c><os_q.c> 
+OPTFFF 4,22,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_sem.c><os_sem.c> 
+OPTFFF 4,23,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_task.c><os_task.c> 
+OPTFFF 4,24,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_time.c><os_time.c> 
+OPTFFF 4,25,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_tmr.c><os_tmr.c> 
+OPTFFF 4,26,1,0,0,0,0,0,<..\..\uCOS-II\Source\os_core.c><os_core.c> 
+OPTFFF 5,27,5,1577058304,0,0,0,0,<..\..\uCOS-II\Ports\os_cpu.h><os_cpu.h> 
+OPTFFF 5,28,2,0,0,0,0,0,<..\..\uCOS-II\Ports\os_cpu_a.asm><os_cpu_a.asm> 
+OPTFFF 5,29,1,1761607680,0,0,0,0,<..\..\uCOS-II\Ports\os_cpu_c.c><os_cpu_c.c> 
+OPTFFF 6,30,5,150994944,0,0,0,0,<..\..\uC-LIB\lib_def.h><lib_def.h> 
+OPTFFF 6,31,1,0,0,0,0,0,<..\..\uC-LIB\lib_mem.c><lib_mem.c> 
+OPTFFF 6,32,5,0,0,0,0,0,<..\..\uC-LIB\lib_mem.h><lib_mem.h> 
+OPTFFF 6,33,2,0,0,0,0,0,<..\..\uC-LIB\lib_mem_a.asm><lib_mem_a.asm> 
+OPTFFF 6,34,1,771751936,0,0,0,0,<..\..\uC-LIB\lib_str.c><lib_str.c> 
+OPTFFF 6,35,5,0,0,0,0,0,<..\..\uC-LIB\lib_str.h><lib_str.h> 
+OPTFFF 7,36,1,0,0,0,0,0,<..\..\uC-TCPIP\IF\net_if_pkt.c><net_if_pkt.c> 
+OPTFFF 7,37,5,0,0,0,0,0,<..\..\uC-TCPIP\IF\net_if_pkt.h><net_if_pkt.h> 
+OPTFFF 8,38,5,0,0,0,0,0,<..\..\uC-TCPIP\IF\Ether\net_if.h><net_if.h> 
+OPTFFF 8,39,1,0,0,0,0,0,<..\..\uC-TCPIP\IF\Ether\net_if.c><net_if.c> 
+OPTFFF 9,40,5,0,0,0,0,0,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic_def.h><net_nic_def.h> 
+OPTFFF 9,41,5,452984832,0,0,0,0,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic.h><net_nic.h> 
+OPTFFF 9,42,1,469762048,0,536,551,0,<..\..\uC-TCPIP\NIC\ETHER\LPC2378\net_nic.c><net_nic.c> { 44,0,0,0,0,0,0,0,1,0,0,0,255,255,255,255,255,255,255,255,252,255,255,255,233,255,255,255,198,0,0,0,198,0,0,0,64,4,0,0,135,2,0,0 }
+OPTFFF 10,43,5,0,0,0,0,0,<..\..\uC-TCPIP\NIC\ETHER\PHY\net_phy_def.h><net_phy_def.h> 
+OPTFFF 11,44,1,0,0,0,0,0,<..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE\net_phy.c><net_phy.c> 
+OPTFFF 11,45,5,0,0,0,0,0,<..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE\net_phy.h><net_phy.h> 
+OPTFFF 12,46,5,654311424,0,0,0,0,<..\..\uC-TCPIP\OS\uCOS-II\net_os.h><net_os.h> 
+OPTFFF 12,47,1,603979776,0,0,0,0,<..\..\uC-TCPIP\OS\uCOS-II\net_os.c><net_os.c> 
+OPTFFF 13,48,2,0,0,0,0,0,<..\..\uC-TCPIP\Ports\net_util_a.asm><net_util_a.asm> 
+OPTFFF 14,49,5,335544320,0,0,0,0,<..\..\uC-TCPIP\Source\net_sock.h><net_sock.h> 
+OPTFFF 14,50,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_stat.c><net_stat.c> 
+OPTFFF 14,51,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_stat.h><net_stat.h> 
+OPTFFF 14,52,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_tcp.c><net_tcp.c> 
+OPTFFF 14,53,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_tcp.h><net_tcp.h> 
+OPTFFF 14,54,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_tmr.c><net_tmr.c> 
+OPTFFF 14,55,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_tmr.h><net_tmr.h> 
+OPTFFF 14,56,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_type.h><net_type.h> 
+OPTFFF 14,57,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_udp.c><net_udp.c> 
+OPTFFF 14,58,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_udp.h><net_udp.h> 
+OPTFFF 14,59,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_util.c><net_util.c> 
+OPTFFF 14,60,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_util.h><net_util.h> 
+OPTFFF 14,61,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net.c><net.c> 
+OPTFFF 14,62,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net.h><net.h> 
+OPTFFF 14,63,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_arp.c><net_arp.c> 
+OPTFFF 14,64,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_arp.h><net_arp.h> 
+OPTFFF 14,65,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ascii.c><net_ascii.c> 
+OPTFFF 14,66,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ascii.h><net_ascii.h> 
+OPTFFF 14,67,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_bsd.c><net_bsd.c> 
+OPTFFF 14,68,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_bsd.h><net_bsd.h> 
+OPTFFF 14,69,1,872415232,0,0,0,0,<..\..\uC-TCPIP\Source\net_buf.c><net_buf.c> 
+OPTFFF 14,70,5,452984832,0,0,0,0,<..\..\uC-TCPIP\Source\net_buf.h><net_buf.h> 
+OPTFFF 14,71,5,1006632960,0,0,0,0,<..\..\uC-TCPIP\Source\net_cfg_net.h><net_cfg_net.h> 
+OPTFFF 14,72,1,486539264,0,0,0,0,<..\..\uC-TCPIP\Source\net_conn.c><net_conn.c> 
+OPTFFF 14,73,5,805306368,0,0,0,0,<..\..\uC-TCPIP\Source\net_conn.h><net_conn.h> 
+OPTFFF 14,74,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ctr.c><net_ctr.c> 
+OPTFFF 14,75,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ctr.h><net_ctr.h> 
+OPTFFF 14,76,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_dbg.c><net_dbg.c> 
+OPTFFF 14,77,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_dbg.h><net_dbg.h> 
+OPTFFF 14,78,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_def.h><net_def.h> 
+OPTFFF 14,79,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_err.c><net_err.c> 
+OPTFFF 14,80,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_err.h><net_err.h> 
+OPTFFF 14,81,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_icmp.c><net_icmp.c> 
+OPTFFF 14,82,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_icmp.h><net_icmp.h> 
+OPTFFF 14,83,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ip.c><net_ip.c> 
+OPTFFF 14,84,5,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_ip.h><net_ip.h> 
+OPTFFF 14,85,1,0,0,0,0,0,<..\..\uC-TCPIP\Source\net_sock.c><net_sock.c> 
+OPTFFF 15,86,5,0,0,0,0,0,<.\LPC2378_RAM.ini><LPC2378_RAM.ini> 
+OPTFFF 15,87,2,973078528,0,0,0,0,<.\LPC2378_Flash.scat><LPC2378_Flash.scat> 
+
+
+TARGOPT 1, (Flash)
+ ADSCLK=12000000
+  OPTTT 1,1,1,0
+  OPTHX 1,65535,0,0,0
+  OPTLX 79,66,8,<.\Flash\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTAX 8
+  OPTBL 0,(Data Sheet)<DATASHTS\PHILIPS\LPC2378_DS.PDF>
+  OPTBL 1,(User Manual)<DATASHTS\PHILIPS\LPC23xx_UM.pdf>
+  OPTDL (SARM.DLL)(-cLPC237x)(DARMP.DLL)(-pLPC2378)(SARM.DLL)()(TARMP.DLL)(-pLPC2378)
+  OPTDBG 49142,2,()()()()()()()()()() (BIN\AGDIRDI.DLL)()()()
+  OPTKEY 0,(DLGDARM)((135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0))
+  OPTKEY 0,(DLGTARM)((135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0))
+  OPTKEY 0,(ARMDBGFLAGS)(-T5F)
+  OPTKEY 0,(AGDIRDI)(-O6 -P(D:\Program Files\SEGGER\JLinkARM_V408i\JLinkRDI.dll) -T() -J0 -FO7 -FD40000000 -FC800 -FN0)
+  OPTKEY 0,(JLTAgdi)(-O1070 -J1 -Y500 -Z1 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000)
+  OPTKEY 0,(UL2ARM)(-UV0704M0Z -O14 -S1 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000)
+  OPTBB 0,0,405,1,42464,0,0,0,0,1,<net_phy.c>()(\net_phy\405)
+  OPTWA 0,1,(hclk_freq,0x0A)
+  OPTDF 0x84
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
