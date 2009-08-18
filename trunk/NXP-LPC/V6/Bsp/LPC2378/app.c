@@ -172,11 +172,11 @@ static  void  AppInitTCPIP (void)
 
 #if EMAC_CFG_MAC_ADDR_SEL == EMAC_CFG_MAC_ADDR_SEL_CFG
     NetIF_MAC_Addr[0] = 0x00;
-    NetIF_MAC_Addr[1] = 0x50;
-    NetIF_MAC_Addr[2] = 0xC2;
-    NetIF_MAC_Addr[3] = 0x25;
-    NetIF_MAC_Addr[4] = 0x61;
-    NetIF_MAC_Addr[5] = 0x39;
+    NetIF_MAC_Addr[1] = 0x38;
+    NetIF_MAC_Addr[2] = 0x6c;
+    NetIF_MAC_Addr[3] = 0xa2;
+    NetIF_MAC_Addr[4] = 0x45;
+    NetIF_MAC_Addr[5] = 0x5e;
 #endif
 
     err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
