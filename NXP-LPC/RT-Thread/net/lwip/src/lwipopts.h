@@ -205,7 +205,7 @@
 
 /* ---------- ARP options ---------- */
 #define LWIP_ARP                    1
-#define ARP_TABLE_SIZE              10
+#define ARP_TABLE_SIZE              40
 #define ARP_QUEUEING                1
 
 /* ---------- IP options ---------- */
