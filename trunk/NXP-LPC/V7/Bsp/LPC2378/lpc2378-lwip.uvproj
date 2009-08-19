@@ -802,6 +802,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\lwip\src\core\sys.c</FilePath>
             </File>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\lwip\src\core\mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>memp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\lwip\src\core\memp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
