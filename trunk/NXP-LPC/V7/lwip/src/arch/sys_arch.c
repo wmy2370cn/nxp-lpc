@@ -1,4 +1,4 @@
-#include <rtthread.h>
+//#include <rtthread.h>
 
 #include "lwip/debug.h"
 #include "lwip/sys.h"

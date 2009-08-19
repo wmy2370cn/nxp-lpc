@@ -28,10 +28,7 @@
 
 #include <includes.h>
 
-#if uC_TCPIP_MODULE > 0
-#include <net_phy.h>
-#include <net_phy_def.h>
-#endif
+
 
 /*
 *********************************************************************************************************
@@ -47,12 +44,6 @@
 
 static  OS_STK          AppTaskStartStk[APP_TASK_START_STK_SIZE];
 
-#if uC_TCPIP_MODULE > 0
-        NET_IP_ADDR     AppNetIP;
-        NET_IP_ADDR     AppNetMsk;
-        NET_IP_ADDR     AppNetGateway;
-#endif
-
 /*
 *********************************************************************************************************
 *                                         LOCAL FUNCTION PROTOTYPES
@@ -61,9 +52,6 @@ static  OS_STK          AppTaskStartStk[APP_TASK_START_STK_SIZE];
 
 static  void            AppTaskStart                (void *p_arg); 
 
-#if uC_TCPIP_MODULE > 0
-static  void            AppInitTCPIP                (void);
-#endif
 
 
 /*
@@ -134,10 +122,6 @@ static  void  AppTaskStart (void *p_arg)
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif
-  
-#if uC_TCPIP_MODULE > 0
-    AppInitTCPIP();                                             /* Initialize uC/TCP-IP and associated appliations          */
-#endif
 
   
     
@@ -151,43 +135,5 @@ static  void  AppTaskStart (void *p_arg)
 	}
 }
 
-/*
-*********************************************************************************************************
-*                                      AppInitTCPIP()
-*
-* Description : This function is called by AppTaskStart() and is responsible for initializing uC/TCP-IP
-*               uC/HTTPs, uC/TFTPs and uC/DHCPc if enabled.
-*
-* Arguments   : none
-*
-* Returns     : none
-*********************************************************************************************************
-*/
-
-#if uC_TCPIP_MODULE > 0
-static  void  AppInitTCPIP (void)
-{
-    NET_ERR  err;
-
-
-#if EMAC_CFG_MAC_ADDR_SEL == EMAC_CFG_MAC_ADDR_SEL_CFG
-    NetIF_MAC_Addr[0] = 0x00;
-    NetIF_MAC_Addr[1] = 0x38;
-    NetIF_MAC_Addr[2] = 0x6c;
-    NetIF_MAC_Addr[3] = 0xa2;
-    NetIF_MAC_Addr[4] = 0x45;
-    NetIF_MAC_Addr[5] = 0x5e;
-#endif
-
-    err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
-
-    AppNetIP        = NetASCII_Str_to_IP("192.9.200.128",  &err);
-    AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-    AppNetGateway   = NetASCII_Str_to_IP("192.9.200.1",   &err);
-
-    err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
-    err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
-}
-#endif 
 
   

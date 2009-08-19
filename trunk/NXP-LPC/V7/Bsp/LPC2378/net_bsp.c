@@ -37,10 +37,6 @@
 */
 
 #include  <includes.h>
-#include  <net.h>
-#include  <net_nic.h>
-#include  <net_phy.h>
-#include  <net_phy_def.h>
 
 #include "iolpc23xx.h"
 
