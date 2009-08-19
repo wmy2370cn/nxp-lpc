@@ -688,11 +688,6 @@
               <FilePath>..\..\lwip\src\arch\sys_arch_init.c</FilePath>
             </File>
             <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\lwip\src\arch\sys.c</FilePath>
-            </File>
-            <File>
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\lwip\src\arch\sys_arch.c</FilePath>
@@ -716,11 +711,6 @@
               <FileName>init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\lwip\src\core\init.c</FilePath>
-            </File>
-            <File>
-              <FileName>memp_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\lwip\src\core\memp_tiny.c</FilePath>
             </File>
             <File>
               <FileName>netif.c</FileName>
@@ -807,7 +797,15 @@
               <FileType>1</FileType>
               <FilePath>..\..\lwip\src\netif\loopif.c</FilePath>
             </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\lwip\src\core\sys.c</FilePath>
+            </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>New Group</GroupName>
         </Group>
       </Groups>
     </Target>

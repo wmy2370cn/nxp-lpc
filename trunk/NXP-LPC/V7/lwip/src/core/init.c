@@ -50,9 +50,9 @@
 #include "lwip/raw.h"
 #include "lwip/udp.h"
 #include "lwip/tcp.h"
-#include "lwip/snmp_msg.h"
+//#include "lwip/snmp_msg.h"
 #include "lwip/autoip.h"
-#include "lwip/igmp.h"
+//#include "lwip/igmp.h"
 #include "lwip/dns.h"
 #include "netif/etharp.h"
 

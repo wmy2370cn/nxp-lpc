@@ -12,7 +12,15 @@ static char g_QueueMemoryPool[MAX_QUEUES * sizeof(TQ_DESCR) ];
 static OS_MEM *g_pQueueMem = NULL;
 
 struct sys_timeouts lwip_timeouts[LWIP_TASK_MAX+1];
-struct sys_timeouts null_timeouts; 	
+struct sys_timeouts null_timeouts;
+
+#define T_LWIP_START_PRIO  		7
+#define T_LWIP_STKSIZE      512
+static u8_t curr_prio_offset;
+#pragma arm section rwdata = "SRAM",zidata = "SRAM"
+OS_STK T_LWIP_TASK_STK[LWIP_TASK_MAX+1][T_LWIP_STKSIZE];
+#pragma arm section 
+
 
 void sys_init(void)
 {
@@ -126,13 +134,6 @@ struct sys_timeouts *sys_arch_timeouts(void)
 
 	return &lwip_timeouts[offset];
 }
-
-#define T_LWIP_START_PRIO  		7
-#define T_LWIP_STKSIZE      512
-static u8_t curr_prio_offset;
-#pragma arm section rwdata = "SRAM",zidata = "SRAM"
-OS_STK T_LWIP_TASK_STK[LWIP_TASK_MAX+1][T_LWIP_STKSIZE];
-#pragma arm section 
 
 sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg), void *arg, int stacksize, int prio)
 {
