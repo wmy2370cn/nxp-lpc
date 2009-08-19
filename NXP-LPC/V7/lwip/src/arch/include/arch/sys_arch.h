@@ -40,9 +40,8 @@
 
 #include "ucos_ii.h" 
 
-#define RT_NULL 				((void *)0)
-#define RT_ASSERT(EX)
 
+ 
 
 #define LWIP_TASK_MAX    		1
 

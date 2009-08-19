@@ -1,39 +1,6 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
-
-//#include <rtconfig.h>
-
-#if defined(RT_USING_NEWLIB) || defined(RT_USING_MINILIBC)
-#define ERRNO						1
-#endif
-
-#define NO_SYS                      0
-#define LWIP_SOCKET                 (NO_SYS==0)
-#define LWIP_NETCONN                (NO_SYS==0)
-
-#ifdef RT_LWIP_IGMP
-#define LWIP_IGMP                   1
-#else
-#define LWIP_IGMP                   0
-#endif
-
-#ifdef RT_LWIP_ICMP
-#define LWIP_ICMP                   1
-#else
-#define LWIP_ICMP                   0
-#endif
-
-#ifdef RT_LWIP_SNMP
-#define LWIP_SNMP                   1
-#else
-#define LWIP_SNMP                   0
-#endif
-
-#ifdef RT_LWIP_DNS
-#define LWIP_DNS                    1
-#else
-#define LWIP_DNS					0
-#endif
+ 
 
 #define LWIP_HAVE_LOOPIF            1
 
@@ -81,7 +48,7 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
-#define MEM_ALIGNMENT               RT_ALIGN_SIZE
+#define MEM_ALIGNMENT               4
 
 #define MEM_LIBC_MALLOC             1
 #define malloc                      rt_malloc
@@ -94,24 +61,24 @@
 #define MEMP_NUM_PBUF               32
 
 /* the number of UDP protocol control blocks. One per active RAW "connection". */
-#ifdef RT_LWIP_RAW_PCB_NUM
-#define MEMP_NUM_RAW_PCB            RT_LWIP_RAW_PCB_NUM
-#endif
+ 
+#define MEMP_NUM_RAW_PCB            3
+ 
 
 /* the number of UDP protocol control blocks. One per active UDP "connection". */
-#ifdef RT_LWIP_UDP_PCB_NUM
-#define MEMP_NUM_UDP_PCB            RT_LWIP_UDP_PCB_NUM
-#endif
+ 
+#define MEMP_NUM_UDP_PCB            4
+ 
 
 /* the number of simulatenously active TCP connections. */
-#ifdef RT_LWIP_TCP_PCB_NUM
-#define MEMP_NUM_TCP_PCB            RT_LWIP_TCP_PCB_NUM
-#endif
+ #define MEMP_NUM_TCP_PCB            5
+
+/* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP connections. */
+#define MEMP_NUM_TCP_PCB_LISTEN 8
 
 /* the number of simultaneously queued TCP */
-#ifdef RT_LWIP_TCP_SEG_NUM
-#define MEMP_NUM_TCP_SEG            RT_LWIP_TCP_SEG_NUM
-#endif
+
+#define MEMP_NUM_TCP_SEG            16
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
    timeouts. */
@@ -131,9 +98,8 @@
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#ifdef RT_LWIP_PBUF_NUM
-#define PBUF_POOL_SIZE              RT_LWIP_PBUF_NUM
-#endif
+#define PBUF_POOL_SIZE              100
+ 
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
 #define PBUF_POOL_BUFSIZE           1500
@@ -150,11 +116,8 @@
 #define SYS_LIGHTWEIGHT_PROT        (NO_SYS==0)
 
 /* ---------- TCP options ---------- */
-#ifdef RT_LWIP_TCP
 #define LWIP_TCP                    1
-#else
-#define LWIP_TCP                    0
-#endif
+ 
 
 #define TCP_TTL                     255
 
@@ -166,11 +129,8 @@
 #define TCP_MSS                     1024
 
 /* TCP sender buffer space (bytes). */
-#ifdef RT_LWIP_TCP_SND_BUF
-#define TCP_SND_BUF                 RT_LWIP_TCP_SND_BUF
-#else
-#define TCP_SND_BUF                 1024
-#endif
+#define TCP_SND_BUF                 2048
+ 
 
 /* TCP sender buffer space (pbufs). This must be at least = 2 *
    TCP_SND_BUF/TCP_MSS for things to work. */
@@ -182,7 +142,7 @@
 #define TCP_SNDLOWAT                (TCP_SND_BUF/2)
 
 /* TCP receive window. */
-#define TCP_WND                     1500
+#define TCP_WND                     8096
 
 /* Maximum number of retransmissions of data segments. */
 #define TCP_MAXRTX                  12
@@ -205,7 +165,7 @@
 
 /* ---------- ARP options ---------- */
 #define LWIP_ARP                    1
-#define ARP_TABLE_SIZE              10
+#define ARP_TABLE_SIZE              40
 #define ARP_QUEUEING                1
 
 /* ---------- IP options ---------- */
@@ -225,13 +185,10 @@
 #define ICMP_TTL                    255
 
 /* ---------- DHCP options ---------- */
-/* Define LWIP_DHCP to 1 if you want DHCP configuration of
-   interfaces. */
-#ifdef RT_LWIP_DHCP
-#define LWIP_DHCP                   1
-#else
+/* Define LWIP_DHCP to 1 if you want DHCP configuration of   interfaces. */
+
 #define LWIP_DHCP                   0
-#endif
+
 
 /* 1 if you want to do an ARP check on the offered address
    (recommended). */
@@ -242,12 +199,9 @@
 #define LWIP_DHCP_AUTOIP_COOP       (LWIP_DHCP && LWIP_AUTOIP)
 
 /* ---------- UDP options ---------- */
-#ifdef RT_LWIP_UDP
+ 
 #define LWIP_UDP                    1
-#else
-#define LWIP_UDP                    0
-#endif
-
+ 
 #define LWIP_UDPLITE                1
 #define UDP_TTL                     255
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
@@ -279,11 +233,9 @@
 #endif /* LWIP_STATS */
 
 /* ---------- PPP options ---------- */
-#ifdef RT_LWIP_PPP
-#define PPP_SUPPORT                 1      /* Set > 0 for PPP */
-#else
+ 
 #define PPP_SUPPORT                 0      /* Set > 0 for PPP */
-#endif
+ 
 
 #if PPP_SUPPORT
 #define NUM_PPP                     1      /* Max PPP sessions. */

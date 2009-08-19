@@ -53,6 +53,10 @@ typedef unsigned int    mem_ptr_t;
 #define S32_F "ld"
 #define X32_F "lx"
 
+#define RT_ASSERT(EX)
+#define RT_NULL 				((void *)0)
+
+
 #ifdef RT_USING_NEWLIB
 #include <errno.h>
 #else
