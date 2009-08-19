@@ -1,5 +1,5 @@
 #include "lwip/opt.h"
-#include <rtthread.h>
+//#include <rtthread.h>
 
 #if (NO_SYS == 0)
 /* don't build if not configured for use in lwipopts.h */

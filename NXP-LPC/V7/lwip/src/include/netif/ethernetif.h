@@ -2,11 +2,12 @@
 #define __NETIF_ETHERNETIF_H__
 
 #include "lwip/netif.h"
-#include <rtthread.h>
+//#include <rtthread.h>
 
 #define NIOCTL_GADDR		0x01
 #define ETHERNET_MTU		1500
 
+#if 0
 struct eth_device
 {
 	/* inherit from rt_device */
@@ -27,5 +28,7 @@ rt_err_t eth_device_ready(struct eth_device* dev);
 rt_err_t eth_device_init(struct eth_device* dev, const char* name);
 
 rt_err_t eth_system_device_init(void);
+
+#endif
 
 #endif /* __NETIF_ETHERNETIF_H__ */
