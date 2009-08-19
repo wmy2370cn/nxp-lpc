@@ -38,7 +38,8 @@
 #include "arch/cpu.h"
 #include "arch/cc.h"
 
-#include <rtthread.h>
+#include "ucos_ii.h"
+//#include <rtthread.h>
 
 #define SYS_MBOX_NULL RT_NULL
 #define SYS_SEM_NULL  RT_NULL
@@ -50,8 +51,13 @@ typedef u32_t sys_prot_t;
 #define SYS_LWIP_MBOX_NAME "mbox"
 #define SYS_LWIP_SEM_NAME "sem"
 
-typedef rt_sem_t sys_sem_t;
+typedef OS_EVENT* sys_sem_t;
+//typedef rt_sem_t sys_sem_t;
 typedef rt_mailbox_t  sys_mbox_t;
-typedef rt_thread_t sys_thread_t;
+typedef INT8U     sys_thread_t;
+
+#define RT_ASSERT(EX)
+#define RT_WAITING_FOREVER	-1		/* Block forever until get resource. */
+#define RT_WAITING_NO		0		/* Non-block. */
 
 #endif /* __ARCH_SYS_ARCH_H__ */

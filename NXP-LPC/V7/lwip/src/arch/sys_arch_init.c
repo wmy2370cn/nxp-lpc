@@ -1,7 +1,7 @@
-#include <rtthread.h>
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#endif
+//#include <rtthread.h>
+//#ifdef RT_USING_FINSH
+//#include <finsh.h>
+//#endif
 
 #include "lwip/debug.h"
 #include "lwip/mem.h"

@@ -1,7 +1,7 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
-#include <rtconfig.h>
+//#include <rtconfig.h>
 
 #if defined(RT_USING_NEWLIB) || defined(RT_USING_MINILIBC)
 #define ERRNO						1
