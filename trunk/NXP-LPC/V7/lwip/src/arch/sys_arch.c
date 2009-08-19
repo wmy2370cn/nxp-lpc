@@ -11,6 +11,10 @@
 static char g_QueueMemoryPool[MAX_QUEUES * sizeof(TQ_DESCR) ];
 static OS_MEM *g_pQueueMem = NULL;
 
+
+const void * const g_pNullPointer;//=(const void *)0xffffffff;
+
+
 struct sys_timeouts lwip_timeouts[LWIP_TASK_MAX+1];
 struct sys_timeouts null_timeouts;
 
@@ -60,39 +64,83 @@ void sys_sem_signal(sys_sem_t sem)
 
 u32_t sys_arch_sem_wait(sys_sem_t sem, u32_t timeout)
 {
-	u32_t ret;
-	s32_t t;
- 
+	u8_t err;
+	u32_t ucos_timeout;
+	//in lwip ,timeout is  millisecond 
+	//in ucosII ,timeout is timer  tick! 
+	//chang timeout from millisecond to ucos tick
+	ucos_timeout = 0;
+	if(timeout != 0)
+	{
+		ucos_timeout = (timeout * OS_TICKS_PER_SEC)/1000;
+		if(ucos_timeout < 1)
+			ucos_timeout = 1;
+		else if(ucos_timeout > 65535)
+			ucos_timeout = 65535;
+	}
 
-	return ret;
+	OSSemPend ((OS_EVENT *)sem,(u16_t)ucos_timeout, (u8_t *)&err);
+	//should not return 0 when wait time is 0, only when timeout!
+	//see sys_arch.txt in lwip/doc 
+	//此处RTT是返回 -1
+	if(err == OS_TIMEOUT)
+		return 0;
+	else
+		return 1; 
 }
 
 sys_mbox_t sys_mbox_new(int size)
 {
-	 
+	u8_t       ucErr;
+	PQ_DESCR    pQDesc;
 
-	return 0;
+	pQDesc = OSMemGet( g_pQueueMem, &ucErr );
+	if( ucErr == OS_NO_ERR )
+	{   
+		pQDesc->pQ = OSQCreate( &(pQDesc->pQEntries[0]), MAX_QUEUE_ENTRIES );       
+		if( pQDesc->pQ != NULL ) 
+		{
+			return pQDesc;
+		}
+	} 
+	return SYS_MBOX_NULL;
 }
 
 void sys_mbox_free(sys_mbox_t mbox)
 {
- 
+	u8_t     ucErr;
+
+	//clear OSQ EVENT
+	OSQFlush( mbox->pQ );
+	//del OSQ EVENT
+	(void)OSQDel( mbox->pQ, OS_DEL_NO_PEND, &ucErr);
+	//put mem back to mem queue
+	ucErr = OSMemPut( g_pQueueMem, mbox );
 
 	return;
 }
 
 void sys_mbox_post(sys_mbox_t mbox, void *msg)
-{
- 
-
-	return;
+{ 
+	if( !msg ) 
+		msg = (void*)&g_pNullPointer;
+	
+	OSQPost( mbox->pQ, msg); 
 }
 
 err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg)
 {
- 
+	INT8U ret = 0;
+	if( !msg ) 
+		msg = (void*)&g_pNullPointer;
 
-	return ERR_MEM;
+	ret = OSQPost( mbox->pQ, msg); 
+	if (ret == OS_ERR_Q_FULL)
+	{
+		return ERR_MEM;
+	}
+
+	return ERR_OK;
 }
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
