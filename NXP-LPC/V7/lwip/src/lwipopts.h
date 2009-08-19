@@ -50,10 +50,10 @@
 /* ---------- Memory options ---------- */
 #define MEM_ALIGNMENT               4
 
-#define MEM_LIBC_MALLOC             1
-#define malloc                      rt_malloc
-#define free                        rt_free
-#define calloc                      rt_calloc
+// #define MEM_LIBC_MALLOC             1
+// #define malloc                      rt_malloc
+// #define free                        rt_free
+// #define calloc                      rt_calloc
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
