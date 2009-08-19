@@ -38,22 +38,34 @@
 #include "arch/cpu.h"
 #include "arch/cc.h"
 
-#include "ucos_ii.h"
-//#include <rtthread.h>
+#include "ucos_ii.h" 
 
-#define SYS_MBOX_NULL RT_NULL
-#define SYS_SEM_NULL  RT_NULL
+#define RT_NULL 				((void *)0)
+#define RT_ASSERT(EX)
+
+
+#define LWIP_TASK_MAX    		1
+
+#define	SYS_MBOX_NULL				((void *)0)
+#define	SYS_SEM_NULL				(void *)0
 
 typedef u32_t sys_prot_t;
 
-#define SYS_MBOX_SIZE 10
-#define SYS_LWIP_TIMER_NAME "timer"
-#define SYS_LWIP_MBOX_NAME "mbox"
-#define SYS_LWIP_SEM_NAME "sem"
+#define SYS_MBOX_SIZE 16
+#define MAX_QUEUE_ENTRIES 20
+#define MAX_QUEUES        20
+//#define SYS_LWIP_TIMER_NAME "timer"
+//#define SYS_LWIP_MBOX_NAME "mbox"
+//#define SYS_LWIP_SEM_NAME "sem"
 
-typedef OS_EVENT* sys_sem_t;
-//typedef rt_sem_t sys_sem_t;
-typedef rt_mailbox_t  sys_mbox_t;
+typedef struct {
+    OS_EVENT*   pQ;
+    void*       pQEntries[MAX_QUEUE_ENTRIES];
+} TQ_DESCR, *PQ_DESCR;
+
+
+typedef OS_EVENT* sys_sem_t; 
+typedef PQ_DESCR  sys_mbox_t;
 typedef INT8U     sys_thread_t;
 
 #define RT_ASSERT(EX)

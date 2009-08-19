@@ -1,4 +1,4 @@
-#include <rtthread.h>
+//#include <rtthread.h>
 
 #include "lwip/debug.h"
 #include "lwip/opt.h"
@@ -13,14 +13,12 @@
 #include "netif/etharp.h"
 #include "netif/ethernetif.h"
 
+#if 0
+
 /* eth rx/tx thread */
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
-#ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
-static char eth_rx_thread_mb_pool[48 * 4];
-static char eth_rx_thread_stack[1024];
-#else
+ 
 #define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
 static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
@@ -31,6 +29,7 @@ struct eth_tx_msg
 	struct netif 	*netif;
 	struct pbuf 	*buf;
 };
+#if 0
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
@@ -39,6 +38,8 @@ static char eth_tx_thread_stack[512];
 #else
 static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
+#endif
+
 #endif
 
 /* the interface provided to LwIP */
@@ -88,6 +89,7 @@ err_t ethernetif_output(struct netif *netif, struct pbuf *p, struct ip_addr *ipa
 
 err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
+#if 0
 	struct eth_tx_msg msg;
 	struct eth_device* enetif;
 	
@@ -101,14 +103,16 @@ err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 	/* waiting for ack */
 	rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
 
+#endif
+
 	return ERR_OK;
 }
 
 /* ethernetif APIs */
-rt_err_t eth_device_init(struct eth_device* dev, const char* name)
+err_t eth_device_init(struct eth_device* dev, const char* name)
 {
 	struct netif* netif;
-
+#if 0
 	netif = (struct netif*) rt_malloc (sizeof(struct netif));
 	if (netif == RT_NULL)
 	{
@@ -154,6 +158,8 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 
 	netif_set_default(netif);
 
+#endif
+
 	return RT_EOK;
 }
 
@@ -161,7 +167,7 @@ rt_err_t eth_device_init(struct eth_device* dev, const char* name)
 void eth_tx_thread_entry(void* parameter)
 {
 	struct eth_tx_msg* msg;
-
+#if 0
 	while (1)
 	{
 		if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
@@ -185,11 +191,15 @@ void eth_tx_thread_entry(void* parameter)
 			rt_sem_release(&(enetif->tx_ack));
 		}
 	}
+
+#endif
+
 }
 
 /* ethernet buffer */
 void eth_rx_thread_entry(void* parameter)
 {
+#if 0
 	struct eth_device* device;
 
 	while (1)
@@ -211,16 +221,21 @@ void eth_rx_thread_entry(void* parameter)
 			}
 		}
 	}
+
+#endif
+
 }
 
-rt_err_t eth_device_ready(struct eth_device* dev)
+err_t eth_device_ready(struct eth_device* dev)
 {
 	/* post message to ethernet thread */
-	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+	return 0;
+//	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
 }
 
-rt_err_t eth_system_device_init()
+err_t eth_system_device_init()
 {
+#if 0
 	rt_err_t result = RT_EOK;
 
 	/* init rx thread */
@@ -254,4 +269,8 @@ rt_err_t eth_system_device_init()
 	RT_ASSERT(result == RT_EOK);
 
 	return result;
+
+#endif
+
+	return 0;
 }
