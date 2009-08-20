@@ -539,10 +539,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\lwip\src\arch\include\arch\init.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\lwip\src\arch\include\arch\lib.h"
 					>
 				</File>
