@@ -7,6 +7,21 @@
 #define NIOCTL_GADDR		0x01
 #define ETHERNET_MTU		1500
 
+typedef struct eth_device* eth_device_t;
+struct eth_device
+{
+	/* inherit from rt_device */
+//	struct rt_device parent;
+
+	struct eth_addr *ethaddr;
+	struct netif *netif;
+//	struct rt_semaphore tx_ack;
+
+	/* eth device interface */
+ 	struct pbuf* (*eth_rx)(eth_device_t dev);
+	u16_t (*eth_tx)(eth_device_t dev, struct pbuf* p);
+};
+
 #if 0
 struct eth_device
 {
