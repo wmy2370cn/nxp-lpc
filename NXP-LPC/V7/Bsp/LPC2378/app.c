@@ -76,6 +76,8 @@ int  main (void)
 
     OSInit();                                                   /* Initialize "uC/OS-II, The Real-Time Kernel"              */
 
+	lwip_sys_init( );
+
     OSTaskCreateExt(AppTaskStart,                               /* Create the start task                                    */
                     (void *)0,
                     (OS_STK *)&AppTaskStartStk[APP_TASK_START_STK_SIZE - 1],

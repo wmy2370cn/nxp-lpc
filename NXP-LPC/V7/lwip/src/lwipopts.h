@@ -98,11 +98,11 @@
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE              100
+#define PBUF_POOL_SIZE              16
  
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
-#define PBUF_POOL_BUFSIZE           1500
+#define PBUF_POOL_BUFSIZE           256
 
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
    link level header. */
@@ -142,7 +142,7 @@
 #define TCP_SNDLOWAT                (TCP_SND_BUF/2)
 
 /* TCP receive window. */
-#define TCP_WND                     8096
+#define TCP_WND                     8192
 
 /* Maximum number of retransmissions of data segments. */
 #define TCP_MAXRTX                  12
@@ -158,14 +158,14 @@
 #else
 #define TCPIP_MBOX_SIZE             8
 #define TCPIP_THREAD_PRIO           128
-#define TCPIP_THREAD_STACKSIZE      4096
+#define TCPIP_THREAD_STACKSIZE      1024
 #endif
 #define TCPIP_THREAD_NAME           "tcpip"
 #define DEFAULT_TCP_RECVMBOX_SIZE   10
 
 /* ---------- ARP options ---------- */
 #define LWIP_ARP                    1
-#define ARP_TABLE_SIZE              40
+#define ARP_TABLE_SIZE              10
 #define ARP_QUEUEING                1
 
 /* ---------- IP options ---------- */
@@ -208,7 +208,7 @@
 
 /* ---------- RAW options ---------- */
 #define DEFAULT_RAW_RECVMBOX_SIZE   1
-#define DEFAULT_ACCEPTMBOX_SIZE     10
+#define DEFAULT_ACCEPTMBOX_SIZE     6
 
 /* ---------- Statistics options ---------- */
 #ifdef RT_LWIP_STATS
