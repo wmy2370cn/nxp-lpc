@@ -65,8 +65,22 @@ struct eth_tx_msg
 	struct pbuf 	*buf;
 };
 
-static struct OS_EVENT *pRxMailbox = NULL;
+#define  MAX_RX_CNT 10
+static  OS_EVENT *pRxMsgQueue = NULL;
+void *RxMsgQeueTbl[MAX_RX_CNT];
+
+#define  MAX_TX_CNT 10
+static  OS_EVENT *pTxMsgQueue = NULL;
+void *TxMsgQeueTbl[MAX_TX_CNT];
+
+#define LWIP_ETHTHREAD_STACKSIZE	256
+#define ETHERNETIF_RX_THREAD_PREORITY	0x60
+#define ETHERNETIF_TX_THREAD_PREORITY	0x61
+
 //static struct rt_thread eth_rx_thread;
+static OS_STK eth_rx_thread_stack[LWIP_ETHTHREAD_STACKSIZE];
+static OS_STK eth_tx_thread_stack[LWIP_ETHTHREAD_STACKSIZE];
+
 
 /* the interface provided to LwIP */
 err_t eth_init(struct netif *netif)
@@ -192,32 +206,29 @@ s16_t eth_device_init(struct eth_device* dev, const char* name)
 void eth_tx_thread_entry(void* parameter)
 {
 	struct eth_tx_msg* msg;
+	INT8U err = 0;
 
 	while (1)
 	{
-#if 0
-		if (rt_mb_recv(&eth_tx_thread_mb, (rt_uint32_t*)&msg, RT_WAITING_FOREVER) == RT_EOK)
+		msg = OSQPend( pTxMsgQueue , 0,&err);
+		if ( err == OS_NO_ERR)
 		{
 			struct eth_device* enetif;
 
 			RT_ASSERT(msg->netif != RT_NULL);
 			RT_ASSERT(msg->buf   != RT_NULL);
-
 			enetif = (struct eth_device*)msg->netif->state;
 			if (enetif != RT_NULL)
 			{
 				/* call driver's interface */
-				if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
-				{
-					rt_kprintf("transmit eth packet failed\n");
-				}
+			//	if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
+			//	{
+			//		rt_kprintf("transmit eth packet failed\n");
+			//	}
 			}
-
 			/* send ack */
-			rt_sem_release(&(enetif->tx_ack));
+		//	rt_sem_release(&(enetif->tx_ack));
 		}
- #endif
-
 	}
 }
 
@@ -225,17 +236,18 @@ void eth_tx_thread_entry(void* parameter)
 void eth_rx_thread_entry(void* parameter)
 {
 	struct eth_device* device;
+	INT8U err = 0;
 
 	while (1)
 	{
-#if 0
-		if (rt_mb_recv(&eth_rx_thread_mb, (rt_uint32_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
-		{	 		
+		device = OSQPend( pRxMsgQueue , 0,&err);
+		if ( err == OS_NO_ERR)
+		{
 			struct pbuf *p;
 			/* receive all of buffer */
 			while (1)
 			{
-				p = device->eth_rx(&(device->parent));
+			//	p = device->eth_rx(&(device->parent));
 				if (p != RT_NULL)
 				{
 					/* notify to upper layer */
@@ -244,16 +256,19 @@ void eth_rx_thread_entry(void* parameter)
 				else break;
 			}
 		}
-#endif
 	}
 }
  
 
-s16_t eth_device_ready(struct eth_device* dev)
+u8_t eth_device_ready(struct eth_device* dev)
 {
 	/* post message to ethernet thread */
-//	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
-	return 0;
+	INT8U err = OS_NO_ERR;
+	err = OSQPost(pRxMsgQueue,dev);
+	if (err == OS_NO_ERR)
+		return OS_TRUE;
+	
+	return OS_FALSE;
 }
 
 s16_t eth_system_device_init()
@@ -262,36 +277,14 @@ s16_t eth_system_device_init()
 
 	/* init rx thread */
 	/* init mailbox and create ethernet thread */
-	pRxMailbox = OSMboxCreate(NULL);
-#if 0
-	result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
-		&eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
-		RT_IPC_FLAG_FIFO);
-	RT_ASSERT(result == RT_EOK);
+	pRxMsgQueue = OSQCreate( &RxMsgQeueTbl[0],MAX_RX_CNT  );
+	//启动任务
+	OSTaskCreate (eth_rx_thread_entry, (void *)0, 	&eth_rx_thread_stack[LWIP_ETHTHREAD_STACKSIZE-1], ETHERNETIF_RX_THREAD_PREORITY);
 
-	result = rt_thread_init(&eth_rx_thread, "erx", eth_rx_thread_entry, RT_NULL,
-		&eth_rx_thread_stack[0], sizeof(eth_rx_thread_stack),
-		RT_ETHERNETIF_THREAD_PREORITY, 16);
-	RT_ASSERT(result == RT_EOK);
 
-	result = rt_thread_startup(&eth_rx_thread);
-	RT_ASSERT(result == RT_EOK);
-
-	/* init tx thread */
-	/* init mailbox and create ethernet thread */
-	result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-		&eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
-		RT_IPC_FLAG_FIFO);
-	RT_ASSERT(result == RT_EOK);
-
-	result = rt_thread_init(&eth_tx_thread, "etx", eth_tx_thread_entry, RT_NULL,
-		&eth_tx_thread_stack[0], sizeof(eth_tx_thread_stack),
-		RT_ETHERNETIF_THREAD_PREORITY, 16);
-	RT_ASSERT(result == RT_EOK);
-
-	result = rt_thread_startup(&eth_tx_thread);
-	RT_ASSERT(result == RT_EOK);
-#endif
+	pTxMsgQueue = OSQCreate( &TxMsgQeueTbl[0],MAX_TX_CNT  );
+	//启动任务
+	OSTaskCreate (eth_tx_thread_entry, (void *)0, 	&eth_tx_thread_stack[LWIP_ETHTHREAD_STACKSIZE-1], ETHERNETIF_TX_THREAD_PREORITY);
 
 	return result;
 }
