@@ -12,7 +12,7 @@ static char g_QueueMemoryPool[MAX_QUEUES * sizeof(TQ_DESCR) ];
 static OS_MEM *g_pQueueMem = NULL;
 
 
-const void * const g_pNullPointer;//=(const void *)0xffffffff;
+const void * const g_pNullPointer = NULL;//=(const void *)0xffffffff;
 
 
 struct sys_timeouts lwip_timeouts[LWIP_TASK_MAX+1];
@@ -145,19 +145,66 @@ err_t sys_mbox_trypost(sys_mbox_t mbox, void *msg)
 
 u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 {
+	u8_t     ucErr;
+	u16_t ucos_timeout=0;
 	 
+	//chang timeout from millisecond to ucos tick
+	if(timeout != 0)
+	{
+		ucos_timeout = timeout * (OS_TICKS_PER_SEC/1000);
+		if(ucos_timeout < 1)
+			ucos_timeout = 1;
+		else if(ucos_timeout > 65535)
+			ucos_timeout = 65535;
+	}  
 
- 
-	return 0;
+	if(msg != NULL)
+	{
+		*msg = OSQPend( mbox->pQ, (u16_t)ucos_timeout, &ucErr );        
+	}
+	else
+	{
+		//just discard return value if data==NULL
+		OSQPend(mbox->pQ,(u16_t)ucos_timeout,&ucErr);
+	}
+
+	if( ucErr == OS_TIMEOUT ) 
+	{
+		timeout=0;
+	} 
+	else 
+	{
+		if(*msg == (void*)&g_pNullPointer ) 
+			*msg = NULL;
+		timeout=1;
+	}
+	return timeout;
 }
 
 u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg)
 {
-	int ret;
+	u8_t     ucErr;
 
- 
+	if(msg != NULL)
+	{
+		*msg = OSQAccept( mbox->pQ,   &ucErr );        
+	}
+	else
+	{
+		//just discard return value if data==NULL
+		OSQAccept(mbox->pQ, &ucErr);
+	}
 
-	return ret;
+	if( ucErr == OS_NO_ERR ) 
+	{
+		return 0;
+	} 
+	else 
+	{
+		if(*msg == (void*)&g_pNullPointer ) 
+			*msg = NULL;
+		  return SYS_ARCH_TIMEOUT; 
+	} 
 }
 
 struct sys_timeouts *sys_arch_timeouts(void)
@@ -187,7 +234,6 @@ sys_thread_t sys_thread_new(char *name, void (* thread)(void *arg), void *arg, i
 {
 	if(curr_prio_offset < LWIP_TASK_MAX)
 	{
-
 		OSTaskCreate(thread, (void *)arg, &T_LWIP_TASK_STK[curr_prio_offset][T_LWIP_STKSIZE-1],T_LWIP_START_PRIO+curr_prio_offset );
 		curr_prio_offset++; 
 	}
