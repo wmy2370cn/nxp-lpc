@@ -74,13 +74,14 @@ static  OS_EVENT *pTxMsgQueue = NULL;
 void *TxMsgQeueTbl[MAX_TX_CNT];
 
 #define LWIP_ETHTHREAD_STACKSIZE	256
-#define ETHERNETIF_RX_THREAD_PREORITY	0x60
-#define ETHERNETIF_TX_THREAD_PREORITY	0x61
+#define ETHERNETIF_RX_THREAD_PREORITY	10
+#define ETHERNETIF_TX_THREAD_PREORITY	11
 
 //static struct rt_thread eth_rx_thread;
 static OS_STK eth_rx_thread_stack[LWIP_ETHTHREAD_STACKSIZE];
 static OS_STK eth_tx_thread_stack[LWIP_ETHTHREAD_STACKSIZE];
 
+static 	struct netif lpc_netif;
 
 /* the interface provided to LwIP */
 err_t eth_init(struct netif *netif)
@@ -132,6 +133,7 @@ err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 	struct eth_tx_msg msg;
 	struct eth_device* enetif;
+	INT8U ret = OS_NO_ERR;
 
 	enetif = (struct eth_device*)netif->state;
 
@@ -139,18 +141,22 @@ err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 	msg.netif = netif;
 	msg.buf   = p;
 //	rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg);
+	ret =  OSQPost( pTxMsgQueue, &msg );
 
 	/* waiting for ack */
 //	rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
+	OSSemPend(  enetif->tx_ack ,0, &ret);
+
+	if(ret == OS_NO_ERR)
+		return ERR_OK;
 
 	return ERR_OK;
 }
 
-
 /* ethernetif APIs */
 s16_t eth_device_init(struct eth_device* dev, const char* name)
 {
-	struct netif* netif;
+	struct netif* netif = &lpc_netif;
 
 #if 0
 	netif = (struct netif*) rt_malloc (sizeof(struct netif));
@@ -160,15 +166,14 @@ s16_t eth_device_init(struct eth_device* dev, const char* name)
 		return -RT_ERROR;
 	}
 	rt_memset(netif, 0, sizeof(struct netif));
-
 #endif
-
 	/* set netif */
  	dev->netif = netif;
 	/* register to rt-thread device manager */
 //	rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
 //	dev->parent.type = RT_Device_Class_NetIf;
 //	rt_sem_init(&(dev->tx_ack), name, 0, RT_IPC_FLAG_FIFO);
+	dev->tx_ack =  OSSemCreate( 0 );
 
 	/* set name */
 	netif->name[0] = name[0];
@@ -182,8 +187,9 @@ s16_t eth_device_init(struct eth_device* dev, const char* name)
 	netif->flags		= NETIF_FLAG_BROADCAST;
 
 	/* get hardware address */
-//	rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
-
+ // 	rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
+	SetHWAddr( netif->hwaddr );
+ 
 	/* set output */
 	netif->output		= ethernetif_output;
 	netif->linkoutput	= ethernetif_linkoutput;
@@ -221,13 +227,14 @@ void eth_tx_thread_entry(void* parameter)
 			if (enetif != RT_NULL)
 			{
 				/* call driver's interface */
-			//	if (enetif->eth_tx(&(enetif->parent), msg->buf) != RT_EOK)
-			//	{
+				if (enetif->eth_tx(enetif, msg->buf) != OS_TRUE)
+			 	{
 			//		rt_kprintf("transmit eth packet failed\n");
-			//	}
+			 	}
 			}
 			/* send ack */
 		//	rt_sem_release(&(enetif->tx_ack));
+			OSSemPost(enetif->tx_ack );
 		}
 	}
 }
@@ -247,7 +254,7 @@ void eth_rx_thread_entry(void* parameter)
 			/* receive all of buffer */
 			while (1)
 			{
-			//	p = device->eth_rx(&(device->parent));
+				p = device->eth_rx(device);
 				if (p != RT_NULL)
 				{
 					/* notify to upper layer */
@@ -271,9 +278,9 @@ u8_t eth_device_ready(struct eth_device* dev)
 	return OS_FALSE;
 }
 
-s16_t eth_system_device_init()
+u8_t eth_system_device_init()
 {
-	s16_t result = 0;
+	u8_t result = 0;
 
 	/* init rx thread */
 	/* init mailbox and create ethernet thread */

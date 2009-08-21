@@ -30,6 +30,8 @@
 #define  BSP_GLOBALS
 #include <includes.h>
 #include "iolpc23xx.h"
+#include <LPC23xx.H>
+
 
 /*
 *********************************************************************************************************
@@ -131,7 +133,7 @@ void  I2C_Init (void)
 
     VICIntSelect       &= ~(1 << VIC_I2C0);                     /* Configure the I2C interrupt as an IRQ source             */
     VICVectAddr9        =  (CPU_INT32U)I2C_ISR_Handler;         /* Set the vector address                                   */
-    VICIntEnClear       =  (1 << VIC_I2C0);                     /* Disable the interrupt source                             */
+    VICIntEnClr       =  (1 << VIC_I2C0);                     /* Disable the interrupt source                             */
 
     pinsel              = PINSEL1;
     pinsel             &= 0xFC3FFFFF;
@@ -340,7 +342,7 @@ void  I2C_ISR_Handler (void)
                  I20CONCLR      = I2CON_STA | I2CON_SI;
                  I20CONSET      = I2CON_STO;
                  OSSemPost(I2C_SemWait);
-                 VICIntEnClear  =  (1 << VIC_I2C0);
+                 VICIntEnClr  =  (1 << VIC_I2C0);
              }
              break;
 
@@ -350,13 +352,13 @@ void  I2C_ISR_Handler (void)
              I20CONSET          = I2CON_STO;
              I20CONCLR          = I2CON_STA | I2CON_SI;
              OSSemPost(I2C_SemWait);
-             VICIntEnClear      =  (1 << VIC_I2C0);
+             VICIntEnClr      =  (1 << VIC_I2C0);
              break;
 
         case I2STAT_ARB_LOST:
              I20CONCLR          = I2CON_STA | I2CON_SI;
              OSSemPost(I2C_SemWait);
-             VICIntEnClear      =  (1 << VIC_I2C0);
+             VICIntEnClr      =  (1 << VIC_I2C0);
              break;
 
 
@@ -387,7 +389,7 @@ void  I2C_ISR_Handler (void)
              I20CONSET          = I2CON_STO;
              I20CONCLR          = I2CON_STA | I2CON_SI;
              OSSemPost(I2C_SemWait);
-             VICIntEnClear      =  (1 << VIC_I2C0);
+             VICIntEnClr      =  (1 << VIC_I2C0);
              break;
 
         default:

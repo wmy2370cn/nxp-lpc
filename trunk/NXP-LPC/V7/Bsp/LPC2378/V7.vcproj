@@ -180,6 +180,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dm9161.c"
+				>
+			</File>
+			<File
+				RelativePath=".\dm9161.h"
+				>
+			</File>
+			<File
+				RelativePath=".\dm9161_def.h"
+				>
+			</File>
+			<File
+				RelativePath=".\emac.c"
+				>
+			</File>
+			<File
+				RelativePath=".\emac.h"
+				>
+			</File>
+			<File
+				RelativePath=".\emac_def.h"
+				>
+			</File>
+			<File
 				RelativePath=".\includes.h"
 				>
 			</File>
@@ -192,7 +216,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\net_bsp.c"
+				RelativePath="D:\Keil\ARM\INC\Philips\LPC23xx.h"
 				>
 			</File>
 			<File
@@ -204,7 +228,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\net_isr.c"
+				RelativePath=".\nic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\nic_bsp.c"
 				>
 			</File>
 			<File
