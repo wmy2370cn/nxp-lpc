@@ -513,7 +513,7 @@ INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 
 	/* lock tx operation */
 //	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
-	OSSemPend(tx_sem,0,&err);
+//	OSSemPend(tx_sem,0,&err);
 	tx_flag = ! tx_flag ;
 	SetLed(5, tx_flag);
 
@@ -525,7 +525,7 @@ INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 			lpc24xxether_write_frame(q->payload, q->len, OS_FALSE);
 	}
 
-	OSSemPost(tx_sem);
+//	OSSemPost(tx_sem);
 //	rt_sem_release(&tx_sem);
 
 	return 0;

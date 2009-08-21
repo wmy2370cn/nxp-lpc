@@ -280,10 +280,29 @@ u8_t eth_device_ready(struct eth_device* dev)
 	return OS_FALSE;
 }
 
-u8_t eth_system_device_init()
-{
-	u8_t result = 0;
-
+/*********************************************************************************************************
+** 函数名称: eth_system_device_init
+** 函数名称: eth_system_device_init
+**
+** 功能描述：  初始化网卡收发任务以及相关的信号量等
+**
+**          
+** 输　出:   u8_t
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月22日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U eth_system_device_init()
+{ 
 	/* init rx thread */
 	/* init mailbox and create ethernet thread */
 	pRxMsgQueue = OSQCreate( &RxMsgQeueTbl[0],MAX_RX_CNT  );
@@ -295,7 +314,7 @@ u8_t eth_system_device_init()
 	//启动任务
 	OSTaskCreate (eth_tx_thread_entry, (void *)0, 	&eth_tx_thread_stack[LWIP_ETHTHREAD_STACKSIZE-1], ETHERNETIF_TX_THREAD_PREORITY);
 
-	return result;
+	return OS_TRUE;
 }
 
 
