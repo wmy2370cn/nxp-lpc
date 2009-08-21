@@ -1,8 +1,8 @@
+#pragma once
 #ifndef __NETIF_ETHERNETIF_H__
 #define __NETIF_ETHERNETIF_H__
 
 #include "lwip/netif.h"
-//#include <rtthread.h>
 
 #define NIOCTL_GADDR		0x01
 #define ETHERNET_MTU		1500
@@ -33,6 +33,7 @@ struct eth_device
 	u8_t (*eth_tx)(eth_device_t dev, struct pbuf* p);
 };
 
+INT8U eth_device_init(struct eth_device* dev, const char* name);
 INT8U eth_system_device_init(void);
 INT8U eth_device_ready(struct eth_device* dev);
 #if 0

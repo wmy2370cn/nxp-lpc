@@ -154,9 +154,11 @@ err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 }
 
 /* ethernetif APIs */
-s16_t eth_device_init(struct eth_device* dev, const char* name)
+INT8U eth_device_init(struct eth_device* dev, const char* name)
 {
 	struct netif* netif = &lpc_netif;
+	
+	memset(&lpc_netif, 0, sizeof(struct netif));
 
 #if 0
 	netif = (struct netif*) rt_malloc (sizeof(struct netif));
@@ -200,12 +202,12 @@ s16_t eth_device_init(struct eth_device* dev, const char* name)
 		/* failed, unregister device and free netif */
 //		rt_device_unregister(&(dev->parent));
 //		rt_free(netif);
-		return -1;
+		return OS_FALSE;
 	}
 
 	netif_set_default(netif);
 
-	return 0;
+	return OS_TRUE;
 }
 
 /* ethernet buffer */

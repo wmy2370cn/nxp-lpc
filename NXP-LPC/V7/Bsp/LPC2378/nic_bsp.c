@@ -827,17 +827,16 @@ int lpc24xxether_register(char *name)
 {
  	INT8U result;	   
 	/* init rt-thread device interface */
-
   	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;
-  	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
-//	lpc24xx_device.parent.control	= lpc24xxether_control;
+  	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx; 
 
 	tx_sem = OSSemCreate(1);
 //	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
-	result = eth_device_init(&(lpc24xx_device), (char*)name);
+	//与协议栈相关
+	result = eth_device_init(& (lpc24xx_device.parent) , (char*)name);
 	RT_ASSERT(result == OS_TRUE);
-
-	lpc24xxether_init( &(lpc24xx_device));
+	//MAC PHY硬件的初始化
+	lpc24xxether_init( & lpc24xx_device );
 	return OS_TRUE;
 }
 INT8U SetHWAddr( INT8U *pAddr )

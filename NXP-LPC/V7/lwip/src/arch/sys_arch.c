@@ -19,11 +19,11 @@ struct sys_timeouts lwip_timeouts[LWIP_TASK_MAX+1];
 struct sys_timeouts null_timeouts;
 
 #define T_LWIP_START_PRIO  		7
-#define T_LWIP_STKSIZE      512
+#define T_LWIP_STKSIZE      256
 static u8_t curr_prio_offset;
-#pragma arm section rwdata = "SRAM",zidata = "SRAM"
+ 
 OS_STK T_LWIP_TASK_STK[LWIP_TASK_MAX+1][T_LWIP_STKSIZE];
-#pragma arm section 
+ 
 
 
 void sys_init(void)
@@ -200,7 +200,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t mbox, void **msg)
 		return 0;
 	} 
 	else 
-	{
+	{//信箱里面为空！？
 		if(*msg == (void*)&g_pNullPointer ) 
 			*msg = NULL;
 		  return SYS_ARCH_TIMEOUT; 
