@@ -27,8 +27,8 @@
 */
 
 #include <includes.h>
-
-
+#include <LPC23xx.H>
+#include "smartarm2300.h"
 
 /*
 *********************************************************************************************************
@@ -76,8 +76,6 @@ int  main (void)
 
     OSInit();                                                   /* Initialize "uC/OS-II, The Real-Time Kernel"              */
 
-	lwip_sys_init( );
-
     OSTaskCreateExt(AppTaskStart,                               /* Create the start task                                    */
                     (void *)0,
                     (OS_STK *)&AppTaskStartStk[APP_TASK_START_STK_SIZE - 1],
@@ -124,6 +122,10 @@ static  void  AppTaskStart (void *p_arg)
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif
+	eth_system_device_init();
+
+	rt_hw_eth_init();
+	lwip_sys_init( );
 
   
     
@@ -136,6 +138,4 @@ static  void  AppTaskStart (void *p_arg)
 	 	LED_Off(1);
 	}
 }
-
-
-  
+ 

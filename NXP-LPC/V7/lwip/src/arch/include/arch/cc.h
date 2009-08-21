@@ -34,9 +34,7 @@
  */
 #ifndef __ARCH_CC_H__
 #define __ARCH_CC_H__
-
-//#include <rthw.h>
-//#include <rtthread.h>
+ 
 
 typedef unsigned char   u8_t;
 typedef signed char     s8_t;
@@ -57,11 +55,11 @@ typedef unsigned int    mem_ptr_t;
 #define RT_NULL 				((void *)0)
 
 
-#ifdef RT_USING_NEWLIB
-#include <errno.h>
-#else
+//#ifdef RT_USING_NEWLIB
+//#include <errno.h>
+//#else
 #define LWIP_PROVIDE_ERRNO
-#endif
+//#endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x

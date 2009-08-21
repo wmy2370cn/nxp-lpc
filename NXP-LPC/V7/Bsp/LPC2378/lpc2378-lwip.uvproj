@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\OS\uCOS-II;..\..\lwip\src\include;..\..\lwip\src;..\..\lwip\src\arch\include;..\..\lwip\src\include\ipv4;</IncludePath>
+              <IncludePath>.;..\..\app;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\OS\uCOS-II;..\..\lwip\src\include;..\..\lwip\src;..\..\lwip\src\arch\include;..\..\lwip\src\include\ipv4;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,6 +403,16 @@
               <FileType>5</FileType>
               <FilePath>.\os_cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>smartarm2300.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\App\smartarm2300.h</FilePath>
+            </File>
+            <File>
+              <FileName>applib.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\App\applib.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -437,6 +447,21 @@
               <FileName>LPC2300.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\LPC2300.s</FilePath>
+            </File>
+            <File>
+              <FileName>emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emac.c</FilePath>
+            </File>
+            <File>
+              <FileName>nic_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\nic_bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>dm9161.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\dm9161.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -813,9 +838,6 @@
               <FilePath>..\..\lwip\src\core\memp.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>New Group</GroupName>
         </Group>
       </Groups>
     </Target>

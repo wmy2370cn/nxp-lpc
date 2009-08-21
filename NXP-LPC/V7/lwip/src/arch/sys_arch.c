@@ -151,7 +151,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 	//chang timeout from millisecond to ucos tick
 	if(timeout != 0)
 	{
-		ucos_timeout = timeout * (OS_TICKS_PER_SEC/1000);
+		ucos_timeout = timeout * OS_TICKS_PER_SEC/1000;
 		if(ucos_timeout < 1)
 			ucos_timeout = 1;
 		else if(ucos_timeout > 65535)
@@ -170,13 +170,13 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t mbox, void **msg, u32_t timeout)
 
 	if( ucErr == OS_TIMEOUT ) 
 	{
-		timeout=0;
+		timeout=SYS_ARCH_TIMEOUT;
 	} 
 	else 
 	{
 		if(*msg == (void*)&g_pNullPointer ) 
 			*msg = NULL;
-		timeout=1;
+		timeout=0;
 	}
 	return timeout;
 }

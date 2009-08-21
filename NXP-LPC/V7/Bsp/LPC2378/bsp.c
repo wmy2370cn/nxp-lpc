@@ -27,7 +27,8 @@
 */
 
 #define  BSP_GLOBALS
-#include <includes.h>
+#include <LPC23xx.H>
+#include <includes.h>  
 #include "iolpc23xx.h"
 #include "smartarm2300.h"
 
@@ -279,7 +280,7 @@ CPU_INT32U  BSP_CPU_PclkFreq (CPU_INT08U  pclk)
 
 void  BSP_IntDisAll (void)
 {
-    VICIntEnClear = 0xFFFFFFFFL;                                        /* Disable ALL interrupts                                   */
+    VICIntEnClr = 0xFFFFFFFFL;                                        /* Disable ALL interrupts                                   */
 }
 
 /*
@@ -308,10 +309,10 @@ void  OS_CPU_ExceptHndlr (CPU_DATA ID)
 
                                                                         /* If this exception is either an IRQ or FIQ                */
     if ((ID == OS_CPU_ARM_EXCEPT_IRQ) || (ID == OS_CPU_ARM_EXCEPT_FIQ)) {
-        pfnct = (BSP_FNCT_PTR)VICAddress;                               /* Read the interrupt vector from the VIC                   */
+        pfnct = (BSP_FNCT_PTR)VICVectAddr;                               /* Read the interrupt vector from the VIC                   */
         if (pfnct != (BSP_FNCT_PTR)0) {                                 /* Make sure we don't have a NULL pointer                   */
           (*pfnct)();                                                   /* Execute the ISR for the interrupting device              */
-            VICAddress  =  1;                                           /* Acknowlege the VIC interrupt                             */
+            VICVectAddr  =  1;                                           /* Acknowlege the VIC interrupt                             */
         }
     }
 }
@@ -448,9 +449,9 @@ static  void  ADC_Init (void)
 CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
 {
     if (adc == 0) {
-        return ((ADDR0 >> 6) & 0x03FF);
+        return ((AD0DR0 >> 6) & 0x03FF);
     } else if (adc == 1) {
-        return ((ADDR1 >> 6) & 0x03FF);
+        return ((AD0DR1 >> 6) & 0x03FF);
     } else {
         return (0);
     }
@@ -1214,8 +1215,8 @@ static  void  GPIO_Init (void)
 
 static  void  VIC_Init (void)
 {
-    VICIntEnClear =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
-    VICAddress    =  0;                                         /* Acknowlege any pending VIC interrupt                     */
+    VICIntEnClr =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
+    VICVectAddr    =  0;                                         /* Acknowlege any pending VIC interrupt                     */
     VICProtection =  0;                                         /* Allow VIC register access in User of Priviledged modes   */
 
     VICVectAddr0  = (CPU_INT32U)VIC_DummyWDT;                   /* Set the vector address                                   */
@@ -1547,4 +1548,17 @@ void  LED_Off (CPU_INT08U led)
 
 	LED_HC595SendByte(LEDS_stat);
 
+}
+
+
+void SetLed( INT8U uLedID,INT8U bState)
+{
+	if (bState)
+	{
+		LED_On(uLedID);
+	}
+	else
+	{
+		LED_Off(uLedID);
+	}
 }

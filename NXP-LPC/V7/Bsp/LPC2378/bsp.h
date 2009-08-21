@@ -92,8 +92,7 @@ CPU_INT32U      BSP_CPU_PclkFreq        (CPU_INT08U  id);
 */
 
 void            LED_On                  (CPU_INT08U led);
-void            LED_Off                 (CPU_INT08U led);
-void            LED_Toggle              (CPU_INT08U led);
+void            LED_Off                 (CPU_INT08U led); 
 
 /*
 *********************************************************************************************************

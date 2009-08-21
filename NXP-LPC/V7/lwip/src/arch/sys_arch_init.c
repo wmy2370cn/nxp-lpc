@@ -60,7 +60,5 @@ void lwip_sys_init()
     }
 #endif
 
-#if defined(RT_USING_FINSH) && (LWIP_STATS_DISPLAY)
-    finsh_syscall_append("lwip_info", (syscall_func)stats_display);
-#endif
+ 
 }
