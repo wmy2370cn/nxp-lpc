@@ -37,7 +37,6 @@ void lwip_sys_init()
 	IP4_ADDR(&netmask, 255,255,255,0);
 
 #endif
-
   	tcpip_init(NULL, NULL);
 
 	netif_set_addr(netif_default, &ipaddr, &netmask, &gw);
@@ -47,8 +46,9 @@ void lwip_sys_init()
 	/* use DHCP client */
 	dhcp_start(netif_default);
 
-    while (1) {
-        rt_thread_delay(DHCP_FINE_TIMER_MSECS);
+    while (1) 
+	{
+        OSTimeDly(DHCP_FINE_TIMER_MSECS);
 
         dhcp_fine_tmr();
         mscnt += DHCP_FINE_TIMER_MSECS;

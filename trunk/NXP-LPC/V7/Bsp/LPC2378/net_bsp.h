@@ -19,4 +19,5 @@ void  nic_int_init  (void);
 void set_mac_id( void )   ;
 
 INT8U SetHWAddr( INT8U *pAddr );
+INT16U lpc24xxether_init(void * dev);
 
