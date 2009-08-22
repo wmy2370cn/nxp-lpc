@@ -503,7 +503,7 @@ void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
 /*
 * Transmit packet.
 */
-static INT8U tx_flag = TRUE;
+static INT16U tx_led_no = 5;
 
 INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 {
@@ -513,9 +513,7 @@ INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 	/* lock tx operation */
 //	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
 	OSSemPend(tx_sem,0,&err);
-	tx_flag = ! tx_flag ;
-	SetLed(5, tx_flag);
-
+ 
 	for (q = p; q != NULL; q = q->next)
 	{
 		if (q->next == RT_NULL)
@@ -741,8 +739,8 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 		}
 	}
 }
-static INT8U rx_flag = TRUE;
-
+static INT16U rx_led_no = 4;
+extern INT8U SendLedMsg( INT16U *pMsg );
 struct pbuf *lpc24xxether_rx(eth_device_t dev)
 {
 	struct pbuf *p = RT_NULL;
@@ -753,7 +751,6 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	struct pbuf* q;
 	INT32U  pkt_len = 0;
 	INT16U  pkt_cnt = 0;
-
 	
 	if (RxProduceIndex == RxConsumeIndex)
 		return RT_NULL;
@@ -763,9 +760,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 // 		RxProduceIndex = MAC_RXPRODUCEINDEX;
 // 		RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 // 	}
-	rx_flag = ! rx_flag ;
-	SetLed(4, rx_flag);
-
+ 	 
 	pkt_len = get_nic_rx_frame_size();
 	//判断一下 pkt_len 是否有效，如果无效，则丢弃
 
@@ -773,7 +768,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	{
 		SetLed(3,TRUE);
 	}
-
+	SendLedMsg(&rx_led_no);
 	//
 	if (pkt_len)
 	{
@@ -788,7 +783,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 			//rt_kprintf("no memory in pbuf\n");
 		}
 	}
-	
+ 
 	return p;
 }
 

@@ -371,6 +371,14 @@
 		<Filter
 			Name="App"
 			>
+			<File
+				RelativePath="..\..\App\TimerExt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\App\TimerExt.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="LwIP"
