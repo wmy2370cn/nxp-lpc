@@ -31,6 +31,7 @@
 #include <includes.h>  
 #include "iolpc23xx.h"
 #include "smartarm2300.h"
+#include "TimerExt.h"
 
 /*
 *********************************************************************************************************
@@ -647,6 +648,7 @@ void  Tmr_TickISR_Handler (void)
     T0IR        = 0xFF;                                         /* Clear timer #0 interrupt                                 */
 
     OSTimeTick();                                               /* Call uC/OS-II's OSTimeTick()                             */
+	ExtTimerTick();
 }
 /*
 ******************************************************************************************************************************
