@@ -106,7 +106,7 @@ err_t eth_input(struct pbuf *p, struct netif *inp)
 		{
 		case ETHTYPE_IP:
 			etharp_ip_input(inp, p);
-			pbuf_header(p, -14);
+			pbuf_header(p, -(s16_t) sizeof(struct eth_hdr));
 			tcpip_input(p, inp);
 			break;
 
@@ -123,12 +123,59 @@ err_t eth_input(struct pbuf *p, struct netif *inp)
 
 	return ERR_OK;
 }
+/*********************************************************************************************************
+** 函数名称: ethernetif_output
+** 函数名称: ethernetif_output
+**
+** 功能描述：   当要发送一个IP信息包时，该函数由TCP/IP协议栈调用。该函数通过调用ethernetif_linkoutput()
+               函数来完成实际的信息包发送。
+**
+** 输　入:  struct netif * netif  ，其指定IP信息包将被发送的哪一个网卡接口上
+** 输　入:  struct pbuf * p         其保存着将要发送的IP信息包
+** 输　入:  struct ip_addr * ipaddr  ，其指定IP信息包的目的IP地址
+**          
+** 输　出:   err_t               ERR_RTE:不能路由到目的地址（没有外网网关）
+**                               ERR_BUF:无法为以太网头腾出空间
+                                 etharp_query()函数或netif->linkoutput()函数的返回值
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月22日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 err_t ethernetif_output(struct netif *netif, struct pbuf *p, struct ip_addr *ipaddr)
 {
 	return etharp_output(netif, p, ipaddr);
 }
-
-
+/*********************************************************************************************************
+** 函数名称: ethernetif_linkoutput
+** 函数名称: ethernetif_linkoutput
+**
+** 功能描述：  完成实际的信息包发送
+**
+** 输　入:  struct netif * netif  ，其指定IP信息包将被发送的哪一个网卡接口上
+** 输　入:  struct pbuf * p        ，其保存着将要发送的IP信息包     
+**          
+** 输　出:   err_t                 0: 发送成功   -1: 发送失败
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月22日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 {
 	struct eth_tx_msg msg;
@@ -159,7 +206,6 @@ INT8U eth_device_init(struct eth_device* dev, const char* name)
 	struct netif* netif = &lpc_netif;
 	
 	memset(&lpc_netif, 0, sizeof(struct netif));
-
 #if 0
 	netif = (struct netif*) rt_malloc (sizeof(struct netif));
 	if (netif == RT_NULL)
