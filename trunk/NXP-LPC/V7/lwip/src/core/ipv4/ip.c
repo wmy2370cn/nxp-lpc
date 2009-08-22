@@ -437,10 +437,8 @@ ip_input(struct pbuf *p, struct netif *inp)
   if (raw_input(p, inp) == 0)
 #endif /* LWIP_RAW */
   {
-   
-				u16_t n = 	 IPH_PROTO(iphdr);
-	     switch (n) {
- //   switch (IPH_PROTO(iphdr)) {
+
+    switch (IPH_PROTO(iphdr)) {
 #if LWIP_UDP
     case IP_PROTO_UDP:
 #if LWIP_UDPLITE
