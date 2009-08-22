@@ -98,7 +98,7 @@
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE              16
+#define PBUF_POOL_SIZE              24
  
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
@@ -151,15 +151,11 @@
 #define TCP_SYNMAXRTX               4
 
 /* tcpip thread options */
-#ifdef RT_LWIP_TCPTHREAD_PRIORITY
-#define TCPIP_MBOX_SIZE             RT_LWIP_TCPTHREAD_MBOX_SIZE
-#define TCPIP_THREAD_PRIO           RT_LWIP_TCPTHREAD_PRIORITY
-#define TCPIP_THREAD_STACKSIZE      RT_LWIP_TCPTHREAD_STACKSIZE
-#else
+ 
 #define TCPIP_MBOX_SIZE             8
-#define TCPIP_THREAD_PRIO           128
-#define TCPIP_THREAD_STACKSIZE      1024
-#endif
+#define TCPIP_THREAD_PRIO           32
+#define TCPIP_THREAD_STACKSIZE      800
+ 
 #define TCPIP_THREAD_NAME           "tcpip"
 #define DEFAULT_TCP_RECVMBOX_SIZE   10
 

@@ -455,15 +455,14 @@ void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
 	while(tx_offset < length)
 	{
 		/* check whether buffer is available */
-// 		if (TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
-// 			return;	
-		while( TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
-		{	/* no buffer */
-	//		rt_thread_delay(5);
-			OSTimeDly(5);
-			TxProduceIndex = MAC_TXPRODUCEINDEX;
-			TxConsumeIndex = MAC_TXCONSUMEINDEX;
-		}
+ 		if (TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
+ 			return;	
+// 		while( TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
+// 		{	/* no buffer */
+// 	 		OSTimeDly(5);
+// 			TxProduceIndex = MAC_TXPRODUCEINDEX;
+// 			TxConsumeIndex = MAC_TXCONSUMEINDEX;
+// 		}
 
 		/* Get the address of the buffer from the descriptor, then copy	the data into the buffer. */
 		current_tb_index = MAC_TXPRODUCEINDEX;
@@ -504,12 +503,17 @@ void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
 * Transmit packet.
 */
 static INT16U tx_led_no = 5;
-
+extern INT8U SendLedMsg( INT16U *pMsg );
 INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 {
 	struct pbuf* q;
 	INT8U err = OS_NO_ERR;
 
+	SendLedMsg(&tx_led_no);
+	if (p->len > 1023)
+	{
+		SetLed(6,TRUE);
+	}
 	/* lock tx operation */
 //	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
 	OSSemPend(tx_sem,0,&err);
@@ -740,7 +744,7 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 	}
 }
 static INT16U rx_led_no = 4;
-extern INT8U SendLedMsg( INT16U *pMsg );
+
 struct pbuf *lpc24xxether_rx(eth_device_t dev)
 {
 	struct pbuf *p = RT_NULL;
@@ -772,7 +776,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	//
 	if (pkt_len)
 	{
-		p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_POOL);
 		if(p != RT_NULL)
 		{
 			for(q = p; q != RT_NULL; q= q->next)
