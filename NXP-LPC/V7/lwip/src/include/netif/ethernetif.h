@@ -7,6 +7,39 @@
 #define NIOCTL_GADDR		0x01
 #define ETHERNET_MTU		1500
 
+#define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
+#define  NET_IF_ADDR_SIZE_MAC                            NET_IF_ADDR_SIZE
+
+#define  NET_IF_ADDR_BROADCAST                0xFFFFFFFFFFFF
+#define  NET_IF_ADDR_BROADCAST_xx                       0xFF    /* ALL broadcast addr octet vals identical.             */
+#define  NET_IF_ADDR_BROADCAST_00                       0xFF
+#define  NET_IF_ADDR_BROADCAST_01                       0xFF
+#define  NET_IF_ADDR_BROADCAST_02                       0xFF
+#define  NET_IF_ADDR_BROADCAST_03                       0xFF
+#define  NET_IF_ADDR_BROADCAST_04                       0xFF
+#define  NET_IF_ADDR_BROADCAST_05                       0xFF
+
+#define  NET_IF_MTU_ETHER                               1500
+#define  NET_IF_MTU_IEEE_802                            1492
+
+#define  NET_IF_HDR_SIZE_ETHER                            14    /* See Note #2.                                         */
+
+#define  NET_IF_HDR_SIZE_MAX                NET_IF_HDR_SIZE_ETHER
+
+
+/* See Note #1.                                         */
+#define  NET_IF_MTU_MIN                         (DEF_MIN(NET_IF_MTU_ETHER, NET_IF_MTU_IEEE_802))
+#define  NET_IF_MTU_MAX                         (DEF_MAX(NET_IF_MTU_ETHER, NET_IF_MTU_IEEE_802))
+#define  NET_IF_MTU                                      NET_IF_MTU_ETHER
+
+#define  NET_IF_FRAME_CRC_SIZE                             4
+
+
+#define  NET_IF_FRAME_MIN_CRC_SIZE                        64    /* See Note #2.                                         */
+#define  NET_IF_FRAME_MIN_SIZE                          (NET_IF_FRAME_MIN_CRC_SIZE - NET_IF_FRAME_CRC_SIZE)
+
+#define  NET_IF_FRAME_MAX_SIZE                          (NET_IF_MTU                + NET_IF_HDR_SIZE_MAX  )
+#define  NET_IF_FRAME_MAX_CRC_SIZE                      (NET_IF_FRAME_MAX_SIZE     + NET_IF_FRAME_CRC_SIZE)
 
 
 
