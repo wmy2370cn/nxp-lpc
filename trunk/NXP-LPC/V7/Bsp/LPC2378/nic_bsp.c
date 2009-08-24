@@ -121,6 +121,10 @@ void tx_descr_init (void)
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
 }
+static  void  EMAC_RxPktDiscard ( )
+{
+	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;
+}
 /*********************************************************************************************************
 ** 函数名称: nic_isr_handler
 ** 函数名称: nic_isr_handler
@@ -149,14 +153,19 @@ void nic_isr_handler( int vector )
     INT32U status               =  MAC_INTSTATUS;    
 	INT16U  n_new;
 
-//     if (status & INT_RX_DONE) // if receive packet
-//     {
-//         INT8U result;
-// 		 MAC_INTCLEAR = status;
-//         /* a frame has been received */
-//         result = eth_device_ready(&(lpc24xx_device.parent));
-//  		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
-//     }
+    if (status & INT_RX_DONE) // if receive packet
+    {
+        INT8U result;
+		 MAC_INTCLEAR = status;
+        /* a frame has been received */
+        result = eth_device_ready(&(lpc24xx_device.parent));
+		if (result != OS_TRUE)
+		{//如果发送失败,那么说明队列满了,处理不过来,那么就把这封信扔掉
+			EMAC_RxPktDiscard();
+		}
+ 		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
+    }
+#if 0
 	if ((status & INT_RX_DONE) > 0) {                                /* If a receiver event has occured                          */
 		n_new  =  NIC_RxGetNRdy() - NIC_RxNRdyCtr;         /* Determine how many NEW franes have been received         */
 		while (n_new > 0) 
@@ -181,6 +190,7 @@ void nic_isr_handler( int vector )
 		}
 		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags                                */
 	}
+#endif
 	if ((status & (INT_RX_OVERRUN)) > 0) 
 	{                           /* If a fator Overrun error has occured                     */
 		MAC_INTCLEAR            = (INT_RX_OVERRUN);                         /* Clear the overrun interrupt flag                         */
@@ -695,10 +705,7 @@ INT8U  NetIF_IsValidPktSize (INT16U  size)
 
 	return (valid);
 }
-static  void  EMAC_RxPktDiscard ( )
-{
-	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;
-}
+
 
 static  CPU_INT32U        NIC_RxNRdyCtr = 0;
 static  CPU_INT16U  NIC_RxGetNRdy (void)
@@ -745,7 +752,7 @@ static  CPU_INT16U  NIC_RxGetNRdy (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 {
 	register INT32U buf_remain, section_remain;
 	static INT32U section_read = 0, buf_offset = 0, frame_read = 0;
@@ -804,6 +811,7 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 	}
 }
 static INT16U rx_led_no = 4;
+static INT16U err_led_no = 8;
 
 struct pbuf *lpc24xxether_rx(eth_device_t dev)
 {
@@ -826,8 +834,8 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 // 		RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 // 	}
  	 
-//	pkt_len = get_nic_rx_frame_size();
-	pkt_len = get_nic_rx_pkt_size();
+	pkt_len = get_nic_rx_frame_size();
+//	pkt_len = get_nic_rx_pkt_size();
 	//判断一下 pkt_len 是否有效，如果无效，则丢弃
 	 ret = NetIF_IsValidPktSize(pkt_len);
 	 if (ret == OS_FALSE)
@@ -854,6 +862,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包
 			//rt_kprintf("no memory in pbuf\n");
 			 EMAC_RxPktDiscard();
+			 SendLedMsg(&err_led_no);
 		}
 	}
  
