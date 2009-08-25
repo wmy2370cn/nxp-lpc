@@ -98,11 +98,11 @@
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE              24
+#define PBUF_POOL_SIZE              4
  
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
-#define PBUF_POOL_BUFSIZE           256
+#define PBUF_POOL_BUFSIZE           1800
 
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
    link level header. */
