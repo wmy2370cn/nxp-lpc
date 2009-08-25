@@ -27,11 +27,9 @@
 */
 
 #include <includes.h>
-
-#if uC_TCPIP_MODULE > 0
-#include <net_phy.h>
-#include <net_phy_def.h>
-#endif
+#include <LPC24xx.H>
+#include "smartarm2300.h"
+#include "TimerExt.h"
 
 /*
 *********************************************************************************************************
@@ -47,12 +45,6 @@
 
 static  OS_STK          AppTaskStartStk[APP_TASK_START_STK_SIZE];
 
-#if uC_TCPIP_MODULE > 0
-        NET_IP_ADDR     AppNetIP;
-        NET_IP_ADDR     AppNetMsk;
-        NET_IP_ADDR     AppNetGateway;
-#endif
-
 /*
 *********************************************************************************************************
 *                                         LOCAL FUNCTION PROTOTYPES
@@ -61,9 +53,6 @@ static  OS_STK          AppTaskStartStk[APP_TASK_START_STK_SIZE];
 
 static  void            AppTaskStart                (void *p_arg); 
 
-#if uC_TCPIP_MODULE > 0
-static  void            AppInitTCPIP                (void);
-#endif
 
 
 /*
@@ -105,6 +94,70 @@ int  main (void)
     OSStart();                                                  /* Start multitasking (i.e. give control to uC/OS-II)       */
 }
 
+static  OS_EVENT *pLedMsgQ = NULL;
+#define MAX_LEDMSG_CNT 10
+void *LedMsgQeueTbl[MAX_LEDMSG_CNT];
+
+
+void InitLedMsgMgr( )
+{
+	pLedMsgQ = OSQCreate(LedMsgQeueTbl,10 );
+}
+
+/*********************************************************************************************************
+** 函数名称: SendLedMsg
+** 函数名称: SendLedMsg
+**
+** 功能描述：  
+**
+** 输　入:  INT16U * pMsg
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月22日
+** 备  注:  此处是临时做法,输入参数需要是全局变量
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U SendLedMsg( INT16U *pMsg )
+{
+	INT8U err = 0;
+	err = OSQPost(pLedMsgQ,pMsg);
+	if (err == OS_NO_ERR)
+		return OS_TRUE;
+	
+	return OS_FALSE;
+}
+
+static void LedMsgHandler( )
+{
+	INT8U err = 0 ;
+	INT16U *pMsg = NULL;
+	if (pLedMsgQ == NULL)
+		return;
+
+	pMsg = OSQAccept(pLedMsgQ,&err);
+	if (err == OS_NO_ERR)
+	{
+		if (pMsg)
+		{
+			if (*pMsg >= 2 && *pMsg <=8)
+			{
+				LED_On(*pMsg);
+				OSTimeDlyHMSM(0,0,0,100);
+				LED_Off(*pMsg);
+			}
+		}
+	}
+}
+
 /*
 *********************************************************************************************************
 *                                          STARTUP TASK
@@ -125,6 +178,8 @@ static  void  AppTaskStart (void *p_arg)
 {
     void           *msg;
     CPU_INT08U      err;
+	INT8U   nLedState = 0;
+	INT16U nTimerID = 0;
     
 
     (void)p_arg;
@@ -134,60 +189,37 @@ static  void  AppTaskStart (void *p_arg)
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif
-  
-#if uC_TCPIP_MODULE > 0
-    AppInitTCPIP();                                             /* Initialize uC/TCP-IP and associated appliations          */
-#endif
+	eth_system_device_init();
+
+	rt_hw_eth_init();
+	lwip_sys_init( );
+	InitTimerMgr(  );
+	InitLedMsgMgr( );
+	nTimerID = SetTimer(nTimerID,500);
 
   
     
 	while (DEF_TRUE)
-	{                         
+	{   
+		LedMsgHandler( );
+		if (IsTimeTo(nTimerID))
+		{
+			nLedState = !nLedState;
+			if (nLedState)
+			{
+				LED_On(1);
+			}
+			else
+			{
+				LED_Off(1);
+			}
+		}
+		OSTimeDly(10) ;
 	//	OSTimeDlyHMSM(0, 0, 1, 0);
-		OSTimeDlyHMSM(0,0,1,0);
-		SetLed(1,1);
-		OSTimeDlyHMSM(0,0,1,0);
-		SetLed(1,0);
+	//	OSTimeDlyHMSM(0,0,1,0);
+	//	LED_On(1);
+	//	OSTimeDlyHMSM(0,0,1,0);
+	 //	LED_Off(1);
 	}
 }
-
-/*
-*********************************************************************************************************
-*                                      AppInitTCPIP()
-*
-* Description : This function is called by AppTaskStart() and is responsible for initializing uC/TCP-IP
-*               uC/HTTPs, uC/TFTPs and uC/DHCPc if enabled.
-*
-* Arguments   : none
-*
-* Returns     : none
-*********************************************************************************************************
-*/
-
-#if uC_TCPIP_MODULE > 0
-static  void  AppInitTCPIP (void)
-{
-    NET_ERR  err;
-
-
-#if EMAC_CFG_MAC_ADDR_SEL == EMAC_CFG_MAC_ADDR_SEL_CFG
-    NetIF_MAC_Addr[0] = 0x00;
-    NetIF_MAC_Addr[1] = 0x50;
-    NetIF_MAC_Addr[2] = 0xC2;
-    NetIF_MAC_Addr[3] = 0x25;
-    NetIF_MAC_Addr[4] = 0x61;
-    NetIF_MAC_Addr[5] = 0x39;
-#endif
-
-    err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
-
-    AppNetIP        = NetASCII_Str_to_IP("192.9.200.128",  &err);
-    AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-    AppNetGateway   = NetASCII_Str_to_IP("192.9.200.1",   &err);
-
-    err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
-    err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
-}
-#endif 
-
-  
+ 
