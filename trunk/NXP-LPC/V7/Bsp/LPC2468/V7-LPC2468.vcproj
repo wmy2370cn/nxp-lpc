@@ -212,11 +212,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LPC2468_Flash.scat"
+				RelativePath="D:\Keil\ARM\INC\Philips\LPC23xx.h"
 				>
 			</File>
 			<File
-				RelativePath="D:\Keil\ARM\INC\Philips\LPC23xx.h"
+				RelativePath=".\LPC2468_Flash.scat"
 				>
 			</File>
 			<File
@@ -267,6 +267,14 @@
 		<Filter
 			Name="uC-LIB"
 			>
+			<File
+				RelativePath="..\..\uC-LIB\heap_mem.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\uC-LIB\heap_mem.h"
+				>
+			</File>
 			<File
 				RelativePath=".\..\..\uC-LIB\lib_def.h"
 				>
@@ -371,6 +379,14 @@
 		<Filter
 			Name="App"
 			>
+			<File
+				RelativePath="..\..\App\LedMsgMgr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\App\LedMsgMgr.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\App\TimerExt.c"
 				>
