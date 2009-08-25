@@ -165,6 +165,18 @@ void nic_isr_handler( int vector )
 		}
  		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
     }
+
+
+	/* check for receive overrun */
+	if (status & INT_RX_OVERRUN)
+	{
+		MAC_INTCLEAR = INT_RX_OVERRUN;
+	//	eth->rx_overrun++;
+		MAC_COMMAND |= CR_RX_RES;
+		/* usleep(?); */
+		MAC_COMMAND |= CR_RX_EN;
+		MAC_MAC1 |= MAC1_REC_EN;
+	}
 #if 0
 	if ((status & INT_RX_DONE) > 0) {                                /* If a receiver event has occured                          */
 		n_new  =  NIC_RxGetNRdy() - NIC_RxNRdyCtr;         /* Determine how many NEW franes have been received         */
@@ -190,13 +202,23 @@ void nic_isr_handler( int vector )
 		}
 		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags                                */
 	}
-#endif
+
 	if ((status & (INT_RX_OVERRUN)) > 0) 
 	{                           /* If a fator Overrun error has occured                     */
 		MAC_INTCLEAR            = (INT_RX_OVERRUN);                         /* Clear the overrun interrupt flag                         */
 		MAC_COMMAND            |=  CR_RX_RES;                        /* Soft reset the Rx datapath, this disables the receiver   */
 		MAC_COMMAND            |=  CR_RX_EN;                           /* Re-enable the reciever                                   */
 		MAC_MAC1               |=  MAC1_REC_EN;                             /* Re-enable the reciever                                   */
+	}
+#endif
+	/* check for transmit underrun */
+	if (status & INT_TX_UNDERRUN)
+	{
+		MAC_INTCLEAR = INT_TX_UNDERRUN;
+	//	eth->tx_underrun++;
+		MAC_COMMAND |= CR_TX_RES;;
+		/* usleep(?); */
+		MAC_COMMAND |= CR_TX_EN;
 	}
 
 	//???????????
@@ -594,7 +616,7 @@ INT16U get_nic_rx_frame_size (void)
 	INT16U     desc_cnt=0 , i =0;
 	INT16U     rx_frame_size = 0;
 	INT32U   rxstatus;
-	INT16U   flag = OS_FALSE;
+	INT8U   flag = OS_FALSE;
 
 	rxconsumeix =   MAC_RXCONSUMEINDEX;
 	rxproduceix =   MAC_RXPRODUCEINDEX;
@@ -629,6 +651,11 @@ INT16U get_nic_rx_frame_size (void)
 		{
 			rx_frame_size  =  Rx_Stat[i].Info & RINFO_SIZE;
 			rx_frame_size  -= 3;
+
+			if (rx_frame_size > 1024)
+			{
+				SetLed(2,1);
+			}
 
 			if (rxstatus | RINFO_LAST_FLAG)
 			{//×îºóÒ»·â
@@ -821,7 +848,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
 	struct pbuf* q;
-	INT32U  pkt_len = 0;
+	INT16U  pkt_len = 0;
 	INT16U  pkt_cnt = 0;
 	INT8U   ret = OS_FALSE;
 	
