@@ -29,8 +29,8 @@
 #ifndef  __BSP_H__
 #define  __BSP_H__
 
-#define  MAIN_OSC_FRQ              12000000L
-#define  IRC_OSC_FRQ               12000000L
+#define  MAIN_OSC_FRQ              11059200L
+#define  IRC_OSC_FRQ               11059200L
 #define  RTC_OSC_FRQ                  32768L
 
 #ifdef   BSP_GLOBALS

@@ -457,139 +457,7 @@ CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
         return (0);
     }
 }
-
-/*
-******************************************************************************************************************************
-******************************************************************************************************************************
-**                                            LCD Functions
-******************************************************************************************************************************
-******************************************************************************************************************************
-*/
-
-/*
-*********************************************************************************************************
-*                                          LCD BACKLIGHT ON
-*
-* Description : This function turns on the LCD backlight.
-*
-* Arguments   : None
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LCD_LightOn (void)
-{
-    FIO3SET     = GPIO3_LCD_LIGHT;
-}
-
-/*
-*********************************************************************************************************
-*                                          LCD BACKLIGHT OFF
-*
-* Description : This function turns off the LCD backlight.
-*
-* Arguments   : None
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LCD_LightOff (void)
-{
-    FIO3CLR     = GPIO3_LCD_LIGHT;
-}
-
-/*
-*********************************************************************************************************
-*                                          LCD BACKLIGHT TOGGLE
-*
-* Description : This function toggles the LCD backlight.
-*
-* Arguments   : None
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LCD_LightToggle (void)
-{
-    CPU_INT32U  pin;
-
-
-    pin         = FIO3PIN & GPIO3_LCD_LIGHT;
-
-    if (pin == GPIO3_LCD_LIGHT) {
-
-        FIO3CLR = GPIO3_LCD_LIGHT;
-
-    } else {
-
-        FIO3SET = GPIO3_LCD_LIGHT;
-    }
-}
-
-/*
-******************************************************************************************************************************
-******************************************************************************************************************************
-**                                          OS-View Functions
-******************************************************************************************************************************
-******************************************************************************************************************************
-*/
-
-/*
-*********************************************************************************************************
-*                                     INITIALIZE TIMER FOR uC/OS-View
-*
-* Description : This function is called to by uC/OS-View to initialize the free running timer that is
-*               used to make time measurements.
-*
-* Arguments   : none
-*
-* Returns     ; none
-*********************************************************************************************************
-*/
-
-#if OS_VIEW_MODULE > 0
-void  OSView_TmrInit (void)
-{
-    T1PR  = 0;
-    T1TCR = 0x00000001;                                         /* Enable the timer                                         */
-
-}
-#endif
-
-/*
-*********************************************************************************************************
-*                                     READ TIMER FOR uC/OS-View
-*
-* Description : This function is called to read the current counts of a 32 bit free running timer.
-*
-* Arguments   : none
-*
-* Returns     ; The 32 bit counts of the timer assuming the timer (MUST be an UP counter).
-*********************************************************************************************************
-*/
-
-#if OS_VIEW_MODULE > 0
-CPU_INT32U  OSView_TmrRd (void)
-{
-    if (OSRunning == DEF_TRUE) {
-        return ((CPU_INT32U)T1TC);
-    } else {
-        return (0);
-    }
-}
-#endif
-
-
-/*
-******************************************************************************************************************************
-******************************************************************************************************************************
-**                                         uC/OS-II Timer Functions
-******************************************************************************************************************************
-******************************************************************************************************************************
-*/
+   
 
 /*
 *********************************************************************************************************
@@ -1123,82 +991,37 @@ static  void  MAM_Init (void)
 
 static  void  GPIO_Init (void)
 {
-	CPU_INT32U  pinsel;
+	SCS |= 0x01;				
+	PINSEL0 = 0x000aa05f;		//PIN设置
+	PINSEL1 = 0x01400000;
+	PINSEL2 = 0x50150105;
+	PINSEL3 = 0x00000005;
+	PINSEL4 = 0x05500000;
+	PINSEL5 = 0x00c0f000;
+	PINSEL9 = 0x0f000a00;
+	PINSEL10 = 0x00000000;	    //要保留
 
+	PINMODE0=0x00000000;
+	PINMODE1=0x00000000;
+	PINMODE2=0x00000000;
+	PINMODE3=0x00000000;
+	PINMODE4=0x00000000;
+	PINMODE5=0x00000000;
+	PINMODE6=0x00000000;
+	PINMODE7=0x00000000;
+	PINMODE8=0x00000000;
+	PINMODE9=0x00000000;
 
-	//    IO0DIR      =  0;
-	//    IO1DIR      =  0;
-	IODIR0      =  0;	  // zhaoyk20081124
-	IODIR1      =  0;	  // zhaoyk20081124
-	FIO0DIR     =  0;
-	FIO1DIR     =  0;
-	FIO2DIR     =  0;
-	FIO3DIR     =  0;
-	FIO4DIR     =  0;
+	FIO0DIR = 0xe0019c00;
+	FIO1DIR = 0x1c000000;
+	FIO2DIR = 0x130c8380;    					 
+	FIO3DIR = 0x07270080;
+	FIO4DIR = 0x08857000;
 
-	FIO0MASK    =  0;
-	FIO1MASK    =  0;
-	FIO2MASK    =  0;
-	FIO3MASK    =  0;
-	FIO4MASK    =  0;
+	PCONP |= 3<<22;//使能定时器2，3
+	PCONP |= 1<<25;//使能Uart3
+	PCONP |= 1<<30;//使能Ethnet
 
-	PINSEL0     =  0;
-	PINSEL1     =  0;
-	PINSEL2     =  0;
-	PINSEL3     =  0;
-	PINSEL4     =  0;
-	PINSEL5     =  0;
-	PINSEL6     =  0;
-	PINSEL7     =  0;
-	PINSEL8     =  0;
-	PINSEL9     =  0;
-	PINSEL10    =  0;
-
-#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_0)
-	/* Configure P3.16 & P3.17 for UART1                        */
-	pinsel          = PINSEL7;
-	pinsel         &= 0xFFFFFFF0;
-	pinsel         |= 0x0000000F;
-	PINSEL7         = pinsel;
-#endif
-
-#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_1)
-	/* Configure P3.16 & P3.17 for UART1                        */
-	pinsel          = PINSEL7;
-	pinsel         &= 0xFFFFFFF0;
-	pinsel         |= 0x0000000F;
-	PINSEL7         = pinsel;
-#endif
-
-	/* Configure P0.28 & P0.27 for I2C0                         */
-	pinsel          = PINSEL1;
-	pinsel         &= 0xFC3FFFFF;
-	pinsel         |= 0x01400000;
-	PINSEL1         = pinsel;
-
-	/* Configure P2.10 for GPIO                                 */
-	pinsel          = PINSEL4;
-	pinsel         &= 0xFFCFFFFF;
-	PINSEL4         = pinsel;
-	FIO2DIR        &= ~DEF_BIT_10;
-
-
-	FIO3DIR         = GPIO3_LCD_LIGHT;
-	FIO3CLR         = GPIO3_LCD_LIGHT;
-	/*********************************************************************************************/
-
-	PINSEL0 = PINSEL0 | 0x50;  //设置引脚P0.2,P0.3为通讯口UART0, for LPC22xx
-
-	/* Configure P1.20 output, P1.21 output, P1.23 input, P1.24 output, for GPIO output for LEDS         */
-	IOSET1      =  GPIO1_SPInCS;	  // zhaoyk20081124
-	IOCLR1      =  GPIO1_SPICLK;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPICLK;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPInCS;	  // zhaoyk20081124
-	IODIR1      =  IODIR1 | GPIO1_SPIMOSI;	  // zhaoyk20081124
-
-	/* Configure P1.27 for GPIO output for Buzzer               */
-	IODIR1      =  IODIR1 | GPIO1_BUZZER;	  // zhaoyk20081124
-	IOSET1      =  GPIO1_BUZZER;	  // zhaoyk20081124
 }
 
 /*
@@ -1462,31 +1285,81 @@ static  void  VIC_DummyI2S (void)
     VIC_Dummy();
 }
 
+//定义LED的IO控制脚
+#define	LED1		1 << 19		//P2.19  
+#define	LED2		1 << 30		//P0.30
+#define	LED3		1 << 18		//P2.18
+#define	LED4		1 << 24		//P3.24
+#define	LED5		1 << 25		//P3.25
+#define	LED6		1 << 29		//P0.29
+#define	LED7		1 << 26		//P3.26
+#define	LED8		1 << 25		//P2.25
+#define	LED9		1 << 24 	//P2.24
+#define	LED10		1 << 12		//P0.12
+#define	LED11		0x80000000	//P0.31
+#define	LED12		1 << 28		//P2.28
 
-static void LED_HC595SendByte(INT8U dat)
-{
-	INT32U i = 0;
-
-	IOCLR1 = GPIO1_SPInCS;
-
-	for(i=0; i<8; i++)
+void LED_On(INT8U led_num)
+{	
+	switch(led_num)
 	{
-		IOCLR1 = GPIO1_SPICLK;
-		if((dat & 0x80) == 0)
-		{
-			IOSET1 = GPIO1_SPIMOSI;
-		}
-		else
-		{
-			IOCLR1 = GPIO1_SPIMOSI;
-		}
-		dat = dat << 1;
-		IOSET1 = GPIO1_SPICLK; 
+	case 0:
+		FIO2CLR =LED1;	break;
+	case 1:
+		FIO0CLR =LED2;	break;			
+	case 2:
+		FIO2CLR =LED3;	break;	
+	case 3:
+		FIO3CLR =LED4;	break;
+	case 4:
+		FIO3CLR =LED5;	break;
+	case 5:
+		FIO0CLR =LED6;	break;			
+	case 6:
+		FIO3CLR =LED7;	break;	
+	case 7:
+		FIO2CLR =LED8;	break;
+	case 8:
+		FIO2CLR =LED9;	break;
+	case 9:
+		FIO0CLR =LED10;	break;			
+	case 10:
+		FIO0CLR =LED11;	break;	
+	case 11:
+		FIO2CLR =LED12;	break;
 	}
-
-	IOSET1 = GPIO1_SPInCS;	 
 }
 
+void LED_Off(INT8U led_num)
+{	
+	switch(led_num)
+	{
+	case 0:
+		FIO2SET =LED1;	break;
+	case 1:
+		FIO0SET =LED2;	break;			
+	case 2:
+		FIO2SET =LED3;	break;	
+	case 3:
+		FIO3SET =LED4;	break;
+	case 4:
+		FIO3SET =LED5;	break;
+	case 5:
+		FIO0SET =LED6;	break;			
+	case 6:
+		FIO3SET =LED7;	break;	
+	case 7:
+		FIO2SET =LED8;	break;
+	case 8:
+		FIO2SET =LED9;	break;
+	case 9:
+		FIO0SET =LED10;	break;			
+	case 10:
+		FIO0SET =LED11;	break;	
+	case 11:
+		FIO2SET =LED12;	break;
+	}	
+}
 /*
 *********************************************************************************************************
 *                                             LED ON
@@ -1503,55 +1376,8 @@ static void LED_HC595SendByte(INT8U dat)
 * Returns     : None
 *********************************************************************************************************
 */
-static INT8U LEDS_stat = (0);	
-void  LED_On (CPU_INT08U led)
-{
-	if(led == 0)
-	{
-		LEDS_stat = ~0;
-	}
-	else if(led < 9)
-	{
-		led--;
-		LEDS_stat = LEDS_stat | (0x01 <<led);
-	}
-
-	LED_HC595SendByte(LEDS_stat);
-}
-
-/*
-*********************************************************************************************************
-*                                             LED OFF
-*
-* Description : This function is used to control any or all the LEDs on the board.
-*
-* Arguments   : led    is the number of the LED to turn OFF
-*                      0    indicates that you want ALL the LEDs to be OFF
-*                      1    turns OFF LED1  on the board
-*                      .
-*                      .
-*                      8    turns OFF LED8 on the board
-*
-* Returns     : None
-*********************************************************************************************************
-*/
-
-void  LED_Off (CPU_INT08U led)
-{
-	if(led == 0)
-	{
-		LEDS_stat = 0;
-	}
-	else if(led < 9)
-	{
-		led--;
-		LEDS_stat = LEDS_stat & ~(0x01 <<led);
-	}
-
-	LED_HC595SendByte(LEDS_stat);
-
-}
-
+ 
+ 
 
 void SetLed( INT8U uLedID,INT8U bState)
 {
