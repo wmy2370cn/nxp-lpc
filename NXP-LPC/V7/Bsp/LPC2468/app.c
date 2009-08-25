@@ -30,6 +30,8 @@
 #include <LPC24xx.H>
 #include "smartarm2300.h"
 #include "TimerExt.h"
+#include "LedMsgMgr.h"
+#include "heap_mem.h"
 
 /*
 *********************************************************************************************************
@@ -93,71 +95,10 @@ int  main (void)
 
     OSStart();                                                  /* Start multitasking (i.e. give control to uC/OS-II)       */
 }
+ 
 
-static  OS_EVENT *pLedMsgQ = NULL;
-#define MAX_LEDMSG_CNT 10
-void *LedMsgQeueTbl[MAX_LEDMSG_CNT];
-
-
-void InitLedMsgMgr( )
-{
-	pLedMsgQ = OSQCreate(LedMsgQeueTbl,10 );
-}
-
-/*********************************************************************************************************
-** 函数名称: SendLedMsg
-** 函数名称: SendLedMsg
-**
-** 功能描述：  
-**
-** 输　入:  INT16U * pMsg
-**          
-** 输　出:   INT8U
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年8月22日
-** 备  注:  此处是临时做法,输入参数需要是全局变量
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-INT8U SendLedMsg( INT16U *pMsg )
-{
-	INT8U err = 0;
-	err = OSQPost(pLedMsgQ,pMsg);
-	if (err == OS_NO_ERR)
-		return OS_TRUE;
-	
-	return OS_FALSE;
-}
-
-static void LedMsgHandler( )
-{
-	INT8U err = 0 ;
-	INT16U *pMsg = NULL;
-	if (pLedMsgQ == NULL)
-		return;
-
-	pMsg = OSQAccept(pLedMsgQ,&err);
-	if (err == OS_NO_ERR)
-	{
-		if (pMsg)
-		{
-			if (*pMsg >= 2 && *pMsg <=8)
-			{
-				LED_On(*pMsg);
-				OSTimeDlyHMSM(0,0,0,100);
-				LED_Off(*pMsg);
-			}
-		}
-	}
-}
-
+ 
+ 
 /*
 *********************************************************************************************************
 *                                          STARTUP TASK
@@ -174,10 +115,15 @@ static void LedMsgHandler( )
 *********************************************************************************************************
 */
 
+#ifdef __CC_ARM
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#else
+extern int __bss_end;
+#endif
+
 static  void  AppTaskStart (void *p_arg)
 {
     void           *msg;
-    CPU_INT08U      err;
 	INT8U   nLedState = 0;
 	INT16U nTimerID = 0;
     
@@ -185,6 +131,13 @@ static  void  AppTaskStart (void *p_arg)
     (void)p_arg;
 
     BSP_Init();                                                 /* Initialize BSP functions                                 */
+
+#ifdef __CC_ARM
+ 	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit ), (void*)0x40010000) ;
+#else
+	rt_system_heap_init((void*)&__bss_end, (void*)0x40010000);
+#endif
+
 
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
@@ -201,7 +154,7 @@ static  void  AppTaskStart (void *p_arg)
     
 	while (DEF_TRUE)
 	{   
-		LedMsgHandler( );
+		LedMsgMgrHandler( );
 		if (IsTimeTo(nTimerID))
 		{
 			nLedState = !nLedState;
