@@ -50,15 +50,6 @@
 #include    <app_cfg.h>
 #include    <bsp.h>
 
-#if OS_VIEW_MODULE > 0
-#include    <os_viewc.h>
-#include    <os_view.h>
-#endif
-
-#if uC_TCPIP_MODULE > 0
-#include    <net.h>
-#endif
-
 
 
 

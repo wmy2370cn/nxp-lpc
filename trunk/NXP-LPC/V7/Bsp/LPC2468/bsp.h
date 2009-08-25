@@ -29,8 +29,8 @@
 #ifndef  __BSP_H__
 #define  __BSP_H__
 
-#define  MAIN_OSC_FRQ              11059200L
-#define  IRC_OSC_FRQ               11059200L
+#define  MAIN_OSC_FRQ              12000000L
+#define  IRC_OSC_FRQ               12000000L
 #define  RTC_OSC_FRQ                  32768L
 
 #ifdef   BSP_GLOBALS
@@ -39,44 +39,6 @@
 #define  BSP_EXT  extern
 #endif
 
-
-/***************************************************************************
- **
- **  VIC Interrupt channels
- **
- ***************************************************************************/
-#define VIC_WDT          0  /* Watchdog                           */
-#define VIC_SW           1  /* Software interrupts                */
-#define VIC_DEBUGRX      2  /* Embedded ICE, DbgCommRx            */
-#define VIC_DEBUGTX      3  /* Embedded ICE, DbgCommTx            */
-#define VIC_TIMER0       4  /* Timer 0 (Match 0-3 Capture 0-3)    */
-#define VIC_TIMER1       5  /* Timer 1 (Match 0-3 Capture 0-3)    */
-#define VIC_UART0        6  /* UART 0  (RLS, THRE, RDA, CTI)      */
-#define VIC_UART1        7  /* UART 1  (RLS, THRE, RDA, CTI, MSI) */
-#define VIC_PWM01        8  /* PWM 01  (Match 0-6 Capture 0-3)    */
-#define VIC_I2C0         9  /* I2C 0   (SI)                       */
-#define VIC_SPI         10  /* SPI 0, SSP 0                       */
-#define VIC_SSP1         11 /* SSP 1                              */
-#define VIC_PLL         12  /* PLL lock (PLOCK)                   */
-#define VIC_RTC         13  /* RTC      (RTCCIF, RTCALF)          */
-#define VIC_EINT0       14  /* External interrupt 0 (EINT0)       */
-#define VIC_EINT1       15  /* External interrupt 1 (EINT1)       */
-#define VIC_EINT2       16  /* External interrupt 2 (EINT2)       */
-#define VIC_EINT3       17  /* External interrupt 3 (EINT3)       */
-#define VIC_AD0         18  /* A/D converter 0                    */
-#define VIC_I2C1        19  /* I2C 1                              */
-#define VIC_BOD         20  /* Brown out detect                   */
-#define VIC_ETHERNET    21  /* Ethernet                           */
-#define VIC_USB         22  /* USB Low and High priority          */
-#define VIC_CAN12       23  /* CAN1,2 Tx, Rx                      */
-#define VIC_MMC         24  /* SD/MMC                             */
-#define VIC_GP_DMA      25  /* DMA channel 0, DMA channel 1       */
-#define VIC_TIMER2      26  /* Timer 2 (Match 0-3 Capture 0-3)    */
-#define VIC_TIMER3      27  /* Timer 3 (Match 0-3 Capture 0-3)    */
-#define VIC_UART2       28  /* UART 2  (RLS, THRE, RDA, CTI)      */
-#define VIC_UART3       29  /* UART 3  (RLS, THRE, RDA, CTI, MSI) */
-#define VIC_I2C2        30  /* I2C 0   (SI)                       */
-#define VIC_I2S         31  /* I2S Rx, Tx                         */
 /*
 *********************************************************************************************************
 *                                             #define CONSTANTS
@@ -122,7 +84,23 @@ void            BSP_Init                (void);
 void            BSP_IntDisAll           (void);
 CPU_INT32U      BSP_CPU_ClkFreq         (void);
 CPU_INT32U      BSP_CPU_PclkFreq        (CPU_INT08U  id);
- 
+
+/*
+*********************************************************************************************************
+*                                             LED SERVICES
+*********************************************************************************************************
+*/
+
+void            LED_On                  (CPU_INT08U led);
+void            LED_Off                 (CPU_INT08U led); 
+
+/*
+*********************************************************************************************************
+*                                         PUSH BUTTON SERVICES
+*********************************************************************************************************
+*/
+
+CPU_BOOLEAN     PB_GetStatus            (CPU_INT08U pb);
 
 /*
 *********************************************************************************************************
@@ -170,7 +148,21 @@ void            LCD_LightToggle         (void);
 
 void            DCC_TxISR_Handler       (void);
 void            DCC_RxISR_Handler       (void);
- 
+
+/*
+*********************************************************************************************************
+*                                             RS-232 SERVICES
+*********************************************************************************************************
+*/
+
+void            Ser_Init            (void);
+void            Ser_WrByte          (      CPU_CHAR  tx_byte);
+void            Ser_WrStr           (const CPU_CHAR *tx_str);
+CPU_INT08U      Ser_RdByte          (void);
+void            Ser_RdStr           (      CPU_CHAR *rx_str, CPU_INT32U len);
+void            Ser_Printf          (const CPU_CHAR *format, ...);
+
+
 
 
 #endif

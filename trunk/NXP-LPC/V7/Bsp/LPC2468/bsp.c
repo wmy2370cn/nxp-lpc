@@ -27,8 +27,11 @@
 */
 
 #define  BSP_GLOBALS
-#include <includes.h> 
-#include <lpc24XX.h>
+#include <LPC24xx.H>
+#include <includes.h>  
+#include "ioLPC23xx.H"
+#include "smartarm2300.h"
+#include "TimerExt.h"
 
 /*
 *********************************************************************************************************
@@ -51,7 +54,7 @@ typedef  void (*BSP_FNCT_PTR)(void);                            /* Pointer to IS
 *                                              PROTOTYPES
 *********************************************************************************************************
 */
-static void CPU_PIN_Init(void);
+
 static  void  PLL_Init          (void);
 static  void  MAM_Init          (void);
 static  void  GPIO_Init         (void);
@@ -119,12 +122,11 @@ static  void  VIC_DummyI2S      (void);
 
 void  BSP_Init (void)
 {
-	CPU_PIN_Init();
- //   PLL_Init();                                                 /* Initialize the PLL                                       */
- //   MAM_Init();                                                 /* Initialize the Memory Acceleration Module                */
- //   GPIO_Init();                                                /* Initialize the board's I/Os                              */
+  //  PLL_Init();                                                 /* Initialize the PLL                                       */
+  //  MAM_Init();                                                 /* Initialize the Memory Acceleration Module                */
+    GPIO_Init();                                                /* Initialize the board's I/Os                              */
  //   ADC_Init();                                                 /* Initialize the board's ADCs                              */
-      VIC_Init();                                                 /* Initialize the Vectored Interrupt Controller             */
+    VIC_Init();                                                 /* Initialize the Vectored Interrupt Controller             */
  //   I2C_Init();                                                 /* Initialize the I2C                                       */
 
     Tmr_TickInit();                                             /* Initialize the uC/OS-II tick interrupt                   */
@@ -447,14 +449,13 @@ static  void  ADC_Init (void)
 
 CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
 {
-	return (0);
-//    if (adc == 0) {
-//        return ((ADDR0 >> 6) & 0x03FF);
-//    } else if (adc == 1) {
-//        return ((ADDR1 >> 6) & 0x03FF);
-//    } else {
-//       return (0);
-//    }
+    if (adc == 0) {
+        return ((AD0DR0 >> 6) & 0x03FF);
+    } else if (adc == 1) {
+        return ((AD0DR1 >> 6) & 0x03FF);
+    } else {
+        return (0);
+    }
 }
 
 /*
@@ -479,7 +480,7 @@ CPU_INT16U  ADC_GetStatus (CPU_INT08U  adc)
 
 void  LCD_LightOn (void)
 {
- //   FIO3SET     = GPIO3_LCD_LIGHT;
+    FIO3SET     = GPIO3_LCD_LIGHT;
 }
 
 /*
@@ -496,7 +497,7 @@ void  LCD_LightOn (void)
 
 void  LCD_LightOff (void)
 {
-//    FIO3CLR     = GPIO3_LCD_LIGHT;
+    FIO3CLR     = GPIO3_LCD_LIGHT;
 }
 
 /*
@@ -513,7 +514,7 @@ void  LCD_LightOff (void)
 
 void  LCD_LightToggle (void)
 {
- /*   CPU_INT32U  pin;
+    CPU_INT32U  pin;
 
 
     pin         = FIO3PIN & GPIO3_LCD_LIGHT;
@@ -525,7 +526,7 @@ void  LCD_LightToggle (void)
     } else {
 
         FIO3SET = GPIO3_LCD_LIGHT;
-    }  */
+    }
 }
 
 /*
@@ -647,8 +648,254 @@ void  Tmr_TickISR_Handler (void)
     T0IR        = 0xFF;                                         /* Clear timer #0 interrupt                                 */
 
     OSTimeTick();                                               /* Call uC/OS-II's OSTimeTick()                             */
+	ExtTimerTick();
+}
+/*
+******************************************************************************************************************************
+******************************************************************************************************************************
+**                                       Serial Port Communications
+******************************************************************************************************************************
+******************************************************************************************************************************
+*/
+
+/*
+*********************************************************************************************************
+*                                                   Ser_Init
+*
+* Description :   This function prepares UART0.
+*
+* Arguments   :   None.
+*
+* Returns     :   None.
+*********************************************************************************************************
+*/
+
+void  Ser_Init (void)
+{
+    CPU_INT16U  div;                                            /* Baud rate divisor                                        */
+    CPU_INT08U  divlo;
+    CPU_INT08U  divhi;
+    CPU_INT08U  lcr;										    /* Line Control Register                                    */
+    CPU_INT32U  pclk_freq;
+    CPU_INT32U  pinsel;
+
+
+#if SER_COMM_SEL == SER_UART_0
+                                                                /* Compute divisor for desired baud rate                    */
+    pclk_freq   =  BSP_CPU_PclkFreq(PCLK_UART0);                /* Get the CPU clock frequency                              */
+
+    div         = (CPU_INT16U)(((2 * pclk_freq / 16 / 115200) + 1) / 2);
+    divlo       =  div & 0x00FF;                                /* Split divisor into LOW and HIGH bytes                    */
+    divhi       = (div >> 8) & 0x00FF;
+    lcr         =  DEF_BIT_00 | DEF_BIT_01;                     /* 8 Bits, 1 Stop, No Parity                                */
+
+                                                                /* Configure P0.2 & P0.3 for UART0                          */
+    pinsel      = PINSEL0;
+    pinsel     &= 0xFFFFFF0F;
+    pinsel     |= 0x00000050;
+    PINSEL0     = pinsel;
+
+    U0LCR       = DEF_BIT_07;                                   /* Set divisor access bit                                   */
+    U0DLL       = divlo;                                        /* Load divisor                                             */
+    U0DLM       = divhi;
+    U0LCR       = lcr;                                          /* Set line control register (Bit 8 is 0)                   */
+    U0IER       = 0x00;                                         /* Disable both Rx and Tx interrupts                        */
+    U0FCR       = DEF_BIT_00 | DEF_BIT_01 | DEF_BIT_02;         /* Enable FIFO, flush Rx & Tx                               */
+#endif
+
+#if SER_COMM_SEL == SER_UART_1
+                                                                /* Compute divisor for desired baud rate                    */
+    pclk_freq   =  BSP_CPU_PclkFreq(PCLK_UART1);                /* Get the CPU clock frequency                              */
+
+    div         = (CPU_INT16U)(((2 * pclk_freq / 16 / 115200) + 1) / 2);
+    divlo       =  div & 0x00FF;                                /* Split divisor into LOW and HIGH bytes                    */
+    divhi       = (div >> 8) & 0x00FF;
+    lcr         =  DEF_BIT_00 | DEF_BIT_01;                     /* 8 Bits, 1 Stop, No Parity                                */
+
+                                                                /* Configure P3.16 & P3.17 for UART1                        */
+    pinsel      = PINSEL7;
+    pinsel     &= 0xFFFFFFF0;
+    pinsel     |= 0x0000000F;
+    PINSEL7     = pinsel;
+
+    U1LCR       = DEF_BIT_07;                                   /* Set divisor access bit                                   */
+    U1DLL       = divlo;                                        /* Load divisor                                             */
+    U1DLM       = divhi;
+    U1LCR       = lcr;                                          /* Set line control register (Bit 8 is 0)                   */
+    U1IER       = 0x00;                                         /* Disable both Rx and Tx interrupts                        */
+    U1FCR       = DEF_BIT_00 | DEF_BIT_01 | DEF_BIT_02;         /* Enable FIFO, flush Rx & Tx                               */
+#endif
 }
 
+/*
+*********************************************************************************************************
+*                                                Ser_WrByte
+*
+* Description :   Transmit a single byte using UART0
+*
+* Arguments   :   The byte that should be transmitted.
+*
+* Returns     :   None.
+*********************************************************************************************************
+*/
+
+void  Ser_WrByte (CPU_INT08U tx_byte)
+{
+#if SER_COMM_SEL == SER_UART_0
+    U0THR       = tx_byte;
+#endif
+
+#if SER_COMM_SEL == SER_UART_1
+    U1THR       = tx_byte;
+#endif
+}
+
+/*
+*********************************************************************************************************
+*                                                Ser_WrStr
+*
+* Description :   Transmits a string using UART0
+*
+* Arguments   :   The string that will be transmitted.
+*
+* Returns     :   None.
+*********************************************************************************************************
+*/
+
+void  Ser_WrStr (const CPU_CHAR * tx_str)
+{
+    while ((*tx_str) != 0) {
+        Ser_WrByte(*tx_str++);
+#if SER_COMM_SEL == SER_UART_0
+        while ((U0LSR & DEF_BIT_05) == 0) {
+            OSTimeDly(1);
+        }
+#endif
+
+#if SER_COMM_SEL == SER_UART_1
+        while ((U1LSR & DEF_BIT_05) == 0) {
+            OSTimeDly(1);
+        }
+#endif
+    }
+}
+
+/*
+*********************************************************************************************************
+*                                                Ser_RdByte
+*
+* Description :   Receive a single byte using UART0
+*
+* Arguments   :   None.
+*
+* Returns     :   The received byte
+*********************************************************************************************************
+*/
+
+CPU_INT08U  Ser_RdByte (void)
+{
+    CPU_INT08U  rx_byte;
+
+
+#if SER_COMM_SEL == SER_UART_0
+    while ((U0LSR & DEF_BIT_00) == 0) {
+        OSTimeDly(1);
+    }
+
+    rx_byte = (CPU_INT08U)(U0RBR);                              /* Remove the data from the holding register                */
+    return (rx_byte);
+#endif
+
+#if SER_COMM_SEL == SER_UART_1
+    while ((U1LSR & DEF_BIT_00) == 0) {
+        OSTimeDly(1);
+    }
+
+    rx_byte = (CPU_INT08U)(U1RBR);                              /* Remove the data from the holding register                */
+    return (rx_byte);
+#endif
+}
+
+/*
+*********************************************************************************************************
+*                                                Ser_RdStr
+*
+* Description :   This function reads a string using Channel 0 of the UART.
+*
+* Arguments   :   s      A pointer to a buffer at which the string can be stored
+*                 len    The size of the string that will be read
+*
+* Returns     :   None
+*********************************************************************************************************
+*/
+
+void  Ser_RdStr (CPU_CHAR    *rx_str,
+                 CPU_INT32U   len)
+{
+    CPU_CHAR  input;
+    CPU_CHAR  input_ix;
+
+
+    input_ix  = 0;
+    rx_str[0] = 0;
+
+    while (1)
+    {
+        input = Ser_RdByte();
+
+        if ((input == '\r') ||
+            (input == '\n')) {
+            Ser_Printf("\n");
+            rx_str[input_ix] = 0;
+            break;
+        }
+
+        if (input == '\b') {
+            if (input_ix > 0) {
+                Ser_Printf("\b \b");
+                input_ix--;
+                rx_str[input_ix] = 0;
+            }
+        }
+
+        if (Str_IsPrint(input)) {
+            Ser_Printf("%c", input);
+            rx_str[input_ix] = input;
+            input_ix++;
+            if (input_ix >= len) {
+               input_ix = len;
+            }
+        }
+    }
+}
+
+/*
+*********************************************************************************************************
+*                                                Ser_Printf
+*
+* Description :   Formatted outout to the serial port.
+*                 This funcion reads a string from a serial port. This call blocks until a
+*                 character appears at the port and the last character is a Carriage
+*                 Return (0x0D).
+*
+* Arguments   :   Format string follwing the C format convention.
+*
+* Returns     :   None.
+*********************************************************************************************************
+*/
+
+void  Ser_Printf (const  CPU_CHAR *format, ...)
+{
+    static  CPU_CHAR  buffer[80 + 1];
+            va_list   vArgs;
+
+
+    va_start(vArgs, format);
+    vsprintf((char *)buffer, (char const *)format, vArgs);
+    va_end(vArgs);
+
+    Ser_WrStr((CPU_CHAR*) buffer);
+}
 
 /*
 ******************************************************************************************************************************
@@ -876,6 +1123,82 @@ static  void  MAM_Init (void)
 
 static  void  GPIO_Init (void)
 {
+	CPU_INT32U  pinsel;
+
+
+	//    IO0DIR      =  0;
+	//    IO1DIR      =  0;
+	IODIR0      =  0;	  // zhaoyk20081124
+	IODIR1      =  0;	  // zhaoyk20081124
+	FIO0DIR     =  0;
+	FIO1DIR     =  0;
+	FIO2DIR     =  0;
+	FIO3DIR     =  0;
+	FIO4DIR     =  0;
+
+	FIO0MASK    =  0;
+	FIO1MASK    =  0;
+	FIO2MASK    =  0;
+	FIO3MASK    =  0;
+	FIO4MASK    =  0;
+
+	PINSEL0     =  0;
+	PINSEL1     =  0;
+	PINSEL2     =  0;
+	PINSEL3     =  0;
+	PINSEL4     =  0;
+	PINSEL5     =  0;
+	PINSEL6     =  0;
+	PINSEL7     =  0;
+	PINSEL8     =  0;
+	PINSEL9     =  0;
+	PINSEL10    =  0;
+
+#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_0)
+	/* Configure P3.16 & P3.17 for UART1                        */
+	pinsel          = PINSEL7;
+	pinsel         &= 0xFFFFFFF0;
+	pinsel         |= 0x0000000F;
+	PINSEL7         = pinsel;
+#endif
+
+#if (OS_VIEW_MODULE > 0) && (OS_VIEW_COMM_SEL == OS_VIEW_UART_1)
+	/* Configure P3.16 & P3.17 for UART1                        */
+	pinsel          = PINSEL7;
+	pinsel         &= 0xFFFFFFF0;
+	pinsel         |= 0x0000000F;
+	PINSEL7         = pinsel;
+#endif
+
+	/* Configure P0.28 & P0.27 for I2C0                         */
+	pinsel          = PINSEL1;
+	pinsel         &= 0xFC3FFFFF;
+	pinsel         |= 0x01400000;
+	PINSEL1         = pinsel;
+
+	/* Configure P2.10 for GPIO                                 */
+	pinsel          = PINSEL4;
+	pinsel         &= 0xFFCFFFFF;
+	PINSEL4         = pinsel;
+	FIO2DIR        &= ~DEF_BIT_10;
+
+
+	FIO3DIR         = GPIO3_LCD_LIGHT;
+	FIO3CLR         = GPIO3_LCD_LIGHT;
+	/*********************************************************************************************/
+
+	PINSEL0 = PINSEL0 | 0x50;  //设置引脚P0.2,P0.3为通讯口UART0, for LPC22xx
+
+	/* Configure P1.20 output, P1.21 output, P1.23 input, P1.24 output, for GPIO output for LEDS         */
+	IOSET1      =  GPIO1_SPInCS;	  // zhaoyk20081124
+	IOCLR1      =  GPIO1_SPICLK;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPICLK;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPInCS;	  // zhaoyk20081124
+	IODIR1      =  IODIR1 | GPIO1_SPIMOSI;	  // zhaoyk20081124
+
+	/* Configure P1.27 for GPIO output for Buzzer               */
+	IODIR1      =  IODIR1 | GPIO1_BUZZER;	  // zhaoyk20081124
+	IOSET1      =  GPIO1_BUZZER;	  // zhaoyk20081124
 }
 
 /*
@@ -894,7 +1217,7 @@ static  void  GPIO_Init (void)
 
 static  void  VIC_Init (void)
 {
-    VICSoftIntClr =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
+    VICIntEnClr =  0xFFFFFFFF;                                /* Disable ALL interrupts                                   */
     VICVectAddr    =  0;                                         /* Acknowlege any pending VIC interrupt                     */
     VICProtection =  0;                                         /* Allow VIC register access in User of Priviledged modes   */
 
@@ -1140,123 +1463,104 @@ static  void  VIC_DummyI2S (void)
 }
 
 
-//定义LED的IO控制脚
-#define	LED1		1 << 19		//P2.19  
-#define	LED2		1 << 30		//P0.30
-#define	LED3		1 << 18		//P2.18
-#define	LED4		1 << 24		//P3.24
-#define	LED5		1 << 25		//P3.25
-#define	LED6		1 << 29		//P0.29
-#define	LED7		1 << 26		//P3.26
-#define	LED8		1 << 25		//P2.25
-#define	LED9		1 << 24 	//P2.24
-#define	LED10		1 << 12		//P0.12
-#define	LED11		0x80000000	//P0.31
-#define	LED12		1 << 28		//P2.28
+static void LED_HC595SendByte(INT8U dat)
+{
+	INT32U i = 0;
 
-void hd_SetOneLED(INT8U led_num)
-{	
-	switch(led_num)
+	IOCLR1 = GPIO1_SPInCS;
+
+	for(i=0; i<8; i++)
 	{
-	case 0:
-		FIO2CLR =LED1;	break;
-	case 1:
-		FIO0CLR =LED2;	break;			
-	case 2:
-		FIO2CLR =LED3;	break;	
-	case 3:
-		FIO3CLR =LED4;	break;
-	case 4:
-		FIO3CLR =LED5;	break;
-	case 5:
-		FIO0CLR =LED6;	break;			
-	case 6:
-		FIO3CLR =LED7;	break;	
-	case 7:
-		FIO2CLR =LED8;	break;
-	case 8:
-		FIO2CLR =LED9;	break;
-	case 9:
-		FIO0CLR =LED10;	break;			
-	case 10:
-		FIO0CLR =LED11;	break;	
-	case 11:
-		FIO2CLR =LED12;	break;
+		IOCLR1 = GPIO1_SPICLK;
+		if((dat & 0x80) == 0)
+		{
+			IOSET1 = GPIO1_SPIMOSI;
+		}
+		else
+		{
+			IOCLR1 = GPIO1_SPIMOSI;
+		}
+		dat = dat << 1;
+		IOSET1 = GPIO1_SPICLK; 
 	}
+
+	IOSET1 = GPIO1_SPInCS;	 
 }
 
-void hd_ClearOneLED(INT8U led_num)
-{	
-	switch(led_num)
+/*
+*********************************************************************************************************
+*                                             LED ON
+*
+* Description : This function is used to control any or all the LEDs on the board.
+*
+* Arguments   : led    is the number of the LED to control
+*                      0    indicates that you want ALL the LEDs to be ON
+*                      1    turns ON LED1  on the board
+*                      .
+*                      .
+*                      8    turns ON LED8 on the board
+*
+* Returns     : None
+*********************************************************************************************************
+*/
+static INT8U LEDS_stat = (0);	
+void  LED_On (CPU_INT08U led)
+{
+	if(led == 0)
 	{
-	case 0:
-		FIO2SET =LED1;	break;
-	case 1:
-		FIO0SET =LED2;	break;			
-	case 2:
-		FIO2SET =LED3;	break;	
-	case 3:
-		FIO3SET =LED4;	break;
-	case 4:
-		FIO3SET =LED5;	break;
-	case 5:
-		FIO0SET =LED6;	break;			
-	case 6:
-		FIO3SET =LED7;	break;	
-	case 7:
-		FIO2SET =LED8;	break;
-	case 8:
-		FIO2SET =LED9;	break;
-	case 9:
-		FIO0SET =LED10;	break;			
-	case 10:
-		FIO0SET =LED11;	break;	
-	case 11:
-		FIO2SET =LED12;	break;
-	}	
+		LEDS_stat = ~0;
+	}
+	else if(led < 9)
+	{
+		led--;
+		LEDS_stat = LEDS_stat | (0x01 <<led);
+	}
+
+	LED_HC595SendByte(LEDS_stat);
 }
+
+/*
+*********************************************************************************************************
+*                                             LED OFF
+*
+* Description : This function is used to control any or all the LEDs on the board.
+*
+* Arguments   : led    is the number of the LED to turn OFF
+*                      0    indicates that you want ALL the LEDs to be OFF
+*                      1    turns OFF LED1  on the board
+*                      .
+*                      .
+*                      8    turns OFF LED8 on the board
+*
+* Returns     : None
+*********************************************************************************************************
+*/
+
+void  LED_Off (CPU_INT08U led)
+{
+	if(led == 0)
+	{
+		LEDS_stat = 0;
+	}
+	else if(led < 9)
+	{
+		led--;
+		LEDS_stat = LEDS_stat & ~(0x01 <<led);
+	}
+
+	LED_HC595SendByte(LEDS_stat);
+
+}
+
+
 void SetLed( INT8U uLedID,INT8U bState)
 {
 	if (bState)
 	{
-		hd_SetOneLED(uLedID);
+		LED_On(uLedID);
 	}
 	else
 	{
-		hd_ClearOneLED(uLedID);
+		LED_Off(uLedID);
 	}
-}
-	  
-static void CPU_PIN_Init(void)
-{	
-	SCS |= 0x01;				
-    PINSEL0 = 0x000aa05f;		//PIN设置
-    PINSEL1 = 0x01400000;
-    PINSEL2 = 0x50150105;
-    PINSEL3 = 0x00000005;
-    PINSEL4 = 0x05500000;
-    PINSEL5 = 0x00c0f000;
-    PINSEL9 = 0x0f000a00;
-    PINSEL10 = 0x00000000;	    //要保留
-   
-    PINMODE0=0x00000000;
-    PINMODE1=0x00000000;
-    PINMODE2=0x00000000;
-    PINMODE3=0x00000000;
-    PINMODE4=0x00000000;
-    PINMODE5=0x00000000;
-    PINMODE6=0x00000000;
-    PINMODE7=0x00000000;
-    PINMODE8=0x00000000;
-    PINMODE9=0x00000000;
-     
-    FIO0DIR = 0xe0019c00;
-    FIO1DIR = 0x1c000000;
-    FIO2DIR = 0x130c8380;    					 
-    FIO3DIR = 0x07270080;
-    FIO4DIR = 0x08857000;
-
-	PCONP |= 3<<22;//使能定时器2，3
-	PCONP |= 1<<25;//使能Uart3
-	PCONP |= 1<<30;//使能Ethnet
 }
