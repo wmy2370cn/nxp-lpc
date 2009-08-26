@@ -30,8 +30,9 @@
 #include <LPC24xx.H>
 #include "smartarm2300.h"
 #include "TimerExt.h"
-#include "LedMsgMgr.h"
+//#include "LedMsgMgr.h"
 #include "heap_mem.h"
+#include "Blinky.h"
 
 /*
 *********************************************************************************************************
@@ -147,13 +148,16 @@ static  void  AppTaskStart (void *p_arg)
 	rt_hw_eth_init();
 	lwip_sys_init( );
 	InitTimerMgr(  );
-	InitLedMsgMgr( );
-	nTimerID = SetTimer(nTimerID,500);
-
-  
+//	InitLedMsgMgr( );
+//	nTimerID = SetTimer(nTimerID,500);
+	InitLed();
+	SetLedBlinking(0,5,5);
     
 	while (DEF_TRUE)
 	{   
+#if 0
+
+
 		LedMsgMgrHandler( );
 		if (IsTimeTo(nTimerID))
 		{
@@ -167,6 +171,7 @@ static  void  AppTaskStart (void *p_arg)
 				LED_Off(1);
 			}
 		}
+#endif
 		OSTimeDly(10) ;
 	//	OSTimeDlyHMSM(0, 0, 1, 0);
 	//	OSTimeDlyHMSM(0,0,1,0);

@@ -32,8 +32,7 @@
  
 
 #define  MAX_LED_NO 8
-
-
+ 
 static  OS_EVENT *pLedMsgQ = NULL;
 #define MAX_LEDMSG_CNT 10
 void *LedMsgQeueTbl[MAX_LEDMSG_CNT];

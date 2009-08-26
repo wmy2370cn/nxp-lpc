@@ -380,11 +380,11 @@
 			Name="App"
 			>
 			<File
-				RelativePath="..\..\App\LedMsgMgr.c"
+				RelativePath="..\..\App\Blinky.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\App\LedMsgMgr.h"
+				RelativePath="..\..\App\Blinky.h"
 				>
 			</File>
 			<File

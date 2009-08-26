@@ -97,11 +97,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARM.DLL</SimDllName>
-          <SimDllArguments>-cLPC246x</SimDllArguments>
+          <SimDllArguments>-cLPC24xx</SimDllArguments>
           <SimDlgDll>DARMP.DLL</SimDlgDll>
           <SimDlgDllArguments>-pLPC2468</SimDlgDllArguments>
           <TargetDllName>SARM.DLL</TargetDllName>
-          <TargetDllArguments>-cLPC246x</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMP.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
         </DllOption>
@@ -311,7 +311,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x40000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -365,7 +365,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x40000000</DataAddressRange>
-            <ScatterFile>.\LPC2468_Flash.scat</ScatterFile>
+            <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -417,6 +417,11 @@
               <FileName>TimerExt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\App\TimerExt.c</FilePath>
+            </File>
+            <File>
+              <FileName>Blinky.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\Blinky.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -597,6 +602,11 @@
               <FileName>lib_str.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\uC-LIB\lib_str.h</FilePath>
+            </File>
+            <File>
+              <FileName>heap_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\uC-LIB\heap_mem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1258,6 +1268,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\App\TimerExt.c</FilePath>
             </File>
+            <File>
+              <FileName>Blinky.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\Blinky.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1437,6 +1452,11 @@
               <FileName>lib_str.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\uC-LIB\lib_str.h</FilePath>
+            </File>
+            <File>
+              <FileName>heap_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\uC-LIB\heap_mem.c</FilePath>
             </File>
           </Files>
         </Group>

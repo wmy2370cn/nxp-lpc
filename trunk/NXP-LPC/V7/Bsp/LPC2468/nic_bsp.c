@@ -547,16 +547,14 @@ void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
 /* ethernet device interface */
 /*
 * Transmit packet.
-*/
-static INT16U tx_led_no = 5;
-extern INT8U SendLedMsg( INT16U *pMsg );
+*/ 
+ 
 INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 {
 	struct pbuf* q;
 	INT8U err = OS_NO_ERR;
 
-	SendLedMsg(&tx_led_no);
-	if (p->len > 1023)
+ 	if (p->len > 1023)
 	{
 		SetLed(6,TRUE);
 	}
@@ -875,8 +873,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	{
 		SetLed(3,TRUE);
 	}
-	SendLedMsg(&rx_led_no);
-	//
+	 	//
 	if (pkt_len)
 	{
 		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_POOL);
@@ -889,8 +886,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包
 			//rt_kprintf("no memory in pbuf\n");
 			 EMAC_RxPktDiscard();
-			 SendLedMsg(&err_led_no);
-		}
+	 	}
 	}
  
 	return p;
