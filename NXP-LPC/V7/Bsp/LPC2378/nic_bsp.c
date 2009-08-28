@@ -545,6 +545,54 @@ void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
 	}
 }
 /* ethernet device interface */
+INT8U IsTxDescFull( )
+{
+	INT32U TxProduceIndex = MAC_TXPRODUCEINDEX;
+	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+	
+	if (TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
+	{	
+		return TRUE;	
+	}
+	return FALSE;
+}
+
+INT8U lpc24xxether_write_frame_ex(struct pbuf* p)
+{
+	struct pbuf* q;
+	INT8U *buf_ptr;
+	INT8U err = OS_NO_ERR;
+	INT32U TxProduceIndex = MAC_TXPRODUCEINDEX;
+	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+	INT32U is_last, tx_offset = 0, remain, pdu_length;
+
+	if (p == NULL || p->tot_len >= ETH_FRAG_SIZE * NUM_TX_FRAG)
+	{
+		return FALSE;
+	}
+	/* check whether buffer is available */
+	
+
+	while(tx_offset < p->tot_len)
+	{
+		 if (IsTxDescFull())
+		 {
+			 OSTimeDly(5);
+		 }
+
+		buf_ptr = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
+		remain = p->tot_len - tx_offset;
+		pdu_length = (remain <= ETH_FRAG_SIZE)? remain : ETH_FRAG_SIZE;
+
+
+
+
+	}
+
+
+
+
+}
 /*
 * Transmit packet.
 */
@@ -879,7 +927,7 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 	//
 	if (pkt_len)
 	{
-		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_POOL);
+		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_RAM);
 		if(p != RT_NULL)
 		{
 			for(q = p; q != RT_NULL; q= q->next)
