@@ -418,6 +418,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\App\TimerExt.c</FilePath>
             </File>
+            <File>
+              <FileName>Blinky.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\Blinky.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1257,6 +1262,11 @@
               <FileName>TimerExt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\App\TimerExt.c</FilePath>
+            </File>
+            <File>
+              <FileName>Blinky.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\Blinky.c</FilePath>
             </File>
           </Files>
         </Group>

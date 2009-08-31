@@ -121,7 +121,7 @@
  * a lot of data that needs to be copied, this should be set high.
  */
 #ifndef MEM_SIZE
-#define MEM_SIZE                        4800
+#define MEM_SIZE                        5376
 #endif
 
 /**
