@@ -1506,6 +1506,7 @@ static void LED_HC595SendByte(INT8U dat)
 static INT8U LEDS_stat = (0);	
 void  LED_On (CPU_INT08U led)
 {
+#if 0
 	if(led == 0)
 	{
 		LEDS_stat = ~0;
@@ -1515,7 +1516,11 @@ void  LED_On (CPU_INT08U led)
 		led--;
 		LEDS_stat = LEDS_stat | (0x01 <<led);
 	}
-
+#endif
+	if(led < 8)
+	{
+		LEDS_stat = LEDS_stat | (0x01 <<led);
+	}
 	LED_HC595SendByte(LEDS_stat);
 }
 
@@ -1538,6 +1543,7 @@ void  LED_On (CPU_INT08U led)
 
 void  LED_Off (CPU_INT08U led)
 {
+#if 0
 	if(led == 0)
 	{
 		LEDS_stat = 0;
@@ -1547,9 +1553,12 @@ void  LED_Off (CPU_INT08U led)
 		led--;
 		LEDS_stat = LEDS_stat & ~(0x01 <<led);
 	}
-
+#endif
+	if(led < 8)
+	{
+		LEDS_stat = LEDS_stat & ~(0x01 <<led);
+	}
 	LED_HC595SendByte(LEDS_stat);
-
 }
 
 

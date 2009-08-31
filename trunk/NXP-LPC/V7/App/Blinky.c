@@ -31,7 +31,7 @@
 #include "bsp.h"
  
 
-#define  MAX_LED_CNT 12
+#define  MAX_LED_CNT 8
 
 
 struct LED_STATUS

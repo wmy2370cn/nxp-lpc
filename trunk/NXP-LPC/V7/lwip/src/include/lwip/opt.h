@@ -152,7 +152,7 @@
  * To use this, MEMP_USE_CUSTOM_POOLS also has to be enabled.
  */
 #ifndef MEM_USE_POOLS
-#define MEM_USE_POOLS                   0
+#define MEM_USE_POOLS                 0
 #endif
 
 /**
@@ -160,7 +160,7 @@
  * bigger pool - WARNING: THIS MIGHT WASTE MEMORY but it can make a system more
  * reliable. */
 #ifndef MEM_USE_POOLS_TRY_BIGGER_POOL
-#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
+#define MEM_USE_POOLS_TRY_BIGGER_POOL   1
 #endif
 
 /**
@@ -413,7 +413,7 @@
  * in this time, the whole packet is discarded.
  */
 #ifndef IP_REASS_MAXAGE
-#define IP_REASS_MAXAGE                 3
+#define IP_REASS_MAXAGE                 2
 #endif
 
 /**
@@ -423,7 +423,7 @@
  * packets even if the maximum amount of fragments is enqueued for reassembly!
  */
 #ifndef IP_REASS_MAX_PBUFS
-#define IP_REASS_MAX_PBUFS              10
+#define IP_REASS_MAX_PBUFS              2
 #endif
 
 /**
