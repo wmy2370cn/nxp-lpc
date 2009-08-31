@@ -456,94 +456,7 @@ void  nic_int_init  (void)
 	VICVectAddr21       =  (CPU_INT32U)nic_isr_handler;              /* Set the vector address                                   */
 	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
 }
-
-
-/* See the header file for descriptions of public functions. */
-/*********************************************************************************************************
-** 函数名称: lpc24xxether_write_frame
-** 函数名称: lpc24xxether_write_frame
-**
-** 功能描述：  
-**
-** 输　入:  INT8U * ptr
-** 输　入:  INT32U length
-** 输　入:  rt_bool_t eof
-**          
-** 输　出:   void
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年8月17日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-void lpc24xxether_write_frame(INT8U *ptr, INT32U length, INT8U eof)
-{
-	INT8U *buf_ptr;
-	INT32U current_tb_index = 0;
-	INT32U is_last, tx_offset = 0, remain, pdu_length;
-
-	INT32U TxProduceIndex = MAC_TXPRODUCEINDEX;
-	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
-	//需要增加一些参数检测
-	if (ptr == NULL || length == 0||length >= 65535)
-	{
-		SetLed(2,TRUE);
-		return;
-	}
-
-	while(tx_offset < length)
-	{
-		/* check whether buffer is available */
- 		if (TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
- 			return;	
-// 		while( TxConsumeIndex == (TxProduceIndex+1)%NUM_TX_FRAG)
-// 		{	/* no buffer */
-// 	 		OSTimeDly(5);
-// 			TxProduceIndex = MAC_TXPRODUCEINDEX;
-// 			TxConsumeIndex = MAC_TXCONSUMEINDEX;
-// 		}
-
-		/* Get the address of the buffer from the descriptor, then copy	the data into the buffer. */
-		current_tb_index = MAC_TXPRODUCEINDEX;
-		buf_ptr = (INT8U *)tb_descriptors[current_tb_index].Packet;
-
-		/* How much can we write to the buffer? */
-		remain = length - tx_offset;
-		pdu_length = (remain <= ETH_FRAG_SIZE)? remain : ETH_FRAG_SIZE;
-
-		/* Copy the data into the buffer. */
-		memcpy(buf_ptr, &ptr[tx_offset], pdu_length );
-		tx_offset += pdu_length;
-
-		/* Is this the last data for the frame? */
-		if((eof == OS_TRUE) )
-			is_last = OS_TRUE;
-		else 
-			is_last = OS_FALSE;
-
-		/* Fill out the necessary in the descriptor to get the data sent,then move to the next descriptor, wrapping if necessary. */
-		if(is_last)
-		tb_descriptors[current_tb_index].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
-			EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
-			EMAC_TX_DESC_LAST       |        /* No additional descriptors to follow, this is the last    */
-			EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
-			(pdu_length - 1);                       /* Write the size of the frame, starting from 0             */
-		else
-			tb_descriptors[current_tb_index].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
-			EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
-			EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
-			(pdu_length - 1);               /* Write the size of the frame, starting from 0             */
-
-		MAC_TXPRODUCEINDEX      =   (current_tb_index + 1) % NUM_TX_FRAG;    /* Increment the produce Ix register, initiate Tx of frame  */
-	}
-}
+ 
 /* ethernet device interface */
 INT8U IsTxDescFull( )
 {
@@ -568,75 +481,9 @@ INT8U IsTxDescEmpty( )
 
 	return OS_FALSE;
 }
-INT16U lpc24xxether_write_frame_ex(INT8U *pSrc ,INT16U nSrcLen, INT32U *pProduceIdx, INT16U *pDescOffset,INT8U eof)
-{
-	//	INT16U nTxCnt = 0;
-	INT8U *pDescBuf = NULL;
-	INT16U nTxOffset = 0,nRemainSrc = 0, nRemainDesc = 0, pdu_length;
-
-	if (pSrc == NULL || pProduceIdx == NULL || pDescOffset == NULL)
-	{
-		return 0;
-	}
-
-	if (nSrcLen > 5000 || nSrcLen == 0)
-	{
-		return 0;
-	}
-
-	if (*pDescOffset >= ETH_FRAG_SIZE || *pProduceIdx >= NUM_TX_FRAG)
-	{
-		return 0;	
-	}
-
-	pDescBuf = (INT8U *)tb_descriptors[*pProduceIdx].Packet;
-
-	while (nTxOffset < nSrcLen)
-	{
-		nRemainDesc = ETH_FRAG_SIZE - *pDescOffset; //描述符的空间
-		nRemainSrc = nSrcLen - nTxOffset; //还没有发送的长度
-		pdu_length = (nRemainSrc <= nRemainDesc)? nRemainSrc : nRemainDesc;
-
-		pDescBuf += *pDescOffset;
-
-		memcpy(pDescBuf, &pSrc[nTxOffset], pdu_length );
-
-		//更新
-		nTxOffset += pdu_length;
-		*pDescOffset += pdu_length;
-		//写入状态字
-		if(nTxOffset >= nSrcLen && eof)
-		{
-			tb_descriptors[*pProduceIdx].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
-				EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
-				EMAC_TX_DESC_LAST       |        /* No additional descriptors to follow, this is the last    */
-				EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
-				(*pDescOffset - 1);                /* Write the size of the frame, starting from 0             */
-		}
-		else
-		{
-			tb_descriptors[*pProduceIdx].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
-				EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
-				EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
-				(*pDescOffset - 1);                /* Write the size of the frame, starting from 0             */
-		}
-
-		if (*pDescOffset >= ETH_FRAG_SIZE || eof)
-		{
-			(*pProduceIdx) ++;
-			if (*pProduceIdx >= NUM_TX_FRAG)
-			{
-				*pProduceIdx -= NUM_TX_FRAG;
-			}
-		}			 
-	}
-
-	return nTxOffset;
-}
-
  
 #define   MIN(x, y)   ((x)   >   (y)   ?   (y)   :   (x)) 
-INT16U lpc24xxether_write_frame_ex2( struct pbuf* p )
+INT16U lpc24xxether_write_frame( struct pbuf* p )
 {
 	struct pbuf* q;
 	INT8U *pDescBuf = NULL;
@@ -648,10 +495,7 @@ INT16U lpc24xxether_write_frame_ex2( struct pbuf* p )
 
 	if (p == NULL)
 		return 0;
-	if (p->tot_len > 1000)
-	{
-		SetLed(8,1);
-	}
+ 
 	pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
 
 	for (q = p; q != NULL; q = q->next)
@@ -715,20 +559,14 @@ INT16U lpc24xxether_write_frame_ex2( struct pbuf* p )
 }
 /*
 * Transmit packet.
-*/
-static INT16U tx_led_no = 5;
-extern INT8U SendLedMsg( INT16U *pMsg );
+*/ 
+ 
 INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 {
 	struct pbuf* q;
 	INT8U err = OS_NO_ERR;
 
-	SendLedMsg(&tx_led_no);
-	if (p->tot_len > 1000)
-	{
-		SetLed(6,TRUE);
-	}
-
+	SetLedBlinking(1,1,0);
 // 	err = IsTxDescEmpty();
 // 	if (err == FALSE)
 // 	{
@@ -742,22 +580,8 @@ INT8U lpc24xxether_tx( eth_device_t dev, struct pbuf* p)
 	/* lock tx operation */
 //	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
 	OSSemPend(tx_sem,0,&err);
-	lpc24xxether_write_frame_ex2(p);
+	lpc24xxether_write_frame (p);
 	OSSemPost(tx_sem);
-#if 0
-	OSSemPend(tx_sem,0,&err);
- 
-	for (q = p; q != NULL; q = q->next)
-	{
-		if (q->next == RT_NULL)
-			lpc24xxether_write_frame(q->payload, q->len, OS_TRUE);
-		else
-			lpc24xxether_write_frame(q->payload, q->len, OS_FALSE);
-	}
-
-	OSSemPost(tx_sem);
-//	rt_sem_release(&tx_sem);
-#endif
 
 	return 0;
 }
@@ -834,12 +658,7 @@ INT16U get_nic_rx_frame_size (void)
 		else
 		{
 			rx_frame_size  =  Rx_Stat[i].Info & RINFO_SIZE;
-			rx_frame_size  -= 3;
-
-			if (rx_frame_size > 1024)
-			{
-				SetLed(2,1);
-			}
+			rx_frame_size  -= 3; 
 
 			if (rxstatus | RINFO_LAST_FLAG)
 			{//最后一封
@@ -1020,9 +839,7 @@ INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 			}
 		}
 	}
-}
-static INT16U rx_led_no = 4;
-static INT16U err_led_no = 8;
+} 
 
 struct pbuf *lpc24xxether_rx(eth_device_t dev)
 {
@@ -1054,16 +871,12 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 		 EMAC_RxPktDiscard();
 		 return NULL;
 	 }
-
-	if (pkt_len > 1023)
-	{
-		SetLed(3,TRUE);
-	}
-	SendLedMsg(&rx_led_no);
+ 
+	 SetLedBlinking(2,1,0);
 	//
 	if (pkt_len)
 	{
-		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_RAM);
+		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_POOL);
 		if(p != RT_NULL)
 		{
 			for(q = p; q != RT_NULL; q= q->next)
@@ -1073,7 +886,8 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包
 			//rt_kprintf("no memory in pbuf\n");
 			 EMAC_RxPktDiscard();
-			 SendLedMsg(&err_led_no);
+			 SetLedBlinking(7,5,0);
+
 		}
 	}
  
