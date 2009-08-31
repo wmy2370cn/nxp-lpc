@@ -102,7 +102,7 @@
  
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
-#define PBUF_POOL_BUFSIZE           1500
+#define PBUF_POOL_BUFSIZE           1536
 
 /* PBUF_LINK_HLEN: the number of bytes that should be allocated for a
    link level header. */
