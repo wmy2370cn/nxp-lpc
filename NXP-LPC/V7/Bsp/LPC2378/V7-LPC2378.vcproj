@@ -380,6 +380,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\App\LwIPTest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\App\LwIPTest.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\App\TimerExt.c"
 				>
 			</File>
@@ -703,6 +711,18 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Driver"
+			>
+			<File
+				RelativePath="..\..\Driver\KeyDrv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Driver\KeyDrv.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
