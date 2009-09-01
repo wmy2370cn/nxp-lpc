@@ -366,6 +366,16 @@
 #define ETHARP_TRUST_IP_MAC             1
 #endif
 
+/**
+ * ETHARP_SUPPORT_VLAN==1: support receiving ethernet packets with VLAN header.
+ * Additionally, you can define ETHARP_VLAN_CHECK to an u16_t VLAN ID to check.
+ * If ETHARP_VLAN_CHECK is defined, only VLAN-traffic for this VLAN is accepted.
+ * If ETHARP_VLAN_CHECK is not defined, all traffic is accepted.
+ */
+#ifndef ETHARP_SUPPORT_VLAN
+#define ETHARP_SUPPORT_VLAN             0
+#endif
+
 /*
    --------------------------------
    ---------- IP options ----------
@@ -803,7 +813,7 @@
  * as much as (2 * TCP_SND_BUF/TCP_MSS) for things to work.
  */
 #ifndef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                (4 * (TCP_SND_BUF/TCP_MSS))
+#define TCP_SND_QUEUELEN                (4 * (TCP_SND_BUF)/(TCP_MSS))
 #endif
 
 /**
@@ -812,7 +822,7 @@
  * TCP snd_buf for select to return writable.
  */
 #ifndef TCP_SNDLOWAT
-#define TCP_SNDLOWAT                    (TCP_SND_BUF/2)
+#define TCP_SNDLOWAT                    ((TCP_SND_BUF)/2)
 #endif
 
 /**
