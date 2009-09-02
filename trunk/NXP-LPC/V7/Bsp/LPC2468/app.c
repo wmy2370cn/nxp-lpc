@@ -134,7 +134,7 @@ static  void  AppTaskStart (void *p_arg)
     BSP_Init();                                                 /* Initialize BSP functions                                 */
 
 #ifdef __CC_ARM
- 	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit ), (void*)0x40010000) ;
+// 	rt_system_heap_init((void*)(&Image$$RW_IRAM1$$ZI$$Limit ), (void*)0x40010000) ;
 #else
 	rt_system_heap_init((void*)&__bss_end, (void*)0x40010000);
 #endif
@@ -154,30 +154,8 @@ static  void  AppTaskStart (void *p_arg)
 	SetLedBlinking(0,5,5);
     
 	while (DEF_TRUE)
-	{   
-#if 0
-
-
-		LedMsgMgrHandler( );
-		if (IsTimeTo(nTimerID))
-		{
-			nLedState = !nLedState;
-			if (nLedState)
-			{
-				LED_On(1);
-			}
-			else
-			{
-				LED_Off(1);
-			}
-		}
-#endif
-		OSTimeDly(10) ;
-	//	OSTimeDlyHMSM(0, 0, 1, 0);
-	//	OSTimeDlyHMSM(0,0,1,0);
-	//	LED_On(1);
-	//	OSTimeDlyHMSM(0,0,1,0);
-	 //	LED_Off(1);
+	{ 
+		OSTimeDly(100) ; 
 	}
 }
  

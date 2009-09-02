@@ -263,7 +263,7 @@ static  void  AppInitTCPIP (void)
 	NetIF_MAC_Addr[2] = 0x6c;
 	NetIF_MAC_Addr[3] = 0xa2;
 	NetIF_MAC_Addr[4] = 0x45;
-	NetIF_MAC_Addr[5] = 0x5e;
+	NetIF_MAC_Addr[5] = 0x3e;
 
 	/* Update MAC address */
 	lpc24xx_device.dev_addr[0] = 0x00;
@@ -271,7 +271,7 @@ static  void  AppInitTCPIP (void)
 	lpc24xx_device.dev_addr[2] = 0x6c;
 	lpc24xx_device.dev_addr[3] = 0xa2;
 	lpc24xx_device.dev_addr[4] = 0x45;
-	lpc24xx_device.dev_addr[5] = 0x5e;
+	lpc24xx_device.dev_addr[5] = 0x3e;
 
 // 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 // 

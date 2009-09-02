@@ -29,7 +29,7 @@
 
 #define  BSP_GLOBALS
 #include <includes.h>
-#include "ioLPC23xx.H"
+#include "ioLPC24xx.H"
 #include <LPC24xx.H>
 
 

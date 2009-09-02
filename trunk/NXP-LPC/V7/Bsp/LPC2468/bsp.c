@@ -29,7 +29,7 @@
 #define  BSP_GLOBALS
 #include <LPC24xx.H>
 #include <includes.h>  
-#include "ioLPC23xx.H"
+#include "ioLPC24xx.H"
 #include "smartarm2300.h"
 #include "TimerExt.h"
 

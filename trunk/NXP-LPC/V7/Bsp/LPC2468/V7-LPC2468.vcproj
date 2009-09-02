@@ -208,15 +208,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\iolpc23xx.h"
-				>
-			</File>
-			<File
-				RelativePath="D:\Keil\ARM\INC\Philips\LPC23xx.h"
+				RelativePath=".\iolpc24xx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\LPC2468_Flash.scat"
+				>
+			</File>
+			<File
+				RelativePath="D:\Keil\ARM\INC\Philips\LPC24xx.h"
 				>
 			</File>
 			<File
@@ -241,10 +241,6 @@
 			</File>
 			<File
 				RelativePath=".\smartarm2300.h"
-				>
-			</File>
-			<File
-				RelativePath=".\vectors.s"
 				>
 			</File>
 		</Filter>
