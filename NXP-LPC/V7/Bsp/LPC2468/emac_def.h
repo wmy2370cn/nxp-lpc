@@ -3,13 +3,6 @@
 
 #pragma  once
 
-#define MYMAC_1         0x00            /* our ethernet (MAC) address        */
-#define MYMAC_2         0x30            /* (MUST be unique in LAN!)          */
-#define MYMAC_3         0x6C
-#define MYMAC_4         0x00
-#define MYMAC_5         0x09
-#define MYMAC_6         0x02
-
 #define  ACCEPT_BROADCAST                           DEF_BIT_01
 #define  ACCEPT_PERFECT                             DEF_BIT_05
 
@@ -23,7 +16,7 @@
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
 
 
-#define  PHY_RDWR_RETRIES                  8                            /* Attempt to read or write the PHY 8 times             */
+#define  PHY_RDWR_RETRIES         8                            /* Attempt to read or write the PHY 8 times             */
 
 
 /* MAC Configuration Register 1 */

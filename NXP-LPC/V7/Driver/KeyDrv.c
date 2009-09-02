@@ -25,9 +25,7 @@
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 #include "includes.h"
-#include "Key.h"
-#include "LcdDriver.h"
-#include "TaskDef.h"
+#include "KeyDrv.h" 
 
 /*
 *********************************************************************************************************
@@ -40,7 +38,7 @@
 #define KEY_STATE_RPT_START_DLY      3
 #define KEY_STATE_RPT_DLY            4
 
-#define  KEY_BUF_SIZE               0X1F      /* Size of the KEYBOARD buffer                             */
+#define  KEY_BUF_SIZE               0X20      /* Size of the KEYBOARD buffer                             */
 
 #define  KEY_SCAN_TASK_DLY          50      /* Number of milliseconds between keyboard scans           */
 #define  KEY_RPT_START_DLY          10      /* Number of scan times before auto repeat function engages*/
@@ -57,6 +55,8 @@ static  INT8U     KeyRptDlyCtr;             /* Number of scan times before auto 
 
 static  INT8U     KeyScanState;             /* Current state of key scanning function                  */
 
+#define  KEY_SCAN_TASK_STK_SIZE  100
+#define  PRIO_KEY_SCAN_TASK   60
 static  OS_STK    KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE];  /* Keyboard scanning task stack             */
 
 static  OS_EVENT *KeySemPtr;                               /* Pointer to keyboard semaphore            */
@@ -86,7 +86,7 @@ static  OS_EVENT *KeySemPtr;                               /* Pointer to keyboar
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static  void  KeyBufIn (INT8U code)
+static  void  AddKey (INT8U code)
 {
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
@@ -143,20 +143,14 @@ static  void  KeyBufIn (INT8U code)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-extern BOOLEAN  KeyHit (void)
+BOOLEAN  KeyHit (void)
 {
-#if OS_CRITICAL_METHOD == 3                                
-	OS_CPU_SR  cpu_sr;
-#endif
 	BOOLEAN hit;
-
-	OS_ENTER_CRITICAL();
 	hit = (BOOLEAN)(KeyNRead > 0) ? TRUE : FALSE;
-	OS_EXIT_CRITICAL();
 	return (hit);
 }
 
- /*********************************************************************************************************
+/*********************************************************************************************************
 ** 函数名称: GetKey
 ** 函数名称: GetKey
 **
@@ -178,7 +172,7 @@ extern BOOLEAN  KeyHit (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-extern INT8U  GetKey (INT16U to)
+INT8U  GetKey (INT16U to)
 {
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
@@ -232,7 +226,7 @@ void  FlushKeyBuffer (void)
 {
 	while (KeyHit())
 	{                           /* While there are keys in the buffer...              */
-		GetKey(0);                            /* ... extract the next key from the buffer           */
+		GetKey(0);              /* ... extract the next key from the buffer           */
 	}
 }
 /*********************************************************************************************************
@@ -305,7 +299,7 @@ static  BOOLEAN   IsKeyDown (void)
 **
 ** 作　者:  LiJin
 ** 日　期:  2008年10月23日
-** 备  注: 
+** 备  注: 这里有问题，
 **-------------------------------------------------------------------------------------------------------
 ** 修改人:
 ** 日　期:
@@ -322,81 +316,81 @@ static  void  ScanKeyTask (void *data)
 		OSTimeDlyHMSM(0, 0, 0, KEY_SCAN_TASK_DLY);         /* Delay between keyboard scans             */
 		switch (KeyScanState)
 		{
-			case KEY_STATE_UP:                             /* See if need to look for a key pressed    */
-				if (IsKeyDown())
-				{                     /* See if key is pressed                    */
-					KeyScanState = KEY_STATE_DEBOUNCE;    /* Next call we will have debounced the key */
-					KeyDownTmr   = 0;                     /* Reset key down timer                     */
-				}
-				break;
+		case KEY_STATE_UP:                             /* See if need to look for a key pressed    */
+			if (IsKeyDown())
+			{                     /* See if key is pressed                    */
+				KeyScanState = KEY_STATE_DEBOUNCE;    /* Next call we will have debounced the key */
+				KeyDownTmr   = 0;                     /* Reset key down timer                     */
+			}
+			break;
 
-			case KEY_STATE_DEBOUNCE:                       /* Key pressed, get scan code and buffer    */
-				if (IsKeyDown())
-				{                     /* See if key is pressed                    */
-					code              = hd_GetKey();      /* Determine the key scan code              */
-					KeyBufIn(code);                       /* Input scan code in buffer                */
-					KeyRptStartDlyCtr = KEY_RPT_START_DLY;/* Start delay to auto-repeat function      */
-					KeyScanState      = KEY_STATE_RPT_START_DLY;
-				} 
-				else
-				{
-		//			KeySelRow(KEY_ALL_ROWS);              /* Select all row                           */
-					KeyScanState      = KEY_STATE_UP;     /* Key was not pressed after all!           */
-				}
-				break;
+		case KEY_STATE_DEBOUNCE:                       /* Key pressed, get scan code and buffer    */
+			if (IsKeyDown())
+			{                     /* See if key is pressed                    */
+				code              = hd_GetKey();      /* Determine the key scan code              */
+				AddKey(code);                       /* Input scan code in buffer                */
+				KeyRptStartDlyCtr = KEY_RPT_START_DLY;/* Start delay to auto-repeat function      */
+				KeyScanState      = KEY_STATE_RPT_START_DLY;
+			} 
+			else
+			{
+				//			KeySelRow(KEY_ALL_ROWS);              /* Select all row                           */
+				KeyScanState      = KEY_STATE_UP;     /* Key was not pressed after all!           */
+			}
+			break;
 
-			case KEY_STATE_RPT_START_DLY:
-				if (IsKeyDown())
-				{                     /* See if key is still pressed              */
-					if (KeyRptStartDlyCtr > 0)
-					{          /* See if we need to delay before auto rpt  */
-						KeyRptStartDlyCtr--;              /* Yes, decrement counter to start of rpt   */
-						if (KeyRptStartDlyCtr == 0)
-						{     /* If delay to auto repeat is completed ... */
-							code         = hd_GetKey();   /* Determine the key scan code              */
-							KeyBufIn(code);               /* Input scan code in buffer                */
-							KeyRptDlyCtr = KEY_RPT_DLY;   /* Load delay before next repeat            */
-							KeyScanState = KEY_STATE_RPT_DLY;
-						}
+		case KEY_STATE_RPT_START_DLY:
+			if (IsKeyDown())
+			{                     /* See if key is still pressed              */
+				if (KeyRptStartDlyCtr > 0)
+				{          /* See if we need to delay before auto rpt  */
+					KeyRptStartDlyCtr--;              /* Yes, decrement counter to start of rpt   */
+					if (KeyRptStartDlyCtr == 0)
+					{     /* If delay to auto repeat is completed ... */
+						code         = hd_GetKey();   /* Determine the key scan code              */
+						AddKey(code);               /* Input scan code in buffer                */
+						KeyRptDlyCtr = KEY_RPT_DLY;   /* Load delay before next repeat            */
+						KeyScanState = KEY_STATE_RPT_DLY;
 					}
-				} 
-				else
-				{
-					KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
 				}
-				break;
+			} 
+			else
+			{
+				KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
+			}
+			break;
 
-			case KEY_STATE_RPT_DLY:
-				if (IsKeyDown())
-				{                     /* See if key is still pressed              */
-					if (KeyRptDlyCtr > 0)
-					{               /* See if we need to wait before repeat key */
-						KeyRptDlyCtr--;                   /* Yes, dec. wait time to next key repeat   */
-						if (KeyRptDlyCtr == 0)
-						{          /* See if it's time to repeat key           */
-							code         = hd_GetKey();   /* Determine the key scan code              */
-							KeyBufIn(code);               /* Input scan code in buffer                */
-							KeyRptDlyCtr = KEY_RPT_DLY;   /* Reload delay counter before auto repeat  */
-						}
+		case KEY_STATE_RPT_DLY:
+			if (IsKeyDown())
+			{                     /* See if key is still pressed              */
+				if (KeyRptDlyCtr > 0)
+				{               /* See if we need to wait before repeat key */
+					KeyRptDlyCtr--;                   /* Yes, dec. wait time to next key repeat   */
+					if (KeyRptDlyCtr == 0)
+					{          /* See if it's time to repeat key           */
+						code         = hd_GetKey();   /* Determine the key scan code              */
+						AddKey(code);               /* Input scan code in buffer                */
+						KeyRptDlyCtr = KEY_RPT_DLY;   /* Reload delay counter before auto repeat  */
 					}
-				} 
-				else
-				{
-					KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
 				}
-				break;
+			} 
+			else
+			{
+				KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
+			}
+			break;
 		}
 	}
 }
 
 extern void  InitKeyDriver (void)
 {
- 	KeyScanState = KEY_STATE_UP;                 /* Keyboard should not have a key pressed             */
+	KeyScanState = KEY_STATE_UP;                 /* Keyboard should not have a key pressed             */
 	KeyNRead     = 0;                            /* Clear the number of keys read                      */
 	KeyDownTmr   = 0;
 	KeyBufInIx   = 0;                            /* Key codes inserted at  the beginning of the buffer */
 	KeyBufOutIx  = 0;                            /* Key codes removed from the beginning of the buffer */
 	KeySemPtr    = OSSemCreate(0);               /* Initialize the keyboard semaphore                  */
-	 
+
 	OSTaskCreate(ScanKeyTask , (void *)0, &KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE-1], PRIO_KEY_SCAN_TASK);
 }

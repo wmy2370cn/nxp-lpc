@@ -19,7 +19,56 @@ HISTORY
 
   ++ New features:
 
+  2009-08-26 Simon Goldschmidt/Simon Kallweit
+  * slipif.c/.h: bug #26397: SLIP polling support
+
+  2009-08-25 Simon Goldschmidt
+  * opt.h, etharp.h/.c: task #9033: Support IEEE 802.1q tagged frame (VLAN),
+    New configuration options ETHARP_SUPPORT_VLAN and ETHARP_VLAN_CHECK.
+
+  2009-08-25 Simon Goldschmidt
+  * ip_addr.h, netdb.c: patch #6900: added define ip_ntoa(struct ip_addr*)
+
+  2009-08-24 Jakob Stoklund Olesen
+  * autoip.c, dhcp.c, netif.c: patch #6725: Teach AutoIP and DHCP to respond
+    to netif_set_link_up().
+
+  2009-08-23 Simon Goldschmidt
+  * tcp.h/.c: Added function tcp_debug_state_str() to convert a tcp state
+    to a human-readable string.
+
   ++ Bugfixes:
+
+  2009-08-30 Simon Goldschmidt
+  * ip.c: Fixed bug bug #27345: "ip_frag() does not use the LWIP_NETIF_LOOPBACK
+    function" by checking for loopback before calling ip_frag
+
+  2009-08-25 Simon Goldschmidt
+  * dhcp.c: fixed invalid dependency to etharp_query if DHCP_DOES_ARP_CHECK==0
+
+  2009-08-23 Simon Goldschmidt
+  * ppp.c: bug #27078: Possible memory leak in pppInit()
+
+  2009-08-23 Simon Goldschmidt
+  * netdb.c, dns.c: bug #26657: DNS, if host name is "localhost", result
+    is error.
+
+  2009-08-23 Simon Goldschmidt
+  * opt.h, init.c: bug #26649: TCP fails when TCP_MSS > TCP_SND_BUF
+    Fixed wrong parenthesis, added check in init.c
+
+  2009-08-23 Simon Goldschmidt
+  * ppp.c: bug #27266: wait-state debug message in pppMain occurs every ms
+
+  2009-08-23 Simon Goldschmidt
+  * udp.c: bug #27252: Address pointer invalid after freeing pbuf in UDP
+    receive callback
+
+  2009-08-23 Simon Goldschmidt
+  * many ppp files: bug #27267: Added include to string.h where needed
+
+  2009-08-23 Simon Goldschmidt
+  * tcp.h: patch #6843: tcp.h macro optimization patch (for little endian)
 
 
 (STABLE-1.3.1)

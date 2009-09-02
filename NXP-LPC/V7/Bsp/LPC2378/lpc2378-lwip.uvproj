@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\app;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\OS\uCOS-II;..\..\lwip\src\include;..\..\lwip\src;..\..\lwip\src\arch\include;..\..\lwip\src\include\ipv4;</IncludePath>
+              <IncludePath>.;..\..\app;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\OS\uCOS-II;..\..\lwip\src\include;..\..\lwip\src\include\lwip;..\..\lwip\src;..\..\lwip\src\arch\include;..\..\lwip\src\include\ipv4;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,6 +422,11 @@
               <FileName>Blinky.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\App\Blinky.c</FilePath>
+            </File>
+            <File>
+              <FileName>LwIPTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\LwIPTest.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1267,6 +1272,11 @@
               <FileName>Blinky.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\App\Blinky.c</FilePath>
+            </File>
+            <File>
+              <FileName>LwIPTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\LwIPTest.c</FilePath>
             </File>
           </Files>
         </Group>
