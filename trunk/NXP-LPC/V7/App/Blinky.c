@@ -31,7 +31,7 @@
 #include "bsp.h"
  
 
-#define  MAX_LED_CNT 8
+#define  MAX_LED_CNT 12
 
 
 struct LED_STATUS
@@ -111,6 +111,11 @@ void InitLed( void )
 		g_LedStatus[i].AutoToggle = 0;
 		g_LedStatus[i].DlyTime = 0;
 		g_LedStatus[i].Value = 0;
+		LED_On(i);
+	}
+	for (i = 0; i < MAX_LED_CNT; i++)
+	{ 
+		LED_Off(i);
 	}
 	pBlinkyTmr = OSTmrCreate( 1,1,OS_TMR_OPT_PERIODIC,LedHandler,NULL,(INT8U *)0,&err);
 	OSTmrStart(pBlinkyTmr,&err);
