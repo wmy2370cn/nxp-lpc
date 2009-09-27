@@ -181,7 +181,7 @@ static  void  AppInitTCPIP (void)
 
     err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 
-    AppNetIP        = NetASCII_Str_to_IP("192.9.200.128",  &err);
+    AppNetIP        = NetASCII_Str_to_IP("192.9.200.198",  &err);
     AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
     AppNetGateway   = NetASCII_Str_to_IP("192.9.200.1",   &err);
 

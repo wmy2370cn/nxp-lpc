@@ -592,7 +592,7 @@
 
 
                                                                 /* Configure socket select functionality :              */
-#define  NET_SOCK_CFG_SEL_EN                    DEF_DISABLED
+#define  NET_SOCK_CFG_SEL_EN                    DEF_ENABLED
                                                                 /*   DEF_DISABLED  Socket select  DISABLED              */
                                                                 /*   DEF_ENABLED   Socket select   ENABLED              */
 

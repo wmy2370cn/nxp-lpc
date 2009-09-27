@@ -106,6 +106,13 @@
           <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
+          <OPTHX>
+            <HexSelection>1</HexSelection>
+            <HexRangeLowAddress>0</HexRangeLowAddress>
+            <HexRangeHighAddress>0</HexRangeHighAddress>
+            <HexOffset>0</HexOffset>
+            <Oh166RecLen>16</Oh166RecLen>
+          </OPTHX>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
@@ -155,7 +162,7 @@
             <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>BIN\AGDIRDI.DLL</Flash2>
-          <Flash3>LPC210x_ISP.EXE ("#H" ^X $D COM1: 38400 1)</Flash3>
+          <Flash3>"LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1)</Flash3>
           <Flash4></Flash4>
         </Utilities>
         <TargetArmAds>
@@ -437,11 +444,6 @@
               <FileName>bsp.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\bsp.h</FilePath>
-            </File>
-            <File>
-              <FileName>iolpc23xx.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\iolpc23xx.h</FilePath>
             </File>
             <File>
               <FileName>LPC2400.s</FileName>
@@ -1046,6 +1048,13 @@
           <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
+          <OPTHX>
+            <HexSelection>1</HexSelection>
+            <HexRangeLowAddress>0</HexRangeLowAddress>
+            <HexRangeHighAddress>0</HexRangeHighAddress>
+            <HexOffset>0</HexOffset>
+            <Oh166RecLen>16</Oh166RecLen>
+          </OPTHX>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
@@ -1377,11 +1386,6 @@
               <FileName>bsp.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\bsp.h</FilePath>
-            </File>
-            <File>
-              <FileName>iolpc23xx.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\iolpc23xx.h</FilePath>
             </File>
             <File>
               <FileName>LPC2400.s</FileName>
@@ -1986,6 +1990,13 @@
           <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
+          <OPTHX>
+            <HexSelection>1</HexSelection>
+            <HexRangeLowAddress>0</HexRangeLowAddress>
+            <HexRangeHighAddress>0</HexRangeHighAddress>
+            <HexOffset>0</HexOffset>
+            <Oh166RecLen>16</Oh166RecLen>
+          </OPTHX>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
@@ -2317,11 +2328,6 @@
               <FileName>bsp.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\bsp.h</FilePath>
-            </File>
-            <File>
-              <FileName>iolpc23xx.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\iolpc23xx.h</FilePath>
             </File>
             <File>
               <FileName>LPC2400.s</FileName>
