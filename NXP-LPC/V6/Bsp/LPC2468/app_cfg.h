@@ -51,6 +51,10 @@
 #define  NET_OS_CFG_TMR_TASK_PRIO              7
 #define  OS_TASK_TMR_PRIO                      8
 
+#define  NET_SVR_TASK_PRIO_BASE                20
+
+#define  LISTEN_TASK_PRIO                      30
+
 /*
 *********************************************************************************************************
 *                                            TASK STACK SIZES
@@ -61,6 +65,9 @@
 #define  APP_TASK_PHY_STK_SIZE               128
 #define  NET_OS_CFG_TMR_TASK_STK_SIZE       1024
 #define  NET_OS_CFG_IF_RX_TASK_STK_SIZE      512
+#define  LISTEN_TASK_STK_SIZE                256
+#define  NET_SVR_TASK_STK_SIZE               512
+
 
 
 /*

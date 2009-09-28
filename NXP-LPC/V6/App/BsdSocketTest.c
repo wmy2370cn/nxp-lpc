@@ -26,6 +26,7 @@
 ********************************************************************************************************/
 #include <stdlib.h>
 #include "includes.h"  
+#include "app_cfg.h"
 
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET  (int)(-1)
@@ -39,24 +40,80 @@
 #define  MAX_CONN_CNT 3 //支持最多3路并发
 #define USERPORT  9002
 
+#define  BUFF_LEN  512
+
 struct client_node
 {
 	INT32S  sock_id;
 	INT32U  second_cnt; //秒计数，在秒定时器中不断累加，如果收到数据就清0，30秒检查一次，如果发现值>30，则判定为没有数据，断开
+	INT8U   send_buf[BUFF_LEN];
+	INT8U   recv_buf[BUFF_LEN];
+	INT16U  send_len;
+	INT16U  recv_len;
 };
 
-struct client_node g_Conn[MAX_CONN_CNT];
+static struct client_node g_Conn[MAX_CONN_CNT];
+static  OS_STK          ListenTaskStk[LISTEN_TASK_STK_SIZE];
+static  OS_STK          NetSvrTaskStk[NET_SVR_TASK_STK_SIZE][MAX_CONN_CNT];
 
-void InitServer( )
+
+static INT32S GetSocket( struct client_node *pClient)
 {
-	INT8U i = 0;
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif
+	INT32S socket_id = INVALID_SOCKET;
 
-	for (i = 0 ; i < MAX_CONN_CNT; i++)
+	if (pClient)
 	{
-	//	g_Conn[i] = NULL;
+		OS_ENTER_CRITICAL();
+		socket_id = pClient->sock_id ;
+		OS_EXIT_CRITICAL();
 	}
+	return socket_id;
 }
 
+static INT8U AddNode( INT32S nSocketId )
+{
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif
+	INT8U i  = 0;
+	INT8U bFlag = OS_FALSE;
+
+	if (nSocketId == 0 || nSocketId == INVALID_SOCKET)
+		return OS_FALSE;
+
+	OS_ENTER_CRITICAL();
+
+	for (i  = 0; i < MAX_CONN_CNT ; i++)
+	{
+		if(g_Conn[i].sock_id == 0 || g_Conn[i].sock_id == INVALID_SOCKET )
+		{
+			bFlag = OS_TRUE;
+			g_Conn[i].sock_id = nSocketId;
+			g_Conn[i].recv_len = 0;
+			g_Conn[i].send_len = 0;
+			break;
+//			if(g_Conn[i].sock_id )
+		}		
+	}
+//	socket_id = pClient->sock_id ;
+	OS_EXIT_CRITICAL();	
+}
+
+static void RemoveNode( struct client_node *pClient )
+{
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif	 
+	if (pClient)
+	{
+		OS_ENTER_CRITICAL();
+		pClient->sock_id = INVALID_SOCKET;
+		OS_EXIT_CRITICAL();
+	} 
+} 
 
 static  void  ListenTask (void *p_arg)
 {
@@ -123,34 +180,75 @@ static  void  ListenTask (void *p_arg)
 
 static  void  ProcessTask (void *p_arg)
 {
-	struct client_node *pCilent = (struct client_node *)p_arg;
-
 	INT32S sock;
-	struct fd_set fdread;
-	struct timeval tv;
+	int ret = 0;
+	struct client_node *pCilent = (struct client_node *)p_arg;
 
 	if (p_arg == NULL)
 		return;
 
 	while(1)
 	{
-		if (pCilent->sock_id == 0 || pCilent->sock_id == INVALID_SOCKET)
+		sock = GetSocket( pCilent );
+		if (sock == 0 || sock == INVALID_SOCKET)
 		{
 			OSTimeDlyHMSM(0,0,1,0);
 			continue;
 		}
 
-		sock = pCilent->sock_id
+	 	//接收数据，然后处理，发送
+		ret = recv(sock, pCilent->recv_buf, BUFF_LEN, 0);
 
-		tv.tv_sec = 2;
-		tv.tv_usec = 0;
+		if (ret>0 && ret <= BUFF_LEN)
+		{//进行数据处理
+
+		}
+		else if ( ret == 0)
+		{// 连接被关闭了
+			close( sock );
+			RemoveNode(pCilent);
+			continue;
+		}
+		else
+		{
+			continue;
+		}
+	}
+}
 
 
+void InitNetSvr( void )
+{
+	INT8U i = 0;
 
-
-
+	for (i = 0 ; i < MAX_CONN_CNT; i++)
+	{
+		memset(&g_Conn[i],0,sizeof(struct client_node ));
 	}
 
+	//启动监听线程
+	OSTaskCreateExt(ListenTask,                               /* Create the start task                                    */
+		(void *)0,
+		(OS_STK *)&ListenTaskStk[LISTEN_TASK_STK_SIZE - 1],
+		LISTEN_TASK_PRIO,
+		LISTEN_TASK_PRIO,
+		(OS_STK *)&ListenTaskStk[0],
+		LISTEN_TASK_STK_SIZE,
+		(void *)0,
+		OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 
 
+	//启动数据收发线程
+	for (i = 0 ; i < MAX_CONN_CNT; i++)
+	{
+		OSTaskCreateExt(ProcessTask,                               /* Create the start task                                    */
+			(void *)(& g_Conn[i]),
+			(OS_STK *)&NetSvrTaskStk[NET_SVR_TASK_STK_SIZE - 1][i],
+			NET_SVR_TASK_PRIO_BASE+i,
+			NET_SVR_TASK_PRIO_BASE+i,
+			(OS_STK *)&NetSvrTaskStk[0][i],
+			NET_SVR_TASK_STK_SIZE,
+			(void *)0,
+			OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
+	}
 }
