@@ -237,7 +237,7 @@ void InitNetSvr( void )
 		(void *)0,
 		OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 
-
+ 
 	//启动数据收发线程
 	for (i = 0 ; i < MAX_CONN_CNT; i++)
 	{
@@ -246,9 +246,10 @@ void InitNetSvr( void )
 			(OS_STK *)&NetSvrTaskStk[NET_SVR_TASK_STK_SIZE - 1][i],
 			NET_SVR_TASK_PRIO_BASE+i,
 			NET_SVR_TASK_PRIO_BASE+i,
-			(OS_STK *)&NetSvrTaskStk[0][i],
+			(OS_STK *)&(NetSvrTaskStk[0][i]),
 			NET_SVR_TASK_STK_SIZE,
 			(void *)0,
 			OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 	}
+ 
 }
