@@ -99,8 +99,8 @@
         <TargetDlgDllArguments>-pLPC2468</TargetDlgDllArguments>
       </DllOpt>
       <DebugOpt>
-        <uSim>0</uSim>
-        <uTrg>1</uTrg>
+        <uSim>1</uSim>
+        <uTrg>0</uTrg>
         <sLdApp>1</sLdApp>
         <sGomain>1</sGomain>
         <sRbreak>1</sRbreak>
@@ -116,8 +116,8 @@
         <tRfunc>0</tRfunc>
         <tRbox>1</tRbox>
         <sRunDeb>0</sRunDeb>
-        <sLrtime>0</sLrtime>
-        <nTsel>2</nTsel>
+        <sLrtime>1</sLrtime>
+        <nTsel>1</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -133,6 +133,11 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGDARM</Key>
+          <Name>(135=-1,-1,-1,-1,0)(105=-1,-1,-1,-1,0)(145=-1,-1,-1,-1,0)(147=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(152=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)(155=-1,-1,-1,-1,0)(177=-1,-1,-1,-1,0)(134=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(156=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(101=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(163=-1,-1,-1,-1,0)(164=-1,-1,-1,-1,0)(176=-1,-1,-1,-1,0)(178=-1,-1,-1,-1,0)(113=-1,-1,-1,-1,0)(112=-1,-1,-1,-1,0)(169=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(137=-1,-1,-1,-1,0)(138=-1,-1,-1,-1,0)(171=-1,-1,-1,-1,0)(117=-1,-1,-1,-1,0)(172=-1,-1,-1,-1,0)(173=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(165=-1,-1,-1,-1,0)(166=-1,-1,-1,-1,0)(167=-1,-1,-1,-1,0)(168=-1,-1,-1,-1,0)(141=-1,-1,-1,-1,0)(144=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(115=-1,-1,-1,-1,0)(116=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>UL2ARM</Key>
           <Name>-UV0704M0Z -O6 -S1 -C0 -N00("ARM7TDMI-S Core") -D00(4F1F0F0F) -L00(4) -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000</Name>
         </SetRegEntry>
@@ -144,7 +149,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ARMDBGFLAGS</Key>
-          <Name></Name>
+          <Name>-T5F</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -152,38 +157,6 @@
           <Name>-O6 -P(D:\Program Files\SEGGER\JLinkARM_V408l\JLinkRDI.dll) -T() -J0 -FO7 -FD40000000 -FC800 -FN0</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>591</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>39604</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>net_nic.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>1363</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>39760</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>net_nic.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-      </Breakpoint>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
@@ -544,10 +517,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>77</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>17</TopLine>
-      <CurrentLine>32</CurrentLine>
+      <TopLine>80</TopLine>
+      <CurrentLine>84</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\app.c</PathWithFileName>
       <FilenameWithoutPath>app.c</FilenameWithoutPath>
@@ -616,8 +589,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>113</TopLine>
+      <CurrentLine>113</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\App\BsdSocketTest.c</PathWithFileName>
       <FilenameWithoutPath>BsdSocketTest.c</FilenameWithoutPath>
@@ -719,10 +692,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>49</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1074</TopLine>
+      <CurrentLine>1092</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\LPC2400.s</PathWithFileName>
       <FilenameWithoutPath>LPC2400.s</FilenameWithoutPath>
@@ -1174,10 +1147,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>36</ColumnNumber>
+      <ColumnNumber>25</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>248</TopLine>
-      <CurrentLine>248</CurrentLine>
+      <TopLine>1359</TopLine>
+      <CurrentLine>1363</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\uC-TCPIP\NIC\ETHER\LPC2468\net_nic.c</PathWithFileName>
       <FilenameWithoutPath>net_nic.c</FilenameWithoutPath>
@@ -1930,8 +1903,33 @@
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
-        <WinId>59392</WinId>
+        <WinId>35524</WinId>
         <ItemNo>2</ItemNo>
+        <Name>System Viewer</Name>
+        <AnchorWinID>0</AnchorWinID>
+        <AnchorWinName></AnchorWinName>
+        <OtherWinID>0</OtherWinID>
+        <OtherWinName></OtherWinName>
+        <WinType>1</WinType>
+        <DockType>1</DockType>
+        <DockLocation>5</DockLocation>
+        <Pinned>0</Pinned>
+        <DockedRect_top>0</DockedRect_top>
+        <DockedRect_left>0</DockedRect_left>
+        <DockedRect_bottom>600</DockedRect_bottom>
+        <DockedRect_right>210</DockedRect_right>
+        <FloatingRect_top>0</FloatingRect_top>
+        <FloatingRect_left>0</FloatingRect_left>
+        <FloatingRect_bottom>600</FloatingRect_bottom>
+        <FloatingRect_right>250</FloatingRect_right>
+        <ContainerPercent>100</ContainerPercent>
+        <ActiveTab>0</ActiveTab>
+        <Visible>0</Visible>
+        <Dynamic>0</Dynamic>
+      </Window>
+      <Window>
+        <WinId>59392</WinId>
+        <ItemNo>3</ItemNo>
         <Name>File Toolbar</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -1956,7 +1954,7 @@
       </Window>
       <Window>
         <WinId>59398</WinId>
-        <ItemNo>3</ItemNo>
+        <ItemNo>4</ItemNo>
         <Name>Build Toolbar</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -1981,7 +1979,7 @@
       </Window>
       <Window>
         <WinId>59399</WinId>
-        <ItemNo>4</ItemNo>
+        <ItemNo>5</ItemNo>
         <Name>Debug Toolbar</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -1994,7 +1992,7 @@
         <DockedRect_top>50</DockedRect_top>
         <DockedRect_left>0</DockedRect_left>
         <DockedRect_bottom>76</DockedRect_bottom>
-        <DockedRect_right>600</DockedRect_right>
+        <DockedRect_right>626</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>0</FloatingRect_bottom>
@@ -2006,7 +2004,7 @@
       </Window>
       <Window>
         <WinId>197</WinId>
-        <ItemNo>5</ItemNo>
+        <ItemNo>6</ItemNo>
         <Name>Build Output</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2031,10 +2029,10 @@
       </Window>
       <Window>
         <WinId>198</WinId>
-        <ItemNo>6</ItemNo>
+        <ItemNo>7</ItemNo>
         <Name>Command</Name>
         <AnchorWinID>197</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Build Output</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2056,10 +2054,10 @@
       </Window>
       <Window>
         <WinId>199</WinId>
-        <ItemNo>7</ItemNo>
+        <ItemNo>8</ItemNo>
         <Name>Find in Files</Name>
         <AnchorWinID>198</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Command</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2081,10 +2079,10 @@
       </Window>
       <Window>
         <WinId>38007</WinId>
-        <ItemNo>8</ItemNo>
+        <ItemNo>9</ItemNo>
         <Name>Browse</Name>
         <AnchorWinID>199</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Find in Files</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2106,10 +2104,10 @@
       </Window>
       <Window>
         <WinId>1939</WinId>
-        <ItemNo>9</ItemNo>
+        <ItemNo>10</ItemNo>
         <Name>UART #1</Name>
         <AnchorWinID>38007</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Browser</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2131,10 +2129,10 @@
       </Window>
       <Window>
         <WinId>1940</WinId>
-        <ItemNo>10</ItemNo>
+        <ItemNo>11</ItemNo>
         <Name>UART #2</Name>
         <AnchorWinID>1939</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>UART #1</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2156,10 +2154,10 @@
       </Window>
       <Window>
         <WinId>1941</WinId>
-        <ItemNo>11</ItemNo>
+        <ItemNo>12</ItemNo>
         <Name>UART #3</Name>
         <AnchorWinID>1940</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>UART #2</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2181,10 +2179,10 @@
       </Window>
       <Window>
         <WinId>1942</WinId>
-        <ItemNo>12</ItemNo>
+        <ItemNo>13</ItemNo>
         <Name>UART #4</Name>
         <AnchorWinID>1941</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>UART #3</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2206,12 +2204,12 @@
       </Window>
       <Window>
         <WinId>1944</WinId>
-        <ItemNo>13</ItemNo>
+        <ItemNo>14</ItemNo>
         <Name>Legacy Stack</Name>
         <AnchorWinID>197</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Build Output</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>2</DockType>
         <DockLocation>2</DockLocation>
@@ -2231,12 +2229,12 @@
       </Window>
       <Window>
         <WinId>1507</WinId>
-        <ItemNo>14</ItemNo>
+        <ItemNo>15</ItemNo>
         <Name>Stack</Name>
         <AnchorWinID>1944</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Call Stack</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2250,18 +2248,18 @@
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
         <ContainerPercent>52</ContainerPercent>
-        <ActiveTab>0</ActiveTab>
+        <ActiveTab>1</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
         <WinId>1935</WinId>
-        <ItemNo>15</ItemNo>
+        <ItemNo>16</ItemNo>
         <Name>Locals</Name>
         <AnchorWinID>1507</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Call Stack</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2281,12 +2279,12 @@
       </Window>
       <Window>
         <WinId>1936</WinId>
-        <ItemNo>16</ItemNo>
+        <ItemNo>17</ItemNo>
         <Name>Watch 1</Name>
         <AnchorWinID>1935</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Locals</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2306,12 +2304,12 @@
       </Window>
       <Window>
         <WinId>1937</WinId>
-        <ItemNo>17</ItemNo>
+        <ItemNo>18</ItemNo>
         <Name>Watch 2</Name>
         <AnchorWinID>1936</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Watch 1</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2331,12 +2329,12 @@
       </Window>
       <Window>
         <WinId>1465</WinId>
-        <ItemNo>18</ItemNo>
+        <ItemNo>19</ItemNo>
         <Name>Memory 1</Name>
         <AnchorWinID>1937</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Watch 2</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2350,18 +2348,18 @@
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
         <ContainerPercent>52</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
+        <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
         <WinId>1466</WinId>
-        <ItemNo>19</ItemNo>
+        <ItemNo>20</ItemNo>
         <Name>Memory 2</Name>
         <AnchorWinID>1465</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Memory 1</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2381,12 +2379,12 @@
       </Window>
       <Window>
         <WinId>1467</WinId>
-        <ItemNo>20</ItemNo>
+        <ItemNo>21</ItemNo>
         <Name>Memory 3</Name>
         <AnchorWinID>1466</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Memory 2</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2406,12 +2404,12 @@
       </Window>
       <Window>
         <WinId>1468</WinId>
-        <ItemNo>21</ItemNo>
+        <ItemNo>22</ItemNo>
         <Name>Memory 4</Name>
         <AnchorWinID>1467</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Memory 3</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2431,12 +2429,12 @@
       </Window>
       <Window>
         <WinId>1506</WinId>
-        <ItemNo>22</ItemNo>
+        <ItemNo>23</ItemNo>
         <Name>Symbols</Name>
         <AnchorWinID>1468</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Memory 4</AnchorWinName>
         <OtherWinID>197</OtherWinID>
-        <OtherWinName></OtherWinName>
+        <OtherWinName>Build Output</OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
@@ -2456,7 +2454,7 @@
       </Window>
       <Window>
         <WinId>1005</WinId>
-        <ItemNo>23</ItemNo>
+        <ItemNo>24</ItemNo>
         <Name>Project</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2475,16 +2473,16 @@
         <FloatingRect_bottom>600</FloatingRect_bottom>
         <FloatingRect_right>250</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
+        <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
         <WinId>109</WinId>
-        <ItemNo>24</ItemNo>
+        <ItemNo>25</ItemNo>
         <Name>Books</Name>
         <AnchorWinID>1005</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Project</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2506,10 +2504,10 @@
       </Window>
       <Window>
         <WinId>195</WinId>
-        <ItemNo>25</ItemNo>
+        <ItemNo>26</ItemNo>
         <Name>Functions</Name>
         <AnchorWinID>109</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Books</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2531,10 +2529,10 @@
       </Window>
       <Window>
         <WinId>196</WinId>
-        <ItemNo>26</ItemNo>
+        <ItemNo>27</ItemNo>
         <Name>Templates</Name>
         <AnchorWinID>195</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Functions</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2556,10 +2554,10 @@
       </Window>
       <Window>
         <WinId>38003</WinId>
-        <ItemNo>27</ItemNo>
+        <ItemNo>28</ItemNo>
         <Name>Registers</Name>
         <AnchorWinID>196</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Templates</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2581,7 +2579,7 @@
       </Window>
       <Window>
         <WinId>50001</WinId>
-        <ItemNo>28</ItemNo>
+        <ItemNo>29</ItemNo>
         <Name>System Viewer Data 1</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2606,7 +2604,7 @@
       </Window>
       <Window>
         <WinId>50002</WinId>
-        <ItemNo>29</ItemNo>
+        <ItemNo>30</ItemNo>
         <Name>System Viewer Data 2</Name>
         <AnchorWinID>50001</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2631,7 +2629,7 @@
       </Window>
       <Window>
         <WinId>50003</WinId>
-        <ItemNo>30</ItemNo>
+        <ItemNo>31</ItemNo>
         <Name>System Viewer Data 3</Name>
         <AnchorWinID>50002</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2656,7 +2654,7 @@
       </Window>
       <Window>
         <WinId>50004</WinId>
-        <ItemNo>31</ItemNo>
+        <ItemNo>32</ItemNo>
         <Name>System Viewer Data 4</Name>
         <AnchorWinID>50003</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2681,7 +2679,7 @@
       </Window>
       <Window>
         <WinId>50005</WinId>
-        <ItemNo>32</ItemNo>
+        <ItemNo>33</ItemNo>
         <Name>System Viewer Data 5</Name>
         <AnchorWinID>50004</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2706,7 +2704,7 @@
       </Window>
       <Window>
         <WinId>50006</WinId>
-        <ItemNo>33</ItemNo>
+        <ItemNo>34</ItemNo>
         <Name>System Viewer Data 6</Name>
         <AnchorWinID>50005</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2731,7 +2729,7 @@
       </Window>
       <Window>
         <WinId>50007</WinId>
-        <ItemNo>34</ItemNo>
+        <ItemNo>35</ItemNo>
         <Name>System Viewer Data 7</Name>
         <AnchorWinID>50006</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2756,7 +2754,7 @@
       </Window>
       <Window>
         <WinId>50008</WinId>
-        <ItemNo>35</ItemNo>
+        <ItemNo>36</ItemNo>
         <Name>System Viewer Data 8</Name>
         <AnchorWinID>50007</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2781,7 +2779,7 @@
       </Window>
       <Window>
         <WinId>50009</WinId>
-        <ItemNo>36</ItemNo>
+        <ItemNo>37</ItemNo>
         <Name>System Viewer Data 9</Name>
         <AnchorWinID>50008</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2806,7 +2804,7 @@
       </Window>
       <Window>
         <WinId>50010</WinId>
-        <ItemNo>37</ItemNo>
+        <ItemNo>38</ItemNo>
         <Name>System Viewer Data 10</Name>
         <AnchorWinID>50009</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2831,7 +2829,7 @@
       </Window>
       <Window>
         <WinId>203</WinId>
-        <ItemNo>38</ItemNo>
+        <ItemNo>39</ItemNo>
         <Name>Disassembly</Name>
         <AnchorWinID>0</AnchorWinID>
         <AnchorWinName></AnchorWinName>
@@ -2850,16 +2848,16 @@
         <FloatingRect_bottom>250</FloatingRect_bottom>
         <FloatingRect_right>600</FloatingRect_right>
         <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>1</ActiveTab>
+        <ActiveTab>0</ActiveTab>
         <Visible>1</Visible>
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
         <WinId>1913</WinId>
-        <ItemNo>39</ItemNo>
+        <ItemNo>40</ItemNo>
         <Name>Trace</Name>
         <AnchorWinID>203</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Disassembly</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2881,10 +2879,10 @@
       </Window>
       <Window>
         <WinId>204</WinId>
-        <ItemNo>40</ItemNo>
+        <ItemNo>41</ItemNo>
         <Name>Performance</Name>
         <AnchorWinID>1913</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
+        <AnchorWinName>Instruction Trace</AnchorWinName>
         <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
@@ -2905,46 +2903,21 @@
         <Dynamic>0</Dynamic>
       </Window>
       <Window>
-        <WinId>35524</WinId>
-        <ItemNo>41</ItemNo>
-        <Name>System Viewer</Name>
-        <AnchorWinID>0</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
-        <OtherWinID>0</OtherWinID>
-        <OtherWinName></OtherWinName>
-        <WinType>1</WinType>
-        <DockType>1</DockType>
-        <DockLocation>5</DockLocation>
-        <Pinned>0</Pinned>
-        <DockedRect_top>0</DockedRect_top>
-        <DockedRect_left>0</DockedRect_left>
-        <DockedRect_bottom>600</DockedRect_bottom>
-        <DockedRect_right>210</DockedRect_right>
-        <FloatingRect_top>0</FloatingRect_top>
-        <FloatingRect_left>0</FloatingRect_left>
-        <FloatingRect_bottom>600</FloatingRect_bottom>
-        <FloatingRect_right>250</FloatingRect_right>
-        <ContainerPercent>100</ContainerPercent>
-        <ActiveTab>0</ActiveTab>
-        <Visible>0</Visible>
-        <Dynamic>0</Dynamic>
-      </Window>
-      <Window>
         <WinId>343</WinId>
         <ItemNo>42</ItemNo>
         <Name>Performance Analyzer</Name>
-        <AnchorWinID>203</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
-        <OtherWinID>203</OtherWinID>
+        <AnchorWinID>204</AnchorWinID>
+        <AnchorWinName>Performance Analyzer</AnchorWinName>
+        <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
         <Pinned>0</Pinned>
-        <DockedRect_top>0</DockedRect_top>
-        <DockedRect_left>0</DockedRect_left>
-        <DockedRect_bottom>210</DockedRect_bottom>
-        <DockedRect_right>600</DockedRect_right>
+        <DockedRect_top>76</DockedRect_top>
+        <DockedRect_left>261</DockedRect_left>
+        <DockedRect_bottom>286</DockedRect_bottom>
+        <DockedRect_right>1400</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>250</FloatingRect_bottom>
@@ -2958,18 +2931,18 @@
         <WinId>346</WinId>
         <ItemNo>43</ItemNo>
         <Name>Code Coverage</Name>
-        <AnchorWinID>203</AnchorWinID>
-        <AnchorWinName></AnchorWinName>
-        <OtherWinID>203</OtherWinID>
+        <AnchorWinID>343</AnchorWinID>
+        <AnchorWinName>Performance Analyzer</AnchorWinName>
+        <OtherWinID>0</OtherWinID>
         <OtherWinName></OtherWinName>
         <WinType>1</WinType>
         <DockType>4</DockType>
         <DockLocation>2</DockLocation>
         <Pinned>0</Pinned>
-        <DockedRect_top>0</DockedRect_top>
-        <DockedRect_left>0</DockedRect_left>
-        <DockedRect_bottom>210</DockedRect_bottom>
-        <DockedRect_right>600</DockedRect_right>
+        <DockedRect_top>76</DockedRect_top>
+        <DockedRect_left>261</DockedRect_left>
+        <DockedRect_bottom>286</DockedRect_bottom>
+        <DockedRect_right>1400</DockedRect_right>
         <FloatingRect_top>0</FloatingRect_top>
         <FloatingRect_left>0</FloatingRect_left>
         <FloatingRect_bottom>250</FloatingRect_bottom>
@@ -2987,19 +2960,55 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>8</ActiveTab>
+      <ActiveTab>3</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>..\..\uCOS-II\Ports\os_cpu_a.asm</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>127</TopLine>
+          <CurrentLine>130</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\uC-TCPIP\NIC\ETHER\LPC2468\net_nic.c</Name>
+          <ColumnNumber>9</ColumnNumber>
+          <TopLine>1165</TopLine>
+          <CurrentLine>1173</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\LPC2400.s</Name>
+          <ColumnNumber>49</ColumnNumber>
+          <TopLine>1074</TopLine>
+          <CurrentLine>1074</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\App\BsdSocketTest.c</Name>
+          <ColumnNumber>15</ColumnNumber>
+          <TopLine>215</TopLine>
+          <CurrentLine>220</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\app.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>80</TopLine>
+          <CurrentLine>84</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>E:\WORK\svn\NXP-LPC\V6\Bsp\LPC2468\Flash\LPC2468-OS-TCPIP.Map</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>266</TopLine>
+          <CurrentLine>266</CurrentLine>
+        </Doc>
         <Doc>
           <Name>.\bsp.h</Name>
           <ColumnNumber>37</ColumnNumber>
           <TopLine>42</TopLine>
-          <CurrentLine>68</CurrentLine>
+          <CurrentLine>42</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\uC-TCPIP\IF\net_if_pkt.c</Name>
           <ColumnNumber>0</ColumnNumber>
           <TopLine>509</TopLine>
-          <CurrentLine>529</CurrentLine>
+          <CurrentLine>509</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\uCOS-II\Source\os_core.c</Name>
@@ -3020,40 +3029,16 @@
           <CurrentLine>412</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\uC-TCPIP\NIC\ETHER\LPC2468\net_nic.c</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>248</TopLine>
-          <CurrentLine>248</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\uCOS-II\Ports\os_cpu_a.asm</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>127</TopLine>
-          <CurrentLine>129</CurrentLine>
-        </Doc>
-        <Doc>
           <Name>..\..\uCOS-II\Ports\os_cpu_c.c</Name>
           <ColumnNumber>12</ColumnNumber>
           <TopLine>226</TopLine>
-          <CurrentLine>245</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\app.c</Name>
-          <ColumnNumber>25</ColumnNumber>
-          <TopLine>17</TopLine>
-          <CurrentLine>29</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>E:\WORK\svn\NXP-LPC\V6\Bsp\LPC2468\Flash\LPC2468-OS-TCPIP.Map</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>266</TopLine>
-          <CurrentLine>266</CurrentLine>
+          <CurrentLine>226</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE\net_phy.c</Name>
           <ColumnNumber>15</ColumnNumber>
           <TopLine>235</TopLine>
-          <CurrentLine>250</CurrentLine>
+          <CurrentLine>235</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\net_bsp.h</Name>
@@ -3065,7 +3050,7 @@
           <Name>.\bsp_i2c.c</Name>
           <ColumnNumber>34</ColumnNumber>
           <TopLine>193</TopLine>
-          <CurrentLine>214</CurrentLine>
+          <CurrentLine>193</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

@@ -54,7 +54,7 @@ struct client_node
 
 static struct client_node g_Conn[MAX_CONN_CNT];
 static  OS_STK          ListenTaskStk[LISTEN_TASK_STK_SIZE];
-static  OS_STK          NetSvrTaskStk[NET_SVR_TASK_STK_SIZE][MAX_CONN_CNT];
+static  OS_STK          NetSvrTaskStk[MAX_CONN_CNT][NET_SVR_TASK_STK_SIZE];
 
 
 static INT32S GetSocket( struct client_node *pClient)
@@ -221,13 +221,10 @@ void InitNetSvr( void )
 {
 	INT8U i = 0;
 
-	for (i = 0 ; i < MAX_CONN_CNT; i++)
-	{
-		memset(&g_Conn[i],0,sizeof(struct client_node ));
-	}
+	memset(&g_Conn[0],0,sizeof(struct client_node )*MAX_CONN_CNT);
 
 	//启动监听线程
-	OSTaskCreateExt(ListenTask,                               /* Create the start task                                    */
+	OSTaskCreateExt(ListenTask,                        
 		(void *)0,
 		(OS_STK *)&ListenTaskStk[LISTEN_TASK_STK_SIZE - 1],
 		LISTEN_TASK_PRIO,
@@ -237,19 +234,18 @@ void InitNetSvr( void )
 		(void *)0,
 		OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 
- 
+
 	//启动数据收发线程
 	for (i = 0 ; i < MAX_CONN_CNT; i++)
 	{
-		OSTaskCreateExt(ProcessTask,                               /* Create the start task                                    */
+		OSTaskCreateExt(ProcessTask,                        
 			(void *)(& g_Conn[i]),
-			(OS_STK *)&NetSvrTaskStk[NET_SVR_TASK_STK_SIZE - 1][i],
+			(OS_STK *)&(NetSvrTaskStk[i][NET_SVR_TASK_STK_SIZE - 1]),
 			NET_SVR_TASK_PRIO_BASE+i,
 			NET_SVR_TASK_PRIO_BASE+i,
-			(OS_STK *)&(NetSvrTaskStk[0][i]),
+			(OS_STK *)&(NetSvrTaskStk[i][0]),
 			NET_SVR_TASK_STK_SIZE,
 			(void *)0,
 			OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 	}
- 
 }

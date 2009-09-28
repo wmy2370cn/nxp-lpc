@@ -114,7 +114,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -122,10 +122,10 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
-            <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
+            <LimitSpeedToRealTime>1</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -135,7 +135,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>2</TargetSelection>
+          <TargetSelection>1</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\IF;..\..\uC-TCPIP\IF\Ether;..\..\uC-TCPIP\NIC\ETHER\LPC2468;..\..\uC-TCPIP\NIC\ETHER\PHY;..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE;..\..\uC-TCPIP\OS\uCOS-II;..\..\uC-TCPIP\Source;..\APP;</IncludePath>
+              <IncludePath>.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\IF;..\..\uC-TCPIP\IF\Ether;..\..\uC-TCPIP\NIC\ETHER\LPC2468;..\..\uC-TCPIP\NIC\ETHER\PHY;..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE;..\..\uC-TCPIP\OS\uCOS-II;..\..\uC-TCPIP\Source;..\..\APP;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
