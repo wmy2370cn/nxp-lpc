@@ -159,7 +159,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4098</DriverSelection>
+            <DriverSelection>4097</DriverSelection>
           </Flash1>
           <Flash2>BIN\AGDIRDI.DLL</Flash2>
           <Flash3>"LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1)</Flash3>
@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\IF;..\..\uC-TCPIP\IF\Ether;..\..\uC-TCPIP\NIC\ETHER\LPC2468;..\..\uC-TCPIP\NIC\ETHER\PHY;..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE;..\..\uC-TCPIP\OS\uCOS-II;..\..\uC-TCPIP\Source;</IncludePath>
+              <IncludePath>.;..\BSP;..\..\uCOS-II\Ports;..\..\uCOS-II\Source;..\..\uC-CPU;..\..\uC-LIB;..\..\uC-TCPIP\IF;..\..\uC-TCPIP\IF\Ether;..\..\uC-TCPIP\NIC\ETHER\LPC2468;..\..\uC-TCPIP\NIC\ETHER\PHY;..\..\uC-TCPIP\NIC\ETHER\PHY\DM9161AE;..\..\uC-TCPIP\OS\uCOS-II;..\..\uC-TCPIP\Source;..\APP;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,6 +409,11 @@
               <FileName>os_cfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\os_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>BsdSocketTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\BsdSocketTest.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1352,6 +1357,11 @@
               <FileType>5</FileType>
               <FilePath>.\os_cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>BsdSocketTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\BsdSocketTest.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2293,6 +2303,11 @@
               <FileName>os_cfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\os_cfg.h</FilePath>
+            </File>
+            <File>
+              <FileName>BsdSocketTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\App\BsdSocketTest.c</FilePath>
             </File>
           </Files>
         </Group>

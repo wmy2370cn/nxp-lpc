@@ -24,7 +24,7 @@ File 1,5,<.\app_cfg.h><app_cfg.h>
 File 1,5,<.\includes.h><includes.h>
 File 1,5,<.\net_cfg.h><net_cfg.h>
 File 1,5,<.\os_cfg.h><os_cfg.h>
-File 1,1,<..\..\App\NetTest.c><NetTest.c>
+File 1,1,<..\..\App\BsdSocketTest.c><BsdSocketTest.c>
 File 2,1,<.\bsp.c><bsp.c>
 File 2,1,<.\bsp_i2c.c><bsp_i2c.c>
 File 2,1,<.\net_isr.c><net_isr.c>
