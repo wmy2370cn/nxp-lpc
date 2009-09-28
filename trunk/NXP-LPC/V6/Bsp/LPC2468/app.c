@@ -27,6 +27,7 @@
 */
 
 #include <includes.h>
+#include "BsdSocketTest.h"
 
 #if uC_TCPIP_MODULE > 0
 #include <net_phy.h>
@@ -138,6 +139,8 @@ static  void  AppTaskStart (void *p_arg)
 #if uC_TCPIP_MODULE > 0
     AppInitTCPIP();                                             /* Initialize uC/TCP-IP and associated appliations          */
 #endif
+
+	InitNetSvr(  );
 
   
     
