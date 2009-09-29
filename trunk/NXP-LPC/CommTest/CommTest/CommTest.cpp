@@ -18,19 +18,20 @@
 
 // CCommTestApp
 
-BEGIN_MESSAGE_MAP(CCommTestApp, CWinAppEx)
+BEGIN_MESSAGE_MAP(CCommTestApp, CWinApp)
 	ON_COMMAND(ID_APP_ABOUT, &CCommTestApp::OnAppAbout)
 	// 基于文件的标准文档命令
-	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
+	ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
+	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	// 标准打印设置命令
-	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinAppEx::OnFilePrintSetup)
+	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
 
 // CCommTestApp 构造
 
-CCommTestApp::CCommTestApp()
+CCommTestApp::CCommTestApp() :
+CBCGPWorkspace (TRUE /* m_bResourceSmartUpdate */)
 {
 
 	m_bHiColorIcons = TRUE;
@@ -58,7 +59,7 @@ BOOL CCommTestApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	CWinAppEx::InitInstance();
+	CWinApp::InitInstance();
 
 	// 初始化 OLE 库
 	if (!AfxOleInit())
@@ -67,6 +68,8 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 	}
 	AfxEnableControlContainer();
+	globalData.SetDPIAware ();
+
 	// 标准初始化
 	// 如果未使用这些功能并希望减小
 	// 最终可执行文件的大小，则应移除下列
@@ -82,10 +85,10 @@ BOOL CCommTestApp::InitInstance()
 	InitKeyboardManager();
 
 	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
+	CBCGPToolTipParams ttParams;
 	ttParams.m_bVislManagerTheme = TRUE;
-	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
-		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+	theApp.GetTooltipManager()->SetTooltipParams(BCGP_TOOLTIP_TYPE_ALL,
+		RUNTIME_CLASS(CBCGPToolTipCtrl), &ttParams);
 
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
@@ -191,3 +194,11 @@ void CCommTestApp::SaveCustomState()
 
 
 
+
+int CCommTestApp::ExitInstance()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	BCGCBProCleanUp();
+
+	return __super::ExitInstance();
+}

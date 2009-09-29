@@ -190,10 +190,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ClassView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CommTest.cpp"
 				>
 			</File>
@@ -206,19 +202,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OutputWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PropertiesWnd.cpp"
+				RelativePath=".\OutputBar.cpp"
 				>
 			</File>
 			<File
@@ -242,7 +230,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\ViewTree.cpp"
+				RelativePath=".\WorkSpaceBar.cpp"
 				>
 			</File>
 		</Filter>
@@ -253,10 +241,6 @@
 			>
 			<File
 				RelativePath=".\ChildFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClassView.h"
 				>
 			</File>
 			<File
@@ -272,19 +256,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileView.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>
 			<File
-				RelativePath=".\OutputWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PropertiesWnd.h"
+				RelativePath=".\OutputBar.h"
 				>
 			</File>
 			<File
@@ -300,7 +276,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ViewTree.h"
+				RelativePath=".\WorkSpaceBar.h"
 				>
 			</File>
 		</Filter>
@@ -415,6 +391,10 @@
 			</File>
 			<File
 				RelativePath=".\UserImages.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Workspace.bmp"
 				>
 			</File>
 		</Filter>

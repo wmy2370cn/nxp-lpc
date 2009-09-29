@@ -13,9 +13,9 @@
 
 // CChildFrame
 
-IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
+IMPLEMENT_DYNCREATE(CChildFrame, CBCGPMDIChildWnd)
 
-BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
+BEGIN_MESSAGE_MAP(CChildFrame, CBCGPMDIChildWnd)
 END_MESSAGE_MAP()
 
 // CChildFrame 构造/析构
@@ -33,7 +33,7 @@ CChildFrame::~CChildFrame()
 BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: 在此处通过修改 CREATESTRUCT cs 来修改窗口类或样式
-	if( !CMDIChildWndEx::PreCreateWindow(cs) )
+	if( !CBCGPMDIChildWnd::PreCreateWindow(cs) )
 		return FALSE;
 
 	return TRUE;
@@ -44,12 +44,12 @@ BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 #ifdef _DEBUG
 void CChildFrame::AssertValid() const
 {
-	CMDIChildWndEx::AssertValid();
+	CBCGPMDIChildWnd::AssertValid();
 }
 
 void CChildFrame::Dump(CDumpContext& dc) const
 {
-	CMDIChildWndEx::Dump(dc);
+	CBCGPMDIChildWnd::Dump(dc);
 }
 #endif //_DEBUG
 

@@ -14,7 +14,8 @@
 // 有关此类的实现，请参阅 CommTest.cpp
 //
 
-class CCommTestApp : public CWinAppEx
+class CCommTestApp : public CWinApp,
+	public CBCGPWorkspace
 {
 public:
 	CCommTestApp();
@@ -34,6 +35,7 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+	virtual int ExitInstance();
 };
 
 extern CCommTestApp theApp;
