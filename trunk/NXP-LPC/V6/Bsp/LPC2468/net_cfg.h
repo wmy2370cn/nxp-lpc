@@ -268,8 +268,8 @@
 
                                                                 /* Configure total number of       BUFFERs ...          */
                                                                 /* ... (see Note #1) :                                  */
-#define  NET_BUF_CFG_NBR_SMALL                            3    /* Configure total number of SMALL BUFFERs.             */
-#define  NET_BUF_CFG_NBR_LARGE                            2    /* Configure total number of LARGE BUFFERs.             */
+#define  NET_BUF_CFG_NBR_SMALL                             5    /* Configure total number of SMALL BUFFERs.             */
+#define  NET_BUF_CFG_NBR_LARGE                             3    /* Configure total number of LARGE BUFFERs.             */
 
                                                                 /* Configure size of       BUFFER DATA areas ...        */
                                                                 /* ... (see Note #2) :                                  */
@@ -597,11 +597,11 @@
                                                                 /*   DEF_ENABLED   Socket select   ENABLED              */
 
                                                                 /* Configure maximum number of socket select ...        */
-#define  NET_SOCK_CFG_SEL_NBR_EVENTS_MAX                  6    /* ... operations/events to wait on (see Note #3).      */
+#define  NET_SOCK_CFG_SEL_NBR_EVENTS_MAX                 32    /* ... operations/events to wait on (see Note #3).      */
 
 
                                                                 /* Configure stream-type sockets' accept queue ...      */
-#define  NET_SOCK_CFG_CONN_ACCEPT_Q_SIZE_MAX               5    /* ... maximum size.                                    */
+#define  NET_SOCK_CFG_CONN_ACCEPT_Q_SIZE_MAX              5    /* ... maximum size.                                    */
 
 #define  NET_SOCK_CFG_PORT_NBR_RANDOM_BASE             65000    /* Configure random ports' starting port number.        */
 
@@ -610,7 +610,7 @@
 #define  NET_SOCK_CFG_TIMEOUT_RX_Q_MS                   3000    /* Configure socket receive    queue   timeout.         */
 #define  NET_SOCK_CFG_TIMEOUT_CONN_REQ_MS              10000    /* Configure socket connection request timeout.         */
 #define  NET_SOCK_CFG_TIMEOUT_CONN_ACCEPT_MS            3000    /* Configure socket connection accept  timeout.         */
-#define  NET_SOCK_CFG_TIMEOUT_CONN_CLOSE_MS             1000    /* Configure socket connection close   timeout.         */
+#define  NET_SOCK_CFG_TIMEOUT_CONN_CLOSE_MS            10000    /* Configure socket connection close   timeout.         */
 
 
 //#define  NET_SOCK_CFG_SEL_EN                           DEF_DISABLED     /*  zhaoyk                */
@@ -648,3 +648,4 @@
 #define  NET_CONN_CFG_FAMILY                    NET_CONN_FAMILY_IP_V4_SOCK
 
 #define  NET_CONN_CFG_NBR_CONN                            20    /* Configure total number of connections (see Note #3). */
+
