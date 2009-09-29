@@ -13,17 +13,19 @@
 
 // CMainFrame
 
-IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
+IMPLEMENT_DYNAMIC(CMainFrame, CBCGPMDIFrameWnd)
 
 const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
-BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
+BEGIN_MESSAGE_MAP(CMainFrame, CBCGPMDIFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
-	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
+	ON_REGISTERED_MESSAGE(BCGM_RESETTOOLBAR, OnToolbarReset)
+
+//	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
 END_MESSAGE_MAP()
@@ -50,8 +52,154 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
+	if (CBCGPMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
+	if (CBCGPMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	if (CBCGPToolBar::GetUserImages () == NULL)
+	{
+		// Load toolbar user images:
+		if (!m_UserImages.Load (_T(".\\UserImages.bmp")))
+		{
+			TRACE(_T("Failed to load user images\n"));
+		}
+		else
+		{
+			CBCGPToolBar::SetUserImages (&m_UserImages);
+		}
+	}
+
+	CBCGPToolBar::EnableQuickCustomization ();
+
+
+	// TODO: Define your own basic commands. Be sure, that each pulldown 
+	// menu have at least one basic command.
+
+	CList<UINT, UINT>	lstBasicCommands;
+
+//	lstBasicCommands.AddTail (ID_VIEW_TOOLBARS);
+	lstBasicCommands.AddTail (ID_FILE_NEW);
+	lstBasicCommands.AddTail (ID_FILE_OPEN);
+	lstBasicCommands.AddTail (ID_FILE_SAVE);
+	lstBasicCommands.AddTail (ID_FILE_PRINT);
+	lstBasicCommands.AddTail (ID_APP_EXIT);
+	lstBasicCommands.AddTail (ID_EDIT_CUT);
+	lstBasicCommands.AddTail (ID_EDIT_PASTE);
+	lstBasicCommands.AddTail (ID_EDIT_UNDO);
+	lstBasicCommands.AddTail (ID_RECORD_NEXT);
+	lstBasicCommands.AddTail (ID_RECORD_LAST);
+	lstBasicCommands.AddTail (ID_APP_ABOUT);
+	lstBasicCommands.AddTail (ID_VIEW_TOOLBAR);
+	lstBasicCommands.AddTail (ID_VIEW_CUSTOMIZE);
+	lstBasicCommands.AddTail (ID_WINDOW_TILE_HORZ);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2000);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_XP);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2003);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2007);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_VS2005);
+	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_WIN_XP);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2007_1);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2007_2);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_2007_3);
+// 	lstBasicCommands.AddTail (ID_VIEW_APPLOOK_VS2008);
+
+	CBCGPToolBar::SetBasicCommands (lstBasicCommands);
+
+	if (!m_wndMenuBar.Create (this))
+	{
+		TRACE0("Failed to create menubar\n");
+		return -1;      // fail to create
+	}
+
+	m_wndMenuBar.SetBarStyle(m_wndMenuBar.GetBarStyle() | CBRS_SIZE_DYNAMIC);
+
+	// Detect color depth. 256 color toolbars can be used in the
+	// high or true color modes only (bits per pixel is > 8):
+	CClientDC dc (this);
+	BOOL bIsHighColor = dc.GetDeviceCaps (BITSPIXEL) > 8;
+
+	UINT uiToolbarHotID = bIsHighColor ;
+
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
+		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME, 0, 0, FALSE, 0, 0, uiToolbarHotID))
+	{
+		TRACE0("Failed to create toolbar\n");
+		return -1;      // fail to create
+	}
+
+	if (!m_wndStatusBar.Create(this) ||
+		!m_wndStatusBar.SetIndicators(indicators,
+		sizeof(indicators)/sizeof(UINT)))
+	{
+		TRACE0("Failed to create status bar\n");
+		return -1;      // fail to create
+	}
+
+	// Load control bar icons:
+	CBCGPToolBarImages imagesWorkspace;
+	imagesWorkspace.SetImageSize (CSize (16, 16));
+	imagesWorkspace.SetTransparentColor (RGB (255, 0, 255));
+	imagesWorkspace.Load (IDB_WORKSPACE);
+
+	if (!m_wndWorkSpace.Create (_T("View  1"), this, CRect (0, 0, 200, 200),
+		TRUE, ID_VIEW_WORKSPACE,
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
+	{
+		TRACE0("Failed to create Workspace bar\n");
+		return -1;      // fail to create
+	}
+
+	m_wndWorkSpace.SetIcon (imagesWorkspace.ExtractIcon (0), FALSE);
+
+ 
+
+	if (!m_wndOutput.Create (_T("Output"), this, CSize (150, 150),
+		TRUE /* Has gripper */, ID_VIEW_OUTPUT,
+		WS_CHILD | WS_VISIBLE | CBRS_BOTTOM))
+	{
+		TRACE0("Failed to create output bar\n");
+		return -1;      // fail to create
+	}
+
+	CString strMainToolbarTitle;
+	strMainToolbarTitle.LoadString (IDS_MAIN_TOOLBAR);
+	m_wndToolBar.SetWindowText (strMainToolbarTitle);
+
+	// TODO: Delete these three lines if you don't want the toolbar to be dockable
+	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+	m_wndWorkSpace.EnableDocking(CBRS_ALIGN_ANY);
+	 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
+	EnableDocking(CBRS_ALIGN_ANY);
+	EnableAutoHideBars(CBRS_ALIGN_ANY);
+	DockControlBar(&m_wndMenuBar);
+	DockControlBar(&m_wndToolBar);
+	DockControlBar(&m_wndWorkSpace);
+	DockControlBar(&m_wndOutput);
+
+
+	m_wndToolBar.EnableCustomizeButton (TRUE, ID_VIEW_CUSTOMIZE, _T("Customize..."));
+
+	// Allow user-defined toolbars operations:
+	InitUserToobars (NULL,
+		uiFirstUserToolBarId,
+		uiLastUserToolBarId);
+
+	// Enable windows manager:
+	EnableWindowsDialog (ID_WINDOW_MANAGER, IDS_WINDOWS_MANAGER, TRUE);
+
+	// Enable control bar context menu (list of bars + customize command):
+	EnableControlBarMenu (	
+		TRUE,				// Enable
+		ID_VIEW_CUSTOMIZE, 	// Customize command ID
+		_T("Customize..."),	// Customize command text
+		ID_VIEW_TOOLBAR);	// Menu items with this ID will be replaced by
+	// toolbars menu
+
+	OnApplicationLook (theApp.m_nAppLook);
+#if 0
 
 	BOOL bNameValid;
 	// 基于持久值设置视觉管理器和样式
@@ -117,7 +265,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
 	// 加载菜单项图像(不在任何标准工具栏上):
-	CMFCToolBar::AddToolBarForImageCollection(IDR_MENU_IMAGES, theApp.m_bHiColorIcons ? IDB_MENU_IMAGES_24 : 0);
+	CBCGPToolBar::AddToolBarForImageCollection(IDR_MENU_IMAGES, theApp.m_bHiColorIcons ? IDB_MENU_IMAGES_24 : 0);
 
 	// 创建停靠窗口
 	if (!CreateDockingWindows())
@@ -129,13 +277,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
-	CDockablePane* pTabbedBar = NULL;
+	CBCGPDockingControlBar* pTabbedBar = NULL;
 	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
-	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&m_wndProperties);
-
+ 
 
 	// 启用增强的窗口管理对话框
 	EnableWindowsDialog(ID_WINDOW_MANAGER, IDS_WINDOWS_MANAGER, TRUE);
@@ -144,15 +290,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// 启用快速(按住 Alt 拖动)工具栏自定义
-	CMFCToolBar::EnableQuickCustomization();
+	CBCGPToolBar::EnableQuickCustomization();
 
-	if (CMFCToolBar::GetUserImages() == NULL)
+	if (CBCGPToolBar::GetUserImages() == NULL)
 	{
 		// 加载用户定义的工具栏图像
 		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
 		{
 			m_UserImages.SetImageSize(CSize(16, 16), FALSE);
-			CMFCToolBar::SetUserImages(&m_UserImages);
+			CBCGPToolBar::SetUserImages(&m_UserImages);
 		}
 	}
 
@@ -182,14 +328,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
-	CMFCToolBar::SetBasicCommands(lstBasicCommands);
+	CBCGPToolBar::SetBasicCommands(lstBasicCommands);
 
+#endif
 	return 0;
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CMDIFrameWndEx::PreCreateWindow(cs) )
+	if( !CBCGPMDIFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
@@ -197,82 +344,17 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-BOOL CMainFrame::CreateDockingWindows()
-{
-	BOOL bNameValid;
-
-	// 创建类视图
-	CString strClassView;
-	bNameValid = strClassView.LoadString(IDS_CLASS_VIEW);
-	ASSERT(bNameValid);
-	if (!m_wndClassView.Create(strClassView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_CLASSVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
-	{
-		TRACE0("未能创建“类视图”窗口\n");
-		return FALSE; // 未能创建
-	}
-
-	// 创建文件视图
-	CString strFileView;
-	bNameValid = strFileView.LoadString(IDS_FILE_VIEW);
-	ASSERT(bNameValid);
-	if (!m_wndFileView.Create(strFileView, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_FILEVIEW, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT| CBRS_FLOAT_MULTI))
-	{
-		TRACE0("未能创建“文件视图”窗口\n");
-		return FALSE; // 未能创建
-	}
-
-	// 创建输出窗口
-	CString strOutputWnd;
-	bNameValid = strOutputWnd.LoadString(IDS_OUTPUT_WND);
-	ASSERT(bNameValid);
-	if (!m_wndOutput.Create(strOutputWnd, this, CRect(0, 0, 100, 100), TRUE, ID_VIEW_OUTPUTWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_BOTTOM | CBRS_FLOAT_MULTI))
-	{
-		TRACE0("未能创建输出窗口\n");
-		return FALSE; // 未能创建
-	}
-
-	// 创建属性窗口
-	CString strPropertiesWnd;
-	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
-	ASSERT(bNameValid);
-	if (!m_wndProperties.Create(strPropertiesWnd, this, CRect(0, 0, 200, 200), TRUE, ID_VIEW_PROPERTIESWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT | CBRS_FLOAT_MULTI))
-	{
-		TRACE0("未能创建“属性”窗口\n");
-		return FALSE; // 未能创建
-	}
-
-	SetDockingWindowIcons(theApp.m_bHiColorIcons);
-	return TRUE;
-}
-
-void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
-{
-	HICON hFileViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_FILE_VIEW_HC : IDI_FILE_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndFileView.SetIcon(hFileViewIcon, FALSE);
-
-	HICON hClassViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndClassView.SetIcon(hClassViewIcon, FALSE);
-
-	HICON hOutputBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_OUTPUT_WND_HC : IDI_OUTPUT_WND), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndOutput.SetIcon(hOutputBarIcon, FALSE);
-
-	HICON hPropertiesBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_PROPERTIES_WND_HC : IDI_PROPERTIES_WND), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
-	m_wndProperties.SetIcon(hPropertiesBarIcon, FALSE);
-
-	UpdateMDITabbedBarsIcons();
-}
-
 // CMainFrame 诊断
 
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
 {
-	CMDIFrameWndEx::AssertValid();
+	CBCGPMDIFrameWnd::AssertValid();
 }
 
 void CMainFrame::Dump(CDumpContext& dc) const
 {
-	CMDIFrameWndEx::Dump(dc);
+	CBCGPMDIFrameWnd::Dump(dc);
 }
 #endif //_DEBUG
 
@@ -286,121 +368,152 @@ void CMainFrame::OnWindowManager()
 
 void CMainFrame::OnViewCustomize()
 {
-	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* 扫描菜单*/);
-	pDlgCust->EnableUserDefinedToolbars();
-	pDlgCust->Create();
+	//------------------------------------
+	// Create a customize toolbars dialog:
+	//------------------------------------
+	CBCGPToolbarCustomize* pDlgCust = new CBCGPToolbarCustomize (this,
+		TRUE /* Automatic menus scaning */);
+
+	pDlgCust->EnableUserDefinedToolbars ();
+	pDlgCust->Create ();
 }
 
-LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
+afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM /*wp*/,LPARAM)
 {
-	LRESULT lres = CMDIFrameWndEx::OnToolbarCreateNew(wp,lp);
-	if (lres == 0)
-	{
-		return 0;
-	}
+	// TODO: reset toolbar with id = (UINT) wp to its initial state:
+	//
+	// UINT uiToolBarId = (UINT) wp;
+	// if (uiToolBarId == IDR_MAINFRAME)
+	// {
+	//		do something with m_wndToolBar
+	// }
 
-	CMFCToolBar* pUserToolbar = (CMFCToolBar*)lres;
-	ASSERT_VALID(pUserToolbar);
-
-	BOOL bNameValid;
-	CString strCustomize;
-	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
-	ASSERT(bNameValid);
-
-	pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
-	return lres;
+	return 0;
 }
+
+// LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
+// {
+// 	LRESULT lres = CBCGPMDIFrameWnd::OnToolbarCreateNew(wp,lp);
+// 	if (lres == 0)
+// 	{
+// 		return 0;
+// 	}
+// 
+// 	CBCGPToolBar* pUserToolbar = (CBCGPToolBar*)lres;
+// 	ASSERT_VALID(pUserToolbar);
+// 
+// 	BOOL bNameValid;
+// 	CString strCustomize;
+// 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
+// 	ASSERT(bNameValid);
+// 
+// 	pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+// 	return lres;
+// }
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
-	CWaitCursor wait;
+	CBCGPDockManager::SetDockMode (BCGP_DT_SMART);
 
 	theApp.m_nAppLook = id;
 
+	CBCGPTabbedControlBar::m_StyleTabWnd = CBCGPTabWnd::STYLE_3D;
+
+	CBCGPMDITabParams mdiTabParams;
+	mdiTabParams.m_bTabIcons = TRUE;
+
 	switch (theApp.m_nAppLook)
 	{
-	case ID_VIEW_APPLOOK_WIN_2000:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
-		break;
+// 	case ID_VIEW_APPLOOK_VS_2005:
+// 		// enable Office 2000 look:
+// 		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManager));
+// 		break;
 
 	case ID_VIEW_APPLOOK_OFF_XP:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		// enable Office XP look:
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManagerXP));
 		break;
 
 	case ID_VIEW_APPLOOK_WIN_XP:
-		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		// enable Windows XP look (in other OS Office XP look will be used):
+		CBCGPWinXPVisualManager::m_b3DTabsXPTheme = TRUE;
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPWinXPVisualManager));
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_2003:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
-		CDockingManager::SetDockingMode(DT_SMART);
-		break;
+		// enable Office 2003 look:
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManager2003));
 
-	case ID_VIEW_APPLOOK_VS_2005:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
-		CDockingManager::SetDockingMode(DT_SMART);
+		mdiTabParams.m_style = CBCGPTabWnd::STYLE_3D_VS2005;
+		mdiTabParams.m_bAutoColor = TRUE;
+		CBCGPDockManager::SetDockMode (BCGP_DT_SMART);
 		break;
 
 	default:
+		// enable Office 2007 look:
 		switch (theApp.m_nAppLook)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			CBCGPVisualManager2007::SetStyle (CBCGPVisualManager2007::VS2007_LunaBlue);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			CBCGPVisualManager2007::SetStyle (CBCGPVisualManager2007::VS2007_ObsidianBlack);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			CBCGPVisualManager2007::SetStyle (CBCGPVisualManager2007::VS2007_Silver);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
-			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			CBCGPVisualManager2007::SetStyle (CBCGPVisualManager2007::VS2007_Aqua);
 			break;
 		}
 
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CDockingManager::SetDockingMode(DT_SMART);
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManager2007));
+
+		mdiTabParams.m_style = CBCGPTabWnd::STYLE_3D_VS2005;
+		mdiTabParams.m_bAutoColor = TRUE;
+		CBCGPDockManager::SetDockMode (BCGP_DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_VS_2005:
+		// enable VS 2005 look:
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManagerVS2005));
+
+		mdiTabParams.m_style = CBCGPTabWnd::STYLE_3D_VS2005;
+		mdiTabParams.m_bDocumentMenu = TRUE;
+		CBCGPDockManager::SetDockMode (BCGP_DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_WIN_2000:
+		// enable VS 2008 look:
+		CBCGPVisualManager::SetDefaultManager (RUNTIME_CLASS (CBCGPVisualManagerVS2008));
+
+		mdiTabParams.m_style = CBCGPTabWnd::STYLE_3D_VS2005;
+		mdiTabParams.m_bDocumentMenu = TRUE;
+		CBCGPDockManager::SetDockMode (BCGP_DT_SMART);
+		break;
 	}
 
-	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+	EnableMDITabbedGroups (TRUE, mdiTabParams);
 
-	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+	CBCGPDockManager* pDockManager = GetDockManager ();
+	if (pDockManager != NULL)
+	{
+		ASSERT_VALID (pDockManager);
+		pDockManager->AdjustBarFrames ();
+	}
+
+	CBCGPTabbedControlBar::ResetTabs ();
+
+	RecalcLayout ();
+	RedrawWindow (NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+
+	theApp.WriteInt (_T("ApplicationLook"), theApp.m_nAppLook);
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
-
-BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
-{
-	// 基类将执行真正的工作
-
-	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
-	{
-		return FALSE;
-	}
-
-
-	// 为所有用户工具栏启用自定义按钮
-	BOOL bNameValid;
-	CString strCustomize;
-	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
-	ASSERT(bNameValid);
-
-	for (int i = 0; i < iMaxUserToolbars; i ++)
-	{
-		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
-		if (pUserToolbar != NULL)
-		{
-			pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
-		}
-	}
-
-	return TRUE;
-}
-

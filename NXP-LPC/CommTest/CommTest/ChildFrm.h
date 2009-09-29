@@ -4,7 +4,7 @@
 
 #pragma once
 
-class CChildFrame : public CMDIChildWndEx
+class CChildFrame : public CBCGPMDIChildWnd
 {
 	DECLARE_DYNCREATE(CChildFrame)
 public:

@@ -62,7 +62,7 @@ void CCommTestView::OnDraw(CDC* /*pDC*/)
 
 void CCommTestView::OnFilePrintPreview()
 {
-	AFXPrintPreview(this);
+	BCGPPrintPreview (this);
 }
 
 BOOL CCommTestView::OnPreparePrinting(CPrintInfo* pInfo)
