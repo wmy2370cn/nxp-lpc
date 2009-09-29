@@ -42,6 +42,8 @@
 
 #define  BUFF_LEN  512
 
+#define  MAX_NO_DATA_RECV_TIME 30 
+
 struct client_node
 {
 	INT32S  sock_id;
@@ -56,6 +58,69 @@ static struct client_node g_Conn[MAX_CONN_CNT];
 static  OS_STK          ListenTaskStk[LISTEN_TASK_STK_SIZE];
 static  OS_STK          NetSvrTaskStk[MAX_CONN_CNT][NET_SVR_TASK_STK_SIZE];
 
+
+/*********************************************************************************************************
+** 函数名称: ClearDataPluseCnt
+** 函数名称: ClearDataPluseCnt
+**
+** 功能描述：  收到数据就清0
+**
+** 输　入:  struct client_node * pClient
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年9月29日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void ClearDataPluseCnt( struct client_node *pClient)
+{
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif
+	if (pClient)
+	{
+		OS_ENTER_CRITICAL();
+		pClient->second_cnt = 0;
+		OS_EXIT_CRITICAL();
+	}
+}
+
+static void IncDataPluseCnt( struct client_node *pClient )
+{
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif
+	if (pClient)
+	{
+		OS_ENTER_CRITICAL();
+		pClient->second_cnt ++;
+		OS_EXIT_CRITICAL();
+	}
+}
+
+static INT32U GetDataPluseCnt( struct client_node *pClient)
+{
+#if OS_CRITICAL_METHOD == 3              
+	OS_CPU_SR  cpu_sr = 0;
+#endif
+	INT32U nCnt = (INT32U)(-1);
+	if (pClient)
+	{
+		OS_ENTER_CRITICAL();
+		nCnt = pClient->second_cnt ;
+		OS_EXIT_CRITICAL();
+	}
+	return nCnt;
+}
 
 static INT32S GetSocket( struct client_node *pClient)
 {
@@ -94,12 +159,11 @@ static INT8U AddNode( INT32S nSocketId )
 			g_Conn[i].sock_id = nSocketId;
 			g_Conn[i].recv_len = 0;
 			g_Conn[i].send_len = 0;
-			break;
-//			if(g_Conn[i].sock_id )
+			break; 
 		}		
-	}
-//	socket_id = pClient->sock_id ;
+	} 
 	OS_EXIT_CRITICAL();	
+	return bFlag;
 }
 
 static void RemoveNode( struct client_node *pClient )
@@ -120,6 +184,7 @@ static  void  ListenTask (void *p_arg)
 	INT32S newsocket,server;
 	struct sockaddr_in dst_addr,client_addr;
 	int namelen = sizeof(client_addr);
+	 
 	while(1)
 	{
 		server = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
@@ -170,47 +235,89 @@ static  void  ListenTask (void *p_arg)
 				continue;
 			}
 			//连接进来了，查找是否有重复的节点，然后添加进来
-			
-
-
+			if (AddNode(newsocket) == OS_FALSE)
+			{
+				close(newsocket);
+			}
 		}
 	}
+}
 
+INT8U DataProcess( struct client_node *pClient )
+{
+	if (pClient)
+	{
+		pClient->send_len = pClient->recv_len;
+		memcpy(pClient->send_buf, pClient->recv_buf, pClient->send_len);
+		return OS_TRUE;
+	}
+	return OS_FALSE;
 }
 
 static  void  ProcessTask (void *p_arg)
 {
 	INT32S sock;
 	int ret = 0;
-	struct client_node *pCilent = (struct client_node *)p_arg;
-
+	struct client_node *pClient = (struct client_node *)p_arg;
+	INT32U nNoDataRcvTime = 0;
+ 
 	if (p_arg == NULL)
 		return;
 
 	while(1)
 	{
-		sock = GetSocket( pCilent );
+		sock = GetSocket( pClient );
 		if (sock == 0 || sock == INVALID_SOCKET)
 		{
 			OSTimeDlyHMSM(0,0,1,0);
 			continue;
 		}
 
+		nNoDataRcvTime = GetDataPluseCnt(pClient);
+		if (nNoDataRcvTime > MAX_NO_DATA_RECV_TIME)
+		{
+			close( sock );
+			RemoveNode(pClient);
+			continue;
+		}
+
 	 	//接收数据，然后处理，发送
-		ret = recv(sock, pCilent->recv_buf, BUFF_LEN, 0);
+		ret = recv(sock, pClient->recv_buf, BUFF_LEN, 0);
 
 		if (ret>0 && ret <= BUFF_LEN)
 		{//进行数据处理
+			 ClearDataPluseCnt(pClient);
+			 if(DataProcess(pClient))
+			 {
+				 if (pClient->send_len >0 && pClient->send_len < BUFF_LEN)
+				 {
+					 ret =  send(sock,pClient->send_buf,pClient->send_len, 0);
+					 if (ret >0 && ret < BUFF_LEN)
+					 {
 
+					 }
+					 else if( ret == 0)
+					 {//此处需要再确定下
+
+					 }
+					 else
+					 {
+
+					 }
+				 }				
+			 }
 		}
 		else if ( ret == 0)
 		{// 连接被关闭了
-			close( sock );
-			RemoveNode(pCilent);
-			continue;
+// 			close( sock );
+// 			RemoveNode(pCilent);
+ 			continue;
 		}
 		else
 		{
+			close( sock );
+			RemoveNode(pClient);
+
 			continue;
 		}
 	}
@@ -221,8 +328,16 @@ void InitNetSvr( void )
 {
 	INT8U i = 0;
 
-	memset(&g_Conn[0],0,sizeof(struct client_node )*MAX_CONN_CNT);
-
+ 	memset(&g_Conn[0],0,sizeof(struct client_node )*MAX_CONN_CNT);
+	OSTimeDlyHMSM(0,0,2,0);
+	
+	OSTaskCreate (ListenTask, (void *)0, &ListenTaskStk[LISTEN_TASK_STK_SIZE - 1], LISTEN_TASK_PRIO);
+	
+	for (i = 0 ; i < MAX_CONN_CNT; i++)
+	{
+		OSTaskCreate (ProcessTask,(void *)(& g_Conn[i]),(OS_STK *)&(NetSvrTaskStk[i][NET_SVR_TASK_STK_SIZE - 1]), NET_SVR_TASK_PRIO_BASE+i);
+	}
+#if 0
 	//启动监听线程
 	OSTaskCreateExt(ListenTask,                        
 		(void *)0,
@@ -248,4 +363,5 @@ void InitNetSvr( void )
 			(void *)0,
 			OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 	}
+#endif
 }
