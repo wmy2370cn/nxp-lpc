@@ -215,23 +215,23 @@ static  void  ListenTask (void *p_arg)
 
 		while(1)
 		{
-			struct fd_set fdread;
-			struct timeval tv;
-			int ret = 0;
+//			struct fd_set fdread;
+//			struct timeval tv;
+//			int ret = 0;
 
 			OSTimeDlyHMSM(0,0,0,300);
-	 		tv.tv_sec = 0;
-			tv.tv_usec = 1;
-			FD_ZERO(&fdread);
-			FD_SET(server, &fdread);
-			ret = select(0, &fdread, NULL, NULL, &tv);
-			if (ret <= 0)
-				continue;
+// 	 		tv.tv_sec = 0;
+// 			tv.tv_usec = 1;
+// 			FD_ZERO(&fdread);
+// 			FD_SET(server, &fdread);
+// 			ret = select(0, &fdread, NULL, NULL, &tv);
+// 			if (ret <= 0)
+// 				continue;
 			newsocket = accept(server,(struct sockaddr*)&client_addr,&namelen);
-			if (newsocket == INVALID_SOCKET)
+			if (newsocket == INVALID_SOCKET || newsocket == 0)
 			{
-				close(newsocket);
-				OSTimeDlyHMSM(0,0,0,300);
+				//close(newsocket);
+				OSTimeDlyHMSM(0,0,1,0);
 				continue;
 			}
 			//连接进来了，查找是否有重复的节点，然后添加进来
@@ -273,19 +273,20 @@ static  void  ProcessTask (void *p_arg)
 			continue;
 		}
 
-		nNoDataRcvTime = GetDataPluseCnt(pClient);
-		if (nNoDataRcvTime > MAX_NO_DATA_RECV_TIME)
-		{
-			close( sock );
-			RemoveNode(pClient);
-			continue;
-		}
+// 		nNoDataRcvTime = GetDataPluseCnt(pClient);
+// 		if (nNoDataRcvTime > MAX_NO_DATA_RECV_TIME)
+// 		{
+// 			close( sock );
+// 			RemoveNode(pClient);
+// 			continue;
+// 		}
 
 	 	//接收数据，然后处理，发送
 		ret = recv(sock, pClient->recv_buf, BUFF_LEN, 0);
 
 		if (ret>0 && ret <= BUFF_LEN)
 		{//进行数据处理
+			pClient->recv_len = ret;
 			 ClearDataPluseCnt(pClient);
 			 if(DataProcess(pClient))
 			 {
@@ -309,14 +310,14 @@ static  void  ProcessTask (void *p_arg)
 		}
 		else if ( ret == 0)
 		{// 连接被关闭了
-// 			close( sock );
-// 			RemoveNode(pCilent);
+ 			close( sock );
+ 			RemoveNode(pClient);
  			continue;
 		}
 		else
 		{
-			close( sock );
-			RemoveNode(pClient);
+//			close( sock );
+//			RemoveNode(pClient);
 
 			continue;
 		}
@@ -348,7 +349,6 @@ void InitNetSvr( void )
 		LISTEN_TASK_STK_SIZE,
 		(void *)0,
 		OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
-
 
 	//启动数据收发线程
 	for (i = 0 ; i < MAX_CONN_CNT; i++)
