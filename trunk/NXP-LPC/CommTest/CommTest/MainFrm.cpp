@@ -124,14 +124,24 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	UINT uiToolbarHotID = bIsHighColor ;
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
-		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME, 0, 0, FALSE, 0, 0, uiToolbarHotID))
+// 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
+// 		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+// 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME_256, 0, 0, FALSE, 0, 0, uiToolbarHotID))
+// 	{
+// 		TRACE0("Failed to create toolbar\n");
+// 		return -1;      // fail to create
+// 	}
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
-		TRACE0("Failed to create toolbar\n");
-		return -1;      // fail to create
+		TRACE0("未能创建工具栏\n");
+		return -1;      // 未能创建
 	}
 
+	CString strToolBarName;
+	BOOL bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
+	ASSERT(bNameValid);
+	m_wndToolBar.SetWindowText(strToolBarName);
 	if (!m_wndStatusBar.Create(this) ||
 		!m_wndStatusBar.SetIndicators(indicators,
 		sizeof(indicators)/sizeof(UINT)))
@@ -146,7 +156,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	imagesWorkspace.SetTransparentColor (RGB (255, 0, 255));
 	imagesWorkspace.Load (IDB_WORKSPACE);
 
-	if (!m_wndWorkSpace.Create (_T("View  1"), this, CRect (0, 0, 200, 200),
+	if (!m_wndWorkSpace.Create (_T("方案管理器"), this, CRect (0, 0, 200, 200),
 		TRUE, ID_VIEW_WORKSPACE,
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
@@ -156,9 +166,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndWorkSpace.SetIcon (imagesWorkspace.ExtractIcon (0), FALSE);
 
- 
-
-	if (!m_wndOutput.Create (_T("Output"), this, CSize (150, 150),
+	if (!m_wndOutput.Create (_T("输出"), this, CSize (150, 150),
 		TRUE /* Has gripper */, ID_VIEW_OUTPUT,
 		WS_CHILD | WS_VISIBLE | CBRS_BOTTOM))
 	{
@@ -174,7 +182,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndWorkSpace.EnableDocking(CBRS_ALIGN_ANY);
-	 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
+	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndMenuBar);
@@ -183,7 +191,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockControlBar(&m_wndOutput);
 
 
-	m_wndToolBar.EnableCustomizeButton (TRUE, ID_VIEW_CUSTOMIZE, _T("Customize..."));
+	m_wndToolBar.EnableCustomizeButton (TRUE, ID_VIEW_CUSTOMIZE, _T("自定义..."));
 
 	// Allow user-defined toolbars operations:
 	InitUserToobars (NULL,
@@ -197,7 +205,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableControlBarMenu (	
 		TRUE,				// Enable
 		ID_VIEW_CUSTOMIZE, 	// Customize command ID
-		_T("Customize..."),	// Customize command text
+		_T("自定义..."),	// Customize command text
 		ID_VIEW_TOOLBAR);	// Menu items with this ID will be replaced by
 	// toolbars menu
 

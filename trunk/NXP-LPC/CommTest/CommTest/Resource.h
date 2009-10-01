@@ -83,23 +83,23 @@
 #define IDR_POPUP_DROP_MDITABS          352
 
  
-#define ID_VIEW_USER_TOOLBAR1           32793
-#define ID_VIEW_USER_TOOLBAR2           32794
-#define ID_VIEW_USER_TOOLBAR3           32795
-#define ID_VIEW_USER_TOOLBAR4           32796
-#define ID_VIEW_USER_TOOLBAR5           32797
-#define ID_VIEW_USER_TOOLBAR6           32798
-#define ID_VIEW_USER_TOOLBAR7           32799
-#define ID_VIEW_USER_TOOLBAR8           32800
-#define ID_VIEW_USER_TOOLBAR9           32801
-#define ID_VIEW_USER_TOOLBAR10          32802
-#define ID_VIEW_WORKSPACE               32803
-#define ID_VIEW_OUTPUT                  32804
-#define ID_MDI_NEW_VERT_GROUP           32838
-#define ID_MDI_NEW_HORZ_TAB_GROUP       32839
-#define ID_MDI_MOVE_TO_PREV_GROUP       32840
-#define ID_MDI_CANCEL                   32841
-#define ID_MDI_MOVE_TO_NEXT_GROUP       32842
+#define ID_VIEW_USER_TOOLBAR1           2793
+#define ID_VIEW_USER_TOOLBAR2           2794
+#define ID_VIEW_USER_TOOLBAR3           2795
+#define ID_VIEW_USER_TOOLBAR4           2796
+#define ID_VIEW_USER_TOOLBAR5           2797
+#define ID_VIEW_USER_TOOLBAR6           2798
+#define ID_VIEW_USER_TOOLBAR7           2799
+#define ID_VIEW_USER_TOOLBAR8           2800
+#define ID_VIEW_USER_TOOLBAR9           2801
+#define ID_VIEW_USER_TOOLBAR10          2802
+#define ID_VIEW_WORKSPACE               2803
+#define ID_VIEW_OUTPUT                  2804
+#define ID_MDI_NEW_VERT_GROUP           2838
+#define ID_MDI_NEW_HORZ_TAB_GROUP       2839
+#define ID_MDI_MOVE_TO_PREV_GROUP       2840
+#define ID_MDI_CANCEL                   2841
+#define ID_MDI_MOVE_TO_NEXT_GROUP       2842
 
 // Next default values for new objects
 // 

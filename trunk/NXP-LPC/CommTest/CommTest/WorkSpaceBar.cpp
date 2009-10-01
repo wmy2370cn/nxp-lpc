@@ -59,9 +59,12 @@ int CWorkSpaceBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Setup trees content:
-	HTREEITEM hRoot1 = m_wndTree.InsertItem (_T("Root 1"));
-	m_wndTree.InsertItem (_T("Item 1"), hRoot1);
-	m_wndTree.InsertItem (_T("Item 2"), hRoot1);
+	HTREEITEM hNet = m_wndTree.InsertItem (_T("以太网"));
+	m_wndTree.InsertItem (_T("客户端模式"), hNet);
+	m_wndTree.InsertItem (_T("服务器模式"), hNet);
+
+	HTREEITEM hCom = m_wndTree.InsertItem (_T("串口"));
+	 
 
 	return 0;
 }
