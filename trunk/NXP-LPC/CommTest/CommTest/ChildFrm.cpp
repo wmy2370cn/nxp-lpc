@@ -35,6 +35,7 @@ BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: 在此处通过修改 CREATESTRUCT cs 来修改窗口类或样式
 	if( !CBCGPMDIChildWnd::PreCreateWindow(cs) )
 		return FALSE;
+	cs.style &= ~WS_SYSMENU;
 
 	return TRUE;
 }
@@ -52,5 +53,10 @@ void CChildFrame::Dump(CDumpContext& dc) const
 	CBCGPMDIChildWnd::Dump(dc);
 }
 #endif //_DEBUG
+
+void CChildFrame::ActivateFrame(int nCmdShow)
+{
+	CBCGPMDIChildWnd::ActivateFrame(SW_SHOWMAXIMIZED);
+}
 
 // CChildFrame 消息处理程序

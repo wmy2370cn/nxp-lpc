@@ -16,11 +16,8 @@
 #define IDR_MAINFRAME_256               129
 #define IDR_CommTestTYPE                130
 #define ID_WINDOW_MANAGER               131
-#define IDR_POPUP_TOOLBAR               131
 #define IDS_WINDOWS_MANAGER             132
-#define IDR_POPUP_MDITABS               132
-#define ID_VIEW_FILEVIEW                133
-#define IDR_POPUP_DROP_MDITABS          133
+
 #define ID_VIEW_CLASSVIEW               134
 #define ID_PROPERTIES                   135
 #define ID_OPEN                         136
@@ -47,22 +44,14 @@
 #define IDS_MAIN_TOOLBAR                156
 #define IDS_OUTPUT_WND                  157
 #define IDS_PROPERTIES_WND              158
-#define IDI_FILE_VIEW                   161
-#define IDI_FILE_VIEW_HC                162
-#define IDI_CLASS_VIEW                  163
 #define IDI_CLASS_VIEW_HC               164
-#define IDI_OUTPUT_WND                  165
 #define IDI_OUTPUT_WND_HC               166
-#define IDI_PROPERTIES_WND              167
 #define IDI_PROPERTIES_WND_HC           168
 #define IDR_EXPLORER                    169
 #define IDB_EXPLORER_24                 170
 #define IDR_SORT                        171
-#define IDB_SORT_24                     172
 #define IDR_POPUP_SORT                  173
 #define IDR_POPUP_EXPLORER              174
-#define IDB_FILE_VIEW                   175
-#define IDB_FILE_VIEW_24                176
 #define IDB_CLASS_VIEW_24               178
 #define IDR_MENU_IMAGES                 179
 #define IDB_MENU_IMAGES_24              180
@@ -87,7 +76,13 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDB_WORKSPACE                   310
-#define ID_VIEW_WORKSPACE2              32792
+
+
+#define IDR_POPUP_TOOLBAR               350
+#define IDR_POPUP_MDITABS               351
+#define IDR_POPUP_DROP_MDITABS          352
+
+ 
 #define ID_VIEW_USER_TOOLBAR1           32793
 #define ID_VIEW_USER_TOOLBAR2           32794
 #define ID_VIEW_USER_TOOLBAR3           32795
@@ -111,7 +106,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32771
+#define _APS_NEXT_COMMAND_VALUE         32850
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

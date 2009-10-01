@@ -48,10 +48,18 @@ protected:
 	afx_msg LRESULT OnToolbarReset(WPARAM,LPARAM);
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
+	afx_msg void OnMdiMoveToNextGroup();
+	afx_msg void OnMdiMoveToPrevGroup();
+	afx_msg void OnMdiNewHorzTabGroup();
+	afx_msg void OnMdiNewVertGroup();
+	afx_msg void OnMdiCancel();
+	afx_msg void OnClose();
+
 	DECLARE_MESSAGE_MAP()
 
-	BOOL CreateDockingWindows();
-	void SetDockingWindowIcons(BOOL bHiColorIcons);
+	virtual BOOL OnShowMDITabContextMenu (CPoint point, DWORD dwAllowedItems, BOOL bDrop);
+	virtual CBCGPMDIChildWnd* CreateDocumentWindow (LPCTSTR lpcszDocName, CObject* /*pObj*/);
+
 };
 
 

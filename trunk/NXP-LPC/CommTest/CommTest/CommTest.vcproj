@@ -294,10 +294,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\classview.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\classview_hc.bmp"
 				>
 			</File>
@@ -323,18 +319,6 @@
 			</File>
 			<File
 				RelativePath=".\res\explorer_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\file_view.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\file_view_hc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\fileview.bmp"
 				>
 			</File>
 			<File
@@ -371,10 +355,6 @@
 			</File>
 			<File
 				RelativePath=".\res\properties_wnd_hc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\sort.bmp"
 				>
 			</File>
 			<File
