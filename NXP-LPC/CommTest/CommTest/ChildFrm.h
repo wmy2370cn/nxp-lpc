@@ -18,6 +18,7 @@ public:
 
 // ÷ÿ–¥
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void ActivateFrame(int nCmdShow);
 
 //  µœ÷
 public:

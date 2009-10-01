@@ -68,6 +68,7 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 	}
 	AfxEnableControlContainer();
+
 	globalData.SetDPIAware ();
 
 	// 标准初始化
@@ -77,8 +78,9 @@ BOOL CCommTestApp::InitInstance()
 	// 更改用于存储设置的注册表项
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
-	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
-	LoadStdProfileSettings(4);  // 加载标准 INI 文件选项(包括 MRU)
+	SetRegistryKey(_T("CommTestStudio"));
+//	LoadStdProfileSettings(4);  // 加载标准 INI 文件选项(包括 MRU)
+	SetRegistryBase (_T("Settings"));
 
 	InitContextMenuManager();
 
@@ -172,14 +174,14 @@ void CCommTestApp::OnAppAbout()
 
 void CCommTestApp::PreLoadState()
 {
-	BOOL bNameValid;
-	CString strName;
-	bNameValid = strName.LoadString(IDS_EDIT_MENU);
-	ASSERT(bNameValid);
-	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
-	bNameValid = strName.LoadString(IDS_EXPLORER);
-	ASSERT(bNameValid);
-	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
+// 	BOOL bNameValid;
+// 	CString strName;
+// 	bNameValid = strName.LoadString(IDS_EDIT_MENU);
+// 	ASSERT(bNameValid);
+// 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
+// 	bNameValid = strName.LoadString(IDS_EXPLORER);
+// 	ASSERT(bNameValid);
+// 	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EXPLORER);
 }
 
 void CCommTestApp::LoadCustomState()

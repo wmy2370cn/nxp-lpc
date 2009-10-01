@@ -16,11 +16,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 非特定语言(默认值) resources
+// 中文(中华人民共和国) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 #ifdef _WIN32
-LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
 #endif //_WIN32
 
@@ -35,7 +35,6 @@ BEGIN
     BEGIN
         MENUITEM "Standard Toolbar",            ID_VIEW_TOOLBAR
         MENUITEM "&Workspace",                  ID_VIEW_WORKSPACE
-        MENUITEM "&Workspace 2",                ID_VIEW_WORKSPACE2
         MENUITEM "&Output",                     ID_VIEW_OUTPUT
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR1
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR2
@@ -51,24 +50,6 @@ BEGIN
         MENUITEM "&Customize...",               32770
     END
 END
-
-#endif    // 非特定语言(默认值) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// 中文(中华人民共和国) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-#ifdef _WIN32
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
 
 IDR_MAINFRAME MENU 
 BEGIN
@@ -229,6 +210,33 @@ BEGIN
     MENUITEM "Office 2007 (水绿色样式)(&A)",     ID_VIEW_APPLOOK_OFF_2007_AQUA
 END
 
+IDR_POPUP_MDITABS MENU 
+BEGIN
+    POPUP "DUMMY"
+    BEGIN
+        MENUITEM "&Save",                       ID_FILE_SAVE
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "New &Horizontal Tab Group",   ID_MDI_NEW_HORZ_TAB_GROUP
+        MENUITEM "New &Vertical Tab Group",     ID_MDI_NEW_VERT_GROUP
+        MENUITEM "Move to Ne&xt Tab Group",     ID_MDI_MOVE_TO_NEXT_GROUP
+        MENUITEM "Move to P&revious Tab Group", ID_MDI_MOVE_TO_PREV_GROUP
+    END
+END
+
+IDR_POPUP_DROP_MDITABS MENU 
+BEGIN
+    POPUP "DUMMY"
+    BEGIN
+        MENUITEM "New &Horizontal Tab Group",   ID_MDI_NEW_HORZ_TAB_GROUP
+        MENUITEM "New &Vertical Tab Group",     ID_MDI_NEW_VERT_GROUP
+        MENUITEM "Move to Ne&xt Tab Group",     ID_MDI_MOVE_TO_NEXT_GROUP
+        MENUITEM "Move to P&revious Tab Group", ID_MDI_MOVE_TO_PREV_GROUP
+        MENUITEM SEPARATOR
+        MENUITEM "&Cancel",                     ID_MDI_CANCEL
+    END
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -246,8 +254,7 @@ BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
-    "#include ""afxres.h""\r\n"
-    "\0"
+    "#include ""afxres.h""\r\0"
 END
 
 3 TEXTINCLUDE 
@@ -265,8 +272,12 @@ BEGIN
     "#if !defined(_AFXDLL)\r\n"
     "#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
     "#endif\r\n"
-    "#endif\r\n"
-    "\0"
+    "\r\n"
+    "#define _BCGCBPRO_STATIC_\r\n"
+    "// BCG ControlBar resources\r\n"
+    "#include ""L.chs\\bcgcontrolbar.rc""  \r\n"
+    "\r\n"
+    "#endif\r\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -281,13 +292,8 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\CommTest.ico"
 IDR_CommTestTYPE        ICON                    "res\\CommTestDoc.ico"
-IDI_FILE_VIEW           ICON                    "res\\file_view.ico"
-IDI_FILE_VIEW_HC        ICON                    "res\\file_view_hc.ico"
-IDI_CLASS_VIEW          ICON                    "res\\class_view.ico"
 IDI_CLASS_VIEW_HC       ICON                    "res\\class_view_hc.ico"
-IDI_OUTPUT_WND          ICON                    "res\\output_wnd.ico"
 IDI_OUTPUT_WND_HC       ICON                    "res\\output_wnd_hc.ico"
-IDI_PROPERTIES_WND      ICON                    "res\\properties_wnd.ico"
 IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -297,10 +303,6 @@ IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_256       BITMAP                  "res\\Toolbar256.bmp"
-IDR_SORT                BITMAP                  "res\\sort.bmp"
-IDB_SORT_24             BITMAP                  "res\\sort_hc.bmp"
-IDB_FILE_VIEW           BITMAP                  "res\\fileview.bmp"
-IDB_FILE_VIEW_24        BITMAP                  "res\\fileview_hc.bmp"
 IDB_CLASS_VIEW_24       BITMAP                  "res\\classview_hc.bmp"
 IDR_EXPLORER            BITMAP                  "res\\explorer.bmp"
 IDB_EXPLORER_24         BITMAP                  "res\\explorer_hc.bmp"
@@ -640,51 +642,6 @@ END
 /////////////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////////////////////////////////////////////////////////
-// 英语(美国) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDR_POPUP_MDITABS MENU 
-BEGIN
-    POPUP "DUMMY"
-    BEGIN
-        MENUITEM "&Save",                       ID_FILE_SAVE
-        MENUITEM "&Close",                      ID_FILE_CLOSE
-        MENUITEM SEPARATOR
-        MENUITEM "New &Horizontal Tab Group",   ID_MDI_NEW_HORZ_TAB_GROUP
-        MENUITEM "New &Vertical Tab Group",     ID_MDI_NEW_VERT_GROUP
-        MENUITEM "Move to Ne&xt Tab Group",     ID_MDI_MOVE_TO_NEXT_GROUP
-        MENUITEM "Move to P&revious Tab Group", ID_MDI_MOVE_TO_PREV_GROUP
-    END
-END
-
-IDR_POPUP_DROP_MDITABS MENU 
-BEGIN
-    POPUP "DUMMY"
-    BEGIN
-        MENUITEM "New &Horizontal Tab Group",   ID_MDI_NEW_HORZ_TAB_GROUP
-        MENUITEM "New &Vertical Tab Group",     ID_MDI_NEW_VERT_GROUP
-        MENUITEM "Move to Ne&xt Tab Group",     ID_MDI_MOVE_TO_NEXT_GROUP
-        MENUITEM "Move to P&revious Tab Group", ID_MDI_MOVE_TO_PREV_GROUP
-        MENUITEM SEPARATOR
-        MENUITEM "&Cancel",                     ID_MDI_CANCEL
-    END
-END
-
-#endif    // 英语(美国) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -704,6 +661,11 @@ LANGUAGE 4, 2
 #if !defined(_AFXDLL)
 #include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
 #endif
+
+#define _BCGCBPRO_STATIC_
+// BCG ControlBar resources
+#include "L.chs\bcgcontrolbar.rc"  
+
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

@@ -15,9 +15,9 @@
 
 IMPLEMENT_DYNAMIC(CMainFrame, CBCGPMDIFrameWnd)
 
-const int  iMaxUserToolbars = 10;
-const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
-const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
+const int  iMaxUserToolbars		= 10;
+const UINT uiFirstUserToolBarId	= AFX_IDW_CONTROLBAR_FIRST + 40;
+const UINT uiLastUserToolBarId	= uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPMDIFrameWnd)
 	ON_WM_CREATE()
@@ -28,6 +28,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPMDIFrameWnd)
 //	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
+	ON_COMMAND(ID_MDI_MOVE_TO_NEXT_GROUP, OnMdiMoveToNextGroup)
+	ON_COMMAND(ID_MDI_MOVE_TO_PREV_GROUP, OnMdiMoveToPrevGroup)
+	ON_COMMAND(ID_MDI_NEW_HORZ_TAB_GROUP, OnMdiNewHorzTabGroup)
+	ON_COMMAND(ID_MDI_NEW_VERT_GROUP, OnMdiNewVertGroup)
+	ON_COMMAND(ID_MDI_CANCEL, OnMdiCancel)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -52,8 +57,6 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CBCGPMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
-		return -1;
 	if (CBCGPMDIFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
@@ -516,4 +519,98 @@ void CMainFrame::OnApplicationLook(UINT id)
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
+}
+
+
+void CMainFrame::OnClose() 
+{
+	SaveMDIState (theApp.GetRegSectionPath ());
+	CBCGPMDIFrameWnd::OnClose();
+}
+
+BOOL CMainFrame::OnShowMDITabContextMenu (CPoint point, DWORD dwAllowedItems, BOOL bDrop)
+{
+	CMenu menu;
+	VERIFY(menu.LoadMenu (bDrop ? IDR_POPUP_DROP_MDITABS : IDR_POPUP_MDITABS));
+
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT(pPopup != NULL);
+
+	if ((dwAllowedItems & BCGP_MDI_CREATE_HORZ_GROUP) == 0)
+	{
+		pPopup->DeleteMenu (ID_MDI_NEW_HORZ_TAB_GROUP, MF_BYCOMMAND);
+	}
+
+	if ((dwAllowedItems & BCGP_MDI_CREATE_VERT_GROUP) == 0)
+	{
+		pPopup->DeleteMenu (ID_MDI_NEW_VERT_GROUP, MF_BYCOMMAND);
+	}
+
+	if ((dwAllowedItems & BCGP_MDI_CAN_MOVE_NEXT) == 0)
+	{
+		pPopup->DeleteMenu (ID_MDI_MOVE_TO_NEXT_GROUP, MF_BYCOMMAND);
+	}
+
+	if ((dwAllowedItems & BCGP_MDI_CAN_MOVE_PREV) == 0)
+	{
+		pPopup->DeleteMenu (ID_MDI_MOVE_TO_PREV_GROUP, MF_BYCOMMAND);
+	}
+
+	CBCGPPopupMenu* pPopupMenu = new CBCGPPopupMenu;
+	pPopupMenu->SetAutoDestroy (FALSE);
+	pPopupMenu->Create (this, point.x, point.y, pPopup->GetSafeHmenu ());
+
+	return TRUE;
+}
+
+void CMainFrame::OnMdiMoveToNextGroup() 
+{
+	MDITabMoveToNextGroup ();
+}
+
+void CMainFrame::OnMdiMoveToPrevGroup() 
+{
+	MDITabMoveToNextGroup (FALSE);
+}
+
+void CMainFrame::OnMdiNewHorzTabGroup() 
+{
+	MDITabNewGroup (FALSE);
+}
+
+void CMainFrame::OnMdiNewVertGroup() 
+{
+	MDITabNewGroup ();
+}
+
+void CMainFrame::OnMdiCancel() 
+{
+	// TODO: Add your command handler code here
+
+}
+
+CBCGPMDIChildWnd* CMainFrame::CreateDocumentWindow (LPCTSTR lpcszDocName, CObject* /*pObj*/)
+{
+	if (lpcszDocName != NULL && lpcszDocName [0] != '\0')
+	{
+		CDocument* pDoc = AfxGetApp()->OpenDocumentFile (lpcszDocName);
+
+		if (pDoc != NULL)
+		{
+			POSITION pos = pDoc->GetFirstViewPosition();
+
+			if (pos != NULL)
+			{
+				CView* pView = pDoc->GetNextView (pos);
+				if (pView == NULL)
+				{
+					return NULL;
+				}
+
+				return DYNAMIC_DOWNCAST (CBCGPMDIChildWnd, pView->GetParent ());
+			}   
+		}
+	}
+
+	return NULL;
 }
