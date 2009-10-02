@@ -106,6 +106,13 @@
           <TargetDlgDllArguments>-pLPC2378</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
+          <OPTHX>
+            <HexSelection>1</HexSelection>
+            <HexRangeLowAddress>0</HexRangeLowAddress>
+            <HexRangeHighAddress>0</HexRangeHighAddress>
+            <HexOffset>0</HexOffset>
+            <Oh166RecLen>16</Oh166RecLen>
+          </OPTHX>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
@@ -584,11 +591,6 @@
               <FilePath>..\..\net\lwip\src\arch\sys_arch_init.c</FilePath>
             </File>
             <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\arch\sys.c</FilePath>
-            </File>
-            <File>
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\arch\sys_arch.c</FilePath>
@@ -708,6 +710,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\netif\loopif.c</FilePath>
             </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\core\sys.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -812,6 +819,13 @@
           <TargetDlgDllArguments>-pLPC2378</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
+          <OPTHX>
+            <HexSelection>1</HexSelection>
+            <HexRangeLowAddress>0</HexRangeLowAddress>
+            <HexRangeHighAddress>0</HexRangeHighAddress>
+            <HexOffset>0</HexOffset>
+            <Oh166RecLen>16</Oh166RecLen>
+          </OPTHX>
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
@@ -1290,11 +1304,6 @@
               <FilePath>..\..\net\lwip\src\arch\sys_arch_init.c</FilePath>
             </File>
             <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\arch\sys.c</FilePath>
-            </File>
-            <File>
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\arch\sys_arch.c</FilePath>
@@ -1413,6 +1422,11 @@
               <FileName>loopif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\netif\loopif.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\net\lwip\src\core\sys.c</FilePath>
             </File>
           </Files>
         </Group>
