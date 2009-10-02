@@ -163,16 +163,6 @@ void FlickerLed( )
 	 int count = 0;
 	 FlickerLed( );
 
-	 	ptr = (int *) rt_malloc (64);
-	if (ptr == RT_NULL)
-	{
-		rt_kprintf("malloc ptr failed\n");
- 
-	}
-	else
-	rt_memset(	ptr, 0, 64);
-
-
 	 while (1)
 	 {
 		 rt_kprintf("Thread2 count:%d\n", count++);
