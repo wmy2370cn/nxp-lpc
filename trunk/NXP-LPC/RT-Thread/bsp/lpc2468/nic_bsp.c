@@ -1,19 +1,22 @@
-#include <rtthread.h>
-#include "dm9161.h"
+#include <rtthread.h> 
 
 #include <netif/ethernetif.h>
-#include "lwipopts.h"
-#include "emac.h"
+#include "lwipopts.h" 
 #include "applib.h"
-#include "LPC24xx.h"
+#include "LPC24xx.h" 
+
+#include "ioLPC24xx.H" 
+
 #include "emac.h"
+#include "emac_def.h"
+#include "dm9161.h"	
+#include "dm9161_def.h"
 
 #define  DM9161AE_INIT_AUTO_NEG_RETRIES        3
 
 #define  DM9161AE_OUI                   0x00606E
 #define  DM9161AE_VNDR_MDL                  0x08
 
-INT16U PHYID;
  
 #define MAX_ADDR_LEN 6
 struct rt_lpc24xx_eth
@@ -32,66 +35,66 @@ struct rt_lpc24xx_eth
 #define ETH_TX_BUF_SIZE		(PBUF_POOL_BUFSIZE)
 
 typedef struct {                        /* RX Descriptor struct              */
-	rt_uint32_t Packet;
-	rt_uint32_t Ctrl;
+	INT32U Packet;
+	INT32U Ctrl;
 } RX_Desc;
 
 typedef struct {                        /* RX Status struct                  */
-	rt_uint32_t Info;
-	rt_uint32_t HashCRC;
+	INT32U Info;
+	INT32U HashCRC;
 } RX_Stat;
 
 typedef struct {                        /* TX Descriptor struct              */
-	rt_uint32_t Packet;
-	rt_uint32_t Ctrl;
+	INT32U Packet;
+	INT32U Ctrl;
 } TX_Desc;
 
 typedef struct {                        /* TX Status struct                  */
-	rt_uint32_t Info;
+	INT32U Info;
 } TX_Stat;
 
+static            RX_Desc *rb_descriptors ;
+static            TX_Desc *tb_descriptors ;
 
-
-static rt_uint32_t 	current_rb_index;						/* current receive buffer index */
-
-
-/* EMAC local DMA Descriptors. */ 
-/* EMAC local DMA Descriptors. */
-static            RX_Desc rb_descriptors[NUM_RX_FRAG];
-static            TX_Desc tb_descriptors[NUM_TX_FRAG];
+static  RX_Stat *Rx_Stat ; /* Must be 8-Byte alligned   */
+static  TX_Stat *Tx_Stat ;
+static  INT8U       *RxBufBaseAddr;
+static  INT8U       *TxBufBaseAddr;
  
-static  RX_Stat Rx_Stat[NUM_RX_FRAG]; /* Must be 8-Byte alligned   */
-static  TX_Stat Tx_Stat[NUM_TX_FRAG];
-
-
-/* EMAC local DMA buffers. */
-static rt_uint32_t rx_buf[NUM_RX_FRAG][ETH_FRAG_SIZE>>2];
-static rt_uint32_t tx_buf[NUM_TX_FRAG][ETH_FRAG_SIZE>>2];
-
-
 static struct rt_lpc24xx_eth lpc24xx_device;
 
 static struct rt_semaphore tx_sem;
 
 
+#define  EMAC_RX_DESC_BASE_ADDR                (EMAC_RAM_BASE_ADDR)
+#define  EMAC_RX_STATUS_BASE_ADDR              (EMAC_RX_DESC_BASE_ADDR   + (NUM_RX_FRAG * sizeof(RX_Desc)))
+#define  EMAC_TX_DESC_BASE_ADDR                (EMAC_RX_STATUS_BASE_ADDR + (NUM_RX_FRAG * sizeof(RX_Stat)))
+#define  EMAC_TX_STATUS_BASE_ADDR              (EMAC_TX_DESC_BASE_ADDR   + (NUM_TX_FRAG * sizeof(TX_Desc)))
+#define  EMAC_RX_BUFF_BASE_ADDR                (EMAC_TX_STATUS_BASE_ADDR + (NUM_TX_FRAG * sizeof(TX_Stat)))
+#define  EMAC_TX_BUFF_BASE_ADDR                (EMAC_RX_BUFF_BASE_ADDR   + (NUM_RX_FRAG * ETH_FRAG_SIZE))
+
 //  function added to initialize Rx Descriptors
-void RxDescrInit (void)
+void rx_descr_init (void)
 {
 	/* Initialize Receive Descriptor and Status array. */
 	unsigned int i = 0;
 
+	rb_descriptors      =  (RX_Desc *)(EMAC_RX_DESC_BASE_ADDR);
+	Rx_Stat            =  (RX_Stat  *)(EMAC_RX_STATUS_BASE_ADDR);
+	RxBufBaseAddr       =  (INT8U *)(EMAC_RX_BUFF_BASE_ADDR);
+
 	for (i = 0; i < NUM_RX_FRAG; i++) 
-	{
-		rb_descriptors[i].Packet  = (rt_uint32_t)&rx_buf[i];
+	{ 
+		rb_descriptors[i].Packet  = (INT32U)(RxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		rb_descriptors[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
 		Rx_Stat[i].Info    = 0;
 		Rx_Stat[i].HashCRC = 0;
 	}
 
 	/* Set EMAC Receive Descriptor Registers. */
-	MAC_RXDESCRIPTOR    = (rt_uint32_t)&rb_descriptors[0];
-	MAC_RXSTATUS        = (rt_uint32_t)&Rx_Stat[0];
- 
+	MAC_RXDESCRIPTOR    = (INT32U)&rb_descriptors[0];
+	MAC_RXSTATUS        = (INT32U)&Rx_Stat[0];
+
 	MAC_RXDESCRIPTORNUM = NUM_RX_FRAG-1;
 
 	/* Rx Descriptors Point to 0 */
@@ -100,139 +103,30 @@ void RxDescrInit (void)
 
 
 //  function added to initialize Tx Descriptors
-void TxDescrInit (void) 
+void tx_descr_init (void) 
 {
 	unsigned int i;
 
+	tb_descriptors      =  (TX_Desc *)(EMAC_TX_DESC_BASE_ADDR);
+	Tx_Stat            =  (TX_Stat  *)(EMAC_TX_STATUS_BASE_ADDR);
+	TxBufBaseAddr       =  (INT8U *)(EMAC_TX_BUFF_BASE_ADDR);
+
 	for (i = 0; i < NUM_TX_FRAG; i++) 
 	{
-		tb_descriptors[i].Packet = (rt_uint32_t)&tx_buf[i];
+		tb_descriptors[i].Packet =  (INT32U)(TxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		tb_descriptors[i].Ctrl   = 0;
 		Tx_Stat[i].Info   = 0;
 	}
 
 	/* Set EMAC Transmit Descriptor Registers. */
-	MAC_TXDESCRIPTOR    = (rt_uint32_t)&tb_descriptors[0];
-	MAC_TXSTATUS        = (rt_uint32_t)&Tx_Stat[0];
+	MAC_TXDESCRIPTOR    = (INT32U)&tb_descriptors[0];
+	MAC_TXSTATUS        = (INT32U)&Tx_Stat[0];
 	MAC_TXDESCRIPTORNUM = NUM_TX_FRAG-1;
 
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
-} 
-/*********************************************************************************************************
-** 函数名称: Write_PHY
-** 函数名称: Write_PHY
-**
-** 功能描述：  
-**
-** 输　入:  INT32U phyadd   PHY address, normally 0.  
-** 输　入:  INT32S PhyReg   PHY register.
-** 输　入:  INT32S Value    Data to write to PHY register.
-**          
-** 输　出:   INT8U
-**         
-** 全局变量:  
-** 调用模块: EMAC_Init().
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月31日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-INT8U write_phy (INT32U phyadd,INT32S PhyReg, INT32S Value)
-{
-	unsigned int tout;
-
-	//MAC_MCMD = 0x0000;			        // Issue a Write COMMAND     
-	MAC_MADR = (phyadd<<8) | PhyReg;    //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr
-	MAC_MWTD = Value;                   //Write the data to the Management Write Data register
-
-	/* Wait utill operation completed */
-	tout = 0;
-	for (tout = 0; tout < MII_WR_TOUT; tout++)
-	{
-		if ((MAC_MIND & 1) == 0)
-		{
-			return TRUE;
-		}
-	}
-	//超时
-	return FALSE;
-}
-/*********************************************************************************************************
-** 函数名称: ReadPHY
-** 函数名称: ReadPHY
-**
-** 功能描述：  从PHY端口读取数据
-**
-** 输　入:  INT16U phyadd      PHY address, normally 0.
-** 输　入:  INT32U PHYReg      PHY register.
-**          
-** 输　出:   INT32U  PHY data  MRDD        PHY register data.
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月28日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/ 
-INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg) 
-{
-	INT32U tout = 0;
-
-	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
-	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 1;                     // Clear the Read COMMAND    
-	
-	/* Wait until operation completed */
-	for (tout = 0; tout < MII_RD_TOUT; tout++) 
-	{
-		if ((MAC_MIND & MIND_BUSY) == 0) 
-		{
-			break;
-		}
-	}
-	MAC_MCMD = 0;
-	return (MAC_MRDD);
 }
 
-INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
-{
-	INT32U tout = 0;
-
-	//MAC_MCMD =  MCMD_READ;            // Issue a Read COMMAND 
-	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
-	MAC_MCMD = 1;                     // Clear the Read COMMAND    
-
-	/* Wait until operation completed */
-	for (tout = 0; tout < MII_RD_TOUT; tout++) 
-	{
-		if ((MAC_MIND & MIND_BUSY) == 0) 
-		{
-			break;
-		}
-	}
-	if (tout == MII_RD_TOUT)
-	{
-		*err = NET_PHY_ERR_REGRD_TIMEOUT;
-	}
-	else
-	{
-		*err = NET_PHY_ERR_NONE;
-	}
-	MAC_MCMD = 0;
-	return (MAC_MRDD);
-}
 /******************************************************************************
 ** Function name:		EMAC_RxEnable/EMAC_RxDisable
 **
@@ -275,23 +169,67 @@ void EMAC_TxDisable( void )
 	MAC_COMMAND &= ~0x02;
 	return;
 }
-/* interrupt service routine */
-void rt_dm9000_isr(int irqno)
+static  void  EMAC_RxPktDiscard ( )
 {
-    rt_uint32_t status;
+	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;
+}
+/* interrupt service routine */
+void nic_isr_handler(int irqno)
+{
+//     rt_uint32_t status;
+// 
+//     if (status) // if receive packet
+//     {
+//         rt_err_t result;
+// 
+//         /* a frame has been received */
+//         result = eth_device_ready(&(lpc24xx_device.parent));
+//         RT_ASSERT(result == RT_EOK);
+//     }
+// 
+//     if (status) // if finished packet transmission
+//     {
+//     }
+	INT32U status               =  MAC_INTSTATUS;    
+	INT16U  n_new;
+	INT32U  nRsv =  MAC_RSV;
+	INT32U  nSta =  MAC_STATUS;
 
-    if (status) // if receive packet
-    {
-        rt_err_t result;
+	if (status & INT_RX_DONE) // if receive packet
+	{
+		INT8U result;
+		MAC_INTCLEAR = status;
+		/* a frame has been received */
+		result = eth_device_ready(&(lpc24xx_device.parent));
+		if (result != RT_TRUE)
+		{//如果发送失败,那么说明队列满了,处理不过来,那么就把这封信扔掉
+			EMAC_RxPktDiscard();
+		}
+		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
+	}
 
-        /* a frame has been received */
-        result = eth_device_ready(&(lpc24xx_device.parent));
-        RT_ASSERT(result == RT_EOK);
-    }
+	/* check for receive overrun */
+	if (status & INT_RX_OVERRUN)
+	{
+		MAC_INTCLEAR = INT_RX_OVERRUN;
+		//	eth->rx_overrun++;
+		MAC_COMMAND |= CR_RX_RES;
+		/* usleep(?); */
+		MAC_COMMAND |= CR_RX_EN;
+		MAC_MAC1 |= MAC1_REC_EN;
+	}
+	/* check for transmit underrun */
+	if (status & INT_TX_UNDERRUN)
+	{
+		MAC_INTCLEAR = INT_TX_UNDERRUN;
+		//	eth->tx_underrun++;
+		MAC_COMMAND |= CR_TX_RES;;
+		/* usleep(?); */
+		MAC_COMMAND |= CR_TX_EN;
+	}
 
-    if (status) // if finished packet transmission
-    {
-    }
+	//???????????
+	VICVectAddr = 0;            //interrupt close 通知中断控制器中断结束
 }
 
 #define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
@@ -305,9 +243,8 @@ void rt_dm9000_isr(int irqno)
 #define  NET_IF_ADDR_BROADCAST_03                       0xFF
 #define  NET_IF_ADDR_BROADCAST_04                       0xFF
 #define  NET_IF_ADDR_BROADCAST_05                       0xFF
-rt_uint8_t   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.                                      */
 
-
+INT8U   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.                                      */
 /*********************************************************************************************************
 ** 函数名称: SetMacID
 ** 函数名称: SetMacID
@@ -362,116 +299,20 @@ static  void  AppInitTCPIP (void)
 }
 
 /*********************************************************************************************************
-** 函数名称: get_phy_autoneg_state
-** 函数名称: get_phy_autoneg_state
+** 函数名称: phy_hw_init
+** 函数名称: phy_hw_init
 **
-** 功能描述：  Returns state of auto-negotiation
-**
-** 输　入:  void
-**          
-** 输　出:   rt_uint8_t  State of auto-negociation (FALSE = not completed, TRUE = completed).
-**         
-** 全局变量:  
-** 调用模块:  init
-**
-** 作　者:  LiJin
-** 日　期:  2009年8月3日
-** 备  注:  If any error is encountered while reading the PHY, this function 
-            will return Auto Negotiation State = FALSE (incomplete).
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-rt_uint8_t  get_phy_autoneg_state(void)
-{
-	rt_uint16_t     err = 0;
-	rt_uint32_t  reg_val;
-	 
-	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-	reg_val     = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-
-	if (err   != NET_PHY_ERR_NONE) 
-	{
-		reg_val = 0;
-	}
-	 /* DM9161AE register 0x01: Basic Status Register #1      */
-	     /* BIT 5 Signal the result of the auto negotiation   */  
-	if ((reg_val & BMSR_ANEGCOMPLETE) == BMSR_ANEGCOMPLETE)
-	{  
-		return (RT_TRUE);                                     
-	} 
-	else 
-	{   /* 1 = complete, 0 = incomplete                          */
-		return (RT_FALSE);
-	}
-}
-/*********************************************************************************************************
-** 函数名称: get_phy_link_state
-** 函数名称: get_phy_link_state
-**
-** 功能描述：   Returns state of ethernet link
+** 功能描述：  
 **
 ** 输　入:  void
 **          
-** 输　出:   rt_uint8_t  State of ethernet link (FALSE = link down, TRUE = link up).
+** 输　出:   void
 **         
 ** 全局变量:  
-** 调用模块:  isr
+** 调用模块: 无
 **
 ** 作　者:  LiJin
-** 日　期:  2009年8月3日
-** 备  注:   If any error is encountered while reading the PHY, this function
-              will return link state = FALSE.
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-rt_uint8_t  get_phy_link_state (void)
-{
-	rt_uint16_t     err = 0;
-	rt_uint32_t  reg_val;
-
-	/* DM9161AE register 0x01: Basic Status Register #1      */
-	/* BIT 2 , Link Status, 1 = linked, 0 = not linked.      */
-	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-	reg_val      = read_phy_ex(PHYID, PHY_REG_BMSR, &err);
-
-	if (err   != NET_PHY_ERR_NONE)
-	{
-		reg_val  = 0;
-	}
-
-	reg_val     &= BMSR_LSTATUS;
-
-	if (reg_val == BMSR_LSTATUS)
-	{
-		return (RT_TRUE);
-	} 
-	else 
-	{
-		return (RT_FALSE);
-	}
-}
-
-/*********************************************************************************************************
-** 函数名称: get_phy_link_speed
-** 函数名称: get_phy_link_speed
-**
-** 功能描述： Returns the speed of the current Ethernet link 
-**
-** 输　入:  void
-**          
-** 输　出:   rt_uint32_t  0 = No Link, 10 = 10mbps, 100 = 100mbps
-**         
-** 全局变量:  
-** 调用模块: init
-**
-** 作　者:  LiJin
-** 日　期:  2009年8月3日
+** 日　期:  2009年8月8日
 ** 备  注:  
 **-------------------------------------------------------------------------------------------------------
 ** 修改人:
@@ -479,82 +320,157 @@ rt_uint8_t  get_phy_link_state (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-rt_uint32_t  get_phy_link_speed (void)
+void  phy_hw_init (void)
+{ /* Configure I/O and the RMII / MII interface pins          */
+  //	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
+  //	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
+}
+/*********************************************************************************************************
+** 函数名称: nic_linkup
+** 函数名称: nic_linkup
+**
+** 功能描述：  Message from NIC that the ethernet link is up.
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  WARNING: Called in interruption context most of the time.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void  nic_linkup (void)
 {
-	rt_uint32_t  bmsr;
-	rt_uint32_t  bmcr;
-	rt_uint32_t  lpa;
-	rt_uint16_t   err;
+	INT32U  link_speed;
+	INT32U  link_duplex;
 
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
-	bmsr    = read_phy_ex(PHYID, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
+	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
+	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
 
-	if ((bmsr & BMSR_LSTATUS) == 0)
-	{
-		return (NET_PHY_SPD_0);                                         /* No link                                                  */
+	if (link_speed == NET_PHY_SPD_0 || link_duplex == NET_PHY_DUPLEX_UNKNOWN) 
+	{   /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(NET_PHY_SPD_0, NET_PHY_DUPLEX_UNKNOWN);    
 	}
+	else
+	{                /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(link_speed,    link_duplex);  
+	}
+}
+/*********************************************************************************************************
+** 函数名称: nic_linkdown
+** 函数名称: nic_linkdown
+**
+** 功能描述：  Message from NIC that the ethernet link is down.
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年8月10日
+** 备  注:  WARNING: Called in interruption context most of the time.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void  nic_linkdown (void)
+{
+	INT32U  link_speed;
+	INT32U  link_duplex;
 
-	bmcr    = read_phy_ex(PHYID, PHY_REG_BMCR, &err);       /* Read the PHY Control Register                            */
+	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
+	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
 
-	if ((bmcr & BMCR_ANENABLE) == BMCR_ANENABLE)
-	{	/* If AutoNegotiation is enabled                            */
-		if ((bmsr & BMSR_ANEGCOMPLETE) == 0)
-		{                          /* If AutoNegotiation is not complete                       */
-			return (NET_PHY_SPD_0);       					            /* AutoNegotitation in progress                             */
-		}
-
-		lpa = read_phy_ex(PHYID, PHY_REG_ANLPAR, &err);     /* Read the Link Partner Ability Register                   */
-
-		if (((lpa & ANLPAR_100FULL) == ANLPAR_100FULL) || ((lpa & ANLPAR_100HALF) == ANLPAR_100HALF))
-		{
-			return (NET_PHY_SPD_100);
-		} 
-		else 
-		{
-			return (NET_PHY_SPD_10);
-		}
+	if (link_speed == NET_PHY_SPD_0 || link_duplex == NET_PHY_DUPLEX_UNKNOWN)
+	{    /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(NET_PHY_SPD_0, NET_PHY_DUPLEX_UNKNOWN);   
 	} 
 	else
-	{  /* Auto-negotiation not enabled, get speed from BMCR        */
-		if ((bmcr & BMCR_SPEED100) == BMCR_SPEED100) 
-		{
-			return (NET_PHY_SPD_100);
-		}
-		else 
-		{
-			return (NET_PHY_SPD_10);
-		}
+	{  /* Inform the EMAC about the current PHY settings       */
+		nic_link_change(link_speed,    link_duplex);                
 	}
 }
 
-static void  set_phy_autoneg  (void)
+#define  MAIN_OSC_FRQ              11059200L
+#define  IRC_OSC_FRQ               11059200L
+#define  RTC_OSC_FRQ                  32768L
+
+
+INT32U  bsp_cpu_clk_freq (void)
 {
-	rt_uint16_t   i;
-	rt_uint16_t   reg_val;
-	rt_uint8_t  link;
-	rt_uint16_t      err;
-	rt_uint32_t  tout = 0;
+	INT32U  msel;
+	INT32U  nsel;
+	INT32U  fin;
+	INT32U  pll_clk_feq;                                    /* When the PLL is enabled, this is Fcco                    */
+	INT32U  clk_div;
+	INT32U  clk_freq;
 
-	i               = DM9161AE_INIT_AUTO_NEG_RETRIES;                   /* Set the # of retries before declaring a timeout  */
-	link            = get_phy_link_state();                            /* Get the current link state. 1=linked, 0=no link  */
-
-	if (link == RT_FALSE) 
-	{
-// #if (!defined(EMAC_CFG_RMII)) || (EMAC_CFG_RMII <= 0)
-// 		reg_val     = NetNIC_PhyRegRd(EMAC_CFG_PHY_ADDR, MII_BMCR, &err);   /* Get current control register value           */
-// 		reg_val    |= DEF_BIT_09;                                       /* Set the auto-negotiation start bit               */
-// 
-// 		NetNIC_PhyRegWr(AT91C_PHY_ADDR, MII_BMCR, reg_val, &err);       /* Initiate auto-negotiation                        */
-// #endif
-
-		do {                                                            /* Do while auto-neg incomplete, or retries expired */
-			for (tout = 5000; tout; tout--);
-                              /* Wait for a while auto-neg to proceed (net_bsp.c) */
-			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
-			reg_val = read_phy_ex(PHYID, PHY_REG_BMSR, &err);   /* Read the Basic Mode Status Register          */
-			i--;
-		} while (((reg_val & BMSR_LSTATUS) == 0) && (i > 0));           /* While link not established and retries remain    */
+	switch (CLKSRCSEL & 0x03)
+	{                                 /* Determine the current clock source                       */
+		case 0:
+			fin        =  IRC_OSC_FRQ;
+			break;
+		case 1:
+			fin        =  MAIN_OSC_FRQ;
+			break;
+		case 2:
+			fin        =  RTC_OSC_FRQ;
+			break;
+		default:
+			fin        =  IRC_OSC_FRQ;
+			break;
 	}
+
+	if ((PLLSTAT & (1 << 25)) > 0) 
+	{                                                              /* If the PLL is currently enabled and connected        */
+		msel        = (INT32U)(PLLSTAT & 0x3FFF) + 1;           /* Obtain the PLL multiplier                            */
+		nsel        = (INT32U)((PLLSTAT >>   16) & 0x0F) + 1;   /* Obtain the PLL divider                               */
+		pll_clk_feq = (2 * msel * fin / nsel);                      /* Compute the PLL output frequency                     */
+	} 
+	else
+	{
+		pll_clk_feq = (fin);                                        /* The PLL is bypassed                                  */
+	}
+
+	clk_div         = (INT8U)(CCLKCFG & 0x0F) + 1;             /* Obtain the CPU core clock divider                    */
+	clk_freq        = (INT32U)(pll_clk_feq / clk_div);          /* Compute the ARM Core clock frequency                 */
+
+	return (clk_freq);
+}
+ 
+void rt_delayms(INT32U ms)
+{
+	//执行11059200次语句，花时3.570S，差不多每ms计算3097条语句
+	INT32U count=3339*ms;
+	INT32U i;
+	for (i=0;i<count;i++)
+	{
+		__asm{ NOP };
+	}
+}
+
+
+void  nic_int_init  (void)
+{
+	//	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
+	//	rt_hw_interrupt_umask(VIC_ETHERNET);
+
+	VICIntSelect       &= ~(1 << VIC_ETHERNET);                         /* Configure the Ethernet VIC interrupt source for IRQ      */
+	VICVectAddr21       =  (INT32U)nic_isr_handler;              /* Set the vector address                                   */
+	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
 }
 
 /* RT-Thread Device Interface */
@@ -580,7 +496,6 @@ static void  set_phy_autoneg  (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-rt_uint16_t PHYREG[80];
 /* ----------------- MCFG bits ---------------- */
 #define  MCFG_CLKSEL_DIV4                             0x0000
 #define  MCFG_CLKSEL_DIV6                             0x0008
@@ -655,205 +570,31 @@ static void hd_DelayMS(rt_uint32_t ms)
 	{
 		__asm{ NOP };
 	}
-}
-static rt_err_t rt_dm9161_init(rt_device_t dev)
-{
-	unsigned int regv,tout,id1,id2 ,i = 0;
-	rt_uint32_t  tempreg = 0;
-	rt_uint16_t  ret = 0;
+} 
 
-	rt_uint32_t clk_freq            =   BSP_CPU_ClkFreq();  
-	clk_freq           /=   100000;        
-	/* Power Up the EMAC controller. */
-	PCONP |= 0x40000000;
- 	/* Set the PIN to RMII */
-	// PINSEL2 &= 0x0fc0ccf0;
-	//PINSEL2 |= 0X50151105; //PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
-	//PINSEL3 &= 0xfffffff0;
-	//PINSEL3 |= 0X00000005; //PINSEL3 = 0x00000005;	/* selects P1[17:16] */
-
-// 	i = rMAC_MODULEID;
-// 	if(i == OLD_EMAC_MODULE_ID)
-// 		PINSEL2 = 0x50151105;	/* selects P1[0,1,4,8,9,10,14,15] */
-// 	else
-
-	//是否需要设置?需要硬件部分确定?
-//	PINSEL2 = 0x50150105;
-// 	PINSEL3 = 0x00000005;	/* selects P1[17:16] */
-
-	/* Reset all EMAC internal modules. */
-	MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX | MAC1_SIM_RES | MAC1_SOFT_RES;
-	MAC_COMMAND = CR_REG_RES | CR_TX_RES | CR_RX_RES;
-	/* A short delay after reset. */
-	for (tout = 500; tout; tout--);
-
-	//Deassert all prior resets
-	MAC_MAC1 = 0;
-	EMAC_RxDisable();
-	EMAC_TxDisable();
- 
-	MAC_COMMAND            |=   COMMAND_RMII;  
-	MAC_SUPP = 0;
-	for (tout = 5000; tout; tout--);
-
-	MAC_TEST                =   0;     
-	/* Initialize MAC control registers. */
-	MAC_MAC1 |= MAC1_PASS_ALL;
-	MAC_MAC2 = MAC2_CRC_EN | MAC2_PAD_EN;
-	MAC_MAXF = ETH_MAX_FLEN;
-	MAC_CLRT = CLRT_DEF;
-	MAC_IPGR = IPGR_DEF;
-	MAC_RXFILTERCTRL =   RFC_BCAST_EN | RFC_PERFECT_EN;          /* Accept Broadcast and Perfect Address frames              */
-
-	/* Enable Reduced MII interface. */
-	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
-	MAC_COMMAND                =   0;                                          /* Clear MII command register                               */
-
-	for (tout = 100; tout; tout--);
-//	MAC_MCFG = MCFG_CLK_DIV20;
-	for (i = 0; i < 7; i++) 
-	{                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
-		if ((clk_freq / MII_Dividers[i][0]) <=  25) 
-		{                   /* Index [i][0] = decimal div value, [i][1] = MCFG reg val  */
-			MAC_MCFG        =   MII_Dividers[i][1];                         /* Remove reset, set proper MIIM divider                    */
-			break;
-		}
-	}
-	/* Enable Reduced MII interface. */
-	//CR_PASS_RUNT_FRM 为“1”时，将小于64字节的短帧传递到存储器中，除非该短帧的CRC有误为“0”，则将短帧被滤除。
-	MAC_COMMAND = CR_RMII | CR_PASS_RUNT_FRM;
-
-	/* Reset Reduced MII Logic. */
-	//PHY支持寄存器???
-//	MAC_SUPP = SUPP_RES_RMII| SUPP_SPEED;
-//	for (tout = 100; tout; tout--);
-	MAC_SUPP = 0;
-
-	//下面开始PHY设置
-	// probe phy address
-	for(i=0;i<32;i++)
-	{
-		ret = read_phy(i , PHY_REG_PHYID1 );
-		if(ret == 0X0181)
-		{
-			PHYID = i;
-			break;
-		}
-	}
-
-	if (PHYID == 0 || PHYID > 32)
-	{//出错
-
-	}
- 
-    //	PHYID = 0;
-	//  复位PHY芯片
-	//  等待一段指定的时间，使PHY就绪 
-	write_phy(PHYID, PHY_REG_BMCR,  BMCR_RESET|BMCR_ANRESTART|BMCR_ANENABLE  );
-//	write_phy (EMAC_CFG_PHY_ADDR, PHY_REG_BMCR, PHY_AUTO_NEG);
-	for ( i = 0; i < 5; i++ )
-	{
-		hd_DelayMS(1000);
-	}
-	 
-	for(i=0;i<32;i++)
-	{
-		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
-	}
-
-
-	//set_phy_autoneg( );
-//	write_phy(PHYID, PHY_REG_ANAR, ANAR_10HALF);
-
-	tempreg = read_phy(PHYID, DM9161_DSCSR );
-	ret = get_phy_autoneg_state( );
-	ret = get_phy_link_state();
-	ret = get_phy_link_speed();
-
-
-  	for(i=0;i<32;i++)
-	{
-		PHYREG[i] = read_phy_ex(PHYID ,i ,&ret);
-	}
-	//判断工作在10/100 半双工/全双工
-	if(tempreg & 0x8000)//100fdx
-	{
-
-	}
-	else if(tempreg & 0x4000)//100hdx
-	{
-
-	}
-	else if(tempreg & 0x2000)//10fdx
-	{
-
-	}
-	else if(tempreg & 0x1000)//10hdx
-	{
-    	MAC_MAC2 = 0x30;		/* half duplex, CRC and PAD enabled. */
-		MAC_SUPP = 0;	/* RMII Support Reg. speed is set to 10M */
-		MAC_COMMAND |= 0x0240;
-		/* back to back int-packet gap */
-		MAC_IPGT = 0x0012;		/* IPG setting in half duplex mode */ 
-	}
-	else
-	{//出错啦
-
-	}
-
-
-
-	//设置MAC地址
-//	SetMacID();
-	 // Initialize Tx and Rx DMA Descriptors 
- 	TxDescrInit();
- 	RxDescrInit();
-	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
-	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
-
-	/* Enable EMAC interrupts. */
-	MAC_INTENABLE = INT_RX_DONE | INT_TX_DONE;
-
-	/* Reset all interrupts */
-	MAC_INTCLEAR  = 0xFFFF;
-
-	/* Enable receive and transmit mode of MAC Ethernet core */
-	MAC_COMMAND  |= (CR_RX_EN | CR_TX_EN);
-	MAC_MAC1     |= MAC1_REC_EN;
-
-	EMAC_RxEnable();
-	EMAC_TxEnable();
-    return RT_EOK;
-}
-
-static  void  rt_emac_init (rt_uint16_t *perr)
-{
-
-}
-
-static rt_err_t rt_dm9000_open(rt_device_t dev, rt_uint16_t oflag)
+static rt_err_t rt_lpc24xxether_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	return RT_EOK;
 }
 
-static rt_err_t rt_dm9000_close(rt_device_t dev)
+static rt_err_t rt_lpc24xxether_close(rt_device_t dev)
 {
 	return RT_EOK;
 }
 
-static rt_size_t rt_dm9000_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_size_t rt_lpc24xxether_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
 
-static rt_size_t rt_dm9000_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_size_t rt_lpc24xxether_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
 	rt_set_errno(-RT_ENOSYS);
 	return 0;
 }
-
-static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+ 
+static rt_err_t rt_lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 {
 	switch(cmd)
 	{
@@ -870,7 +611,7 @@ static rt_err_t rt_dm9000_control(rt_device_t dev, rt_uint8_t cmd, void *args)
 	return RT_EOK;
 }
 
-
+#if 0
 /* See the header file for descriptions of public functions. */
 void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof)
 {
@@ -949,6 +690,172 @@ rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 
 	return 0;
 }
+#endif
+
+#define   MIN(x, y)   ((x)   >   (y)   ?   (y)   :   (x)) 
+INT16U lpc24xxether_write_frame( struct pbuf* p )
+{
+	struct pbuf* q;
+	INT8U *pDescBuf = NULL;
+	INT8U *pSrcBuf = NULL;
+	INT16U nTxBufOffset = 0,nDescOffset = 0,nPduLen = 0,nSendLen = 0;
+
+	INT32U TxProduceIndex = MAC_TXPRODUCEINDEX;
+	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+
+	if (p == NULL)
+		return 0;
+ 
+	pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
+
+	for (q = p; q != NULL; q = q->next)
+	{
+		nTxBufOffset = 0;
+		if (q && q->len)
+		{
+			pSrcBuf = (INT8U*) q->payload;
+
+			while( nTxBufOffset < q->len )
+			{
+				nPduLen = MIN(ETH_FRAG_SIZE-nDescOffset,q->len-nTxBufOffset);
+				if (nPduLen)
+				{
+					memcpy(&pDescBuf[nDescOffset], &pSrcBuf[nTxBufOffset], nPduLen );
+					nSendLen += nPduLen;
+
+					if (nSendLen >= p->tot_len)
+					{
+						tb_descriptors[TxProduceIndex].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
+							EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
+							EMAC_TX_DESC_LAST       |        /* No additional descriptors to follow, this is the last    */
+							EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
+							(nPduLen + nDescOffset- 1);                       /* Write the size of the frame, starting from 0             */
+					}
+					else
+					{
+						tb_descriptors[TxProduceIndex].Ctrl =  (EMAC_TX_DESC_OVERRIDE   |        /* Override the defaults from the MAC internal registers    */
+							EMAC_TX_DESC_PAD        |        /* Add padding for frames < 64 bytes                        */
+							EMAC_TX_DESC_CRC)       |        /* Append the CRC automatically                             */
+							(nPduLen + nDescOffset- 1);                       /* Write the size of the frame, starting from 0             */
+					}
+
+					nTxBufOffset += nPduLen;
+					nDescOffset += nPduLen;
+				
+					//更新
+					if (nDescOffset >= ETH_FRAG_SIZE )
+					{
+						TxProduceIndex ++;
+						if (TxProduceIndex >= NUM_TX_FRAG)
+						{
+							TxProduceIndex -= NUM_TX_FRAG;
+						}
+						pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
+					}
+					else if (nSendLen >= p->tot_len)
+					{
+						TxProduceIndex ++;
+						if (TxProduceIndex >= NUM_TX_FRAG)
+						{
+							TxProduceIndex -= NUM_TX_FRAG;
+						}
+						break;
+					}
+				}
+			}
+		}							   
+	}
+	MAC_TXPRODUCEINDEX = TxProduceIndex;
+}
+/*
+* Transmit packet.
+*/ 
+ 
+rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
+{
+	struct pbuf* q; 
+// 	err = IsTxDescEmpty();
+// 	if (err == FALSE)
+// 	{
+// 		return 0;
+// 	}
+// 	while(!IsTxDescEmpty())
+// 	{
+// 		OSTimeDly(5);
+// 	}
+
+	/* lock tx operation */
+//	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
+	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
+
+//	OSSemPend(tx_sem,0,&err);
+	lpc24xxether_write_frame (p);
+//	OSSemPost(tx_sem);
+	rt_sem_release(&tx_sem);
+
+	return 0;
+}
+
+INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+{
+	register INT32U buf_remain, section_remain;
+	static INT32U section_read = 0, buf_offset = 0, frame_read = 0;
+	static INT8U* src_ptr = RT_NULL;
+
+	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
+	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+
+	src_ptr = (INT8U *)(rb_descriptors[RxConsumeIndex].Packet );
+	/* Loop until we have obtained the required amount of data. */
+	section_read = 0;//
+	while( section_read < section_length )
+	{
+		buf_remain = (total - buf_offset);
+		section_remain = section_length - section_read;
+
+		if( section_remain > buf_remain )
+		{//目标空间够大
+			/* more data on section than buffer size */
+			memcpy(&ptr[ section_read ], &src_ptr[buf_offset], buf_remain);
+			section_read += buf_remain;
+			frame_read += buf_remain;
+
+			/* free buffer */
+			//rb_descriptors[current_rb_index].Packet &= ~RxDESC_FLAG_OWNSHIP;
+			Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
+
+			/* move to the next frame. */
+			MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
+
+			/* Reset the variables for the new buffer. */
+			src_ptr = (INT8U *)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
+			buf_offset = 0;
+		}
+		else
+		{
+			/* more data on buffer than section size */
+			memcpy(&ptr[section_read], &src_ptr[buf_offset], section_remain);
+			buf_offset += section_remain;
+			section_read += section_remain;
+			frame_read += section_remain;
+
+			/* finish this read */
+			if((frame_read >= total) || (buf_offset >= ETH_FRAG_SIZE))
+			{
+				/* free buffer */
+				Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
+
+				/* move to the next frame. */
+				MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
+
+				src_ptr = (INT8U*)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
+				buf_offset = 0;
+			}
+		}
+	}
+} 
+
+#if 0
 void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uint32_t total)
 {
 	static rt_uint8_t* src_ptr;
@@ -1058,52 +965,151 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 			}
 		}
 	}
-
-	/* enable interrupt */
-//	AT91C_BASE_EMAC->EMAC_IER = AT91C_EMAC_RCOMP;
-
-
 }
+#endif
 
-/* reception packet. */
-struct pbuf *rt_dm9000_rx(rt_device_t dev)
+INT16U get_nic_rx_frame_size (void)
 {
-    struct pbuf* p;
-	rt_uint32_t len;
+	INT16U     rxconsumeix;
+	INT16U     rxproduceix;
+	INT16U     desc_cnt=0 , i =0;
+	INT16U     rx_frame_size = 0;
+	INT32U   rxstatus;
+	INT8U   flag = RT_FALSE;
 
-    /* init p pointer */
-    p = RT_NULL;
+	INT32U  nRsv =  MAC_RSV;
+	INT32U  nSta =  MAC_STATUS;
 
-    if (1) // if there is packet in device
-    {
-        /* get one packet length */
-        len = 0; // packet length
 
-        /* allocate buffer */
-        p = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
+	rxconsumeix =   MAC_RXCONSUMEINDEX;
+	rxproduceix =   MAC_RXPRODUCEINDEX;
+	if (rxconsumeix == rxproduceix )
+	{
+		return rx_frame_size;
+	}
 
-        if (p != RT_NULL)
-        {
-            rt_uint8_t* data;
-            struct pbuf* q;
+	if (rxproduceix < rxconsumeix) 
+	{ /* If the produce index has wrapped around                  */
+		desc_cnt   =   NUM_RX_FRAG - rxconsumeix + rxproduceix;
+	}
+	else
+	{ /* If consumeix is < produceix, then no wrap around occured */
+		desc_cnt   =   rxproduceix - rxconsumeix;	
+	}
 
-            for (q = p; q != RT_NULL; q= q->next)
-            {
-                data = q->payload;
-                len = q->len;
+	for (i = rxconsumeix;  ; i++)
+	{
+		rxstatus   =  Rx_Stat[i].Info;   
+		rxstatus       &= (RINFO_NO_DESCR    |                       /* Obtain the descriptor error bits                         */
+			RINFO_OVERRUN    |
+			RINFO_ALIGN_ERR  |
+			RINFO_LEN_ERR    |
+			RINFO_SYM_ERR    |
+			RINFO_CRC_ERR    |
+			RINFO_FAIL_FILT);
 
-                /* read data from device */
-            }
-        }
-    }
-    else
-    {
-        /* restore interrupt */
-    }
+		if (rxstatus > 0)
+			//	if (0)
+			break;			 
+		else
+		{
+			rx_frame_size  =  Rx_Stat[i].Info & RINFO_SIZE;
+			rx_frame_size  -= 3;
 
-    return p;
+			if (rxstatus | RINFO_LAST_FLAG)
+			{//最后一封
+				break;
+			}				 
+		}
+		if (rxproduceix > rxconsumeix)
+		{
+			if (i >= rxproduceix) //到头了
+				break;
+		}
+		else
+		{
+			if (i >= NUM_RX_FRAG-1)
+			{
+				i = 0;
+				flag = RT_TRUE;
+			}
+			if (flag && i >= rxproduceix)
+				break;		
+		}					
+	}
+	return rx_frame_size;
 }
 
+INT8U  NetIF_IsValidPktSize (INT16U  size)
+{
+	INT8U  valid;
+
+	valid = RT_TRUE;
+
+	if (size  < 60)
+	{
+		valid = RT_FALSE;
+	}
+
+	if (size  > 1514+4) 
+	{
+		valid = RT_FALSE;
+	}
+
+	return (valid);
+}
+
+struct pbuf *lpc24xxether_rx(rt_device_t dev)
+{
+	
+	struct pbuf *p = RT_NULL;
+
+	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
+	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+
+	struct pbuf* q;
+	INT16U  pkt_len = 0;
+	INT16U  pkt_cnt = 0;
+	INT8U   ret = RT_FALSE;
+
+	if (RxProduceIndex == RxConsumeIndex)
+		return RT_NULL;
+
+
+	pkt_len = get_nic_rx_frame_size();
+	//判断一下 pkt_len 是否有效，如果无效，则丢弃
+	ret = NetIF_IsValidPktSize(pkt_len);
+	if (ret == RT_FALSE)
+	{
+		EMAC_RxPktDiscard();
+		return NULL;
+	}
+
+	//
+	if (pkt_len)
+	{
+		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_RAM);
+		if(p != RT_NULL)
+		{
+			for(q = p; q != RT_NULL; q= q->next)
+				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
+		}
+		else
+		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包
+			//rt_kprintf("no memory in pbuf\n");
+			EMAC_RxPktDiscard();		 
+		}
+	}
+
+	return p;
+}
+ 
+void set_mac_id( )   
+{
+//	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
+//	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
+//	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
+}
 /*********************************************************************************************************
 ** 函数名称: lpc24xxether_register
 ** 函数名称: lpc24xxether_register
@@ -1131,12 +1137,12 @@ int lpc24xxether_register(char *name)
 	rt_err_t result;
 
 	/* init rt-thread device interface */
-	lpc24xx_device.parent.parent.init		= rt_dm9161_init;
-	lpc24xx_device.parent.parent.open		= rt_dm9000_open;
-	lpc24xx_device.parent.parent.close		= rt_dm9000_close;
-	lpc24xx_device.parent.parent.read		= rt_dm9000_read;
-	lpc24xx_device.parent.parent.write		= rt_dm9000_write;
-	lpc24xx_device.parent.parent.control	= rt_dm9000_control;
+	lpc24xx_device.parent.parent.init		= rt_lpc24xxether_init;
+	lpc24xx_device.parent.parent.open		= rt_lpc24xxether_open;
+	lpc24xx_device.parent.parent.close		= rt_lpc24xxether_close;
+	lpc24xx_device.parent.parent.read		= rt_lpc24xxether_read;
+	lpc24xx_device.parent.parent.write		= rt_lpc24xxether_write;
+	lpc24xx_device.parent.parent.control	= rt_lpc24xxether_control;
 	lpc24xx_device.parent.parent.private    = RT_NULL;
 
 	lpc24xx_device.parent.eth_rx			= lpc24xxether_rx;

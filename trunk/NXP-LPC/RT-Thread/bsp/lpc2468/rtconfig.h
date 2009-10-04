@@ -109,15 +109,15 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
-#define RT_LWIP_IPADDR0	202
-#define RT_LWIP_IPADDR1	119
-#define RT_LWIP_IPADDR2	242
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0	192
+#define RT_LWIP_IPADDR1	9
+#define RT_LWIP_IPADDR2	200
+#define RT_LWIP_IPADDR3	128
 
 /* gateway address of target*/
-#define RT_LWIP_GWADDR0	202
-#define RT_LWIP_GWADDR1	119
-#define RT_LWIP_GWADDR2	242
+#define RT_LWIP_GWADDR0	192
+#define RT_LWIP_GWADDR1	9
+#define RT_LWIP_GWADDR2	200
 #define RT_LWIP_GWADDR3	1
 
 /* mask address of target*/
