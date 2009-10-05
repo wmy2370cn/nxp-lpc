@@ -176,23 +176,8 @@ static  void  EMAC_RxPktDiscard ( )
 /* interrupt service routine */
 void nic_isr_handler(int irqno)
 {
-//     rt_uint32_t status;
-// 
-//     if (status) // if receive packet
-//     {
-//         rt_err_t result;
-// 
-//         /* a frame has been received */
-//         result = eth_device_ready(&(lpc24xx_device.parent));
-//         RT_ASSERT(result == RT_EOK);
-//     }
-// 
-//     if (status) // if finished packet transmission
-//     {
-//     }
 	INT32U status               =  MAC_INTSTATUS;    
-	INT16U  n_new;
-	INT32U  nRsv =  MAC_RSV;
+ 	INT32U  nRsv =  MAC_RSV;
 	INT32U  nSta =  MAC_STATUS;
 
 	if (status & INT_RX_DONE) // if receive packet
@@ -201,7 +186,8 @@ void nic_isr_handler(int irqno)
 		MAC_INTCLEAR = status;
 		/* a frame has been received */
 		result = eth_device_ready(&(lpc24xx_device.parent));
-		if (result != RT_TRUE)
+		RT_ASSERT(result == RT_EOK);
+		if (result != RT_EOK)
 		{//如果发送失败,那么说明队列满了,处理不过来,那么就把这封信扔掉
 			EMAC_RxPktDiscard();
 		}
@@ -287,6 +273,13 @@ static  void  AppInitTCPIP (void)
 	NetIF_MAC_Addr[3] = 0x25;
 	NetIF_MAC_Addr[4] = 0x61;
 	NetIF_MAC_Addr[5] = 0x39;
+
+	lpc24xx_device.dev_addr[0] = 0x00;
+	lpc24xx_device.dev_addr[1] = 0x50;
+	lpc24xx_device.dev_addr[2] = 0xC2;
+	lpc24xx_device.dev_addr[3] = 0x25;
+	lpc24xx_device.dev_addr[4] = 0x61;
+	lpc24xx_device.dev_addr[5] = 0x39;
 
 // 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 // 
@@ -474,46 +467,7 @@ void  nic_int_init  (void)
 }
 
 /* RT-Thread Device Interface */
-/*********************************************************************************************************
-** 函数名称: rt_dm9161_init
-** 函数名称: rt_dm9161_init
-**
-** 功能描述：  对芯片的工作寄存器进行设置,各个寄存器的用法可参考文档和络芯片的数据手册
-**
-** 输　入:  rt_device_t dev
-**          
-** 输　出:   rt_err_t
-**         
-** 全局变量:            
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月29日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-/* ----------------- MCFG bits ---------------- */
-#define  MCFG_CLKSEL_DIV4                             0x0000
-#define  MCFG_CLKSEL_DIV6                             0x0008
-#define  MCFG_CLKSEL_DIV8                             0x000C
-#define  MCFG_CLKSEL_DIV10                            0x0010
-#define  MCFG_CLKSEL_DIV14                            0x0014
-#define  MCFG_CLKSEL_DIV20                            0x0018
-#define  MCFG_CLKSEL_DIV28                            0x001C
-
-static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
-{6,  MCFG_CLKSEL_DIV6},
-{8,  MCFG_CLKSEL_DIV8},
-{10, MCFG_CLKSEL_DIV10},
-{14, MCFG_CLKSEL_DIV14},
-{20, MCFG_CLKSEL_DIV20},
-{28, MCFG_CLKSEL_DIV28}};
-
-
+ 
 #define  MAIN_OSC_FRQ              11059200L
 #define  IRC_OSC_FRQ               11059200L
 #define  RTC_OSC_FRQ                  32768L
@@ -560,18 +514,7 @@ rt_uint32_t  BSP_CPU_ClkFreq (void)
 
 	return (clk_freq);
 }
- 
-static void hd_DelayMS(rt_uint32_t ms)
-{
-	//执行11059200次语句，花时3.570S，差不多每ms计算3097条语句
-	rt_uint32_t count=3339*ms;
-	rt_uint32_t i;
-	for (i=0;i<count;i++)
-	{
-		__asm{ NOP };
-	}
-} 
-
+  
 static rt_err_t rt_lpc24xxether_open(rt_device_t dev, rt_uint16_t oflag)
 {
 	return RT_EOK;
@@ -610,90 +553,10 @@ static rt_err_t rt_lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *a
 
 	return RT_EOK;
 }
-
-#if 0
-/* See the header file for descriptions of public functions. */
-void lpc24xxether_write_frame(rt_uint8_t *ptr, rt_uint32_t length, rt_bool_t eof)
-{
-	rt_uint8_t *buf_ptr;
-	static rt_uint32_t current_tb_index = 0;
-	rt_uint32_t is_last, tx_offset = 0, remain, pdu_length;
-
-	while(tx_offset < length)
-	{
-		/* check whether buffer is available */
-		while(!(tb_descriptors[current_tb_index].Ctrl & TxDESC_STATUS_USED))
-		{
-			/* no buffer */
-			rt_thread_delay(5);
-		}
-
-		/* Get the address of the buffer from the descriptor, then copy
-		the data into the buffer. */
-		buf_ptr = (rt_uint8_t *)tb_descriptors[current_tb_index].Packet;
-
-		/* How much can we write to the buffer? */
-		remain = length - tx_offset;
-		pdu_length = (remain <= ETH_TX_BUF_SIZE)? remain : ETH_TX_BUF_SIZE;
-
-		/* Copy the data into the buffer. */
-		rt_memcpy(buf_ptr, &ptr[tx_offset], pdu_length );
-		tx_offset += pdu_length;
-
-		/* Is this the last data for the frame? */
-		if((eof == RT_TRUE) && ( tx_offset >= length )) is_last = TxDESC_STATUS_LAST_BUF;
-		else is_last = 0;
-
-		/* Fill out the necessary in the descriptor to get the data sent,
-		then move to the next descriptor, wrapping if necessary. */
-		if(current_tb_index >= (TB_BUFFER_SIZE - 1))
-		{
-			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
-				| is_last
-				| TxDESC_STATUS_WRAP;
-			current_tb_index = 0;
-		}
-		else
-		{
-			tb_descriptors[current_tb_index].Ctrl = ( pdu_length & TxDESC_STATUS_BUF_SIZE )
-				| is_last;
-			current_tb_index++;
-		}
-
-		/* If this is the last buffer to be sent for this frame we can start the transmission. */
-		if(is_last)
-		{
-			//AT91C_BASE_EMAC->EMAC_NCR |= AT91C_EMAC_TSTART;
-		}
-	}
-}
-/* ethernet device interface */
-/*
-* Transmit packet.
-*/
-rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
-{
-	struct pbuf* q;
-
-	/* lock tx operation */
-	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
-
-	for (q = p; q != NULL; q = q->next)
-	{
-		if (q->next == RT_NULL)
-			lpc24xxether_write_frame(q->payload, q->len, RT_TRUE);
-		else
-			lpc24xxether_write_frame(q->payload, q->len, RT_FALSE);
-	}
-
-	rt_sem_release(&tx_sem);
-
-	return 0;
-}
-#endif
+ 
 
 #define   MIN(x, y)   ((x)   >   (y)   ?   (y)   :   (x)) 
-INT16U lpc24xxether_write_frame( struct pbuf* p )
+void lpc24xxether_write_frame( struct pbuf* p )
 {
 	struct pbuf* q;
 	INT8U *pDescBuf = NULL;
@@ -704,7 +567,7 @@ INT16U lpc24xxether_write_frame( struct pbuf* p )
 	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
 
 	if (p == NULL)
-		return 0;
+		return ;
  
 	pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
 
@@ -773,17 +636,6 @@ INT16U lpc24xxether_write_frame( struct pbuf* p )
  
 rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 {
-	struct pbuf* q; 
-// 	err = IsTxDescEmpty();
-// 	if (err == FALSE)
-// 	{
-// 		return 0;
-// 	}
-// 	while(!IsTxDescEmpty())
-// 	{
-// 		OSTimeDly(5);
-// 	}
-
 	/* lock tx operation */
 //	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
 	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
@@ -796,7 +648,7 @@ rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 	return 0;
 }
 
-INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 {
 	register INT32U buf_remain, section_remain;
 	static INT32U section_read = 0, buf_offset = 0, frame_read = 0;
@@ -854,119 +706,7 @@ INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 		}
 	}
 } 
-
-#if 0
-void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uint32_t total)
-{
-	static rt_uint8_t* src_ptr;
-	register rt_uint32_t buf_remain, section_remain;
-	static rt_uint32_t section_read = 0, buf_offset = 0, frame_read = 0;
-
-	if(ptr == RT_NULL)
-	{
-		/* Reset our state variables ready for the next read from this buffer. */
-		src_ptr = (rt_uint8_t *)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
-		frame_read = (rt_uint32_t)0;
-		buf_offset = (rt_uint32_t)0;
-	}
-	else
-	{
-		/* Loop until we have obtained the required amount of data. */
-		section_read = 0;
-		while( section_read < section_length )
-		{
-			buf_remain = (ETH_RX_BUF_SIZE - buf_offset);
-			section_remain = section_length - section_read;
-
-			if( section_remain > buf_remain )
-			{
-				/* more data on section than buffer size */
-				rt_memcpy(&ptr[ section_read ], &src_ptr[buf_offset], buf_remain);
-				section_read += buf_remain;
-				frame_read += buf_remain;
-
-				/* free buffer */
-				rb_descriptors[current_rb_index].Packet &= ~RxDESC_FLAG_OWNSHIP;
-
-				/* move to the next frame. */
-				current_rb_index++;
-				if(current_rb_index >= RB_BUFFER_SIZE) current_rb_index = 0;
-
-				/* Reset the variables for the new buffer. */
-				src_ptr = (rt_uint8_t *)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
-				buf_offset = 0;
-			}
-			else
-			{
-				/* more data on buffer than section size */
-				rt_memcpy(&ptr[section_read], &src_ptr[buf_offset], section_remain);
-				buf_offset += section_remain;
-				section_read += section_remain;
-				frame_read += section_remain;
-
-				/* finish this read */
-				if((buf_offset >= ETH_RX_BUF_SIZE) || (frame_read >= total))
-				{
-					/* free buffer */
-					rb_descriptors[current_rb_index].Packet &= ~(RxDESC_FLAG_OWNSHIP);
-
-					/* move to the next frame. */
-					current_rb_index++;
-					if( current_rb_index >= RB_BUFFER_SIZE ) current_rb_index = 0;
-
-					src_ptr = (rt_uint8_t*)(rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_ADDR_MASK);
-					buf_offset = 0;
-				}
-			}
-		}
-	}
-}
-
-struct pbuf *lpc24xxether_rx(rt_device_t dev)
-{
-	struct pbuf *p = RT_NULL;
-	/* skip fragment frame */
-	while((rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_OWNSHIP)&& !(rb_descriptors[current_rb_index].Ctrl & RxDESC_STATUS_FRAME_START))
-	{
-		rb_descriptors[current_rb_index].Packet &= (~RxDESC_FLAG_OWNSHIP);
-
-		current_rb_index++;
-		if(current_rb_index >= RB_BUFFER_SIZE) current_rb_index = 0;
-	}
-	if ((rb_descriptors[current_rb_index].Packet & RxDESC_FLAG_OWNSHIP))
-	{
-		struct pbuf* q;
-		rt_uint32_t index, pkt_len = 0;
-
-		/* first of all, find the frame length */
-		index = current_rb_index;
-		while (rb_descriptors[index].Packet & RxDESC_FLAG_OWNSHIP)
-		{
-			pkt_len = rb_descriptors[index].Ctrl & RxDESC_STATUS_BUF_SIZE;
-			if (pkt_len > 0) 
-				break;
-
-			index ++;
-			if (index > RB_BUFFER_SIZE) index = 0;
-		}
-
-		if (pkt_len)
-		{
-			p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
-			if(p != RT_NULL)
-			{
-				lpc24xxether_read_frame(RT_NULL, 0, pkt_len);
-				for(q = p; q != RT_NULL; q= q->next)
-					lpc24xxether_read_frame(q->payload, q->len, pkt_len);
-			}
-			else
-			{
-				rt_kprintf("no memory in pbuf\n");
-			}
-		}
-	}
-}
-#endif
+ 
 
 INT16U get_nic_rx_frame_size (void)
 {
@@ -1060,8 +800,7 @@ INT8U  NetIF_IsValidPktSize (INT16U  size)
 }
 
 struct pbuf *lpc24xxether_rx(rt_device_t dev)
-{
-	
+{	
 	struct pbuf *p = RT_NULL;
 
 	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
@@ -1074,7 +813,6 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 
 	if (RxProduceIndex == RxConsumeIndex)
 		return RT_NULL;
-
 
 	pkt_len = get_nic_rx_frame_size();
 	//判断一下 pkt_len 是否有效，如果无效，则丢弃

@@ -283,7 +283,7 @@ static void nic_phy_int_clr(void)
 }
 /*
 *********************************************************************************************************
-*                                        NetNIC_ISR_Handler()
+*                                        nic_phy_isr_handler()
 *
 * Description : (1) Update NetNIC_ConnStatus according to link state
 *
