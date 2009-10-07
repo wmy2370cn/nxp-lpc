@@ -410,6 +410,21 @@
               <FileType>5</FileType>
               <FilePath>.\rtconfig.h</FilePath>
             </File>
+            <File>
+              <FileName>bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>dm9161.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\dm9161.c</FilePath>
+            </File>
+            <File>
+              <FileName>emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emac.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

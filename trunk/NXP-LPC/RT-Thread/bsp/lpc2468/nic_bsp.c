@@ -458,12 +458,12 @@ void rt_delayms(INT32U ms)
 
 void  nic_int_init  (void)
 {
-	//	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
-	//	rt_hw_interrupt_umask(VIC_ETHERNET);
+	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
+	rt_hw_interrupt_umask(VIC_ETHERNET);
 
-	VICIntSelect       &= ~(1 << VIC_ETHERNET);                         /* Configure the Ethernet VIC interrupt source for IRQ      */
-	VICVectAddr21       =  (INT32U)nic_isr_handler;              /* Set the vector address                                   */
-	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
+//	VICIntSelect       &= ~(1 << VIC_ETHERNET);                   /* Configure the Ethernet VIC interrupt source for IRQ      */
+//	VICVectAddr21       =  (INT32U)nic_isr_handler;              /* Set the vector address                                   */
+//	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
 }
 
 /* RT-Thread Device Interface */
@@ -636,15 +636,10 @@ void lpc24xxether_write_frame( struct pbuf* p )
  
 rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 {
-	/* lock tx operation */
-//	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
-	rt_sem_take(&tx_sem, RT_WAITING_FOREVER);
-
-//	OSSemPend(tx_sem,0,&err);
-	lpc24xxether_write_frame (p);
-//	OSSemPost(tx_sem);
+	/* lock tx operation */ 
+	rt_sem_take(&tx_sem, RT_WAITING_FOREVER); 
+	lpc24xxether_write_frame (p); 
 	rt_sem_release(&tx_sem);
-
 	return 0;
 }
 
