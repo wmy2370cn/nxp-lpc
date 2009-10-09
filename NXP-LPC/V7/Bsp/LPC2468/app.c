@@ -143,10 +143,11 @@ static  void  AppTaskStart (void *p_arg)
 #if OS_TASK_STAT_EN > 0
     OSStatInit();                                               /* Determine CPU capacity                                   */
 #endif
-	eth_system_device_init();
 
+	eth_system_device_init();
+//	OSTimeDly(10) ; 
 	rt_hw_eth_init();
-	lwip_sys_init( );
+//	OSTimeDlyHMSM(0,0,10,0);
 	InitTimerMgr(  );
 //	InitLedMsgMgr( );
 //	nTimerID = SetTimer(nTimerID,500);
@@ -157,5 +158,4 @@ static  void  AppTaskStart (void *p_arg)
 	{ 
 		OSTimeDly(100) ; 
 	}
-}
- 
+} 

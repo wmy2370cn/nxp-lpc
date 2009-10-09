@@ -224,10 +224,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\net_cfg.h"
-				>
-			</File>
-			<File
 				RelativePath=".\nic.h"
 				>
 			</File>
