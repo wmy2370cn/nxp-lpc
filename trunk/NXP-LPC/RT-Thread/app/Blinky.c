@@ -32,15 +32,15 @@
 
 struct LED_STATUS
 {
-	INT8U  AutoToggle; //一直自动翻转
-	INT8U  DlyTime; //  
-	INT8U  Value;
+	rt_uint8_t  AutoToggle; //一直自动翻转
+	rt_uint8_t  DlyTime; //  
+	rt_uint8_t  Value;
 };
 
 static struct LED_STATUS g_LedStatus[MAX_LED_CNT];
 static OS_TMR *pBlinkyTmr;
 
-void SetLedBlinking( INT8U nLedNo ,INT8U ms100 ,INT8U Toggle)
+void SetLedBlinking( rt_uint8_t nLedNo ,rt_uint8_t ms100 ,rt_uint8_t Toggle)
 {
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
@@ -61,7 +61,7 @@ static void LedHandler( void *ptmr, void *parg )
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
 #endif
-	INT8U i = 0;
+	rt_uint8_t i = 0;
 	parg = parg;
 	if (ptmr && ptmr == pBlinkyTmr)
 	{
@@ -100,8 +100,8 @@ static void LedHandler( void *ptmr, void *parg )
 
 void InitLed( void )
 {
-	INT8U i = 0;
-	INT8U err = 0;
+	rt_uint8_t i = 0;
+	rt_uint8_t err = 0;
 	for (i = 0; i < MAX_LED_CNT; i++)
 	{
 		g_LedStatus[i].AutoToggle = 0;
@@ -113,6 +113,6 @@ void InitLed( void )
 	{ 
 		LED_Off(i);
 	}
-	pBlinkyTmr = OSTmrCreate( 1,1,OS_TMR_OPT_PERIODIC,LedHandler,NULL,(INT8U *)0,&err);
+	pBlinkyTmr = OSTmrCreate( 1,1,OS_TMR_OPT_PERIODIC,LedHandler,NULL,(rt_uint8_t *)0,&err);
 	OSTmrStart(pBlinkyTmr,&err);
 }

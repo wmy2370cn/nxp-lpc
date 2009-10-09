@@ -27,5 +27,5 @@
 #pragma once
   
 void InitLed( void ) ;
-void SetLedBlinking( INT8U nLedNo ,INT8U ms100 ,INT8U Toggle);
+void SetLedBlinking( rt_uint8_t nLedNo ,rt_uint8_t ms100 ,rt_uint8_t Toggle);
 

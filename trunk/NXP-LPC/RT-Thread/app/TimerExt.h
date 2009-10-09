@@ -49,10 +49,10 @@ typedef struct TIMER_MSG
 
 typedef struct EXT_TIMER
 {
-	INT32U Count;		//时间计数器
-	INT32U TimeOut;		//触发点
-	INT8U  Enable; 	    //使能标志
-	INT8U  Flag ;       //是否已经超时标志
+	rt_uint32_t Count;		//时间计数器
+	rt_uint32_t TimeOut;		//触发点
+	rt_uint8_t  Enable; 	    //使能标志
+	rt_uint8_t  Flag ;       //是否已经超时标志
 #if  EXT_TIMER_CB_EN > 0
  	fnTimerProcess pFunc;
 	void   *pFuncParam;
@@ -65,17 +65,17 @@ void InitTimerMgr( void );
 
 //设置定时器
 #if  EXT_TIMER_CB_EN > 0
-INT16U  SetTimer  (INT16U nTimerID, INT32U nTime,fnTimerProcess fnProc,void *pFuncParam );
+rt_uint16_t  SetTimer  (rt_uint16_t nTimerID, rt_uint32_t nTime,fnTimerProcess fnProc,void *pFuncParam );
 #else
-INT16U  SetTimer  (INT16U nTimerID, INT32U nTime);
+rt_uint16_t  SetTimer  (rt_uint16_t nTimerID, rt_uint32_t nTime);
 #endif
 // 关定时器
-INT8U   KillTimer (INT16U nTimerID);
+rt_uint8_t   KillTimer (rt_uint16_t nTimerID);
 
-INT8U  ResetTimer(INT16U nTimerID);
+rt_uint8_t  ResetTimer(rt_uint16_t nTimerID);
 
 //
-INT8U IsTimeTo(INT16U TimerID ); 
+rt_uint8_t IsTimeTo(rt_uint16_t TimerID ); 
 //在TICK中断里面调用
 void   ExtTimerTick( void );
 

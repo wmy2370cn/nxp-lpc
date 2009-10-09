@@ -63,7 +63,7 @@ static TIMER_MSG TimerMsgPartition[EXT_TIMER_CNT];
 void TimerFuncHandleTask(void *pdata)
 {	
 	TIMER_MSG  *pTimer = NULL;
-	INT8U err = 0;
+	rt_uint8_t err = 0;
 
 	pdata = pdata;
 	while (RT_TRUE)
@@ -106,9 +106,9 @@ void TimerFuncHandleTask(void *pdata)
 void InitTimerMgr(void )
 {
 #if  EXT_TIMER_CB_EN > 0
-	INT8U err = 0;
+	rt_uint8_t err = 0;
 #endif
-	INT8U i = 0;
+	rt_uint8_t i = 0;
 
 	for ( i = 0; i < EXT_TIMER_CNT; i++)
 	{
@@ -154,16 +154,16 @@ void InitTimerMgr(void )
 ********************************************************************************************************/
 void ExtTimerTick(  )
 {
-	INT16U  i = 0;
+	rt_uint16_t  i = 0;
 #if  EXT_TIMER_CB_EN > 0
 	TIMER_MSG *pTimerMsg = NULL;
-	INT8U err = 0;
+	rt_uint8_t err = 0;
 #endif
 
 #ifdef EXT_TMR_CFG_TICKS_PER_SEC
-	INT16U nCnt = EXT_TMR_CFG_TICKS_PER_SEC;
+	rt_uint16_t nCnt = EXT_TMR_CFG_TICKS_PER_SEC;
 #else
-	INT16U nCnt = 1000/OS_TICKS_PER_SEC;
+	rt_uint16_t nCnt = 1000/OS_TICKS_PER_SEC;
 #endif // _DEBUG
 	if(nCnt == 0)
    		nCnt = 10;
@@ -209,12 +209,12 @@ void ExtTimerTick(  )
 **
 ** 功能描述： 安装一个定时器
 **
-** 输　入:  INT16U TimerID
-** 输　入:  INT32U nTime
+** 输　入:  rt_uint16_t TimerID
+** 输　入:  rt_uint32_t nTime
 ** 输　入:  fnTimerProcess fnProc 定时器的回调函数
 ** 输　入:  void * pFuncParam     回调函数的参数
 **          
-** 输　出:  INT16U
+** 输　出:  rt_uint16_t
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -229,15 +229,15 @@ void ExtTimerTick(  )
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 #if  EXT_TIMER_CB_EN > 0
-INT16U  SetTimer(INT16U TimerID, INT32U nTime,fnTimerProcess fnProc,void *pFuncParam )
+rt_uint16_t  SetTimer(rt_uint16_t TimerID, rt_uint32_t nTime,fnTimerProcess fnProc,void *pFuncParam )
 #else
-INT16U  SetTimer(INT16U TimerID, INT32U nTime )
+rt_uint16_t  SetTimer(rt_uint16_t TimerID, rt_uint32_t nTime )
 #endif
 {
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
 #endif
-	INT16U i = 0;
+	rt_uint16_t i = 0;
 
 	if (TimerID>0 && TimerID <= EXT_TIMER_CNT && nTime)
 	{
@@ -281,9 +281,9 @@ INT16U  SetTimer(INT16U TimerID, INT32U nTime )
 **
 ** 功能描述： 删除定时器
 **
-** 输　入:  INT16U TimerID
+** 输　入:  rt_uint16_t TimerID
 **          
-** 输　出:  INT8U
+** 输　出:  rt_uint8_t
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -297,7 +297,7 @@ INT16U  SetTimer(INT16U TimerID, INT32U nTime )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U   KillTimer (INT16U  TimerID)
+rt_uint8_t   KillTimer (rt_uint16_t  TimerID)
 {
 #if OS_CRITICAL_METHOD == 3                                
 	OS_CPU_SR  cpu_sr;
@@ -328,9 +328,9 @@ INT8U   KillTimer (INT16U  TimerID)
 **
 ** 功能描述： 定时重新计时
 **
-** 输　入:  INT16U TimerID
+** 输　入:  rt_uint16_t TimerID
 **          
-** 输　出:  INT8U
+** 输　出:  rt_uint8_t
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -344,7 +344,7 @@ INT8U   KillTimer (INT16U  TimerID)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U  ResetTimer(INT16U TimerID)
+rt_uint8_t  ResetTimer(rt_uint16_t TimerID)
 {
 	if (TimerID>0 && TimerID <= EXT_TIMER_CNT )
 	{
@@ -363,9 +363,9 @@ INT8U  ResetTimer(INT16U TimerID)
 **
 ** 功能描述： 判断定时是否到。
 **
-** 输　入:  INT16U TimerID
+** 输　入:  rt_uint16_t TimerID
 **          
-** 输　出:  INT8U
+** 输　出:  rt_uint8_t
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -379,7 +379,7 @@ INT8U  ResetTimer(INT16U TimerID)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U IsTimeTo(INT16U TimerID )
+rt_uint8_t IsTimeTo(rt_uint16_t TimerID )
 {
 	if (TimerID>0 && TimerID <= EXT_TIMER_CNT)
 	{
@@ -396,9 +396,9 @@ INT8U IsTimeTo(INT16U TimerID )
 //测试用的定时器回调函数
 void TimerTestFunc( void * pPara )
 {
-	INT16U *pCnt =  pPara ;
+	rt_uint16_t *pCnt =  pPara ;
 
-	INT16U aa = *pCnt;
+	rt_uint16_t aa = *pCnt;
 
 	aa++;
 
@@ -406,9 +406,9 @@ void TimerTestFunc( void * pPara )
 
 void TestTimer( )
 {
-	INT16U cnt = 0;
-	INT8U bRet = RT_FALSE;
-	INT32U nTest = 0;
+	rt_uint16_t cnt = 0;
+	rt_uint8_t bRet = RT_FALSE;
+	rt_uint32_t nTest = 0;
 
 	SetTimer(1,100,TimerTestFunc,&cnt);
 	SetTimer(2,1000,NULL,NULL);

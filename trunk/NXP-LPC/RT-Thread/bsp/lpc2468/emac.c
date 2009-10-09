@@ -17,11 +17,11 @@
 **
 ** 功能描述：  
 **
-** 输　入:  INT32U phyadd   PHY address, normally 0.  
+** 输　入:  rt_uint32_t phyadd   PHY address, normally 0.  
 ** 输　入:  INT32S PhyReg   PHY register.
 ** 输　入:  INT32S Value    Data to write to PHY register.
 **          
-** 输　出:   INT8U
+** 输　出:   rt_uint8_t
 **         
 ** 全局变量:  
 ** 调用模块: EMAC_Init().
@@ -35,7 +35,7 @@
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U write_phy (INT32U phyadd,INT32U PhyReg, INT32U Value)
+rt_uint8_t write_phy (rt_uint32_t phyadd,rt_uint32_t PhyReg, rt_uint32_t Value)
 {
 	unsigned int tout;
 
@@ -55,10 +55,10 @@ INT8U write_phy (INT32U phyadd,INT32U PhyReg, INT32U Value)
 	//超时
 	return FALSE;
 }
-void  write_phy_ex (INT8U  phy, INT8U  reg, INT16U  val, INT16U  *perr)
+void  write_phy_ex (rt_uint8_t  phy, rt_uint8_t  reg, rt_uint16_t  val, rt_uint16_t  *perr)
 {
-	INT8U  retries;
-	volatile  INT32U  i;
+	rt_uint8_t  retries;
+	volatile  rt_uint32_t  i;
 
 
 	retries     =   0;                                                  /* Initialize retries to 0                                  */
@@ -91,10 +91,10 @@ void  write_phy_ex (INT8U  phy, INT8U  reg, INT16U  val, INT16U  *perr)
 **
 ** 功能描述：  从PHY端口读取数据
 **
-** 输　入:  INT16U phyadd      PHY address, normally 0.
-** 输　入:  INT32U PHYReg      PHY register.
+** 输　入:  rt_uint16_t phyadd      PHY address, normally 0.
+** 输　入:  rt_uint32_t PHYReg      PHY register.
 **          
-** 输　出:   INT32U  PHY data  MRDD        PHY register data.
+** 输　出:   rt_uint32_t  PHY data  MRDD        PHY register data.
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -108,9 +108,9 @@ void  write_phy_ex (INT8U  phy, INT8U  reg, INT16U  val, INT16U  *perr)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/ 
-INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg) 
+rt_uint16_t read_phy ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg) 
 {
-	INT32U tout = 0;
+	rt_uint32_t tout = 0;
 
 	MAC_MCMD =  0;            // Clear the Read COMMAND   
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
@@ -127,9 +127,9 @@ INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg)
 	return (MAC_MRDD);
 }
 
-INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
+rt_uint16_t read_phy_ex ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg,rt_uint16_t *err)
 {
-	INT32U tout = 0;
+	rt_uint32_t tout = 0;
 
 	MAC_MCMD = 0;                     // Clear the Read COMMAND    
 	MAC_MADR = (phyadd<<8) | PhyReg;  //[12:8] == PHY addr, [4:0]=0x00(BMCR) register addr 
@@ -161,8 +161,8 @@ INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
 **
 ** 功能描述：  This function is called by NetNIC_Init and the PHY ISR in order to update the
 **             speed and duplex settings for the EMAC. 
-** 输　入:  INT32U link_speed
-** 输　入:  INT32U link_duplex
+** 输　入:  rt_uint32_t link_speed
+** 输　入:  rt_uint32_t link_duplex
 **          
 ** 输　出:   void
 **         
@@ -178,7 +178,7 @@ INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void  nic_link_change(INT32U link_speed, INT32U link_duplex)
+void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex)
 {
 	switch (link_speed)
 	{
@@ -281,7 +281,7 @@ static  void  EMAC_RxIntEn (void)
 #define  MCFG_CLKSEL_DIV20                            0x0018
 #define  MCFG_CLKSEL_DIV28                            0x001C
 
-static  INT8U        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
+static  rt_uint8_t        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
 {6,  MCFG_CLKSEL_DIV6},
 {8,  MCFG_CLKSEL_DIV8},
 {10, MCFG_CLKSEL_DIV10},
@@ -296,7 +296,7 @@ static  INT8U        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
 **
 ** 输　入:  rt_device_t dev
 **          
-** 输　出:   INT8U
+** 输　出:   rt_uint8_t
 **         
 ** 全局变量:            
 ** 调用模块: 无
@@ -310,15 +310,15 @@ static  INT8U        MII_Dividers [7][2] =  {{4,  MCFG_CLKSEL_DIV4},
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/ 
-INT16U PHYREG[80];
-INT16U PHYID;
+rt_uint16_t PHYREG[80];
+rt_uint16_t PHYID;
 rt_err_t rt_lpc24xxether_init(rt_device_t dev)
 {
 	unsigned int  tout, i = 0;
-	INT32U  tempreg = 0;
-	INT16U  ret = 0;
+	rt_uint32_t  tempreg = 0;
+	rt_uint16_t  ret = 0;
 
-	INT32U clk_freq  =   bsp_cpu_clk_freq();  	
+	rt_uint32_t clk_freq  =   bsp_cpu_clk_freq();  	
 	clk_freq           /=   100000;     
 	nic_linkup();     /* Set NetNIC_ConnStatus to TRUE by default (for uC/TCP-IP) */
 
@@ -411,8 +411,6 @@ rt_err_t rt_lpc24xxether_init(rt_device_t dev)
 	
 	/* Receive Broadcast, Unicast ,Multicast and Perfect Match Packets */
 //	MAC_RXFILTERCTRL = RFC_UCAST_EN |RFC_MCAST_EN | RFC_BCAST_EN | RFC_PERFECT_EN;
-
-
 
 	for(i=0;i<32;i++)
 	{

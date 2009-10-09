@@ -2,8 +2,7 @@
 
 
 #include <rtthread.h>			    
-#include <LPC24xx.H>
-#include "ioLPC24xx.H"
+#include <LPC24xx.H> 
 #include "applib.h"
 #include "dm9161_def.h"
 #include "net_bsp.h"
@@ -18,7 +17,7 @@
 **
 ** 输　入:  void
 **          
-** 输　出:   INT8U  State of auto-negociation (FALSE = not completed, TRUE = completed).
+** 输　出:   rt_uint8_t  State of auto-negociation (FALSE = not completed, TRUE = completed).
 **         
 ** 全局变量:  
 ** 调用模块:  init
@@ -33,10 +32,10 @@ will return Auto Negotiation State = FALSE (incomplete).
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U  get_phy_autoneg_state(void)
+rt_uint8_t  get_phy_autoneg_state(void)
 {
-	INT16U     err = 0;
-	INT32U  reg_val;
+	rt_uint16_t     err = 0;
+	rt_uint32_t  reg_val;
 
 	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
 	reg_val     = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);
@@ -64,7 +63,7 @@ INT8U  get_phy_autoneg_state(void)
 **
 ** 输　入:  void
 **          
-** 输　出:   INT8U  State of ethernet link (FALSE = link down, TRUE = link up).
+** 输　出:   rt_uint8_t  State of ethernet link (FALSE = link down, TRUE = link up).
 **         
 ** 全局变量:  
 ** 调用模块:  isr
@@ -79,10 +78,10 @@ will return link state = FALSE.
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U  get_phy_link_state (void)
+rt_uint8_t  get_phy_link_state (void)
 {
-	INT16U     err = 0;
-	INT32U  reg_val;
+	rt_uint16_t     err = 0;
+	rt_uint32_t  reg_val;
 
 	/* DM9161AE register 0x01: Basic Status Register #1      */
 	/* BIT 2 , Link Status, 1 = linked, 0 = not linked.      */
@@ -113,7 +112,7 @@ INT8U  get_phy_link_state (void)
 **
 ** 输　入:  void
 **          
-** 输　出:   INT32U  0 = No Link, 10 = 10mbps, 100 = 100mbps
+** 输　出:   rt_uint32_t  0 = No Link, 10 = 10mbps, 100 = 100mbps
 **         
 ** 全局变量:  
 ** 调用模块: init
@@ -127,12 +126,12 @@ INT8U  get_phy_link_state (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT32U  get_phy_link_speed (void)
+rt_uint32_t  get_phy_link_speed (void)
 {
-	INT32U  bmsr;
-	INT32U  bmcr;
-	INT32U  lpa;
-	INT16U   err;
+	rt_uint32_t  bmsr;
+	rt_uint32_t  bmcr;
+	rt_uint32_t  lpa;
+	rt_uint16_t   err;
 
 	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
 	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
@@ -182,7 +181,7 @@ INT32U  get_phy_link_speed (void)
 **            his probes the Davicom DM9161AE '3.3V Dual-Speed Fast Ethernet Transceiver'
 ** 输　入:  void
 **          
-** 输　出:   INT32U  0 = Unknown (Auto-Neg in progress), 1 = Half Duplex, 2 = Full Duplex
+** 输　出:   rt_uint32_t  0 = Unknown (Auto-Neg in progress), 1 = Half Duplex, 2 = Full Duplex
 **         
 ** 全局变量:  
 ** 调用模块: EMAC_Init()
@@ -196,12 +195,12 @@ INT32U  get_phy_link_speed (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT32U  get_phy_link_duplex (void)
+rt_uint32_t  get_phy_link_duplex (void)
 {
-	INT32U  bmcr;
-	INT32U  bmsr;
-	INT32U  lpa;
-	INT16U     err;
+	rt_uint32_t  bmcr;
+	rt_uint32_t  bmsr;
+	rt_uint32_t  lpa;
+	rt_uint16_t     err;
 
 	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
 	bmsr    = read_phy_ex(EMAC_CFG_PHY_ADDR, PHY_REG_BMSR, &err);       /* Get Link Status from PHY status reg. Requires 2 reads    */
@@ -246,11 +245,11 @@ INT32U  get_phy_link_duplex (void)
 
 static void  phy_auto_nego  (void)
 {
-	INT16U   i;
-	INT16U   reg_val;
-	INT8U  link;
-	INT16U      err;
-	INT32U  tout = 0;
+	rt_uint16_t   i;
+	rt_uint16_t   reg_val;
+	rt_uint8_t  link;
+	rt_uint16_t      err;
+	rt_uint32_t  tout = 0;
 
 	i               = DM9161AE_INIT_AUTO_NEG_RETRIES;                   /* Set the # of retries before declaring a timeout  */
 	link            = get_phy_link_state();                            /* Get the current link state. 1=linked, 0=no link  */
@@ -292,12 +291,12 @@ static void nic_phy_int_clr(void)
 * Return(s)   : none.
 *********************************************************************************************************
 */
-INT16U  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
+rt_uint16_t  NetNIC_ConnStatus;                            /* NIC's connection status : DEF_ON/DEF_OFF.            */
 
 void  nic_phy_isr_handler   (int vector)
 {
-	volatile INT16U reg_val;
-	INT16U     err;
+	volatile rt_uint16_t reg_val;
+	rt_uint16_t     err;
 
 
  	nic_phy_int_enter();
@@ -325,7 +324,7 @@ void  nic_phy_int_init   (void)
 //	rt_hw_interrupt_umask(VIC_EINT3);
 
 //	VICIntSelect           &= ~(1 << VIC_EINT3);                        /* Enable interrupts                                        */
-//	VICVectAddr17           = (CPU_INT32U)NetNIC_PhyISR_Handler;        /* Set the vector address                                   */
+//	VICVectAddr17           = (CPU_rt_uint32_t)NetNIC_PhyISR_Handler;        /* Set the vector address                                   */
 //	VICIntEnable            =  (1 << VIC_EINT3);                        /* Enable Interrupts                                        */
 }
 /*
@@ -344,9 +343,9 @@ void  nic_phy_int_init   (void)
 * Note(s)     : Assumes the MDI port as already been enabled for the PHY.
 *********************************************************************************************************
 */
-void  nic_phy_init   (INT16U *perr)
+void  nic_phy_init   (rt_uint16_t *perr)
 {
-	volatile  INT32U  reg_val;
+	volatile  rt_uint32_t  reg_val;
  
 	phy_auto_nego();                                                /* Perform auto-negotiation                                 */
 

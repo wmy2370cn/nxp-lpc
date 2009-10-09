@@ -14,6 +14,10 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_LWIP
+#include <lwip/sys.h>
+#include <lwip/api.h>
+#endif
 /**
  * @addtogroup LPC2478
  */
