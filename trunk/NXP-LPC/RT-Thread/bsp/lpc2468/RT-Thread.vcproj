@@ -576,10 +576,6 @@
 				>
 			</File>
 			<File
-				RelativePath="D:\Keil\ARM\INC\Philips\LPC24xx.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\app\main.c"
 				>
 			</File>
@@ -641,6 +637,10 @@
 			</File>
 			<File
 				RelativePath="..\lpc2468\emac.h"
+				>
+			</File>
+			<File
+				RelativePath="D:\Keil\ARM\INC\Philips\LPC24xx.h"
 				>
 			</File>
 			<File
