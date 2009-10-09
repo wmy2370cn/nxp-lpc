@@ -642,19 +642,34 @@ rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 	rt_sem_release(&tx_sem);
 	return 0;
 }
+void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+{
+	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
+	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+	 INT8U* src_ptr   = (INT8U *)(rb_descriptors[RxConsumeIndex].Packet );
+	memcpy(&ptr[ 0 ], &src_ptr[0], section_length);
+	
+	Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
 
+	/* move to the next frame. */
+	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
+
+}
+
+#if 0
 void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 {
 	register INT32U buf_remain, section_remain;
-	static INT32U section_read = 0, buf_offset = 0, frame_read = 0;
+	static INT32U  buf_offset = 0, frame_read = 0;
 	static INT8U* src_ptr = RT_NULL;
+	INT32U section_read = 0;
 
 	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
 	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
 	src_ptr = (INT8U *)(rb_descriptors[RxConsumeIndex].Packet );
 	/* Loop until we have obtained the required amount of data. */
-	section_read = 0;//
+	
 	while( section_read < section_length )
 	{
 		buf_remain = (total - buf_offset);
@@ -668,7 +683,6 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 			frame_read += buf_remain;
 
 			/* free buffer */
-			//rb_descriptors[current_rb_index].Packet &= ~RxDESC_FLAG_OWNSHIP;
 			Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
 
 			/* move to the next frame. */
@@ -701,7 +715,7 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 		}
 	}
 } 
- 
+#endif 
 
 INT16U get_nic_rx_frame_size (void)
 {
@@ -744,7 +758,6 @@ INT16U get_nic_rx_frame_size (void)
 			RINFO_FAIL_FILT);
 
 		if (rxstatus > 0)
-			//	if (0)
 			break;			 
 		else
 		{
@@ -821,11 +834,14 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 	//
 	if (pkt_len)
 	{
-		p = pbuf_alloc(PBUF_RAW, pkt_len, PBUF_RAM);
-		if(p != RT_NULL)
+		p = pbuf_alloc(PBUF_LINK, pkt_len, PBUF_RAM);
+		if(p != RT_NULL && pkt_len == p->len)
 		{
-			for(q = p; q != RT_NULL; q= q->next)
-				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
+			SetLed(1,TRUE);
+			lpc24xxether_read_frame(p->payload, p->len, pkt_len);
+// 			for(q = p; q != RT_NULL; q= q->next)
+// 				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
+			SetLed(1,FALSE);
 		}
 		else
 		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包

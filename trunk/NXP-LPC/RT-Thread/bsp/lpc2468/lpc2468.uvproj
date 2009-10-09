@@ -676,11 +676,6 @@
               <FilePath>..\..\net\lwip\src\core\ipv4\icmp.c</FilePath>
             </File>
             <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\ipv4\igmp.c</FilePath>
-            </File>
-            <File>
               <FileName>inet.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\core\ipv4\inet.c</FilePath>
@@ -714,36 +709,6 @@
               <FileName>loopif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\netif\loopif.c</FilePath>
-            </File>
-            <File>
-              <FileName>msg_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\msg_out.c</FilePath>
-            </File>
-            <File>
-              <FileName>asn1_dec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\asn1_dec.c</FilePath>
-            </File>
-            <File>
-              <FileName>asn1_enc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\asn1_enc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mib2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\mib2.c</FilePath>
-            </File>
-            <File>
-              <FileName>mib_structs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\mib_structs.c</FilePath>
-            </File>
-            <File>
-              <FileName>msg_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\net\lwip\src\core\snmp\msg_in.c</FilePath>
             </File>
             <File>
               <FileName>sys.c</FileName>

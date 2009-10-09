@@ -3,6 +3,7 @@
 #include <rtthread.h>
 #include "applib.h"  
 #include "bsp.h"
+#include "nic.h"
  
 
 void FlickerLed( )

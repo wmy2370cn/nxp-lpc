@@ -431,7 +431,31 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\icmp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\inet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\inet_chksum.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\net\lwip\src\include\lwip\init.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\ip.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\ip_addr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\net\lwip\src\include\ipv4\lwip\ip_frag.h"
 					>
 				</File>
 				<File
