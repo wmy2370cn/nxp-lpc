@@ -330,7 +330,7 @@ INT16U lpc24xxether_init(void * dev)
 	MAC_COMMAND = CR_REG_RES | CR_TX_RES | CR_RX_RES;
 
 	/* A short delay after reset. */
-	for (tout = 0; tout <5000; tout++);
+	rt_delayms(2);
 
 	//Deassert all prior resets
 	MAC_MAC1 = 0;
@@ -354,7 +354,7 @@ INT16U lpc24xxether_init(void * dev)
 	MAC_MCFG |= MCFG_CLK_DIV20 | MCFG_RES_MII;
 	MAC_MCMD                =   0;                                          /* Clear MII command register                               */
 
-	for (tout = 0; tout <5000; tout++);
+	rt_delayms(2);
 	for (i = 0; i < 7; i++) 
 	{                                           /* Check dividers to yield MII frequency ~2.5 MHz           */
 		if ((clk_freq / MII_Dividers[i][0]) <=  25) 
@@ -372,34 +372,34 @@ INT16U lpc24xxether_init(void * dev)
 
 	//下面开始PHY设置
 	// probe phy address
-	for(i=0;i<32;i++)
-	{
-		ret = read_phy(i , PHY_REG_PHYID1 );
-		if(ret == 0X0181)
-		{
-			PHYID = i;
-			break;
-		}
-	}
+// 	for(i=0;i<32;i++)
+// 	{
+// 		ret = read_phy(i , PHY_REG_PHYID1 );
+// 		if(ret == 0X0181)
+// 		{
+// 			PHYID = i;
+// 			break;
+// 		}
+// 	}
 
 	
 	//	PHYID = 0;
 	//  复位PHY芯片
 	//  等待一段指定的时间，使PHY就绪 
 	//	write_phy(PHYID, PHY_REG_BMCR,  BMCR_RESET|BMCR_ANRESTART|BMCR_ANENABLE  );
-	for ( i = 0; i < 5; i++ )
-	{
-		rt_delayms(1000);
-	}
+// 	for ( i = 0; i < 5; i++ )
+// 	{
+// 		rt_delayms(1000);
+// 	}
 
-	for(i=0;i<32;i++)
-	{
-		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
-	}
-
+// 	for(i=0;i<32;i++)
+// 	{
+// 		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
+// 	}
+	rt_delayms(10);
 	nic_phy_init(&ret); 
 
-	tempreg = read_phy(PHYID, DM9161_DSCSR );
+//	tempreg = read_phy(PHYID, DM9161_DSCSR );
 
 	MAC_IPGR = IPGR_DEF;
 	MAC_CLRT = CLRT_DEF;
@@ -412,10 +412,10 @@ INT16U lpc24xxether_init(void * dev)
 
 
 
-	for(i=0;i<32;i++)
-	{
-		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
-	}
+// 	for(i=0;i<32;i++)
+// 	{
+// 		PHYREG[i] = read_phy_ex(EMAC_CFG_PHY_ADDR ,i ,&ret);
+// 	}
 	// Initialize Tx and Rx DMA Descriptors 
 	rx_descr_init();
 	tx_descr_init();

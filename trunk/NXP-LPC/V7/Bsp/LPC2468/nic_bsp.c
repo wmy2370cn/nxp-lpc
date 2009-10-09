@@ -274,7 +274,9 @@ static  void  AppInitTCPIP (void)
 void  phy_hw_init (void)
 { /* Configure I/O and the RMII / MII interface pins          */
   //	PINSEL2             =   0x50150105;	                                /* Selects P1[0,1,4,8,9,10,14,15]                           */
-  //	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
+	//	PINSEL3             =   0x00000005;	                                /* Selects P1[17:16]                                        */
+	PINSEL2             =   0x50150105;	   
+	PINSEL3             =   0x00000005;	        
 }
 /*********************************************************************************************************
 ** 函数名称: nic_linkup
@@ -416,9 +418,6 @@ void rt_delayms(INT32U ms)
 
 void  nic_int_init  (void)
 {
- //	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
- //	rt_hw_interrupt_umask(VIC_ETHERNET);
-
 	VICIntSelect       &= ~(1 << VIC_ETHERNET);                         /* Configure the Ethernet VIC interrupt source for IRQ      */
 	VICVectAddr21       =  (CPU_INT32U)nic_isr_handler;              /* Set the vector address                                   */
 	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
@@ -452,7 +451,7 @@ INT8U IsTxDescEmpty( )
 }
  
 #define   MIN(x, y)   ((x)   >   (y)   ?   (y)   :   (x)) 
-INT16U lpc24xxether_write_frame( struct pbuf* p )
+void lpc24xxether_write_frame( struct pbuf* p )
 {
 	struct pbuf* q;
 	INT8U *pDescBuf = NULL;
@@ -463,7 +462,7 @@ INT16U lpc24xxether_write_frame( struct pbuf* p )
 	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
 
 	if (p == NULL)
-		return 0;
+		return  ;
  
 	pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
 
@@ -627,7 +626,6 @@ INT16U get_nic_rx_frame_size (void)
 			RINFO_FAIL_FILT);
 
 		if (rxstatus > 0)
-	//	if (0)
 	 		break;			 
 	 	else
 		{
@@ -756,7 +754,7 @@ static  CPU_INT16U  NIC_RxGetNRdy (void)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 {
 	register INT32U buf_remain, section_remain;
 	static INT32U section_read = 0, buf_offset = 0, frame_read = 0;
@@ -861,7 +859,6 @@ struct pbuf *lpc24xxether_rx(eth_device_t dev)
 			//rt_kprintf("no memory in pbuf\n");
 			 EMAC_RxPktDiscard();
 			 SetLedBlinking(7,5,0);
-
 		}
 	}
  
@@ -910,6 +907,9 @@ int lpc24xxether_register(char *name)
 	//与协议栈相关
 	result = eth_device_init(& (lpc24xx_device.parent) , (char*)name);
 	RT_ASSERT(result == OS_TRUE);
+
+	lwip_sys_init( );
+
 	//MAC PHY硬件的初始化
 	lpc24xxether_init( & lpc24xx_device );
 	return OS_TRUE;

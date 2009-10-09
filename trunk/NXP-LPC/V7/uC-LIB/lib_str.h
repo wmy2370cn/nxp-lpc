@@ -97,7 +97,7 @@
                                                                 /* See Note #3.                                         */
 #include  <stdlib.h>
 #include  <ctype.h>
-#include  <errno.h>
+//#include  <errno.h>
 #include  <limits.h>
 #include  <stdio.h>
 
