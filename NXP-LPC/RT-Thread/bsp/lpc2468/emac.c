@@ -7,7 +7,7 @@
 #include "emac_def.h"
 #include "dm9161_def.h"
 #include "dm9161.h"
-#include "net_bsp.h"
+#include "nic_bsp.h"
 #include <LPC24xx.H>
 
 
@@ -253,7 +253,7 @@ void emac_tx_disable( void )
 }
 /*
 *********************************************************************************************************
-*                                       EMAC_RxIntEn()
+*                                       emac_rx_int_en()
 *
 * Description : Enable EMAC Receiver Interrupts.
 *
@@ -267,7 +267,7 @@ void emac_tx_disable( void )
 *********************************************************************************************************
 */
 
-static  void  EMAC_RxIntEn (void)
+static  void  emac_rx_int_en (void)
 {
 //	MAC_INTENABLE  |= (INT_RX_DONE | INT_RX_OVERRUN|INT_RX_FIN);                       /* Enable RxDone interrupts and Rx Overrun interrupts       */
 	MAC_INTENABLE  |= (INT_RX_DONE | INT_RX_OVERRUN);                       /* Enable RxDone interrupts and Rx Overrun interrupts       */
@@ -315,7 +315,7 @@ rt_uint16_t PHYID;
 rt_err_t rt_lpc24xxether_init(rt_device_t dev)
 {
 	unsigned int  tout, i = 0;
-	rt_uint32_t  tempreg = 0;
+ 	rt_uint32_t  tempreg = 0;
 	rt_uint16_t  ret = 0;
 
 	rt_uint32_t clk_freq  =   bsp_cpu_clk_freq();  	
@@ -443,7 +443,7 @@ rt_err_t rt_lpc24xxether_init(rt_device_t dev)
 	emac_rx_enanble();
 	emac_tx_enable();
 
-	EMAC_RxIntEn( );
+	emac_rx_int_en( );
 	return RT_TRUE;
 }
 

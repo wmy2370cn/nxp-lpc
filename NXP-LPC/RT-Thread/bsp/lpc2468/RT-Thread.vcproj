@@ -644,15 +644,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\net_bsp.h"
-				>
-			</File>
-			<File
 				RelativePath="..\lpc2468\nic.h"
 				>
 			</File>
 			<File
 				RelativePath="..\lpc2468\nic_bsp.c"
+				>
+			</File>
+			<File
+				RelativePath=".\nic_bsp.h"
 				>
 			</File>
 		</Filter>
