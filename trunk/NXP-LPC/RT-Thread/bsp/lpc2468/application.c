@@ -25,24 +25,31 @@
 
 char app_thread_stack[512];
 struct rt_thread app_thread;
-extern void app_thread_entry(void* parameter);
+extern void main_app_thread_entry(void* parameter);
+
+#ifdef RT_USING_LWIP
+	extern void lwip_sys_init(void);
+	extern int echo_thread_init(void);
+#endif 
+
 
 int rt_application_init()
 { 
 #ifdef RT_USING_LWIP
 	{
-		extern void lwip_sys_init(void);
-
 		/* init lwip system */
 		lwip_sys_init();
 		rt_kprintf("TCP/IP initialized!\n");
 	}
 #endif 
-	rt_thread_init(&app_thread,"app_thread",app_thread_entry, RT_NULL,	&app_thread_stack[0], sizeof(app_thread_stack),
+	rt_thread_init(&app_thread,"app_thread",main_app_thread_entry, RT_NULL,	&app_thread_stack[0], sizeof(app_thread_stack),
 		20, 10);
 
 	rt_thread_startup(&app_thread);
-	 
+
+#ifdef RT_USING_LWIP	 
+ 	echo_thread_init();	 
+#endif 
 	return 0;
 }
   

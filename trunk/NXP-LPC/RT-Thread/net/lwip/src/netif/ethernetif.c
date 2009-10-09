@@ -218,7 +218,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
 	return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
 }
 
-rt_err_t eth_system_device_init()
+rt_err_t eth_system_device_init(void)
 {
 	rt_err_t result = RT_EOK;
 
