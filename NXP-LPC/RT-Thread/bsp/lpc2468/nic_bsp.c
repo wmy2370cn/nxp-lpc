@@ -753,8 +753,7 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 ** ±¸  ×¢: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
- 
-void set_mac_id( )   
+ void set_mac_id( )   
 {
 	MAC_SA0   =  (lpc24xx_device.dev_addr[5] << 8) |(lpc24xx_device.dev_addr[4]);    /* Write the MAC Address, octect 2 and 1 to the EMAC        */
 	MAC_SA1   =  (lpc24xx_device.dev_addr[3] << 8) |(lpc24xx_device.dev_addr[2]);    /* Write the MAC Address, octect 4 and 3 to the EMAC        */
