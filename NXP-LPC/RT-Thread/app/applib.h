@@ -49,7 +49,7 @@
 #define  DEF_BIT_30                               0x40000000
 #define  DEF_BIT_31                               0x80000000
 
-
+#if 0
 typedef unsigned char  BOOLEAN;
 typedef unsigned char  INT8U;                    /* Unsigned  8 bit quantity                           */
 typedef signed   char  INT8S;                    /* Signed    8 bit quantity                           */
@@ -59,3 +59,5 @@ typedef unsigned long  INT32U;                   /* Unsigned 32 bit quantity    
 typedef signed   long  INT32S;                   /* Signed   32 bit quantity                           */
 typedef float          FP32;                     /* Single precision floating point                    */
 typedef double         FP64;                     /* Double precision floating point                    */
+
+#endif

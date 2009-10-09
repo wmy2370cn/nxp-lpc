@@ -4,8 +4,8 @@
 #include "lwipopts.h" 
 #include "applib.h"
 #include "LPC24xx.h" 
-
-#include "ioLPC24xx.H" 
+#include "bsp.h"
+ 
 
 #include "emac.h"
 #include "emac_def.h"
@@ -28,29 +28,23 @@ struct rt_lpc24xx_eth
 	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
 };
 
-#define RB_BUFFER_SIZE		8			/* max number of receive buffers */
-#define ETH_RX_BUF_SIZE		128
-
-#define TB_BUFFER_SIZE		4
-#define ETH_TX_BUF_SIZE		(PBUF_POOL_BUFSIZE)
-
 typedef struct {                        /* RX Descriptor struct              */
-	INT32U Packet;
-	INT32U Ctrl;
+	rt_uint32_t Packet;
+	rt_uint32_t Ctrl;
 } RX_Desc;
 
 typedef struct {                        /* RX Status struct                  */
-	INT32U Info;
-	INT32U HashCRC;
+	rt_uint32_t Info;
+	rt_uint32_t HashCRC;
 } RX_Stat;
 
 typedef struct {                        /* TX Descriptor struct              */
-	INT32U Packet;
-	INT32U Ctrl;
+	rt_uint32_t Packet;
+	rt_uint32_t Ctrl;
 } TX_Desc;
 
 typedef struct {                        /* TX Status struct                  */
-	INT32U Info;
+	rt_uint32_t Info;
 } TX_Stat;
 
 static            RX_Desc *rb_descriptors ;
@@ -58,8 +52,8 @@ static            TX_Desc *tb_descriptors ;
 
 static  RX_Stat *Rx_Stat ; /* Must be 8-Byte alligned   */
 static  TX_Stat *Tx_Stat ;
-static  INT8U       *RxBufBaseAddr;
-static  INT8U       *TxBufBaseAddr;
+static  rt_uint8_t       *RxBufBaseAddr;
+static  rt_uint8_t       *TxBufBaseAddr;
  
 static struct rt_lpc24xx_eth lpc24xx_device;
 
@@ -81,19 +75,19 @@ void rx_descr_init (void)
 
 	rb_descriptors      =  (RX_Desc *)(EMAC_RX_DESC_BASE_ADDR);
 	Rx_Stat            =  (RX_Stat  *)(EMAC_RX_STATUS_BASE_ADDR);
-	RxBufBaseAddr       =  (INT8U *)(EMAC_RX_BUFF_BASE_ADDR);
+	RxBufBaseAddr       =  (rt_uint8_t *)(EMAC_RX_BUFF_BASE_ADDR);
 
 	for (i = 0; i < NUM_RX_FRAG; i++) 
 	{ 
-		rb_descriptors[i].Packet  = (INT32U)(RxBufBaseAddr + (i * ETH_FRAG_SIZE));
+		rb_descriptors[i].Packet  = (rt_uint32_t)(RxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		rb_descriptors[i].Ctrl    = RCTRL_INT | (ETH_FRAG_SIZE-1);
 		Rx_Stat[i].Info    = 0;
 		Rx_Stat[i].HashCRC = 0;
 	}
 
 	/* Set EMAC Receive Descriptor Registers. */
-	MAC_RXDESCRIPTOR    = (INT32U)&rb_descriptors[0];
-	MAC_RXSTATUS        = (INT32U)&Rx_Stat[0];
+	MAC_RXDESCRIPTOR    = (rt_uint32_t)&rb_descriptors[0];
+	MAC_RXSTATUS        = (rt_uint32_t)&Rx_Stat[0];
 
 	MAC_RXDESCRIPTORNUM = NUM_RX_FRAG-1;
 
@@ -109,66 +103,24 @@ void tx_descr_init (void)
 
 	tb_descriptors      =  (TX_Desc *)(EMAC_TX_DESC_BASE_ADDR);
 	Tx_Stat            =  (TX_Stat  *)(EMAC_TX_STATUS_BASE_ADDR);
-	TxBufBaseAddr       =  (INT8U *)(EMAC_TX_BUFF_BASE_ADDR);
+	TxBufBaseAddr       =  (rt_uint8_t *)(EMAC_TX_BUFF_BASE_ADDR);
 
 	for (i = 0; i < NUM_TX_FRAG; i++) 
 	{
-		tb_descriptors[i].Packet =  (INT32U)(TxBufBaseAddr + (i * ETH_FRAG_SIZE));
+		tb_descriptors[i].Packet =  (rt_uint32_t)(TxBufBaseAddr + (i * ETH_FRAG_SIZE));
 		tb_descriptors[i].Ctrl   = 0;
 		Tx_Stat[i].Info   = 0;
 	}
 
 	/* Set EMAC Transmit Descriptor Registers. */
-	MAC_TXDESCRIPTOR    = (INT32U)&tb_descriptors[0];
-	MAC_TXSTATUS        = (INT32U)&Tx_Stat[0];
+	MAC_TXDESCRIPTOR    = (rt_uint32_t)&tb_descriptors[0];
+	MAC_TXSTATUS        = (rt_uint32_t)&Tx_Stat[0];
 	MAC_TXDESCRIPTORNUM = NUM_TX_FRAG-1;
 
 	/* Tx Descriptors Point to 0 */
 	MAC_TXPRODUCEINDEX  = 0;
 }
 
-/******************************************************************************
-** Function name:		EMAC_RxEnable/EMAC_RxDisable
-**
-** Descriptions:		EMAC RX API modules
-**
-** parameters:			None
-** Returned value:		None
-** 
-******************************************************************************/
-void EMAC_RxEnable( void )
-{
-	MAC_COMMAND |= 0x01;
-	MAC_MAC1 |= 0x01;
-	return;    
-}
-
-void EMAC_RxDisable( void )
-{
-	MAC_COMMAND &= ~0x01;
-	MAC_MAC1 &= ~0x01;
-	return;
-}
-/******************************************************************************
-** Function name:		EMAC_TxEnable/EMAC_TxDisable
-**
-** Descriptions:		EMAC TX API modules
-**
-** parameters:			None
-** Returned value:		None
-** 
-******************************************************************************/
-void EMAC_TxEnable( void )
-{
-	MAC_COMMAND |= 0x02;
-	return;
-}
-
-void EMAC_TxDisable( void )
-{
-	MAC_COMMAND &= ~0x02;
-	return;
-}
 static  void  EMAC_RxPktDiscard ( )
 {
 	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;
@@ -176,13 +128,13 @@ static  void  EMAC_RxPktDiscard ( )
 /* interrupt service routine */
 void nic_isr_handler(int irqno)
 {
-	INT32U status               =  MAC_INTSTATUS;    
- 	INT32U  nRsv =  MAC_RSV;
-	INT32U  nSta =  MAC_STATUS;
+	rt_uint32_t status               =  MAC_INTSTATUS;    
+ 	rt_uint32_t  nRsv =  MAC_RSV;
+	rt_uint32_t  nSta =  MAC_STATUS;
 
 	if (status & INT_RX_DONE) // if receive packet
 	{
-		INT8U result;
+		rt_uint8_t result;
 		MAC_INTCLEAR = status;
 		/* a frame has been received */
 		result = eth_device_ready(&(lpc24xx_device.parent));
@@ -229,66 +181,16 @@ void nic_isr_handler(int irqno)
 #define  NET_IF_ADDR_BROADCAST_03                       0xFF
 #define  NET_IF_ADDR_BROADCAST_04                       0xFF
 #define  NET_IF_ADDR_BROADCAST_05                       0xFF
-
-INT8U   NetIF_MAC_Addr[NET_IF_ADDR_SIZE];      /* NIC's MAC addr.                                      */
-/*********************************************************************************************************
-** 函数名称: SetMacID
-** 函数名称: SetMacID
-**
-** 功能描述：  设置芯片物理地址,物理地址已经存储在程序空间内 
-**
-** 输　入:  INT8U * mac_ptr
-**          
-** 输　出:   void
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月30日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-void SetMacID( )   
-{
-	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
-	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
-	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
-
-//	MAC_SA0 = mac_ptr[0]*256+mac_ptr[1];
-//	MAC_SA1 = mac_ptr[2]*256+mac_ptr[3];
-//	MAC_SA2 = mac_ptr[4]*256+mac_ptr[5];
-	//把MAC地址写入MY——MAC——ID中
-}
-
+ 
 static  void  AppInitTCPIP (void)
 {  
-	NetIF_MAC_Addr[0] = 0x00;
-	NetIF_MAC_Addr[1] = 0x50;
-	NetIF_MAC_Addr[2] = 0xC2;
-	NetIF_MAC_Addr[3] = 0x25;
-	NetIF_MAC_Addr[4] = 0x61;
-	NetIF_MAC_Addr[5] = 0x39;
-
+	/* Update MAC address */
 	lpc24xx_device.dev_addr[0] = 0x00;
-	lpc24xx_device.dev_addr[1] = 0x50;
-	lpc24xx_device.dev_addr[2] = 0xC2;
-	lpc24xx_device.dev_addr[3] = 0x25;
-	lpc24xx_device.dev_addr[4] = 0x61;
-	lpc24xx_device.dev_addr[5] = 0x39;
-
-// 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
-// 
-// 	AppNetIP        = NetASCII_Str_to_IP("10.10.1.129",  &err);
-// 	AppNetMsk       = NetASCII_Str_to_IP("255.255.255.0", &err);
-// 	AppNetGateway   = NetASCII_Str_to_IP("10.10.1.1",   &err);
-
-//	err             = NetIP_CfgAddrThisHost(AppNetIP, AppNetMsk);
-//	err             = NetIP_CfgAddrDfltGateway(AppNetGateway);
+	lpc24xx_device.dev_addr[1] = 0x38;
+	lpc24xx_device.dev_addr[2] = 0x6c;
+	lpc24xx_device.dev_addr[3] = 0xa2;
+	lpc24xx_device.dev_addr[4] = 0x45;
+	lpc24xx_device.dev_addr[5] = 0x3e; 
 }
 
 /*********************************************************************************************************
@@ -342,8 +244,8 @@ void  phy_hw_init (void)
 ********************************************************************************************************/
 void  nic_linkup (void)
 {
-	INT32U  link_speed;
-	INT32U  link_duplex;
+	rt_uint32_t  link_speed;
+	rt_uint32_t  link_duplex;
 
 	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
 	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
@@ -381,8 +283,8 @@ void  nic_linkup (void)
 ********************************************************************************************************/
 void  nic_linkdown (void)
 {
-	INT32U  link_speed;
-	INT32U  link_duplex;
+	rt_uint32_t  link_speed;
+	rt_uint32_t  link_duplex;
 
 	link_speed              =   get_phy_link_speed();                  /* Read the PHY's current link speed                    */
 	link_duplex             =   get_phy_link_duplex();                 /* Read the PHY's current link duplex mode              */
@@ -402,14 +304,14 @@ void  nic_linkdown (void)
 #define  RTC_OSC_FRQ                  32768L
 
 
-INT32U  bsp_cpu_clk_freq (void)
+rt_uint32_t  bsp_cpu_clk_freq (void)
 {
-	INT32U  msel;
-	INT32U  nsel;
-	INT32U  fin;
-	INT32U  pll_clk_feq;                                    /* When the PLL is enabled, this is Fcco                    */
-	INT32U  clk_div;
-	INT32U  clk_freq;
+	rt_uint32_t  msel;
+	rt_uint32_t  nsel;
+	rt_uint32_t  fin;
+	rt_uint32_t  pll_clk_feq;                                    /* When the PLL is enabled, this is Fcco                    */
+	rt_uint32_t  clk_div;
+	rt_uint32_t  clk_freq;
 
 	switch (CLKSRCSEL & 0x03)
 	{                                 /* Determine the current clock source                       */
@@ -429,8 +331,8 @@ INT32U  bsp_cpu_clk_freq (void)
 
 	if ((PLLSTAT & (1 << 25)) > 0) 
 	{                                                              /* If the PLL is currently enabled and connected        */
-		msel        = (INT32U)(PLLSTAT & 0x3FFF) + 1;           /* Obtain the PLL multiplier                            */
-		nsel        = (INT32U)((PLLSTAT >>   16) & 0x0F) + 1;   /* Obtain the PLL divider                               */
+		msel        = (rt_uint32_t)(PLLSTAT & 0x3FFF) + 1;           /* Obtain the PLL multiplier                            */
+		nsel        = (rt_uint32_t)((PLLSTAT >>   16) & 0x0F) + 1;   /* Obtain the PLL divider                               */
 		pll_clk_feq = (2 * msel * fin / nsel);                      /* Compute the PLL output frequency                     */
 	} 
 	else
@@ -438,17 +340,17 @@ INT32U  bsp_cpu_clk_freq (void)
 		pll_clk_feq = (fin);                                        /* The PLL is bypassed                                  */
 	}
 
-	clk_div         = (INT8U)(CCLKCFG & 0x0F) + 1;             /* Obtain the CPU core clock divider                    */
-	clk_freq        = (INT32U)(pll_clk_feq / clk_div);          /* Compute the ARM Core clock frequency                 */
+	clk_div         = (rt_uint8_t)(CCLKCFG & 0x0F) + 1;             /* Obtain the CPU core clock divider                    */
+	clk_freq        = (rt_uint32_t)(pll_clk_feq / clk_div);          /* Compute the ARM Core clock frequency                 */
 
 	return (clk_freq);
 }
  
-void rt_delayms(INT32U ms)
+void rt_delayms(rt_uint32_t ms)
 {
 	//执行11059200次语句，花时3.570S，差不多每ms计算3097条语句
-	INT32U count=3339*ms;
-	INT32U i;
+	rt_uint32_t count=3339*ms;
+	rt_uint32_t i;
 	for (i=0;i<count;i++)
 	{
 		__asm{ NOP };
@@ -462,7 +364,7 @@ void  nic_int_init  (void)
 	rt_hw_interrupt_umask(VIC_ETHERNET);
 
 //	VICIntSelect       &= ~(1 << VIC_ETHERNET);                   /* Configure the Ethernet VIC interrupt source for IRQ      */
-//	VICVectAddr21       =  (INT32U)nic_isr_handler;              /* Set the vector address                                   */
+//	VICVectAddr21       =  (rt_uint32_t)nic_isr_handler;              /* Set the vector address                                   */
 //	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
 }
 
@@ -559,24 +461,24 @@ static rt_err_t rt_lpc24xxether_control(rt_device_t dev, rt_uint8_t cmd, void *a
 void lpc24xxether_write_frame( struct pbuf* p )
 {
 	struct pbuf* q;
-	INT8U *pDescBuf = NULL;
-	INT8U *pSrcBuf = NULL;
-	INT16U nTxBufOffset = 0,nDescOffset = 0,nPduLen = 0,nSendLen = 0;
+	rt_uint8_t *pDescBuf = NULL;
+	rt_uint8_t *pSrcBuf = NULL;
+	rt_uint16_t nTxBufOffset = 0,nDescOffset = 0,nPduLen = 0,nSendLen = 0;
 
-	INT32U TxProduceIndex = MAC_TXPRODUCEINDEX;
-	INT32U TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
+	rt_uint32_t TxProduceIndex = MAC_TXPRODUCEINDEX;
+	rt_uint32_t TxConsumeIndex = MAC_TXCONSUMEINDEX;	 
 
 	if (p == NULL)
 		return ;
  
-	pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
+	pDescBuf = (rt_uint8_t *)tb_descriptors[TxProduceIndex].Packet;
 
 	for (q = p; q != NULL; q = q->next)
 	{
 		nTxBufOffset = 0;
 		if (q && q->len)
 		{
-			pSrcBuf = (INT8U*) q->payload;
+			pSrcBuf = (rt_uint8_t*) q->payload;
 
 			while( nTxBufOffset < q->len )
 			{
@@ -613,7 +515,7 @@ void lpc24xxether_write_frame( struct pbuf* p )
 						{
 							TxProduceIndex -= NUM_TX_FRAG;
 						}
-						pDescBuf = (INT8U *)tb_descriptors[TxProduceIndex].Packet;
+						pDescBuf = (rt_uint8_t *)tb_descriptors[TxProduceIndex].Packet;
 					}
 					else if (nSendLen >= p->tot_len)
 					{
@@ -642,32 +544,32 @@ rt_err_t lpc24xxether_tx( rt_device_t dev, struct pbuf* p)
 	rt_sem_release(&tx_sem);
 	return 0;
 }
-void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+#if 0
+void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uint32_t total)
 {
-	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
-	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
-	 INT8U* src_ptr   = (INT8U *)(rb_descriptors[RxConsumeIndex].Packet );
+	rt_uint32_t RxProduceIndex = MAC_RXPRODUCEINDEX;
+	rt_uint32_t RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+	 rt_uint8_t* src_ptr   = (rt_uint8_t *)(rb_descriptors[RxConsumeIndex].Packet );
 	memcpy(&ptr[ 0 ], &src_ptr[0], section_length);
 	
 	Rx_Stat[MAC_RXCONSUMEINDEX].Info     = 0;                       //Clear status for debugging purposes                      */
 
 	/* move to the next frame. */
 	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
-
 }
+#endif
 
-#if 0
-void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
+void lpc24xxether_read_frame(rt_uint8_t* ptr, rt_uint32_t section_length, rt_uint32_t total)
 {
-	register INT32U buf_remain, section_remain;
-	static INT32U  buf_offset = 0, frame_read = 0;
-	static INT8U* src_ptr = RT_NULL;
-	INT32U section_read = 0;
+	register rt_uint32_t buf_remain, section_remain;
+	static rt_uint32_t  buf_offset = 0, frame_read = 0;
+	static rt_uint8_t* src_ptr = RT_NULL;
+	rt_uint32_t section_read = 0;
 
-	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
-	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+	rt_uint32_t RxProduceIndex = MAC_RXPRODUCEINDEX;
+	rt_uint32_t RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
-	src_ptr = (INT8U *)(rb_descriptors[RxConsumeIndex].Packet );
+	src_ptr = (rt_uint8_t *)(rb_descriptors[RxConsumeIndex].Packet );
 	/* Loop until we have obtained the required amount of data. */
 	
 	while( section_read < section_length )
@@ -689,7 +591,7 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 			MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
 
 			/* Reset the variables for the new buffer. */
-			src_ptr = (INT8U *)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
+			src_ptr = (rt_uint8_t *)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
 			buf_offset = 0;
 		}
 		else
@@ -709,25 +611,25 @@ void lpc24xxether_read_frame(INT8U* ptr, INT32U section_length, INT32U total)
 				/* move to the next frame. */
 				MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;     
 
-				src_ptr = (INT8U*)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
+				src_ptr = (rt_uint8_t*)(rb_descriptors[MAC_RXCONSUMEINDEX].Packet );
 				buf_offset = 0;
 			}
 		}
 	}
 } 
-#endif 
 
-INT16U get_nic_rx_frame_size (void)
+
+rt_uint16_t get_nic_rx_frame_size (void)
 {
-	INT16U     rxconsumeix;
-	INT16U     rxproduceix;
-	INT16U     desc_cnt=0 , i =0;
-	INT16U     rx_frame_size = 0;
-	INT32U   rxstatus;
-	INT8U   flag = RT_FALSE;
+	rt_uint16_t     rxconsumeix;
+	rt_uint16_t     rxproduceix;
+	rt_uint16_t     desc_cnt=0 , i =0;
+	rt_uint16_t     rx_frame_size = 0;
+	rt_uint32_t   rxstatus;
+	rt_uint8_t   flag = RT_FALSE;
 
-	INT32U  nRsv =  MAC_RSV;
-	INT32U  nSta =  MAC_STATUS;
+	rt_uint32_t  nRsv =  MAC_RSV;
+	rt_uint32_t  nSta =  MAC_STATUS;
 
 
 	rxconsumeix =   MAC_RXCONSUMEINDEX;
@@ -788,9 +690,9 @@ INT16U get_nic_rx_frame_size (void)
 	return rx_frame_size;
 }
 
-INT8U  NetIF_IsValidPktSize (INT16U  size)
+rt_uint8_t  NetIF_IsValidPktSize (rt_uint16_t  size)
 {
-	INT8U  valid;
+	rt_uint8_t  valid;
 
 	valid = RT_TRUE;
 
@@ -811,13 +713,13 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 {	
 	struct pbuf *p = RT_NULL;
 
-	INT32U RxProduceIndex = MAC_RXPRODUCEINDEX;
-	INT32U RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
+	rt_uint32_t RxProduceIndex = MAC_RXPRODUCEINDEX;
+	rt_uint32_t RxConsumeIndex = MAC_RXCONSUMEINDEX;	 
 
 	struct pbuf* q;
-	INT16U  pkt_len = 0;
-	INT16U  pkt_cnt = 0;
-	INT8U   ret = RT_FALSE;
+	rt_uint16_t  pkt_len = 0;
+	rt_uint16_t  pkt_cnt = 0;
+	rt_uint8_t   ret = RT_FALSE;
 
 	if (RxProduceIndex == RxConsumeIndex)
 		return RT_NULL;
@@ -838,9 +740,9 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 		if(p != RT_NULL && pkt_len == p->len)
 		{
 			SetLed(1,TRUE);
-			lpc24xxether_read_frame(p->payload, p->len, pkt_len);
-// 			for(q = p; q != RT_NULL; q= q->next)
-// 				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
+//			lpc24xxether_read_frame(p->payload, p->len, pkt_len);
+ 			for(q = p; q != RT_NULL; q= q->next)
+ 				lpc24xxether_read_frame(q->payload, q->len, pkt_len);
 			SetLed(1,FALSE);
 		}
 		else
@@ -852,12 +754,34 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 
 	return p;
 }
+ /*********************************************************************************************************
+** 函数名称: set_mac_id
+** 函数名称: set_mac_id
+**
+** 功能描述：  设置芯片物理地址,物理地址已经存储在程序空间内 
+**
+** 输　入:  
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月30日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
  
 void set_mac_id( )   
 {
-//	MAC_SA0   =  (NetIF_MAC_Addr[5] << 8) |(NetIF_MAC_Addr[4]);                   /* Write the MAC Address, octect 2 and 1 to the EMAC        */
-//	MAC_SA1   =  (NetIF_MAC_Addr[3] << 8) |(NetIF_MAC_Addr[2]);                   /* Write the MAC Address, octect 4 and 3 to the EMAC        */
-//	MAC_SA2  =  (NetIF_MAC_Addr[1] << 8) | (NetIF_MAC_Addr[0]);                  /* Write the MAC Address, octect 6 and 5 to the EMAC        */
+	MAC_SA0   =  (lpc24xx_device.dev_addr[5] << 8) |(lpc24xx_device.dev_addr[4]);    /* Write the MAC Address, octect 2 and 1 to the EMAC        */
+	MAC_SA1   =  (lpc24xx_device.dev_addr[3] << 8) |(lpc24xx_device.dev_addr[2]);    /* Write the MAC Address, octect 4 and 3 to the EMAC        */
+	MAC_SA2  =  (lpc24xx_device.dev_addr[1] << 8) | (lpc24xx_device.dev_addr[0]);    /* Write the MAC Address, octect 6 and 5 to the EMAC        */
 }
 /*********************************************************************************************************
 ** 函数名称: lpc24xxether_register
@@ -898,14 +822,11 @@ int lpc24xxether_register(char *name)
 	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
 
 	/* Update MAC address */
-// 	lpc24xx_device.dev_addr[0] = 0x1e;
-// 	lpc24xx_device.dev_addr[1] = 0x30;
-// 	lpc24xx_device.dev_addr[2] = 0x6c;
-// 	lpc24xx_device.dev_addr[3] = 0xa2;
-// 	lpc24xx_device.dev_addr[4] = 0x45;
-// 	lpc24xx_device.dev_addr[5] = 0x5e;
+ 	AppInitTCPIP();
 // 	/* update mac address */
 // 	update_mac_address(lpc24xx_device);
+
+
 
 	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 	result = eth_device_init(&(lpc24xx_device.parent), (char*)name);
@@ -916,7 +837,6 @@ int lpc24xxether_register(char *name)
 
 void rt_hw_eth_init()
 {
-	AppInitTCPIP();
 	lpc24xxether_register("E0");	 
 }
 

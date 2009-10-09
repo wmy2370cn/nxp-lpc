@@ -4,15 +4,15 @@
   
 /* ------------------- PHYTER FNCTS ------------------ */
 
-INT16U read_phy ( INT16U phyadd ,INT8U  PhyReg) ;
-INT8U write_phy (INT32U phyadd,INT32U PhyReg, INT32U Value);
+rt_uint16_t read_phy ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg) ;
+rt_uint8_t write_phy (rt_uint32_t phyadd,rt_uint32_t PhyReg, rt_uint32_t Value);
 
-INT16U read_phy_ex ( INT16U phyadd ,INT8U  PhyReg,INT16U *err);
-void  write_phy_ex (INT8U  phy, INT8U  reg, INT16U  val, INT16U  *perr);
+rt_uint16_t read_phy_ex ( rt_uint16_t phyadd ,rt_uint8_t  PhyReg,rt_uint16_t *err);
+void  write_phy_ex (rt_uint8_t  phy, rt_uint8_t  reg, rt_uint16_t  val, rt_uint16_t  *perr);
 
-//INT8U lpc24xxether_init(rt_device_t dev);
+//rt_uint8_t lpc24xxether_init(rt_device_t dev);
 
-void  nic_link_change(INT32U link_speed, INT32U link_duplex);
+void  nic_link_change(rt_uint32_t link_speed, rt_uint32_t link_duplex);
 
 
 rt_err_t rt_lpc24xxether_init(rt_device_t dev);

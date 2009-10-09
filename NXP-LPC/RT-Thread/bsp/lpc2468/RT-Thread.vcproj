@@ -644,7 +644,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\iolpc24xx.h"
+				RelativePath=".\net_bsp.h"
 				>
 			</File>
 			<File

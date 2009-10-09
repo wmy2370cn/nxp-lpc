@@ -8,7 +8,7 @@
 
 void FlickerLed( )
 {
-	INT32U i = 0;
+	rt_uint32_t i = 0;
 	for (i = 0; i < 11; i++)
 	{
 		SetLed(i,TRUE);	 
