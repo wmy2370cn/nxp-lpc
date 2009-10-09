@@ -55,19 +55,18 @@ void FlickerLed( )
 			break;
 	}
 } 
- 
- void app_thread_entry(void* parameter)
- {															  
-	 int *ptr = RT_NULL;
-	 int count = 0;
-	 FlickerLed( );
 
-	 while (1)
-	 {
-		 rt_kprintf("Thread2 count:%d\n", count++);
-		 rt_thread_delay(50);   
-		 SetLed(0,TRUE);
-		 rt_thread_delay(50);
-		 SetLed(0,FALSE);
-	 }
- }
+void main_app_thread_entry(void* parameter)
+{															  
+	int count = 0;
+	FlickerLed( );
+
+	while (1)
+	{
+		rt_kprintf("Thread2 count:%d\n", count++);
+		rt_thread_delay(50);   
+		SetLed(0,TRUE);
+		rt_thread_delay(50);
+		SetLed(0,FALSE);
+	}
+}

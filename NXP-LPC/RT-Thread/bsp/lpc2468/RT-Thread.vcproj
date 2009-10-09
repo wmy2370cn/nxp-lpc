@@ -160,10 +160,6 @@
 			Name="Startup"
 			>
 			<File
-				RelativePath="..\lpc2468\application.c"
-				>
-			</File>
-			<File
 				RelativePath="..\lpc2468\rtconfig.h"
 				>
 			</File>
@@ -568,11 +564,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\lpc2468\application.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\app\Blinky.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\app\Blinky.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\app\echo.c"
 				>
 			</File>
 			<File

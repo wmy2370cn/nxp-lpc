@@ -21,7 +21,8 @@ extern void finsh_system_init(void);
 #endif
 
 #include <LPC24xx.h>
-#include <board.h>
+#include "board.h"
+#include "nic.h"
 
 /**
  * @addtogroup LPC2478
