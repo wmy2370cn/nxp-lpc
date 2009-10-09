@@ -147,7 +147,7 @@ static  void  EMAC_RxPktDiscard ( )
 ** ±¸  ×¢: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void nic_isr_handler( int vector )
+static void nic_isr_handler(   )
 {
 //    INT32U status   =  (MAC_INTSTATUS & MAC_INTENABLE);
     INT32U status               =  MAC_INTSTATUS;    
@@ -226,19 +226,19 @@ void set_mac_id( )
 static  void  AppInitTCPIP (void)
 {  
 	NetIF_MAC_Addr[0] = 0x00;
-	NetIF_MAC_Addr[1] = 0x28;
+	NetIF_MAC_Addr[1] = 0x38;
 	NetIF_MAC_Addr[2] = 0x6c;
 	NetIF_MAC_Addr[3] = 0xa2;
-	NetIF_MAC_Addr[4] = 0x35;
-	NetIF_MAC_Addr[5] = 0x1e;
+	NetIF_MAC_Addr[4] = 0x45;
+	NetIF_MAC_Addr[5] = 0x3e;
 
 	/* Update MAC address */
 	lpc24xx_device.dev_addr[0] = 0x00;
-	lpc24xx_device.dev_addr[1] = 0x28;
+	lpc24xx_device.dev_addr[1] = 0x38;
 	lpc24xx_device.dev_addr[2] = 0x6c;
 	lpc24xx_device.dev_addr[3] = 0xa2;
-	lpc24xx_device.dev_addr[4] = 0x35;
-	lpc24xx_device.dev_addr[5] = 0x1e;
+	lpc24xx_device.dev_addr[4] = 0x45;
+	lpc24xx_device.dev_addr[5] = 0x3e;
 
 // 	err             = Net_Init();                               /* Initialize uC/TCP-IP                                     */
 // 
