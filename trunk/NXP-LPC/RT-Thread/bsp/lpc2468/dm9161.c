@@ -5,7 +5,7 @@
 #include <LPC24xx.H> 
 #include "applib.h"
 #include "dm9161_def.h"
-#include "net_bsp.h"
+#include "nic_bsp.h"
 #include "emac.h" 
  
 

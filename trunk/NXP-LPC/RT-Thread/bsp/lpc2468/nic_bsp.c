@@ -121,7 +121,7 @@ void tx_descr_init (void)
 	MAC_TXPRODUCEINDEX  = 0;
 }
 
-static  void  EMAC_RxPktDiscard ( )
+static  void  rxpkt_discard ( )
 {
 	MAC_RXCONSUMEINDEX      = (MAC_RXCONSUMEINDEX + 1) % NUM_RX_FRAG;
 }
@@ -141,7 +141,7 @@ void nic_isr_handler(int irqno)
 		RT_ASSERT(result == RT_EOK);
 		if (result != RT_EOK)
 		{//如果发送失败,那么说明队列满了,处理不过来,那么就把这封信扔掉
-			EMAC_RxPktDiscard();
+			rxpkt_discard();
 		}
 		MAC_INTCLEAR            = (INT_RX_DONE);                            /* Clear the interrupt flags        */
 	}
@@ -170,19 +170,7 @@ void nic_isr_handler(int irqno)
 	VICVectAddr = 0;            //interrupt close 通知中断控制器中断结束
 }
 
-#define  NET_IF_ADDR_SIZE                                  6    /* 48-bit MAC/net addr size.                            */
-#define  NET_IF_ADDR_SIZE_MAC                            NET_IF_ADDR_SIZE
-
-#define  NET_IF_ADDR_BROADCAST                0xFFFFFFFFFFFF
-#define  NET_IF_ADDR_BROADCAST_xx                       0xFF    /* ALL broadcast addr octet vals identical.             */
-#define  NET_IF_ADDR_BROADCAST_00                       0xFF
-#define  NET_IF_ADDR_BROADCAST_01                       0xFF
-#define  NET_IF_ADDR_BROADCAST_02                       0xFF
-#define  NET_IF_ADDR_BROADCAST_03                       0xFF
-#define  NET_IF_ADDR_BROADCAST_04                       0xFF
-#define  NET_IF_ADDR_BROADCAST_05                       0xFF
- 
-static  void  AppInitTCPIP (void)
+static  void  updata_mac_addr (void)
 {  
 	/* Update MAC address */
 	lpc24xx_device.dev_addr[0] = 0x00;
@@ -192,7 +180,6 @@ static  void  AppInitTCPIP (void)
 	lpc24xx_device.dev_addr[4] = 0x45;
 	lpc24xx_device.dev_addr[5] = 0x3e; 
 }
-
 /*********************************************************************************************************
 ** 函数名称: phy_hw_init
 ** 函数名称: phy_hw_init
@@ -302,8 +289,7 @@ void  nic_linkdown (void)
 #define  MAIN_OSC_FRQ              11059200L
 #define  IRC_OSC_FRQ               11059200L
 #define  RTC_OSC_FRQ                  32768L
-
-
+ 
 rt_uint32_t  bsp_cpu_clk_freq (void)
 {
 	rt_uint32_t  msel;
@@ -362,20 +348,11 @@ void  nic_int_init  (void)
 {
 	rt_hw_interrupt_install(VIC_ETHERNET, nic_isr_handler, RT_NULL);
 	rt_hw_interrupt_umask(VIC_ETHERNET);
-
-//	VICIntSelect       &= ~(1 << VIC_ETHERNET);                   /* Configure the Ethernet VIC interrupt source for IRQ      */
-//	VICVectAddr21       =  (rt_uint32_t)nic_isr_handler;              /* Set the vector address                                   */
-//	VICIntEnable        =  (1 << VIC_ETHERNET);                         /* Enable the VIC interrupt source, but no local sources    */
 }
 
 /* RT-Thread Device Interface */
- 
-#define  MAIN_OSC_FRQ              11059200L
-#define  IRC_OSC_FRQ               11059200L
-#define  RTC_OSC_FRQ                  32768L
 
-
-rt_uint32_t  BSP_CPU_ClkFreq (void)
+rt_uint32_t  get_cpu_clkfreq (void)
 {
 	rt_uint32_t  msel;
 	rt_uint32_t  nsel;
@@ -690,7 +667,7 @@ rt_uint16_t get_nic_rx_frame_size (void)
 	return rx_frame_size;
 }
 
-rt_uint8_t  NetIF_IsValidPktSize (rt_uint16_t  size)
+rt_uint8_t  is_pkt_size_valid (rt_uint16_t  size)
 {
 	rt_uint8_t  valid;
 
@@ -726,10 +703,10 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 
 	pkt_len = get_nic_rx_frame_size();
 	//判断一下 pkt_len 是否有效，如果无效，则丢弃
-	ret = NetIF_IsValidPktSize(pkt_len);
+	ret = is_pkt_size_valid(pkt_len);
 	if (ret == RT_FALSE)
 	{
-		EMAC_RxPktDiscard();
+		rxpkt_discard();
 		return NULL;
 	}
 
@@ -748,7 +725,7 @@ struct pbuf *lpc24xxether_rx(rt_device_t dev)
 		else
 		{//如果内存申请不到，那么需要对描述符进行处理，扔掉部分数据包
 			//rt_kprintf("no memory in pbuf\n");
-			EMAC_RxPktDiscard();		 
+			rxpkt_discard();		 
 		}
 	}
 
@@ -822,12 +799,10 @@ int lpc24xxether_register(char *name)
 	lpc24xx_device.parent.eth_tx			= lpc24xxether_tx;
 
 	/* Update MAC address */
- 	AppInitTCPIP();
+ 	updata_mac_addr();
 // 	/* update mac address */
 // 	update_mac_address(lpc24xx_device);
-
-
-
+ 
 	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 	result = eth_device_init(&(lpc24xx_device.parent), (char*)name);
 	RT_ASSERT(result == RT_EOK);
@@ -835,7 +810,7 @@ int lpc24xxether_register(char *name)
 }
 
 
-void rt_hw_eth_init()
+void rt_hw_eth_init(void)
 {
 	lpc24xxether_register("E0");	 
 }
