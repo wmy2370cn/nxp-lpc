@@ -13,6 +13,8 @@
 
 #include "ClientChildFrm.h"
 #include "ClientCommDoc.h"
+#include "ClientCommView.h"
+#include "ClientSendView.h"
 
 #include "PingChildFrm.h"
 
@@ -121,7 +123,7 @@ BOOL CCommTestApp::InitInstance()
 	m_pClientDocTemplate = new CMultiDocTemplate(IDR_PING_TEST,
 		RUNTIME_CLASS(CClientCommDoc),
 		RUNTIME_CLASS(CClientChildFrame), // 自定义 MDI 子框架
-		RUNTIME_CLASS(CView));
+		RUNTIME_CLASS(CClientSendView));
 	if (!m_pClientDocTemplate)
 		return FALSE;
 

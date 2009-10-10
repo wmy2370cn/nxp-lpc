@@ -42,12 +42,13 @@ BOOL CClientCommView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CClientCommView 绘制
 
-void CClientCommView::OnDraw(CDC* /*pDC*/)
+void CClientCommView::OnDraw(CDC*  pDC )
 {
 	CClientCommDoc* pDoc = (CClientCommDoc *)GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+	pDC->TextOut(10,10,_T("aaaaaaa"));
 
 	// TODO: 在此处为本机数据添加绘制代码
 }
@@ -75,10 +76,10 @@ void CClientCommView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CCClientCommDoc* CClientCommView::GetDocument() const // 非调试版本是内联的
+CClientCommDoc* CClientCommView::GetDocument() const // 非调试版本是内联的
 {
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CCClientCommDoc)));
-	return (CCClientCommDoc*)m_pDocument;
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CClientCommDoc)));
+	return (CClientCommDoc*)m_pDocument;
 }
 #endif //_DEBUG
 

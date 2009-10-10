@@ -36,4 +36,6 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };

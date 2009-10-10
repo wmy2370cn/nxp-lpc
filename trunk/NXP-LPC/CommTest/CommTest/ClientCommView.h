@@ -5,7 +5,7 @@
 
 #pragma once
 
-class CCClientCommDoc;
+class CClientCommDoc;
 class CClientCommView : public CView
 {
 protected: // 仅从序列化创建
@@ -14,7 +14,7 @@ protected: // 仅从序列化创建
 
 // 属性
 public:
-	CCClientCommDoc* GetDocument() const;
+	CClientCommDoc* GetDocument() const;
 
 // 操作
 public:
@@ -42,7 +42,7 @@ protected:
 };
 
 #ifndef _DEBUG  // CommTestView.cpp 中的调试版本
-inline CCClientCommDoc* CClientCommView::GetDocument() const
-   { return reinterpret_cast<CCClientCommDoc*>(m_pDocument); }
+inline CClientCommDoc* CClientCommView::GetDocument() const
+   { return reinterpret_cast<CClientCommDoc*>(m_pDocument); }
 #endif
 

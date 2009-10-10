@@ -19,6 +19,7 @@ IMPLEMENT_DYNCREATE(CClientChildFrame, CBCGPMDIChildWnd)
 
 BEGIN_MESSAGE_MAP(CClientChildFrame, CBCGPMDIChildWnd)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 // CClientChildFrame 构造/析构
@@ -95,12 +96,20 @@ BOOL CClientChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCon
 	CRect rectClient;
 	GetClientRect (rectClient);
 
-	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CClientSendView), CSize (0, rectClient.Height() / 6), pContext);
-	m_wndSplitter.CreateView (1, 0, RUNTIME_CLASS (CClientRecvView), CSize (0, rectClient.Height () / 2), pContext);
+	m_wndSplitter.CreateView (0, 0, pContext->m_pNewViewClass, CSize(0, 0), pContext);
+	m_wndSplitter.CreateView (1, 0, RUNTIME_CLASS (CClientRecvView), CSize(0, 0), pContext);
 
-	m_wndSplitter.SetColumnInfo (0, rectClient.Height () / 6, 30);
+	m_wndSplitter.SetRowInfo(0, rectClient.Height () / 3 , 30);
 	m_wndSplitter.SetWindowPos (NULL, 0, 0, rectClient.Width (), rectClient.Height (), SWP_NOZORDER | SWP_NOREDRAW);
-
+	m_wndSplitter.RecalcLayout();
+	return TRUE;
 
 	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
+}
+
+void CClientChildFrame::OnSize(UINT nType, int cx, int cy)
+{
+	CBCGPMDIChildWnd::OnSize(nType, cx, cy);
+	
+	// TODO: 在此处添加消息处理程序代码
 }
