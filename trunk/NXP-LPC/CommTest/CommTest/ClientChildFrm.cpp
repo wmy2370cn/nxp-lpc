@@ -6,6 +6,8 @@
 #include "CommTest.h"
 
 #include "ClientChildFrm.h"
+#include "ClientSendView.h"
+#include "ClientRecvView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -68,11 +70,37 @@ int CClientChildFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  在此添加您专用的创建代码
-
-//	SetTitle(_T("xxxxxx"));
-// 	SetWindowText(_T("xxxxxx"));
-// 	CDocument *pDoc = GetActiveDocument();
+	
 	
 
 	return 0;
+}
+
+BOOL CClientChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (m_wndSplitter.GetSafeHwnd () != NULL)
+	{
+		return FALSE;
+	}
+
+	if (!m_wndSplitter.CreateStatic (this, 2,1))
+	{
+		ASSERT(FALSE);
+		return FALSE;
+	}
+
+	m_wndSplitter.ModifyStyle (WS_HSCROLL | WS_VSCROLL, 0);
+
+	CRect rectClient;
+	GetClientRect (rectClient);
+
+	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CClientSendView), CSize (0, rectClient.Height() / 6), pContext);
+	m_wndSplitter.CreateView (1, 0, RUNTIME_CLASS (CClientRecvView), CSize (0, rectClient.Height () / 2), pContext);
+
+	m_wndSplitter.SetColumnInfo (0, rectClient.Height () / 6, 30);
+	m_wndSplitter.SetWindowPos (NULL, 0, 0, rectClient.Width (), rectClient.Height (), SWP_NOZORDER | SWP_NOREDRAW);
+
+
+	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
 }

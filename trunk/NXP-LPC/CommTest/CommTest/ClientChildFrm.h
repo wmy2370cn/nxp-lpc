@@ -12,6 +12,7 @@ public:
 
 // ÊôÐÔ
 public:
+	CBCGPSplitterWnd  m_wndSplitter;
 
 // ²Ù×÷
 public:
@@ -33,4 +34,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+protected:
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 };

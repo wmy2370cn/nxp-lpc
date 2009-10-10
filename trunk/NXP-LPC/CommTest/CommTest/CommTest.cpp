@@ -11,6 +11,9 @@
 #include "CommTestDoc.h"
 #include "CommTestView.h"
 
+#include "ClientChildFrm.h"
+#include "ClientCommDoc.h"
+
 #include "PingChildFrm.h"
 
 #ifdef _DEBUG
@@ -39,6 +42,7 @@ CBCGPWorkspace (TRUE /* m_bResourceSmartUpdate */)
 	m_bHiColorIcons = TRUE;
 	m_pDocTemplate = NULL;
 	m_pPingDocTemplate = NULL;
+	m_pClientDocTemplate = NULL;
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 }
@@ -114,6 +118,14 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 	AddDocTemplate(m_pPingDocTemplate);
 
+	m_pClientDocTemplate = new CMultiDocTemplate(IDR_PING_TEST,
+		RUNTIME_CLASS(CClientCommDoc),
+		RUNTIME_CLASS(CClientChildFrame), // 自定义 MDI 子框架
+		RUNTIME_CLASS(CView));
+	if (!m_pClientDocTemplate)
+		return FALSE;
+
+	AddDocTemplate(m_pClientDocTemplate);
 	// 创建主 MDI 框架窗口
 	CMainFrame* pMainFrame = new CMainFrame;
 	if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))

@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ClientCommView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ClientRecvView.cpp"
 				>
 			</File>
@@ -269,6 +273,10 @@
 			</File>
 			<File
 				RelativePath=".\ClientCommDoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientCommView.h"
 				>
 			</File>
 			<File

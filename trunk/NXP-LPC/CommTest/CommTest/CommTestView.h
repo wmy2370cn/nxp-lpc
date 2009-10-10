@@ -5,7 +5,7 @@
 
 #pragma once
 
-
+class CCommTestDoc;
 class CCommTestView : public CView
 {
 protected: // 仅从序列化创建
