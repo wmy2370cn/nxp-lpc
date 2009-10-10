@@ -231,10 +231,30 @@ void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
 void CWorkSpaceBar::OnNewTest()
 {
 	// TODO: 在此添加命令处理程序代码
+	CPoint curPoint;
+	UINT nFlags = 0;
+	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
+	CString szItem;
+
 	if (theApp.m_pPingDocTemplate)
 	{
-		theApp.m_pPingDocTemplate->OpenDocumentFile(NULL);
+		CDocument *pDoc = theApp.m_pPingDocTemplate->OpenDocumentFile(NULL);
+		if (pDoc)
+		{
+			POSITION pos = pDoc-> GetFirstViewPosition();
+			while (pos != NULL)
+			{
+				CView* pView = pDoc->GetNextView(pos);
+				ASSERT_VALID(pView);
+				CFrameWnd* pFrame = pView->GetParentFrame();
+				// assume frameless views are ok to close
+				if (pFrame != NULL)
+				{
+					// assumes 1 document per frame
+					ASSERT_VALID(pFrame);
+					break;				 
+				}
+			}
+		}
 	}
-	 
-
 }
