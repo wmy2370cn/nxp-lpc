@@ -1,0 +1,48 @@
+
+// CommTestView.h : CClientCommView 类的接口
+//
+
+
+#pragma once
+
+class CCClientCommDoc;
+class CClientCommView : public CView
+{
+protected: // 仅从序列化创建
+	CClientCommView();
+	DECLARE_DYNCREATE(CClientCommView)
+
+// 属性
+public:
+	CCClientCommDoc* GetDocument() const;
+
+// 操作
+public:
+
+// 重写
+public:
+	virtual void OnDraw(CDC* pDC);  // 重写以绘制该视图
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+protected: 
+
+// 实现
+public:
+	virtual ~CClientCommView();
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+
+protected:
+
+// 生成的消息映射函数
+protected:
+ 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	DECLARE_MESSAGE_MAP()
+};
+
+#ifndef _DEBUG  // CommTestView.cpp 中的调试版本
+inline CCClientCommDoc* CClientCommView::GetDocument() const
+   { return reinterpret_cast<CCClientCommDoc*>(m_pDocument); }
+#endif
+

@@ -236,9 +236,9 @@ void CWorkSpaceBar::OnNewTest()
 	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
 	CString szItem;
 
-	if (theApp.m_pPingDocTemplate)
+	if (theApp.m_pClientDocTemplate)
 	{
-		CDocument *pDoc = theApp.m_pPingDocTemplate->OpenDocumentFile(NULL);
+		CDocument *pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
 		if (pDoc)
 		{
 			POSITION pos = pDoc-> GetFirstViewPosition();

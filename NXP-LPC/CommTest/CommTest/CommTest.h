@@ -27,6 +27,8 @@ public:
 
 	CMultiDocTemplate* m_pDocTemplate;
 	CMultiDocTemplate* m_pPingDocTemplate;
+	CMultiDocTemplate* m_pClientDocTemplate;
+
 
 // й╣ож
 	UINT  m_nAppLook;
