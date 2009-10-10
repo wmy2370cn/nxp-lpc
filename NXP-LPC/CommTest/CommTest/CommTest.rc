@@ -494,6 +494,7 @@ STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "CommTest"
     IDR_CommTestTYPE        "\nCommTest\nCommTest\n\n\nCommTest.Document\nCommTest.Document"
+    IDR_PING_TEST           "\nPING²âÊÔ\nPING\n\n\nCommTest.Document\nCommTest.Document"
     IDS_WINDOWS_MANAGER     "´°¿Ú(&W)..."
 END
 

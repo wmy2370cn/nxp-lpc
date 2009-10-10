@@ -11,6 +11,8 @@
 #include "CommTestDoc.h"
 #include "CommTestView.h"
 
+#include "PingChildFrm.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -35,7 +37,8 @@ CBCGPWorkspace (TRUE /* m_bResourceSmartUpdate */)
 {
 
 	m_bHiColorIcons = TRUE;
-
+	m_pDocTemplate = NULL;
+	m_pPingDocTemplate = NULL;
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 }
@@ -95,14 +98,21 @@ BOOL CCommTestApp::InitInstance()
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
 
-	CMultiDocTemplate* pDocTemplate;
-	pDocTemplate = new CMultiDocTemplate(IDR_CommTestTYPE,
+	m_pDocTemplate = new CMultiDocTemplate(IDR_CommTestTYPE,
 		RUNTIME_CLASS(CCommTestDoc),
 		RUNTIME_CLASS(CChildFrame), // 自定义 MDI 子框架
 		RUNTIME_CLASS(CCommTestView));
-	if (!pDocTemplate)
+	if (!m_pDocTemplate)
 		return FALSE;
-	AddDocTemplate(pDocTemplate);
+	AddDocTemplate(m_pDocTemplate);
+
+	m_pPingDocTemplate = new CMultiDocTemplate(IDR_PING_TEST,
+		RUNTIME_CLASS(CCommTestDoc),
+		RUNTIME_CLASS(CPingChildFrame), // 自定义 MDI 子框架
+		RUNTIME_CLASS(CCommTestView));
+	if (!m_pPingDocTemplate)
+		return FALSE;
+	AddDocTemplate(m_pPingDocTemplate);
 
 	// 创建主 MDI 框架窗口
 	CMainFrame* pMainFrame = new CMainFrame;

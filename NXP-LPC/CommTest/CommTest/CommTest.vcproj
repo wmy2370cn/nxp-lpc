@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingChildFrm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -261,6 +265,10 @@
 			</File>
 			<File
 				RelativePath=".\OutputBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PingChildFrm.h"
 				>
 			</File>
 			<File
@@ -388,5 +396,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="CommTest.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
