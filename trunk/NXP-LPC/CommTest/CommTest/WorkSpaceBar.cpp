@@ -21,6 +21,7 @@ BEGIN_MESSAGE_MAP(CWorkSpaceBar, CBCGPDockingControlBar)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -57,17 +58,46 @@ int CWorkSpaceBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create workspace view\n");
 		return -1;      // fail to create
 	}
+	InitImages( );
 
 	// Setup trees content:
-	HTREEITEM hNet = m_wndTree.InsertItem (_T("以太网"));
-	m_wndTree.InsertItem (_T("客户端模式"), hNet);
-	m_wndTree.InsertItem (_T("服务器模式"), hNet);
+	HTREEITEM hNet = m_wndTree.InsertItem (_T("以太网"), 0,1);
+	m_wndTree.InsertItem (_T("客户端模式"), 0,1,hNet);
+	m_wndTree.InsertItem (_T("服务器模式"),0,1, hNet);
 
-	HTREEITEM hCom = m_wndTree.InsertItem (_T("串口"));
+	HTREEITEM hPing = m_wndTree.InsertItem (_T("PING"), 0,1);
+
+	HTREEITEM hCom = m_wndTree.InsertItem (_T("串口"), 0,1);
 	 
 
 	return 0;
 }
+// 加载视图图像:
+int CWorkSpaceBar::InitImages( )
+{
+	m_Images.DeleteImageList ();
+
+	UINT uiBmpId = IDB_BITMAP_LIST;
+
+	CBitmap bmp;
+	if (!bmp.LoadBitmap (uiBmpId))
+	{
+		TRACE(_T ("Can't load bitmap: %x\n"), uiBmpId);
+		ASSERT (FALSE);
+		return -1;
+	}
+
+	BITMAP bmpObj;
+	bmp.GetBitmap (&bmpObj);	
+	UINT nFlags = ILC_MASK;	
+	nFlags |= ILC_COLOR32 ;
+
+	m_Images.Create (16, bmpObj.bmHeight, nFlags, 0, 0);
+	m_Images.Add (&bmp,RGB (255, 0, 255) );
+
+	m_wndTree.SetImageList (&m_Images, TVSIL_NORMAL);
+	return 0;
+} 
 
 void CWorkSpaceBar::OnSize(UINT nType, int cx, int cy) 
 {
@@ -92,3 +122,106 @@ void CWorkSpaceBar::OnPaint()
 								::GetSysColor (COLOR_3DSHADOW));
 }
 
+
+void CWorkSpaceBar::OnTreeExpand()
+{
+	HTREEITEM hItemSel = m_wndTree.GetSelectedItem();	
+	if (hItemSel!=NULL)
+	{
+		ExpandItem(hItemSel,TVE_EXPAND);
+	}
+}
+
+void CWorkSpaceBar::OnTreeCollapse()
+{
+	HTREEITEM hItemSel = m_wndTree.GetSelectedItem();	
+	if (hItemSel!=NULL)
+	{
+		ExpandItem(hItemSel,TVE_COLLAPSE);
+	}
+} 
+void  CWorkSpaceBar::ExpandItem(HTREEITEM hItem,UINT nCode)
+{
+	m_wndTree.Expand(hItem,nCode);
+	if (m_wndTree.ItemHasChildren(hItem))
+	{
+		HTREEITEM hNextItem;
+		HTREEITEM hChildItem = m_wndTree.GetChildItem(hItem);
+
+		while (hChildItem != NULL)
+		{
+			hNextItem = m_wndTree.GetNextItem(hChildItem,  TVGN_NEXT);				
+			ExpandItem(hChildItem,nCode);		
+			hChildItem = hNextItem;
+		}
+	}
+}
+void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	// TODO: 在此处添加消息处理程序代码
+	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndTree;
+	ASSERT_VALID(pWndTree);
+
+	if (pWnd != pWndTree)
+	{
+		CBCGPDockingControlBar::OnContextMenu(pWnd, point);
+		return;
+	}
+
+	if (point != CPoint(-1, -1))
+	{
+		// 选择已单击的项:
+		CPoint ptTree = point;
+		pWndTree->ScreenToClient(&ptTree);
+
+		UINT flags = 0;
+		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
+		if (hTreeItem != NULL)
+		{
+			pWndTree->SelectItem(hTreeItem);
+		}
+	}
+
+	UINT nFlags = 0;
+	CPoint curPoint;
+	GetCursorPos(&curPoint);
+	m_wndTree.ScreenToClient(&curPoint);
+
+	CMenu menu;
+	VERIFY(menu.LoadMenu (IDR_POPUP_WORKSPACE));
+	CMenu* pPopup = NULL;
+
+	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
+	CString szItem;
+	if (ItemSel != NULL)
+	{
+		m_wndTree.SelectItem(ItemSel);
+		szItem = m_wndTree.GetItemText(ItemSel);
+	}
+	else
+	{
+		m_wndTree.SelectItem(NULL);
+	}
+
+	pPopup = menu.GetSubMenu(0);
+
+// 	if (szItem == m_szDeviceInfo )
+// 	{
+// 		pPopup = menu.GetSubMenu(DEVICE_MENU);
+// 		ASSERT(pPopup);
+// 		//		pPopup->DeleteMenu (ID_PROJECT_EXPORT,MF_BYCOMMAND );
+// 	}
+// 	else if( szItem == m_szRTData )
+// 	{
+// 		pPopup = menu.GetSubMenu(RT_DATA_MENU);
+// 		ASSERT(pPopup);
+// 	}
+
+	pWndTree->SetFocus();
+
+	if (pPopup == NULL)
+		return;	
+
+	UINT nResult = 	g_pContextMenuManager->TrackPopupMenu(pPopup->GetSafeHmenu(),point.x,point.y,this);
+	SendMessage(WM_COMMAND,nResult);
+}

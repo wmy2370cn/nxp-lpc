@@ -152,13 +152,15 @@ BEGIN
     END
 END
 
-IDR_POPUP_EDIT MENU 
+IDR_POPUP_WORKSPACE MENU 
 BEGIN
-    POPUP "编辑"
+    POPUP "测试方案"
     BEGIN
-        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
-        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
-        MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM "新建(&N)",                      ID_WORKSPACE_NEW
+        MENUITEM "删除(&D)",                      ID_WORKSPACE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "全部展开(&X)",                    ID_TREE_EXPAND
+        MENUITEM "全部折叠(&L)",                    ID_TREE_COLLAPSE
     END
 END
 
@@ -194,10 +196,11 @@ IDR_OUTPUT_POPUP MENU
 BEGIN
     POPUP "弹出项"
     BEGIN
-        MENUITEM "复制(&C)",                      ID_EDIT_COPY
-        MENUITEM "清除(&C)",                      ID_EDIT_CLEAR
+        MENUITEM "新建(&N)",                      ID_EDIT_NEW
+        MENUITEM "删除(&D)",                      ID_EDIT_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "隐藏(&H)",                      ID_VIEW_OUTPUTWND
+        MENUITEM "全部展开(&X)",                    ID_TREE_EXPAND
+        MENUITEM "全部折叠(&L)",                    ID_TREE_COLLAPSE
     END
 END
 
@@ -310,6 +313,7 @@ IDB_MENU_IMAGES_24      BITMAP                  "res\\menuimages_hc.bmp"
 IDR_PROPERTIES          BITMAP                  "res\\properties.bmp"
 IDB_PROPERTIES_HC       BITMAP                  "res\\properties_hc.bmp"
 IDB_WORKSPACE           BITMAP                  "res\\Workspace.bmp"
+IDB_BITMAP_LIST         BITMAP                  "res\\bmplist.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -635,6 +639,16 @@ BEGIN
     IDS_BUILD_TAB           "生成"
     IDS_DEBUG_TAB           "调试"
     IDS_FIND_TAB            "查找"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_NEW             "新建测试方案\n新建"
+    ID_EDIT_DELETE          "删除除选定的方案\n删除"
+    ID_TREE_EXPAND          "将所选择的子项全部展开\n全部展开"
+    ID_TREE_COLLAPSE        "将所选择的子项全部折叠\n全部折叠"
+    ID_WORKSPACE_NEW        "新建测试方案\n新建"
+    ID_WORKSPACE_DELETE     "删除选定的测试方案\n删除"
 END
 
 #endif    // 中文(中华人民共和国) resources

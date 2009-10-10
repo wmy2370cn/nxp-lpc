@@ -4,7 +4,7 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
-#define IDR_POPUP_EDIT                  119
+#define IDR_POPUP_WORKSPACE             119
 #define ID_STATUSBAR_PANE1              120
 #define ID_STATUSBAR_PANE2              121
 #define IDS_STATUS_PANE1                122
@@ -17,7 +17,6 @@
 #define IDR_CommTestTYPE                130
 #define ID_WINDOW_MANAGER               131
 #define IDS_WINDOWS_MANAGER             132
-
 #define ID_VIEW_CLASSVIEW               134
 #define ID_PROPERTIES                   135
 #define ID_OPEN                         136
@@ -76,13 +75,10 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDB_WORKSPACE                   310
-
-
+#define IDB_BITMAP_LIST                 311
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
-
- 
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -100,13 +96,19 @@
 #define ID_MDI_MOVE_TO_PREV_GROUP       2840
 #define ID_MDI_CANCEL                   2841
 #define ID_MDI_MOVE_TO_NEXT_GROUP       2842
+#define ID_EDIT_NEW                     32850
+#define ID_EDIT_DELETE                  32851
+#define ID_TREE_EXPAND                  32852
+#define ID_TREE_COLLAPSE                32853
+#define ID_WORKSPACE_NEW                32854
+#define ID_WORKSPACE_DELETE             32855
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32850
+#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_COMMAND_VALUE         32856
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
