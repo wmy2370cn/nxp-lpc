@@ -338,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\idr_comm.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\menuimages.bmp"
 				>
 			</File>

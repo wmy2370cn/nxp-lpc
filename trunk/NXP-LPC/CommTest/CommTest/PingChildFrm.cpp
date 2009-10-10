@@ -16,6 +16,7 @@
 IMPLEMENT_DYNCREATE(CPingChildFrame, CBCGPMDIChildWnd)
 
 BEGIN_MESSAGE_MAP(CPingChildFrame, CBCGPMDIChildWnd)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 // CPingChildFrame 构造/析构
@@ -36,7 +37,7 @@ BOOL CPingChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if( !CBCGPMDIChildWnd::PreCreateWindow(cs) )
 		return FALSE;
 	cs.style &= ~WS_SYSMENU;
-	cs.style  &= ~FWS_ADDTOTITLE ;
+//	cs.style  &= ~FWS_ADDTOTITLE ;
 	return TRUE;
 }
 
@@ -60,3 +61,18 @@ void CPingChildFrame::ActivateFrame(int nCmdShow)
 }
 
 // CPingChildFrame 消息处理程序
+
+int CPingChildFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPMDIChildWnd::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+
+//	SetTitle(_T("xxxxxx"));
+// 	SetWindowText(_T("xxxxxx"));
+// 	CDocument *pDoc = GetActiveDocument();
+	
+
+	return 0;
+}
