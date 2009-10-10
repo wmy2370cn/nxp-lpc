@@ -16,6 +16,8 @@
 #define IDR_MAINFRAME_256               129
 #define IDR_CommTestTYPE                130
 #define ID_WINDOW_MANAGER               131
+
+
 #define IDS_WINDOWS_MANAGER             132
 #define ID_VIEW_CLASSVIEW               134
 #define ID_PROPERTIES                   135
@@ -79,6 +81,9 @@
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
+
+#define IDR_PING_TEST                   401
+
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795

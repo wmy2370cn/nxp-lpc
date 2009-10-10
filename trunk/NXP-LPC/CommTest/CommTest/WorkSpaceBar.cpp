@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "CommTest.h"
-#include "WorkSpaceBar.h"
+#include "WorkSpaceBar.h" 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +22,7 @@ BEGIN_MESSAGE_MAP(CWorkSpaceBar, CBCGPDockingControlBar)
 	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_WORKSPACE_NEW, &CWorkSpaceBar::OnNewTest)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -224,4 +225,16 @@ void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	UINT nResult = 	g_pContextMenuManager->TrackPopupMenu(pPopup->GetSafeHmenu(),point.x,point.y,this);
 	SendMessage(WM_COMMAND,nResult);
+}
+ 
+
+void CWorkSpaceBar::OnNewTest()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (theApp.m_pPingDocTemplate)
+	{
+		theApp.m_pDocTemplate->OpenDocumentFile(NULL);
+	}
+	 
+
 }

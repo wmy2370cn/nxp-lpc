@@ -25,6 +25,9 @@ public:
 public:
 	virtual BOOL InitInstance();
 
+	CMultiDocTemplate* m_pDocTemplate;
+	CMultiDocTemplate* m_pPingDocTemplate;
+
 // й╣ож
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
