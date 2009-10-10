@@ -89,7 +89,7 @@ void CCommTestView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CCommTestView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
+//	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
 }
 
 

@@ -16,6 +16,9 @@ public:
 // Attributes
 protected:
 	CTreeCtrl	m_wndTree;
+	int  InitImages( );
+	CImageList	m_Images;
+	void  ExpandItem(HTREEITEM hItem,UINT nCode);
 
 // Operations
 public:
@@ -35,8 +38,13 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnPaint();
+	afx_msg void OnTreeExpand();
+	afx_msg void OnTreeCollapse();
+
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 /////////////////////////////////////////////////////////////////////////////

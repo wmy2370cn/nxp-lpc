@@ -94,6 +94,7 @@ BOOL CCommTestApp::InitInstance()
 
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
+
 	CMultiDocTemplate* pDocTemplate;
 	pDocTemplate = new CMultiDocTemplate(IDR_CommTestTYPE,
 		RUNTIME_CLASS(CCommTestDoc),
@@ -117,6 +118,7 @@ BOOL CCommTestApp::InitInstance()
 
 	// 分析标准外壳命令、DDE、打开文件操作的命令行
 	CCommandLineInfo cmdInfo;
+	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 	ParseCommandLine(cmdInfo);
 
 
