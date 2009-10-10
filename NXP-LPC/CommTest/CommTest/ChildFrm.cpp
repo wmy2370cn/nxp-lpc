@@ -60,3 +60,10 @@ void CChildFrame::ActivateFrame(int nCmdShow)
 }
 
 // CChildFrame 消息处理程序
+
+BOOL CChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
+}
