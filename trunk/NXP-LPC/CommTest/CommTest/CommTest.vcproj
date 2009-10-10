@@ -190,6 +190,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ClientChildFrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientCommDoc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientRecvView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientSendView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CommTest.cpp"
 				>
 			</File>
@@ -245,6 +261,22 @@
 			>
 			<File
 				RelativePath=".\ChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientCommDoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientRecvView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientSendView.h"
 				>
 			</File>
 			<File

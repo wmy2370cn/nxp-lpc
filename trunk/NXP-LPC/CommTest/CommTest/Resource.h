@@ -16,7 +16,6 @@
 #define IDR_MAINFRAME_256               129
 #define IDR_CommTestTYPE                130
 #define ID_WINDOW_MANAGER               131
-#define IDR_PING_TEST                   401
 #define IDS_WINDOWS_MANAGER             132
 #define ID_VIEW_CLASSVIEW               134
 #define ID_PROPERTIES                   135
@@ -77,10 +76,13 @@
 #define IDS_EDIT_MENU                   306
 #define IDB_WORKSPACE                   310
 #define IDB_BITMAP_LIST                 311
+#define IDD_DLG_SEND                    312
+#define IDD_DIALOG1                     313
+#define IDD_DLG_RECV                    313
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
-
+#define IDR_PING_TEST                   401
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -109,7 +111,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32856
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
