@@ -233,7 +233,7 @@ void CWorkSpaceBar::OnNewTest()
 	// TODO: 在此添加命令处理程序代码
 	if (theApp.m_pPingDocTemplate)
 	{
-		theApp.m_pDocTemplate->OpenDocumentFile(NULL);
+		theApp.m_pPingDocTemplate->OpenDocumentFile(NULL);
 	}
 	 
 

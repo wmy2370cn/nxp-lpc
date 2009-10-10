@@ -7,8 +7,9 @@
 #include "WorkSpaceBar.h" 
 #include "OutputBar.h"
 
+#define CMDIFrameWnd CBCGPMDIFrameWnd 
 
-class CMainFrame : public CBCGPMDIFrameWnd
+class CMainFrame : public CMDIFrameWnd
 {
 	DECLARE_DYNAMIC(CMainFrame)
 public:
