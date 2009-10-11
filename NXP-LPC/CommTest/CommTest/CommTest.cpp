@@ -27,11 +27,6 @@
 
 BEGIN_MESSAGE_MAP(CCommTestApp, CWinApp)
 	ON_COMMAND(ID_APP_ABOUT, &CCommTestApp::OnAppAbout)
-	// 基于文件的标准文档命令
-	ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
-	// 标准打印设置命令
-	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
 
