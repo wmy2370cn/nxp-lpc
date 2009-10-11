@@ -82,16 +82,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CList<UINT, UINT>	lstBasicCommands;
 
 //	lstBasicCommands.AddTail (ID_VIEW_TOOLBARS);
-	lstBasicCommands.AddTail (ID_FILE_NEW);
-	lstBasicCommands.AddTail (ID_FILE_OPEN);
-	lstBasicCommands.AddTail (ID_FILE_SAVE);
-	lstBasicCommands.AddTail (ID_FILE_PRINT);
+// 	lstBasicCommands.AddTail (ID_FILE_NEW);
+// 	lstBasicCommands.AddTail (ID_FILE_OPEN);
+// 	lstBasicCommands.AddTail (ID_FILE_SAVE);
+// 	lstBasicCommands.AddTail (ID_FILE_PRINT);
 	lstBasicCommands.AddTail (ID_APP_EXIT);
-	lstBasicCommands.AddTail (ID_EDIT_CUT);
-	lstBasicCommands.AddTail (ID_EDIT_PASTE);
-	lstBasicCommands.AddTail (ID_EDIT_UNDO);
-	lstBasicCommands.AddTail (ID_RECORD_NEXT);
-	lstBasicCommands.AddTail (ID_RECORD_LAST);
+// 	lstBasicCommands.AddTail (ID_EDIT_CUT);
+// 	lstBasicCommands.AddTail (ID_EDIT_PASTE);
+// 	lstBasicCommands.AddTail (ID_EDIT_UNDO);
+// 	lstBasicCommands.AddTail (ID_RECORD_NEXT);
+// 	lstBasicCommands.AddTail (ID_RECORD_LAST);
 	lstBasicCommands.AddTail (ID_APP_ABOUT);
 	lstBasicCommands.AddTail (ID_VIEW_TOOLBAR);
 	lstBasicCommands.AddTail (ID_VIEW_CUSTOMIZE);
