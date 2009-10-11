@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "WorkSpaceBar.h" 
+#include "NewClientDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -236,12 +237,19 @@ void CWorkSpaceBar::OnNewTest()
 	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
 	CString szItem;
 
+
+	CNewClientDlg dlg;
+	INT_PTR nRet = dlg.DoModal();
+
+	if (nRet != IDOK)
+		return;
+
 	if (theApp.m_pClientDocTemplate)
 	{
 		CDocument *pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
 		if (pDoc)
 		{
-			POSITION pos = pDoc-> GetFirstViewPosition();
+			POSITION pos = pDoc->GetFirstViewPosition();
 			while (pos != NULL)
 			{
 				CView* pView = pDoc->GetNextView(pos);
