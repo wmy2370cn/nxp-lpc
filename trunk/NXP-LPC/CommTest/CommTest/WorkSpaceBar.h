@@ -20,6 +20,21 @@ protected:
 	CImageList	m_Images;
 	void  ExpandItem(HTREEITEM hItem,UINT nCode);
 
+	CString  m_szEth;
+	CString  m_szClientMode;
+	CString  m_szSvrMode;
+	CString  m_szPingMode;
+	CString  m_szCom;
+	BOOL  InitString( );
+
+	HTREEITEM m_hEth;
+	HTREEITEM m_hCom;
+	HTREEITEM m_hClientMode;
+	HTREEITEM m_hSvrMode;
+	HTREEITEM m_hPingMode;
+
+
+
 // Operations
 public:
 

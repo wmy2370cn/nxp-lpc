@@ -32,7 +32,11 @@ END_MESSAGE_MAP()
 CWorkSpaceBar::CWorkSpaceBar()
 {
 	// TODO: add one-time construction code here
-
+	m_hEth = NULL;
+	m_hCom = NULL;
+	m_hClientMode = NULL;
+	m_hSvrMode = NULL;
+	m_hPingMode = NULL;
 }
 
 CWorkSpaceBar::~CWorkSpaceBar()
@@ -52,28 +56,50 @@ int CWorkSpaceBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Create tree windows.
 	// TODO: create your own tab windows here:
-	const DWORD dwViewStyle =	WS_CHILD | WS_VISIBLE | TVS_HASLINES | 
-								TVS_LINESATROOT | TVS_HASBUTTONS;
+	const DWORD dwViewStyle =	WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
 	
 	if (!m_wndTree.Create (dwViewStyle, rectDummy, this, 1))
 	{
 		TRACE0("Failed to create workspace view\n");
 		return -1;      // fail to create
 	}
+
 	InitImages( );
 
+	InitString( );
+
 	// Setup trees content:
-	HTREEITEM hNet = m_wndTree.InsertItem (_T("以太网"), 0,1);
-	m_wndTree.InsertItem (_T("客户端模式"), 0,1,hNet);
-	m_wndTree.InsertItem (_T("服务器模式"),0,1, hNet);
-
-	HTREEITEM hPing = m_wndTree.InsertItem (_T("PING"), 0,1);
-
-	HTREEITEM hCom = m_wndTree.InsertItem (_T("串口"), 0,1);
-	 
+	m_hEth = m_wndTree.InsertItem (m_szEth, 0,1);
+	m_hClientMode = m_wndTree.InsertItem (m_szClientMode, 0,1,m_hEth);
+	m_hSvrMode = m_wndTree.InsertItem (m_szSvrMode,0,1, m_hEth);
+	m_hPingMode = m_wndTree.InsertItem (m_szPingMode, 0,1,m_hEth);
+	m_hCom = m_wndTree.InsertItem (m_szCom, 0,1);
 
 	return 0;
 }
+
+BOOL  CWorkSpaceBar::InitString( )
+{
+	BOOL bValid = FALSE;
+	bValid =  m_szEth.LoadString(ID_STRING_ETH);
+	ASSERT(bValid);
+
+	bValid =  m_szClientMode.LoadString(ID_STRING_CLIENT_MODE);
+	ASSERT(bValid);
+
+	bValid =  m_szSvrMode.LoadString(ID_STRING_SVR_MODE);
+	ASSERT(bValid);
+	
+	bValid =  m_szPingMode.LoadString(ID_STRING_PING_MODE);
+	ASSERT(bValid);
+
+	bValid =  m_szCom.LoadString(ID_STRING_COM);
+	ASSERT(bValid);
+ 
+
+	return TRUE;
+}
+
 // 加载视图图像:
 int CWorkSpaceBar::InitImages( )
 {
@@ -192,32 +218,32 @@ void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
 	CMenu menu;
 	VERIFY(menu.LoadMenu (IDR_POPUP_WORKSPACE));
 	CMenu* pPopup = NULL;
+	pPopup = menu.GetSubMenu(0);
 
 	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
 	CString szItem;
 	if (ItemSel != NULL)
 	{
 		m_wndTree.SelectItem(ItemSel);
-		szItem = m_wndTree.GetItemText(ItemSel);
+//		szItem = m_wndTree.GetItemText(ItemSel);
+		if(ItemSel == m_hCom || ItemSel == m_hEth)
+		{
+			pPopup->DeleteMenu (ID_WORKSPACE_NEW,MF_BYCOMMAND );
+			pPopup->DeleteMenu (ID_WORKSPACE_DELETE,MF_BYCOMMAND );
+			pPopup->DeleteMenu (MF_SEPARATOR,MF_BYCOMMAND );
+		}
+		else if ( m_wndTree.GetParentItem(ItemSel) == m_hEth || m_wndTree.GetParentItem(ItemSel) == m_hCom)
+		{
+			pPopup->DeleteMenu (ID_WORKSPACE_DELETE,MF_BYCOMMAND );
+		}
 	}
 	else
 	{
 		m_wndTree.SelectItem(NULL);
+		pPopup->DeleteMenu (ID_WORKSPACE_NEW,MF_BYCOMMAND );
+		pPopup->DeleteMenu (ID_WORKSPACE_DELETE,MF_BYCOMMAND );
+ 		pPopup->DeleteMenu (MF_SEPARATOR,MF_BYCOMMAND );
 	}
-
-	pPopup = menu.GetSubMenu(0);
-
-// 	if (szItem == m_szDeviceInfo )
-// 	{
-// 		pPopup = menu.GetSubMenu(DEVICE_MENU);
-// 		ASSERT(pPopup);
-// 		//		pPopup->DeleteMenu (ID_PROJECT_EXPORT,MF_BYCOMMAND );
-// 	}
-// 	else if( szItem == m_szRTData )
-// 	{
-// 		pPopup = menu.GetSubMenu(RT_DATA_MENU);
-// 		ASSERT(pPopup);
-// 	}
 
 	pWndTree->SetFocus();
 
@@ -232,18 +258,44 @@ void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
 void CWorkSpaceBar::OnNewTest()
 {
 	// TODO: 在此添加命令处理程序代码
-	CPoint curPoint;
-	UINT nFlags = 0;
-	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
+// 	CPoint curPoint;
+// 	UINT nFlags = 0;
+// 	GetCursorPos(&curPoint);
+// 	m_wndTree.ScreenToClient(&curPoint);
+// 	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
+
+	HTREEITEM ItemSel = m_wndTree.GetSelectedItem();
+
 	CString szItem;
 
-
-	CNewClientDlg dlg;
-	INT_PTR nRet = dlg.DoModal();
-
-	if (nRet != IDOK)
+	if (ItemSel== NULL)
 		return;
+	 
+//		m_wndTree.SelectItem(ItemSel);
+//		szItem = m_wndTree.GetItemText(ItemSel);
+	 HTREEITEM hItem = NULL;
+	if ( m_wndTree.GetParentItem(ItemSel) == m_hClientMode || ItemSel == m_hClientMode)
+	{
+		CNewClientDlg dlg;
+		INT_PTR nRet = dlg.DoModal();
+		if (nRet != IDOK)
+			return;
 
+		in_addr stuIp;
+		memset(&stuIp,0,sizeof(in_addr));
+		stuIp.s_addr = htonl (dlg.m_dwDestIp);	
+		char szIp[128] = {0};
+		strcpy_s(szIp ,64, inet_ntoa(stuIp));
+		CString tmp = CA2W (szIp);			 
+		szItem.Format(_T("%s:%d"),tmp,dlg.m_nDestPort);
+
+	    hItem = m_wndTree.InsertItem(szItem,103,103,m_hClientMode);
+
+
+
+	}
+	 
+	CFrameWnd* pFrame = NULL;
 	if (theApp.m_pClientDocTemplate)
 	{
 		CDocument *pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
@@ -254,7 +306,7 @@ void CWorkSpaceBar::OnNewTest()
 			{
 				CView* pView = pDoc->GetNextView(pos);
 				ASSERT_VALID(pView);
-				CFrameWnd* pFrame = pView->GetParentFrame();
+				pFrame = pView->GetParentFrame();
 				// assume frameless views are ok to close
 				if (pFrame != NULL)
 				{
@@ -265,4 +317,10 @@ void CWorkSpaceBar::OnNewTest()
 			}
 		}
 	}
+	ASSERT_VALID(pFrame);
+	if (pFrame && hItem)
+	{
+		m_wndTree.SetItemData(hItem,(DWORD_PTR)pFrame);
+	}
+	m_wndTree.RedrawWindow();  
 }
