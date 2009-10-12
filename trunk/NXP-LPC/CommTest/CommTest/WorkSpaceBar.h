@@ -8,6 +8,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <hash_map>
+ 
+
+typedef stdext::hash_map <DWORD_PTR ,HTREEITEM> CTreeItemMap ;
+typedef std::pair <DWORD_PTR,HTREEITEM> TreeItem_Pair;
+
 class CWorkSpaceBar : public CBCGPDockingControlBar
 {
 public:
@@ -33,10 +39,12 @@ protected:
 	HTREEITEM m_hSvrMode;
 	HTREEITEM m_hPingMode;
 
+	CTreeItemMap m_TreeItemMap;
 
 
 // Operations
 public:
+	void CloseFrame( CWnd *pWnd);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

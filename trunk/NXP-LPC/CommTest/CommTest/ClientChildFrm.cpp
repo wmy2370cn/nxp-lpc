@@ -1,10 +1,11 @@
 
-// PingChildFrm.cpp : CClientChildFrame 类的实现
+// ClientChildFrame.cpp : CClientChildFrame 类的实现
 //
 
 #include "stdafx.h"
 #include "CommTest.h"
 
+#include "MainFrm.h"
 #include "ClientChildFrm.h"
 #include "ClientSendView.h"
 #include "ClientRecvView.h"
@@ -20,6 +21,8 @@ IMPLEMENT_DYNCREATE(CClientChildFrame, CBCGPMDIChildWnd)
 BEGIN_MESSAGE_MAP(CClientChildFrame, CBCGPMDIChildWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_CLOSE()
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 // CClientChildFrame 构造/析构
@@ -39,8 +42,7 @@ BOOL CClientChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: 在此处通过修改 CREATESTRUCT cs 来修改窗口类或样式
 	if( !CBCGPMDIChildWnd::PreCreateWindow(cs) )
 		return FALSE;
-	cs.style &= ~WS_SYSMENU;
-//	cs.style  &= ~FWS_ADDTOTITLE ;
+	cs.style &= ~WS_SYSMENU; 
 	return TRUE;
 }
 
@@ -111,5 +113,27 @@ void CClientChildFrame::OnSize(UINT nType, int cx, int cy)
 {
 	CBCGPMDIChildWnd::OnSize(nType, cx, cy);
 	
+	// TODO: 在此处添加消息处理程序代码
+}
+
+void CClientChildFrame::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	
+	CBCGPMDIChildWnd::OnClose();
+}
+
+void CClientChildFrame::OnDestroy()
+{
+	CMainFrame*pMain = (CMainFrame*) GetMDIFrame();
+	ASSERT(pMain);
+	if (pMain)
+	{
+		pMain->CloseChildFrm(this);
+	}
+
+	CBCGPMDIChildWnd::OnDestroy();
+	
+
 	// TODO: 在此处添加消息处理程序代码
 }

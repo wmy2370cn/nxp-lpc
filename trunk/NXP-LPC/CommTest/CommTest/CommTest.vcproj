@@ -222,6 +222,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EcBusSocket.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
@@ -301,6 +305,10 @@
 			</File>
 			<File
 				RelativePath=".\CommTestView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EcBusSocket.h"
 				>
 			</File>
 			<File
