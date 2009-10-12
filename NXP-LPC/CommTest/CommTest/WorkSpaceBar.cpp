@@ -309,6 +309,8 @@ void CWorkSpaceBar::OnNewTest()
 			}
 			else
 				pClientCommDoc->m_nLocalPort = 0;
+
+			pDoc->UpdateAllViews(NULL,1);
 		}
 	}
 	else if ( m_wndTree.GetParentItem(ItemSel) == m_hPingMode || ItemSel == m_hPingMode)
