@@ -14,6 +14,49 @@
 #define new DEBUG_NEW
 #endif
 
+
+IMPLEMENT_DYNAMIC(CSplitterWndEx,CBCGPSplitterWnd)
+
+/////////////////////////////////////////////////////////////////////////////
+// CBCGPSplitterWnd
+
+CSplitterWndEx::CSplitterWndEx()
+{
+}
+
+CSplitterWndEx::~CSplitterWndEx()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CSplitterWndEx ,CBCGPSplitterWnd)
+	//{{AFX_MSG_MAP(CSplitterWndEx)
+	// NOTE - the ClassWizard will add and remove mapping macros here.
+	//}}AFX_MSG_MAP
+	ON_WM_MOUSEMOVE()
+END_MESSAGE_MAP()
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CSplitterWndEx message handlers 
+
+void CSplitterWndEx::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// 限制切分条的运动范围。 
+	if(point.x< 144 ||point.x > 200) 
+	{ 
+		CWnd::OnMouseMove(nFlags, point); 
+	} 
+	else 
+	{ 
+		CBCGPSplitterWnd::OnMouseMove(nFlags, point); 
+	} 
+
+ //	CBCGPSplitterWnd::OnMouseMove(nFlags, point);
+}
+
+
 // CClientChildFrame
 
 IMPLEMENT_DYNCREATE(CClientChildFrame, CBCGPMDIChildWnd)

@@ -4,6 +4,40 @@
 
 #pragma once
 
+class CSplitterWndEx: public CBCGPSplitterWnd
+{
+	DECLARE_DYNAMIC(CSplitterWndEx)
+
+	// Construction
+public:
+	CSplitterWndEx();
+
+	// Attributes
+public:
+
+	// Operations
+public:
+
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CSplitterWndEx)
+	//}}AFX_VIRTUAL
+
+ 
+	// Implementation
+public:
+	virtual ~CSplitterWndEx();
+
+	// Generated message map functions
+protected:
+	//{{AFX_MSG(CSplitterWndEx)
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+};
+
 class CClientChildFrame : public CBCGPMDIChildWnd
 {
 	DECLARE_DYNCREATE(CClientChildFrame)
@@ -12,7 +46,7 @@ public:
 
 // ÊôÐÔ
 public:
-	CBCGPSplitterWnd  m_wndSplitter1;
+	CSplitterWndEx  m_wndSplitter1;
 	CBCGPSplitterWnd  m_wndSplitter2;
 
 // ²Ù×÷
