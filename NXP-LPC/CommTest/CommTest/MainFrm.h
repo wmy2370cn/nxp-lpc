@@ -33,6 +33,8 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
+	void CloseChildFrm( CBCGPMDIChildWnd *pWnd );
+
 protected:  // 控件条嵌入成员
 	CBCGPMenuBar       m_wndMenuBar;
 	CBCGPToolBar       m_wndToolBar;

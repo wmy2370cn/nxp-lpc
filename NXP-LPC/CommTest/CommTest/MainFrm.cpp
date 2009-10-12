@@ -622,3 +622,11 @@ CBCGPMDIChildWnd* CMainFrame::CreateDocumentWindow (LPCTSTR lpcszDocName, CObjec
 
 	return NULL;
 }
+
+void CMainFrame::CloseChildFrm( CBCGPMDIChildWnd *pWnd )
+{
+	if (m_wndWorkSpace.GetSafeHwnd())
+	{
+		m_wndWorkSpace.CloseFrame(pWnd);
+	}
+}

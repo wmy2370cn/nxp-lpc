@@ -273,7 +273,7 @@ void CWorkSpaceBar::OnNewTest()
 	 
 //		m_wndTree.SelectItem(ItemSel);
 //		szItem = m_wndTree.GetItemText(ItemSel);
-	 HTREEITEM hItem = NULL;
+	HTREEITEM hItem = NULL;
 	if ( m_wndTree.GetParentItem(ItemSel) == m_hClientMode || ItemSel == m_hClientMode)
 	{
 		CNewClientDlg dlg;
@@ -301,6 +301,7 @@ void CWorkSpaceBar::OnNewTest()
 		CDocument *pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
 		if (pDoc)
 		{
+			pDoc->SetTitle( szItem );
 			POSITION pos = pDoc->GetFirstViewPosition();
 			while (pos != NULL)
 			{
@@ -321,6 +322,23 @@ void CWorkSpaceBar::OnNewTest()
 	if (pFrame && hItem)
 	{
 		m_wndTree.SetItemData(hItem,(DWORD_PTR)pFrame);
+		m_TreeItemMap.insert( TreeItem_Pair ((DWORD_PTR)pFrame ,hItem) );
 	}
 	m_wndTree.RedrawWindow();  
+}
+
+void CWorkSpaceBar::CloseFrame( CWnd *pWnd)
+{
+	ASSERT_VALID(pWnd);
+	if (pWnd == NULL)
+		return;
+
+	CTreeItemMap::iterator it =	m_TreeItemMap.find( (DWORD_PTR) pWnd );
+	if (it != m_TreeItemMap.end())
+	{
+		m_wndTree.DeleteItem( (it)->second );
+
+		m_TreeItemMap.erase(it);
+		m_wndTree.RedrawWindow();  
+	}
 }

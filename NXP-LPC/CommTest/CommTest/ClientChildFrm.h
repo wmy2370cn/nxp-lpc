@@ -1,5 +1,5 @@
 
-// PingChildFrm.h : CClientChildFrame 类的接口
+// ClientChildFrame.h : CClientChildFrame 类的接口
 //
 
 #pragma once
@@ -38,4 +38,6 @@ protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnClose();
+	afx_msg void OnDestroy();
 };
