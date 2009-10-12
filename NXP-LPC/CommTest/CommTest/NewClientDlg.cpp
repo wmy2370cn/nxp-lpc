@@ -14,6 +14,8 @@ CNewClientDlg::CNewClientDlg(CWnd* pParent /*=NULL*/)
 	: CBCGPDialog(CNewClientDlg::IDD, pParent)
 	, m_nDestPort(0)
 	, m_nLocalPort(0)
+	, m_nProtocolType(0)
+	, m_bRandomPort(FALSE)
 {
 	m_dwDestIp = 0;
 }
@@ -28,10 +30,14 @@ void CNewClientDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_IPADDRESS_DEST, m_ctlDestIp);
 	DDX_Text(pDX, IDC_EDIT_DEST_PORT, m_nDestPort);
 	DDX_Text(pDX, IDC_EDIT_LOCAL_PORT, m_nLocalPort); 
+	DDX_CBIndex(pDX, IDC_CB_PROTO_TYPE, m_nProtocolType);
+	DDX_Radio(pDX, IDC_RADIO_LOCAL_PORT1, m_bRandomPort);
 }
 
 
 BEGIN_MESSAGE_MAP(CNewClientDlg, CBCGPDialog)
+	ON_BN_CLICKED(IDC_RADIO_LOCAL_PORT1, &CNewClientDlg::OnBnClickedRadioLocalPort1)
+	ON_BN_CLICKED(IDC_RADIO_LOCAL_PORT2, &CNewClientDlg::OnBnClickedRadioLocalPort2)
 END_MESSAGE_MAP()
 
 
@@ -48,6 +54,24 @@ BOOL CNewClientDlg::OnInitDialog()
 	m_ctlDestIp.SetAddress(dwIp);
 	m_nDestPort = 505;
 
+	CWnd *pLocalPort =GetDlgItem(IDC_EDIT_LOCAL_PORT);
+	ASSERT(pLocalPort);
+
+	if (m_bRandomPort)
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(TRUE);
+		}
+	}
+	else
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(FALSE);
+			m_nLocalPort = 0;
+		}
+	}
 
 	UpdateData(FALSE);
 
@@ -63,4 +87,54 @@ void CNewClientDlg::OnOK()
  	m_ctlDestIp.GetAddress(m_dwDestIp);
 
 	CBCGPDialog::OnOK();
+}
+
+void CNewClientDlg::OnBnClickedRadioLocalPort1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+
+	CWnd *pLocalPort =GetDlgItem(IDC_EDIT_LOCAL_PORT);
+	ASSERT(pLocalPort);
+
+	if (m_bRandomPort)
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(TRUE);
+		}
+	}
+	else
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(FALSE);
+			m_nLocalPort = 0;
+		}
+	}
+}
+
+void CNewClientDlg::OnBnClickedRadioLocalPort2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+
+	CWnd *pLocalPort =GetDlgItem(IDC_EDIT_LOCAL_PORT);
+	ASSERT(pLocalPort);
+
+	if (m_bRandomPort)
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(TRUE);
+		}
+	}
+	else
+	{
+		if (pLocalPort)
+		{
+			pLocalPort->EnableWindow(FALSE);
+			m_nLocalPort = 0;
+		}
+	}
 }

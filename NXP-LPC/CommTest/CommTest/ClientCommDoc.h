@@ -14,6 +14,11 @@ protected: // 仅从序列化创建
 
 // 属性
 public:
+	int  m_nProtocolType; //协议类型 0 TCP 1 UDP
+	DWORD m_dwDestIp;
+	unsigned int m_nDestPort;
+	unsigned int m_nLocalPort; //0 表示随机端口 非0为指定端口
+
 
 // 操作
 public:

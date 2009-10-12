@@ -40,7 +40,6 @@
 #define ID_EXPAND_ALL                   154
 #define IDS_FILE_VIEW                   155
 #define IDS_CLASS_VIEW                  156
-#define IDS_MAIN_TOOLBAR                156
 #define IDS_OUTPUT_WND                  157
 #define IDS_PROPERTIES_WND              158
 #define IDI_CLASS_VIEW_HC               164
@@ -98,8 +97,10 @@
 #define IDC_EDIT_DEST_PORT2             1005
 #define IDC_CHECK1                      1009
 #define IDC_BUTTON_RESET                1010
-#define IDC_BUTTON2                     1011
 #define IDC_BUTTON_START                1011
+#define IDC_STATIC_SND_CNT              1012
+#define IDC_STATIC_RCV_CNT              1013
+#define IDS_MAIN_TOOLBAR                1014
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -130,7 +131,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        319
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
