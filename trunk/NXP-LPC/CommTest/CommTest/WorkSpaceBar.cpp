@@ -5,6 +5,7 @@
 #include "CommTest.h"
 #include "WorkSpaceBar.h" 
 #include "NewClientDlg.h"
+#include "ClientCommDoc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,6 +24,8 @@ BEGIN_MESSAGE_MAP(CWorkSpaceBar, CBCGPDockingControlBar)
 	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_TREE_EXPAND, &CWorkSpaceBar::OnTreeExpand)
+	ON_COMMAND(ID_TREE_COLLAPSE, &CWorkSpaceBar::OnTreeCollapse)
 	ON_COMMAND(ID_WORKSPACE_NEW, &CWorkSpaceBar::OnNewTest)
 END_MESSAGE_MAP()
 
@@ -168,6 +171,7 @@ void CWorkSpaceBar::OnTreeCollapse()
 		ExpandItem(hItemSel,TVE_COLLAPSE);
 	}
 } 
+
 void  CWorkSpaceBar::ExpandItem(HTREEITEM hItem,UINT nCode)
 {
 	m_wndTree.Expand(hItem,nCode);
@@ -266,6 +270,9 @@ void CWorkSpaceBar::OnNewTest()
 		return;
 	  
 	HTREEITEM hItem = NULL;
+	CDocument *pDoc = NULL;
+	CFrameWnd* pFrame = NULL;
+
 	if ( m_wndTree.GetParentItem(ItemSel) == m_hClientMode || ItemSel == m_hClientMode)
 	{
 		CNewClientDlg dlg;
@@ -284,38 +291,51 @@ void CWorkSpaceBar::OnNewTest()
 	    hItem = m_wndTree.InsertItem(szItem,103,103,m_hClientMode);
 		m_wndTree.Expand(m_hClientMode,TVE_EXPAND);
 
+		CClientCommDoc *pClientCommDoc = NULL;
 
+		if (theApp.m_pClientDocTemplate)
+		{
+			pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
+			pDoc->SetTitle( szItem );
 
+			pClientCommDoc = (CClientCommDoc *)pDoc;
+			//保存值到doc里面
+			pClientCommDoc->m_nDestPort = dlg.m_nDestPort;
+			pClientCommDoc->m_dwDestIp = dlg.m_dwDestIp;
+			pClientCommDoc->m_nProtocolType = dlg.m_nProtocolType;
+			if (dlg.m_bRandomPort && dlg.m_nLocalPort )
+			{
+				pClientCommDoc->m_nLocalPort = dlg.m_nLocalPort;
+			}
+			else
+				pClientCommDoc->m_nLocalPort = 0;
+		}
 	}
 	else if ( m_wndTree.GetParentItem(ItemSel) == m_hPingMode || ItemSel == m_hPingMode)
 	{
 
 	}
 
-	 
-	CFrameWnd* pFrame = NULL;
-	if (theApp.m_pClientDocTemplate)
+
+	ASSERT(pDoc);	 	
+	if (pDoc)
 	{
-		CDocument *pDoc = theApp.m_pClientDocTemplate->OpenDocumentFile(NULL);
-		if (pDoc)
+		POSITION pos = pDoc->GetFirstViewPosition();
+		while (pos != NULL)
 		{
-			pDoc->SetTitle( szItem );
-			POSITION pos = pDoc->GetFirstViewPosition();
-			while (pos != NULL)
+			CView* pView = pDoc->GetNextView(pos);
+			ASSERT_VALID(pView);
+			pFrame = pView->GetParentFrame();
+			// assume frameless views are ok to close
+			if (pFrame != NULL)
 			{
-				CView* pView = pDoc->GetNextView(pos);
-				ASSERT_VALID(pView);
-				pFrame = pView->GetParentFrame();
-				// assume frameless views are ok to close
-				if (pFrame != NULL)
-				{
-					// assumes 1 document per frame
-					ASSERT_VALID(pFrame);
-					break;				 
-				}
+				// assumes 1 document per frame
+				ASSERT_VALID(pFrame);
+				break;				 
 			}
 		}
 	}
+	 
 	ASSERT_VALID(pFrame);
 	if (pFrame && hItem)
 	{

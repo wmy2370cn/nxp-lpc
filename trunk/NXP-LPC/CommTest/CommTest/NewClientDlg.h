@@ -29,4 +29,8 @@ public:
 protected:
 	virtual void OnOK();
 public: 
+	int m_nProtocolType;
+	BOOL m_bRandomPort;
+	afx_msg void OnBnClickedRadioLocalPort1();
+	afx_msg void OnBnClickedRadioLocalPort2();
 };
