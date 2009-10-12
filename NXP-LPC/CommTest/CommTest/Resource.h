@@ -83,13 +83,17 @@
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
 #define IDR_PING_TEST                   401
-#define IDC_IPADDRESS1                  1000
+#define ID_STRING_ETH                   500
+#define ID_STRING_CLIENT_MODE           501
+#define ID_STRING_SVR_MODE              502
+#define ID_STRING_PING_MODE             503
+#define ID_STRING_COM                   504
+#define IDC_IPADDRESS_DEST              1000
 #define IDC_CB_PROTO_TYPE               1001
-#define IDC_RADIO1                      1002
-#define IDC_RADIO2                      1003
+#define IDC_RADIO_LOCAL_PORT1           1002
+#define IDC_RADIO_LOCAL_PORT2           1003
 #define IDC_EDIT_DEST_PORT              1004
-#define IDC_EDIT_DEST_PORT2             1005
-#define IDC_EDIT_LOCAL_PORT             1005
+#define IDC_EDIT_LOCAL_PORT             1005 
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -118,9 +122,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        315
+#define _APS_NEXT_RESOURCE_VALUE        316
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1005
+#define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

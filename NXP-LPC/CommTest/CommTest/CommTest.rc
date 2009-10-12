@@ -452,15 +452,15 @@ BEGIN
     PUSHBUTTON      "取消",IDCANCEL,169,113,50,14
     LTEXT           "类型",IDC_STATIC,23,17,17,8
     LTEXT           "目标IP：",IDC_STATIC,22,46,32,8
-    CONTROL         "",IDC_IPADDRESS1,"SysIPAddress32",WS_TABSTOP,67,44,95,12
+    CONTROL         "",IDC_IPADDRESS_DEST,"SysIPAddress32",WS_TABSTOP,67,44,95,12
     LTEXT           "端口",IDC_STATIC,177,46,17,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,33,263,1
     LTEXT           "本地端口",IDC_STATIC,19,81,41,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,68,263,1
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,101,263,1
     COMBOBOX        IDC_CB_PROTO_TYPE,67,14,96,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "随机选择端口",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,71,80,67,10
-    CONTROL         "指定",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,162,80,40,10
+    CONTROL         "随机选择端口",IDC_RADIO_LOCAL_PORT1,"Button",BS_AUTORADIOBUTTON,71,80,67,10
+    CONTROL         "指定",IDC_RADIO_LOCAL_PORT2,"Button",BS_AUTORADIOBUTTON,162,80,40,10
     EDITTEXT        IDC_EDIT_DEST_PORT,210,44,40,14,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_LOCAL_PORT,210,76,40,14,ES_AUTOHSCROLL | ES_NUMBER
 END
@@ -543,6 +543,21 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DLG_NEW_CLIENT DLGINIT
+BEGIN
+    IDC_CB_PROTO_TYPE, 0x403, 4, 0
+0x4354, 0x0050, 
+    IDC_CB_PROTO_TYPE, 0x403, 4, 0
+0x4455, 0x0050, 
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -711,6 +726,15 @@ BEGIN
     ID_TREE_COLLAPSE        "将所选择的子项全部折叠\n全部折叠"
     ID_WORKSPACE_NEW        "新建测试方案\n新建"
     ID_WORKSPACE_DELETE     "删除选定的测试方案\n删除"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STRING_ETH           "以太网"
+    ID_STRING_CLIENT_MODE   "客户端模式"
+    ID_STRING_SVR_MODE      "服务端模式"
+    ID_STRING_PING_MODE     "PING模式"
+    ID_STRING_COM           "串行口"
 END
 
 #endif    // 中文(中华人民共和国) resources

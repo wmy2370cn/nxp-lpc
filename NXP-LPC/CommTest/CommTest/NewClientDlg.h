@@ -1,4 +1,5 @@
 #pragma once
+#include "afxcmn.h"
 
 
 // CNewClientDlg ¶Ô»°¿ò
@@ -20,4 +21,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
+ 	CIPAddressCtrl m_ctlDestIp;
+ 	UINT m_nDestPort;
+	UINT m_nLocalPort;
+
+	DWORD m_dwDestIp;
+protected:
+	virtual void OnOK();
+public: 
 };
