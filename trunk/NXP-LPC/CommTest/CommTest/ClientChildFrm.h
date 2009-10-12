@@ -12,7 +12,8 @@ public:
 
 // ÊôĞÔ
 public:
-	CBCGPSplitterWnd  m_wndSplitter;
+	CBCGPSplitterWnd  m_wndSplitter1;
+	CBCGPSplitterWnd  m_wndSplitter2;
 
 // ²Ù×÷
 public:

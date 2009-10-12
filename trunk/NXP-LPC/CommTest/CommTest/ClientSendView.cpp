@@ -8,10 +8,10 @@
 
 // CClientSendView
 
-IMPLEMENT_DYNCREATE(CClientSendView, CFormView)
+IMPLEMENT_DYNCREATE(CClientSendView, CBCGPFormView)
 
 CClientSendView::CClientSendView()
-	: CFormView(CClientSendView::IDD)
+	: CBCGPFormView(CClientSendView::IDD)
 {
 
 }
@@ -22,10 +22,11 @@ CClientSendView::~CClientSendView()
 
 void CClientSendView::DoDataExchange(CDataExchange* pDX)
 {
-	CFormView::DoDataExchange(pDX);
+	CBCGPFormView::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CClientSendView, CFormView)
+BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -34,16 +35,27 @@ END_MESSAGE_MAP()
 #ifdef _DEBUG
 void CClientSendView::AssertValid() const
 {
-	CFormView::AssertValid();
+	CBCGPFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
 void CClientSendView::Dump(CDumpContext& dc) const
 {
-	CFormView::Dump(dc);
+	CBCGPFormView::Dump(dc);
 }
 #endif
 #endif //_DEBUG
 
 
 // CClientSendView 消息处理程序
+
+int CClientSendView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPFormView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+	EnableVisualManagerStyle();
+
+	return 0;
+}

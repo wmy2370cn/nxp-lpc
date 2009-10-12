@@ -258,21 +258,13 @@ void CWorkSpaceBar::OnContextMenu(CWnd* pWnd, CPoint point)
 void CWorkSpaceBar::OnNewTest()
 {
 	// TODO: 在此添加命令处理程序代码
-// 	CPoint curPoint;
-// 	UINT nFlags = 0;
-// 	GetCursorPos(&curPoint);
-// 	m_wndTree.ScreenToClient(&curPoint);
-// 	HTREEITEM ItemSel = m_wndTree.HitTest(curPoint, &nFlags);
-
 	HTREEITEM ItemSel = m_wndTree.GetSelectedItem();
 
 	CString szItem;
 
 	if (ItemSel== NULL)
 		return;
-	 
-//		m_wndTree.SelectItem(ItemSel);
-//		szItem = m_wndTree.GetItemText(ItemSel);
+	  
 	HTREEITEM hItem = NULL;
 	if ( m_wndTree.GetParentItem(ItemSel) == m_hClientMode || ItemSel == m_hClientMode)
 	{
@@ -290,10 +282,16 @@ void CWorkSpaceBar::OnNewTest()
 		szItem.Format(_T("%s:%d"),tmp,dlg.m_nDestPort);
 
 	    hItem = m_wndTree.InsertItem(szItem,103,103,m_hClientMode);
+		m_wndTree.Expand(m_hClientMode,TVE_EXPAND);
 
 
 
 	}
+	else if ( m_wndTree.GetParentItem(ItemSel) == m_hPingMode || ItemSel == m_hPingMode)
+	{
+
+	}
+
 	 
 	CFrameWnd* pFrame = NULL;
 	if (theApp.m_pClientDocTemplate)
@@ -324,6 +322,7 @@ void CWorkSpaceBar::OnNewTest()
 		m_wndTree.SetItemData(hItem,(DWORD_PTR)pFrame);
 		m_TreeItemMap.insert( TreeItem_Pair ((DWORD_PTR)pFrame ,hItem) );
 	}
+	
 	m_wndTree.RedrawWindow();  
 }
 

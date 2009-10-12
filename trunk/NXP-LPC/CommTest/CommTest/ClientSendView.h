@@ -4,7 +4,7 @@
 
 // CClientSendView 窗体视图
 
-class CClientSendView : public CFormView
+class CClientSendView : public CBCGPFormView
 {
 	DECLARE_DYNCREATE(CClientSendView)
 
@@ -25,6 +25,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 

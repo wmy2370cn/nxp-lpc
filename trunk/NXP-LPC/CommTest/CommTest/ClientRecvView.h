@@ -4,7 +4,7 @@
 
 // CClientRecvView 窗体视图
 
-class CClientRecvView : public CFormView
+class CClientRecvView : public CBCGPFormView
 {
 	DECLARE_DYNCREATE(CClientRecvView)
 
@@ -25,6 +25,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 
