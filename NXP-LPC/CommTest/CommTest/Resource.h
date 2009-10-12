@@ -79,6 +79,7 @@
 #define IDD_DLG_SEND                    312
 #define IDD_DLG_RECV                    313
 #define IDD_DLG_NEW_CLIENT              314
+#define IDD_DLG_CLIENT_OPTIONS          317
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
@@ -93,7 +94,12 @@
 #define IDC_RADIO_LOCAL_PORT1           1002
 #define IDC_RADIO_LOCAL_PORT2           1003
 #define IDC_EDIT_DEST_PORT              1004
-#define IDC_EDIT_LOCAL_PORT             1005 
+#define IDC_EDIT_LOCAL_PORT             1005
+#define IDC_EDIT_DEST_PORT2             1005
+#define IDC_CHECK1                      1009
+#define IDC_BUTTON_RESET                1010
+#define IDC_BUTTON2                     1011
+#define IDC_BUTTON_START                1011
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -122,9 +128,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_RESOURCE_VALUE        319
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

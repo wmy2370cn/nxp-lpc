@@ -8,10 +8,10 @@
 
 // CClientRecvView
 
-IMPLEMENT_DYNCREATE(CClientRecvView, CFormView)
+IMPLEMENT_DYNCREATE(CClientRecvView, CBCGPFormView)
 
 CClientRecvView::CClientRecvView()
-	: CFormView(CClientRecvView::IDD)
+	: CBCGPFormView(CClientRecvView::IDD)
 {
 
 }
@@ -22,10 +22,11 @@ CClientRecvView::~CClientRecvView()
 
 void CClientRecvView::DoDataExchange(CDataExchange* pDX)
 {
-	CFormView::DoDataExchange(pDX);
+	CBCGPFormView::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CClientRecvView, CFormView)
+BEGIN_MESSAGE_MAP(CClientRecvView, CBCGPFormView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -34,16 +35,26 @@ END_MESSAGE_MAP()
 #ifdef _DEBUG
 void CClientRecvView::AssertValid() const
 {
-	CFormView::AssertValid();
+	CBCGPFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
 void CClientRecvView::Dump(CDumpContext& dc) const
 {
-	CFormView::Dump(dc);
+	CBCGPFormView::Dump(dc);
 }
 #endif
 #endif //_DEBUG
 
 
 // CClientRecvView 消息处理程序
+
+int CClientRecvView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPFormView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+	EnableVisualManagerStyle();
+	return 0;
+}
