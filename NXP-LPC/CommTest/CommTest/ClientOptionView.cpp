@@ -166,12 +166,26 @@ void CClientOptionView::OnBnClickedButtonStart()
 		return;
 	//保存界面上面数据，然后校验一下是否合法
 
+	pDoc->m_nProtocolType = m_nProtocolType; //协议类型 0 TCP 1 UDP	 
+	pDoc->m_nDestPort = m_nDestPortNum;
+//	pDoc->m_nLocalPort = ; //0 表示随机端口 非0为指定端口
+
+	if (m_bRandromLocalPort)
+	{
+		pDoc->m_nLocalPort = m_nLocalPortNum;		 
+	}
+	else
+	{
+		pDoc->m_nLocalPort = 0;
+	}
+
+	m_wndDestIp.GetAddress(pDoc->m_dwDestIp);
+
 	BOOL bRet = pDoc->m_ClientSocket.Connect();
 	if (bRet)
 	{
+
 	}
-
-
 }
 
 void CClientOptionView::OnBnClickedButtonReset()

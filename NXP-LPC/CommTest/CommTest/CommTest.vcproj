@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DataBuf.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EcBusSocket.cpp"
 				>
 			</File>
@@ -313,6 +317,10 @@
 			</File>
 			<File
 				RelativePath=".\CommTestView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DataBuf.h"
 				>
 			</File>
 			<File
@@ -455,6 +463,62 @@
 			</File>
 			<File
 				RelativePath=".\res\Workspace.bmp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Boost"
+			>
+			<File
+				RelativePath=".\boost\memory\auto_alloc.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\basic.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\block_pool.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\container\dcl_list.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\fixed_alloc.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\object_pool.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\pool.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\pools.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\region_alloc.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\scoped_alloc.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\system_alloc.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\boost\memory\type_traits.hpp"
 				>
 			</File>
 		</Filter>

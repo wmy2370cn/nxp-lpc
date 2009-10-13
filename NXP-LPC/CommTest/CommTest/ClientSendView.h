@@ -1,4 +1,5 @@
 #pragma once
+#include "afxwin.h"
 
 
 
@@ -29,6 +30,9 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedButtonSend();
+	CEdit m_wndSend;
+	BOOL m_bHex;
+	afx_msg void OnEnChangeEditSendTxt();
 };
 
 
