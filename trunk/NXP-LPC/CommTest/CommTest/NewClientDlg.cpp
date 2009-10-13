@@ -69,7 +69,7 @@ BOOL CNewClientDlg::OnInitDialog()
 		if (pLocalPort)
 		{
 			pLocalPort->EnableWindow(FALSE);
-			m_nLocalPort = 0;
+			m_nLocalPort = 4001;
 		}
 	}
 
@@ -109,7 +109,7 @@ void CNewClientDlg::OnBnClickedRadioLocalPort1()
 		if (pLocalPort)
 		{
 			pLocalPort->EnableWindow(FALSE);
-			m_nLocalPort = 0;
+			m_nLocalPort = 4001;
 		}
 	}
 }
@@ -134,7 +134,7 @@ void CNewClientDlg::OnBnClickedRadioLocalPort2()
 		if (pLocalPort)
 		{
 			pLocalPort->EnableWindow(FALSE);
-			m_nLocalPort = 0;
+			m_nLocalPort = 4001;
 		}
 	}
 }

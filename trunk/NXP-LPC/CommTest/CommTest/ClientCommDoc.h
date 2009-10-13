@@ -6,6 +6,8 @@
 #pragma once
 #include "ClientComm.h"
 
+const int MAX_SEND_LEN = 2048;
+
 class CClientCommDoc : public CDocument
 {
 protected: // 仅从序列化创建
@@ -20,6 +22,17 @@ public:
 	unsigned int m_nLocalPort; //0 表示随机端口 非0为指定端口
 
 	CClientSocket  m_ClientSocket;
+
+	CMutex  m_nSendTxtMutex;
+
+	//原始的，UNICODE编码
+	CString m_szRawSendTxt;
+
+ 
+
+#ifdef UNICODE
+	
+#endif // UNICODE
 
 
 // 操作

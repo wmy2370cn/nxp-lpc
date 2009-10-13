@@ -12,7 +12,9 @@ CClientSocket::CClientSocket( )
 	m_nDestPortNum = 0;
 	m_nLocalPortNum = 0;
 
-
+	m_pCommTsk = NULL;
+	m_hTaskHandle = NULL;
+	m_hStopEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 }
 
 CClientSocket::~CClientSocket( )
@@ -98,4 +100,32 @@ BOOL CClientSocket::Connect ( DWORD dwTimeout )
 	return FALSE;
 }
 
+//开始收发
+void CClientSocket::StartEngine( )
+{
+	StopEngine();
+	if (m_pCommTsk == NULL)
+	{
+		m_pCommTsk = AfxBeginThread( EthCommTask, (LPVOID)(this));
+		m_pCommTsk->m_bAutoDelete = FALSE;
+		m_pCommTsk->ResumeThread();
 
+		HANDLE pProcess = ::GetCurrentProcess();
+		ASSERT(pProcess);
+		//将句柄复制
+		BOOL bRet = ::DuplicateHandle(pProcess,m_pCommTsk->m_hThread,pProcess,&m_hTaskHandle,DUPLICATE_SAME_ACCESS,true,DUPLICATE_SAME_ACCESS);
+		//保证所复制的句柄要有效
+		ASSERT(bRet);
+	}
+	return ;
+}
+//停止收发
+void CClientSocket::StopEngine( )
+{
+
+}
+UINT  EthCommTask (LPVOID lpParam)
+{
+
+	return 0;
+}
