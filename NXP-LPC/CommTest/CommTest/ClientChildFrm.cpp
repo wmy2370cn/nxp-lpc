@@ -44,7 +44,7 @@ void CSplitterWndEx::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	// 限制切分条的运动范围。 
-	if(point.x< 144 ||point.x > 200) 
+	if(point.x< 144 ||point.x > 180) 
 	{ 
 		CWnd::OnMouseMove(nFlags, point); 
 	} 
@@ -148,9 +148,9 @@ BOOL CClientChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCon
 	m_wndSplitter2.CreateView (0, 0, RUNTIME_CLASS (CClientSendView), CSize(0, 0), pContext);
 	m_wndSplitter2.CreateView (1, 0, RUNTIME_CLASS (CClientRecvView), CSize(0, 0), pContext);
 
-	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
+//	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
 
-	m_wndSplitter2.SetRowInfo(0, rectClient.Height () / 3 , 40);
+	m_wndSplitter2.SetRowInfo(0, rectClient.Height () *2/5 , 40);
 	m_wndSplitter2.SetWindowPos (NULL, 0, 0, rectClient.Width (), rectClient.Height (), SWP_NOZORDER | SWP_NOREDRAW);
 	m_wndSplitter2.RecalcLayout();
 

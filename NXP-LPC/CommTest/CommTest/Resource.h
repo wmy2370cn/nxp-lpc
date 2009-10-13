@@ -98,6 +98,7 @@
 #define IDC_EDIT_DEST_PORT_OPT          1005
 #define IDC_CHECK1                      1009
 #define IDC_CHECK_LOCAL_PORT            1009
+#define IDC_CHECK_HEX                   1009
 #define IDC_BUTTON_RESET                1010
 #define IDC_BUTTON_START                1011
 #define IDC_STATIC_SND_CNT              1012
@@ -106,6 +107,14 @@
 #define IDC_IPADDRESS_DEST_OPT          1014
 #define IDC_EDIT_LOCAL_PORT_OPT         1015
 #define IDC_CB_PROTO_TYPE_OPT           1017
+#define IDC_EDIT_SEND_TXT               1017
+#define IDC_BUTTON_SEND                 1018
+#define IDC_BUTTON_CLEAR                1019
+#define IDC_BUTTON_STOP                 1020
+#define IDC_BUTTON_DISP                 1020
+#define IDC_BUTTON_PROTOCOL             1021
+#define IDC_BUTTON2                     1021
+#define IDC_BUTTON_CLEAR_RECV           1021
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -136,7 +145,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        319
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1017
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
