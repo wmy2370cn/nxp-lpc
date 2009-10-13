@@ -23,7 +23,6 @@ public:
 
 	CClientSocket  m_ClientSocket;
 
-	CMutex  m_nSendTxtMutex;
 
 	//Ô­Ê¼µÄ£¬UNICODE±àÂë
 	CString m_szRawSendTxt;
