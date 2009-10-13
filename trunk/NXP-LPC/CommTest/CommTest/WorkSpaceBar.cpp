@@ -78,6 +78,8 @@ int CWorkSpaceBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_hPingMode = m_wndTree.InsertItem (m_szPingMode, 0,1,m_hEth);
 	m_hCom = m_wndTree.InsertItem (m_szCom, 0,1);
 
+	ExpandItem( m_wndTree.GetRootItem(), TVE_EXPAND);
+
 	return 0;
 }
 

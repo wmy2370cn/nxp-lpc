@@ -262,7 +262,7 @@ BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
-    "#include ""afxres.h""\0"
+    "#include ""afxres.h\0"
 END
 
 3 TEXTINCLUDE 
@@ -277,14 +277,14 @@ BEGIN
     "#include ""res\\CommTest.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
     "#include ""l.CHS\\afxres.rc""          // 标准组件\r\n"
     "#if !defined(_AFXDLL)\r\n"
-    "#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
+    "//#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
     "#endif\r\n"
     "\r\n"
     "#define _BCGCBPRO_STATIC_\r\n"
     "// BCG ControlBar resources\r\n"
     "#include ""L.chs\\bcgcontrolbar.rc""  \r\n"
     "\r\n"
-    "#endif\0"
+    "#endi\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -427,12 +427,18 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_DLG_SEND DIALOGEX 0, 0, 409, 121
+IDD_DLG_SEND DIALOGEX 0, 0, 409, 86
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "",IDC_STATIC,6,0,36,19,0,WS_EX_RTLREADING
     LTEXT           "发送区",IDC_STATIC,12,7,25,8
+    EDITTEXT        IDC_EDIT_SEND_TXT,6,42,396,36,ES_AUTOHSCROLL
+    PUSHBUTTON      "发送",IDC_BUTTON_SEND,175,6,50,14
+    CONTROL         "按16进制",IDC_CHECK_HEX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,25,48,10
+    PUSHBUTTON      "清空",IDC_BUTTON_CLEAR,175,24,50,14
+    PUSHBUTTON      "停止",IDC_BUTTON_STOP,250,6,50,14
+    PUSHBUTTON      "协议",IDC_BUTTON_PROTOCOL,250,24,50,14
 END
 
 IDD_DLG_RECV DIALOGEX 0, 0, 316, 186
@@ -441,6 +447,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "",IDC_STATIC,3,1,36,19,0,WS_EX_RTLREADING
     LTEXT           "接收区",IDC_STATIC,9,8,25,8
+    PUSHBUTTON      "暂停显示",IDC_BUTTON_DISP,66,6,50,14
+    PUSHBUTTON      "清空",IDC_BUTTON_CLEAR_RECV,119,6,50,14
 END
 
 IDD_DLG_NEW_CLIENT DIALOGEX 0, 0, 277, 125
@@ -465,7 +473,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,64,263,1
 END
 
-IDD_DLG_CLIENT_OPTIONS DIALOGEX 0, 0, 98, 272
+IDD_DLG_CLIENT_OPTIONS DIALOGEX 0, 0, 92, 272
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -546,7 +554,7 @@ BEGIN
     BEGIN
         RIGHTMARGIN, 402
         TOPMARGIN, 1
-        BOTTOMMARGIN, 114
+        BOTTOMMARGIN, 79
     END
 
     IDD_DLG_RECV, DIALOG
@@ -566,7 +574,7 @@ BEGIN
     IDD_DLG_CLIENT_OPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 91
+        RIGHTMARGIN, 85
         TOPMARGIN, 7
         BOTTOMMARGIN, 265
     END
@@ -799,7 +807,7 @@ LANGUAGE 4, 2
 #include "res\CommTest.rc2"  // 非 Microsoft Visual C++ 编辑的资源
 #include "l.CHS\afxres.rc"          // 标准组件
 #if !defined(_AFXDLL)
-#include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
+//#include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
 #endif
 
 #define _BCGCBPRO_STATIC_

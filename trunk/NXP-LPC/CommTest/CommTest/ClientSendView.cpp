@@ -27,6 +27,8 @@ void CClientSendView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
 	ON_WM_CREATE()
+	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_BUTTON_SEND, &CClientSendView::OnBnClickedButtonSend)
 END_MESSAGE_MAP()
 
 
@@ -58,4 +60,31 @@ int CClientSendView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableVisualManagerStyle();
 
 	return 0;
+}
+
+void CClientSendView::OnSize(UINT nType, int cx, int cy)
+{
+	CBCGPFormView::OnSize(nType, cx, cy);
+
+	// TODO: 在此处添加消息处理程序代码
+	CWnd *pEdit = GetDlgItem(IDC_EDIT_SEND_TXT);
+	if (pEdit && pEdit->GetSafeHwnd())
+	{
+		CRect rcEdit;
+		CRect rectClient;
+
+		GetClientRect (rectClient);
+		pEdit->GetWindowRect(rcEdit);
+		ScreenToClient (rcEdit);
+
+		rcEdit.left = rectClient.left + 2;
+		rcEdit.right = rectClient.right - 3;
+		rcEdit.bottom = rectClient.bottom - 3;
+		pEdit->MoveWindow(rcEdit);
+	}
+}
+
+void CClientSendView::OnBnClickedButtonSend()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }
