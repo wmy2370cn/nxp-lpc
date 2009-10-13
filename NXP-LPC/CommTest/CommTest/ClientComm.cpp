@@ -4,7 +4,7 @@
 #include "ClientComm.h"
 #include "ClientCommDoc.h"
 
-CClientSocket::CClientSocket( )
+CClientComm::CClientComm( )
 {
 	m_pDocument = NULL;
 
@@ -17,7 +17,7 @@ CClientSocket::CClientSocket( )
 	m_hStopEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 }
 
-CClientSocket::~CClientSocket( )
+CClientComm::~CClientComm( )
 {
 
 }
@@ -45,7 +45,7 @@ CClientSocket::~CClientSocket( )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-BOOL CClientSocket::Connect ( DWORD dwTimeout )
+BOOL CClientComm::Connect ( DWORD dwTimeout )
 {
 	if (m_pDocument == NULL)
 		return FALSE;
@@ -101,7 +101,7 @@ BOOL CClientSocket::Connect ( DWORD dwTimeout )
 }
 
 //开始收发
-void CClientSocket::StartEngine( )
+void CClientComm::StartEngine( )
 {
 	StopEngine();
 	if (m_pCommTsk == NULL)
@@ -120,7 +120,7 @@ void CClientSocket::StartEngine( )
 	return ;
 }
 //停止收发
-void CClientSocket::StopEngine( )
+void CClientComm::StopEngine( )
 {
 
 }

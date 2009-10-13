@@ -29,15 +29,15 @@ bool CDataBuf::SetData( char * szData )
 	CSingleLock lock(&m_Mutex);
 
 	if (nLen <= m_nLen && m_nLen <= MAX_DATA_LEN)
-	{
-		memcpy_s(m_pData,m_nLen,szData,nLen);
-	}
+	{	
+	}	 
 	else
 	{//重新分配内存
-	//	m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
-
-
+		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
+		ASSERT(m_pData);
+		m_nLen = nLen;
 	}
+	memcpy_s(m_pData,m_nLen,szData,nLen);
 
 	lock.Unlock();
 	return true;
@@ -46,21 +46,21 @@ bool CDataBuf::SetData( char * szData )
 bool  CDataBuf::SetData(unsigned char *pData, unsigned int nLen)
 {
 	if (pData == NULL || nLen <= 0 || nLen > MAX_DATA_LEN)
-			return false;
-	
+		return false;
+
 	CSingleLock lock(&m_Mutex);
 
 	if (nLen <= m_nLen && m_nLen <= MAX_DATA_LEN)
 	{
-		memcpy_s(m_pData,m_nLen,pData,nLen);
 	}
 	else
 	{//重新分配内存
-
+		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
+		ASSERT(m_pData);
+		m_nLen = nLen;
 	}
-
-	lock.Unlock();
- 
+	memcpy_s(m_pData,m_nLen,pData,nLen);
+	lock.Unlock(); 
 	return true;
 }
 

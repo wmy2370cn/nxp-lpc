@@ -7,12 +7,12 @@
 
 
 class CClientCommDoc;
-class CClientSocket : public CEcBusSocket
+class CClientComm : public CEcBusSocket
 {
 	friend UINT  EthCommTask (LPVOID lpParam);		 
 public:
-	CClientSocket( );
-	~CClientSocket( );
+	CClientComm( );
+	~CClientComm( );
 public:
 	BOOL Connect ( DWORD dwTimeout = 2000);
 
@@ -21,10 +21,11 @@ public:
 	//Õ£÷π ’∑¢
 	void StopEngine( );
 
+	CDataBuf  m_SendBuf;
+
 protected:
 	SOCKET  m_nSocket;
 
-	CDataBuf  m_SendBuf;
 
 	CClientCommDoc *m_pDocument;
 

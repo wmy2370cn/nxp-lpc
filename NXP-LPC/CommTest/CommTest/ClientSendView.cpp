@@ -131,9 +131,11 @@ void CClientSendView::OnEnChangeEditSendTxt()
 
 		CStringA szTxt; 
 		szTxt = CT2CA( pDoc->m_szRawSendTxt );
-
- 
-
+		if (!szTxt.IsEmpty())
+		{
+			pDoc->m_ClientComm.m_SendBuf.SetData(szTxt.GetBuffer(szTxt.GetLength()) );
+			szTxt.ReleaseBuffer();
+		}
 	}
  
 
