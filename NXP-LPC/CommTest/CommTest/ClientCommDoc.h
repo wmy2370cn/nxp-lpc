@@ -4,7 +4,7 @@
 
 
 #pragma once
-
+#include "ClientComm.h"
 
 class CClientCommDoc : public CDocument
 {
@@ -18,6 +18,8 @@ public:
 	DWORD m_dwDestIp;
 	unsigned int m_nDestPort;
 	unsigned int m_nLocalPort; //0 表示随机端口 非0为指定端口
+
+	CClientSocket  m_ClientSocket;
 
 
 // 操作

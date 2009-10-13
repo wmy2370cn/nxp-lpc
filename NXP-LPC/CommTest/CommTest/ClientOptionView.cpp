@@ -158,6 +158,20 @@ void CClientOptionView::OnBnClickedCheckLocalPort()
 void CClientOptionView::OnBnClickedButtonStart()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+	//保存界面上面数据，然后校验一下是否合法
+
+	BOOL bRet = pDoc->m_ClientSocket.Connect();
+	if (bRet)
+	{
+	}
+
+
 }
 
 void CClientOptionView::OnBnClickedButtonReset()
