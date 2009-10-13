@@ -21,7 +21,7 @@ public:
 	unsigned int m_nDestPort;
 	unsigned int m_nLocalPort; //0 表示随机端口 非0为指定端口
 
-	CClientSocket  m_ClientSocket;
+	CClientComm  m_ClientComm;
 
 
 	//原始的，UNICODE编码

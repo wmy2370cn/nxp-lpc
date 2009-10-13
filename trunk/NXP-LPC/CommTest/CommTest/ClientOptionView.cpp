@@ -181,7 +181,7 @@ void CClientOptionView::OnBnClickedButtonStart()
 
 	m_wndDestIp.GetAddress(pDoc->m_dwDestIp);
 
-	BOOL bRet = pDoc->m_ClientSocket.Connect();
+	BOOL bRet = pDoc->m_ClientComm.Connect();
 	if (bRet)
 	{
 
