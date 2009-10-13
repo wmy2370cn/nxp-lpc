@@ -135,17 +135,8 @@ void CClientSendView::OnEnChangeEditSendTxt()
  
 
 	}
-
-//	pDoc->m_szRawSendTxt.Trim()
-
-
-	CSingleLock lock(& (pDoc->m_nSendTxtMutex) );
+ 
 
 
-
-
-	
-
-
-	lock.Unlock();
+	 
 }

@@ -3,6 +3,8 @@
 
 
 #include "EcBusSocket.h"
+#include "DataBuf.h"
+
 
 class CClientCommDoc;
 class CClientSocket : public CEcBusSocket
@@ -21,6 +23,8 @@ public:
 
 protected:
 	SOCKET  m_nSocket;
+
+	CDataBuf  m_SendBuf;
 
 	CClientCommDoc *m_pDocument;
 
