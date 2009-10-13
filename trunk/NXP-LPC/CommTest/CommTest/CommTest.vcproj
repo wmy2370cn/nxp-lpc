@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ClientComm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ClientCommDoc.cpp"
 				>
 			</File>
@@ -277,6 +281,10 @@
 			</File>
 			<File
 				RelativePath=".\ClientChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ClientComm.h"
 				>
 			</File>
 			<File
