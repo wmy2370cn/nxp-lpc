@@ -320,6 +320,7 @@ IDR_PROPERTIES          BITMAP                  "res\\properties.bmp"
 IDB_PROPERTIES_HC       BITMAP                  "res\\properties_hc.bmp"
 IDB_WORKSPACE           BITMAP                  "res\\Workspace.bmp"
 IDB_BITMAP_LIST         BITMAP                  "res\\bmplist.bmp"
+IDB_BMP_FLAG            BITMAP                  "res\\list.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -517,13 +518,13 @@ BEGIN
     BEGIN
         BLOCK "080403a8"
         BEGIN
-            VALUE "CompanyName", "TODO: <公司名>"
-            VALUE "FileDescription", "TODO: <文件说明>"
+            VALUE "CompanyName", "软件工作室"
+            VALUE "FileDescription", "通讯测试工具"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "CommTest.exe"
-            VALUE "LegalCopyright", "TODO: (C) <公司名>。保留所有权利。"
+            VALUE "LegalCopyright", "TODO: (C) <软件工作室>。保留所有权利。"
             VALUE "OriginalFilename", "CommTest.exe"
-            VALUE "ProductName", "TODO: <产品名>"
+            VALUE "ProductName", "通讯测试工具"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -614,6 +615,7 @@ END
 STRINGTABLE 
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE 初始化失败。请确保 OLE 库是正确的版本。"
+    IDP_SOCKETS_INIT_FAILED "Windows 套接字初始化失败。"
 END
 
 STRINGTABLE 
@@ -806,9 +808,7 @@ LANGUAGE 4, 2
 #pragma code_page(936)
 #include "res\CommTest.rc2"  // 非 Microsoft Visual C++ 编辑的资源
 #include "l.CHS\afxres.rc"          // 标准组件
-#if !defined(_AFXDLL)
-//#include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
-#endif
+
 
 #define _BCGCBPRO_STATIC_
 // BCG ControlBar resources

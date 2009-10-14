@@ -86,7 +86,17 @@ int CEcBusSocket::RecvLL(SOCKET hSocket, char *pszBuffer, int nBufferSize)
 	WSABuff.len = nBufferSize;
 	WSABuff.buf = pszBuffer;
 	//如果正确就返回本次接收的字节个数，如果错误返回错误号码(负数)
-	return ((WSARecv(hSocket, &WSABuff, 1, &dwRtxBytes, &dwRtxFlags,NULL, NULL) == SOCKET_SUCCESS) ? (int) dwRtxBytes : -WSAGetLastError());
+//	return ((WSARecv(hSocket, &WSABuff, 1, &dwRtxBytes, &dwRtxFlags,NULL, NULL) == SOCKET_SUCCESS) ? (int) dwRtxBytes : -WSAGetLastError());
+	int nRet = WSARecv(hSocket, &WSABuff, 1, &dwRtxBytes, &dwRtxFlags,NULL, NULL);
+	int err = 0;
+	
+	if ( (nRet == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError()))) 
+	{
+	//	fprintf(stderr, "WSARecv failed: %d\n", err);
+		return -err;
+	}
+	else
+		return dwRtxBytes;
 }
 
 

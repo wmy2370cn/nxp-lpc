@@ -4,6 +4,21 @@
 
 #pragma once
 
+#include "ListCtrlEx.h"
+
+
+class COutputListCtrl : public CListCtrlEx
+{	
+public:
+	COutputListCtrl();
+	virtual ~COutputListCtrl();
+public:
+protected:
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	DECLARE_MESSAGE_MAP()
+};
+
+class CLogStr;
 class COutputBar : public CBCGPDockingControlBar
 {
 public:
@@ -12,7 +27,14 @@ public:
 // Attributes
 protected:
 
-	CListCtrl	m_wndList;
+	COutputListCtrl	m_wndList;
+	CFont m_Font;
+	void InitListControl();
+	bool m_bAutoScroll;
+	CImageList  m_ilSmall;
+	int DispDebugStr(CLogStr *pLogData );
+	CString GetItemTxt(int nSelItem) ;
+	void LoadDebugStr( );
 
 // Operations
 public:
@@ -34,6 +56,9 @@ protected:
 	afx_msg void OnPaint();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnDestroy();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 /////////////////////////////////////////////////////////////////////////////
