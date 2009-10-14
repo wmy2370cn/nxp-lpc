@@ -4,6 +4,7 @@
 #include "ClientComm.h"
 #include "ClientCommDoc.h"
 #include "Common.h"
+#include "LogDataApi.h"
 
 CClientComm::CClientComm( )
 {
@@ -81,6 +82,8 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 
 	m_nSocket = CreateSocket( );
 
+	CString szLog;
+
 	if(m_nSocket != INVALID_SOCKET)
 	{
 		if( m_nLocalPortNum )
@@ -89,6 +92,11 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 			{
 				CloseSocket(m_nSocket);
 				m_nSocket = INVALID_SOCKET;
+
+				szLog.Format(_T("绑定本地端口%d失败，可能是端口已被占用！"),m_nLocalPortNum );
+				LogString(szLog.GetBuffer(szLog.GetLength()),ERR_STR );
+				szLog.ReleaseBuffer();
+
 				return FALSE;
 			}			 
 		}
@@ -102,14 +110,25 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 
 		if (dwTimeout <= 10)
 			dwTimeout = CONNECT_TIMEOUT;
+
 		int nRet = Connect_Event(m_nSocket,(struct sockaddr *)&dst_addr,sizeof(dst_addr),dwTimeout);
 		if (nRet == SOCKET_SUCCESS)
 		{
+			szLog.Format(_T("连接%d.%d.%d.%d:%d成功！"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+				dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,m_nDestPortNum);
+			LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
+			szLog.ReleaseBuffer();
+
 			StartTask();
 			return TRUE;
 		}
 		else
 		{//连接不成功，强制关闭
+			szLog.Format(_T("连接%d.%d.%d.%d:%d失败！"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+				dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,m_nDestPortNum );
+			LogString(szLog.GetBuffer(szLog.GetLength()),ERR_STR );
+			szLog.ReleaseBuffer();
+
 			CloseSocket(m_nSocket,TRUE);
 			m_nSocket = INVALID_SOCKET;
 			return FALSE;
@@ -262,15 +281,27 @@ void CClientComm::Engine( )
 
 
 UINT  EthCommTask (LPVOID lpParam)
-{	CClientComm *pComm = (CClientComm *)lpParam;
+{	
+	CClientComm *pComm = (CClientComm *)lpParam;
 	ASSERT(pComm);
 	if (pComm == NULL)
 		return 0x88;
-	Sleep(1000);
+
 	CString szLog;
+	struct sockaddr_in dst_addr;		
+	memset((void*)&dst_addr,0,sizeof(dst_addr));
+ 	dst_addr.sin_addr.s_addr=htonl( pComm->m_dwDestIp ); 
+	szLog.Format(_T("%d.%d.%d.%d:%d收发线程启动。"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+		dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,pComm->m_nDestPortNum );
+
+ 	LogString(szLog.GetBuffer(szLog.GetLength()),ERR_STR );
+	szLog.ReleaseBuffer();
+
+	Sleep(1000);
 
 	ResetEvent(pComm->m_hStopEvent);
-
+ 
+	
 	while(1)
 	{
 		DWORD dwRtn = WaitForSingleObject(pComm->m_hStopEvent, 0);
@@ -281,7 +312,6 @@ UINT  EthCommTask (LPVOID lpParam)
 		}	
 
 		pComm->Engine();
-
 	}
 
 	return 0;

@@ -203,7 +203,7 @@ void EnableWriteDB(bool bFlag)
 
 void LogString( TCHAR* lpszTxt ,int nStrType)
 {
-	TCHAR szModuleName [] = _T("主程序"); 
+	TCHAR szModuleName [] = _T("MAIN"); 
 	g_LogStrMgr.LogString(szModuleName, lpszTxt,nStrType);
 	if (g_LogStrMgr.m_bWriteDB)
 	{
@@ -212,7 +212,7 @@ void LogString( TCHAR* lpszTxt ,int nStrType)
 }
 void LogStringTm( SYSTEMTIME st, TCHAR* lpszTxt ,int nStrType)
 {
-	TCHAR szModuleName [] = _T("主程序"); 
+	TCHAR szModuleName [] = _T("MAIN"); 
 
 	g_LogStrMgr.LogString(szModuleName,st,lpszTxt,nStrType);
 	if (g_LogStrMgr.m_bWriteDB)
