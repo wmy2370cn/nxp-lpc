@@ -20,9 +20,7 @@ public:
 	~CCommMsg( );
 	CCommMsg operator= (const CCommMsg &Src);
 public:
-	unsigned int m_nMsgType;
-
-
+	unsigned int m_nMsgType;  
 };
 
 const int MAX_COMM_MSG_CNT = 512;

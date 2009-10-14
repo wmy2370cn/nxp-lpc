@@ -27,6 +27,7 @@ CClientCommDoc::CClientCommDoc()
 {
 	// TODO: 在此添加一次性构造代码
 	m_bConnected = FALSE;
+	m_ClientComm.m_pDocument = this;
 }
 
 CClientCommDoc::~CClientCommDoc()
@@ -83,9 +84,6 @@ BOOL CClientCommDoc::Connect( )
 	BOOL bRet = m_ClientComm.Connect();
 
 	//连接成功后，更新相关的界面
-
-	 
-
 	POSITION pos = GetFirstViewPosition();
 	while (pos != NULL)
 	{

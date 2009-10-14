@@ -34,9 +34,9 @@ bool CDataBuf::SetData( char * szData )
 	else
 	{//重新分配内存
 		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
-		ASSERT(m_pData);
-		m_nLen = nLen;
+		ASSERT(m_pData);	
 	}
+	m_nLen = nLen;
 	memcpy_s(m_pData,m_nLen,szData,nLen);
 
 	lock.Unlock();
