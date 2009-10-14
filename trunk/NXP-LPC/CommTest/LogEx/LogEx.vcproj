@@ -2,10 +2,10 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="CommTest"
-	ProjectGUID="{C6F0482A-F4D4-4580-A417-CACF2EFA6975}"
-	RootNamespace="CommTest"
-	Keyword="MFCProj"
+	Name="LogEx"
+	ProjectGUID="{4FD4BC1B-8E96-4E1A-B7C8-E7A92AF81A7B}"
+	RootNamespace="LogEx"
+	Keyword="MFCDLLProj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -17,12 +17,12 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Debug Ansi|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			UseOfMFC="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,12 +40,11 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -67,8 +66,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\BIN\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
+				ModuleDefinitionFile=".\LogEx.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -93,15 +92,17 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="复制 LogEx.lib"
+				CommandLine="COPY ..\\..\\BIN\$(ConfigurationName)\$(ProjectName).lib ..\\LIB\"
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release Ansi|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			UseOfMFC="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -120,14 +121,12 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
-				MinimalRebuild="false"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -148,8 +147,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\BIN\$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
+				ModuleDefinitionFile=".\LogEx.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -176,6 +175,173 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="复制LogEx.lib"
+				CommandLine="COPY ..\\..\\BIN\$(ConfigurationName)\$(ProjectName).lib ..\\LIB\"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="false"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="2"
+				WarningLevel="3"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2052"
+				AdditionalIncludeDirectories="$(IntDir)"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="..\..\BIN\$(ConfigurationName)\$(ProjectName).dll"
+				LinkIncremental="2"
+				ModuleDefinitionFile=".\LogEx.def"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="复制 LogEx.lib"
+				CommandLine="COPY ..\\..\\BIN\$(ConfigurationName)\$(ProjectName).lib ..\\LIB\"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="false"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2052"
+				AdditionalIncludeDirectories="$(IntDir)"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="..\..\BIN\$(ConfigurationName)\$(ProjectName).dll"
+				LinkIncremental="1"
+				ModuleDefinitionFile=".\LogEx.def"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="复制LogEx.lib"
+				CommandLine="COPY ..\\..\\BIN\$(ConfigurationName)\$(ProjectName).lib ..\\LIB\"
 			/>
 		</Configuration>
 	</Configurations>
@@ -188,88 +354,60 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\ChildFrm.cpp"
+				RelativePath=".\BDBWrapper.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\ClientChildFrm.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientComm.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientCommDoc.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientOptionView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientRecvView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientSendView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CommMsg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Common.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTest.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTestDoc.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTestView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DataBuf.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EcBusSocket.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ListCtrlEx.cpp"
-				>
+				<FileConfiguration
+					Name="Debug Ansi|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\LogData.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.cpp"
+				RelativePath=".\LogEx.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NewClientDlg.cpp"
+				RelativePath=".\LogEx.def"
 				>
 			</File>
 			<File
-				RelativePath=".\OutputBar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PingChildFrm.cpp"
+				RelativePath=".\SQLite.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Ansi|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Ansi|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
@@ -287,10 +425,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\WorkSpaceBar.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="头文件"
@@ -298,63 +432,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ChildFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientChildFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientComm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientCommDoc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientOptionView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientRecvView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ClientSendView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CommMsg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Common.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTest.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTestDoc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTestView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DataBuf.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EcBusSocket.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ListCtrlEx.h"
+				RelativePath=".\BDBWrapper.h"
 				>
 			</File>
 			<File
@@ -362,31 +440,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LogDataApi.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LogDataExtApi.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NewClientDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OutputBar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PingChildFrm.h"
+				RelativePath=".\LogEx.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SQLite.h"
 				>
 			</File>
 			<File
@@ -397,10 +463,6 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
-			<File
-				RelativePath=".\WorkSpaceBar.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="资源文件"
@@ -408,111 +470,59 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\bitmap1.bmp"
+				RelativePath=".\LogEx.rc"
 				>
 			</File>
 			<File
-				RelativePath=".\res\bmplist.bmp"
+				RelativePath=".\res\LogEx.rc2"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="SQLite3"
+			>
+			<File
+				RelativePath=".\sqlite3\sqlite3.c"
+				>
+				<FileConfiguration
+					Name="Debug Ansi|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Ansi|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\sqlite3\sqlite3.h"
 				>
 			</File>
 			<File
-				RelativePath=".\res\class_view.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\class_view_hc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\classview_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\CommTest.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\CommTest.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\CommTest.rc2"
-				>
-			</File>
-			<File
-				RelativePath=".\res\CommTestDoc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\explorer.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\explorer_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\fileview_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\idr_comm.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\list.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\menuimages.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\menuimages_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\output_wnd.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\output_wnd_hc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\properties.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\properties_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\properties_wnd.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\properties_wnd_hc.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\sort_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Toolbar.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Toolbar256.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\UserImages.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Workspace.bmp"
+				RelativePath=".\sqlite3\sqlite3ext.h"
 				>
 			</File>
 		</Filter>
@@ -580,7 +590,7 @@
 	<Globals>
 		<Global
 			Name="RESOURCE_FILE"
-			Value="CommTest.rc"
+			Value="LogEx.rc"
 		/>
 	</Globals>
 </VisualStudioProject>

@@ -13,6 +13,8 @@ CClientComm::CClientComm( )
 	m_nDestPortNum = 0;
 	m_nLocalPortNum = 0;
 
+	m_nSocket = INVALID_SOCKET;
+
 	m_pCommTsk = NULL;
 	m_hTaskHandle = NULL;
 	m_hStopEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
@@ -74,7 +76,7 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 	{
 		CloseSocket(m_nSocket);
 		m_nSocket = INVALID_SOCKET;
-		return FALSE;
+	//	return FALSE;
 	}
 
 	m_nSocket = CreateSocket( );
@@ -105,6 +107,12 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 		{
 			StartTask();
 			return TRUE;
+		}
+		else
+		{//连接不成功，强制关闭
+			CloseSocket(m_nSocket,TRUE);
+			m_nSocket = INVALID_SOCKET;
+			return FALSE;
 		}
 	}
 	return FALSE;
@@ -234,6 +242,7 @@ void CClientComm::Engine( )
 	if(m_CommMsg.GetCommMsg(msg))
 	{
 		ExecMsgCmd(msg);
+		Sleep(50);
 	}
 	//2.接收数据，并推送到界面
 	int nRet = RecvData_Event(m_nSocket,(char*)m_pRawBuf,MAX_DATA_LEN);
@@ -257,7 +266,7 @@ UINT  EthCommTask (LPVOID lpParam)
 	ASSERT(pComm);
 	if (pComm == NULL)
 		return 0x88;
-
+	Sleep(1000);
 	CString szLog;
 
 	ResetEvent(pComm->m_hStopEvent);
@@ -272,7 +281,7 @@ UINT  EthCommTask (LPVOID lpParam)
 		}	
 
 		pComm->Engine();
-		Sleep(50);
+
 	}
 
 	return 0;

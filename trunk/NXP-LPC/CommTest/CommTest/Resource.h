@@ -4,6 +4,7 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
+#define IDP_SOCKETS_INIT_FAILED         104
 #define IDR_POPUP_WORKSPACE             119
 #define ID_STATUSBAR_PANE1              120
 #define ID_STATUSBAR_PANE2              121
@@ -79,6 +80,8 @@
 #define IDD_DLG_RECV                    313
 #define IDD_DLG_NEW_CLIENT              314
 #define IDD_DLG_CLIENT_OPTIONS          317
+#define IDB_BITMAP1                     320
+#define IDB_BMP_FLAG                    320
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
@@ -140,7 +143,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32856
 #define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           310

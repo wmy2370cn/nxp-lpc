@@ -17,6 +17,11 @@
 
 #include "PingChildFrm.h"
 
+
+#include "LogDataApi.h"
+
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -71,7 +76,11 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 	}
 	
-	AfxSocketInit();
+	if (!AfxSocketInit())
+	{
+		AfxMessageBox(IDP_SOCKETS_INIT_FAILED);
+		return FALSE;
+	}
 
 	AfxEnableControlContainer();
 
@@ -100,6 +109,7 @@ BOOL CCommTestApp::InitInstance()
 
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
+	RegisterLog( _T("MAIN"));
 
 	m_pDocTemplate = new CMultiDocTemplate(IDR_CommTestTYPE,
 		RUNTIME_CLASS(CCommTestDoc),
@@ -224,6 +234,7 @@ int CCommTestApp::ExitInstance()
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	BCGCBProCleanUp();
+	UnregisterLog( _T("MAIN"));
 
 	return __super::ExitInstance();
 }
