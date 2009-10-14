@@ -214,6 +214,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommMsg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CommTest.cpp"
 				>
 			</File>
@@ -305,6 +309,10 @@
 			</File>
 			<File
 				RelativePath=".\ClientSendView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CommMsg.h"
 				>
 			</File>
 			<File

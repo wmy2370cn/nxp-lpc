@@ -4,6 +4,8 @@
 
 #include "EcBusSocket.h"
 #include "DataBuf.h"
+#include "commmsg.h"
+
 
 
 class CClientCommDoc;
@@ -17,14 +19,18 @@ public:
 	BOOL Connect ( DWORD dwTimeout = 2000);
 
 	//开始收发
-	void StartEngine( );
+	void StartTask( );
 	//停止收发
-	void StopEngine( );
+	void StopTask( );
+
+	void Engine( );
 
 	CDataBuf  m_SendBuf;
 
 protected:
 	SOCKET  m_nSocket;
+
+	CCommMsgContainer m_CommMsg;
 
 
 	CClientCommDoc *m_pDocument;
