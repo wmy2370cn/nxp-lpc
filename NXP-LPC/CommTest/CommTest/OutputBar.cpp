@@ -118,13 +118,20 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Create list window.
 	// TODO: create your own window here:
-	const DWORD dwViewStyle = LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL;
-	
-	if (!m_wndList.Create (dwViewStyle, rectDummy, this, 1))
+	const DWORD dwViewStyle =	LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL;
+	DWORD dwStyle = LVS_REPORT | LVS_NOSORTHEADER | LVS_SHOWSELALWAYS |	WS_CHILD | WS_VISIBLE|WS_VSCROLL  | WS_HSCROLL | WS_TABSTOP;
+
+	if (!m_wndList.Create (dwStyle, rectDummy,this, 2) )
 	{
 		TRACE0("Failed to create output view\n");
 		return -1;      // fail to create
 	}
+
+	m_Font.CreateStockObject(DEFAULT_GUI_FONT);
+	m_wndList.SetFont(&m_Font);
+
+	InitListControl();
+	SetTimer(ID_LOG_STR,1000,NULL);
 
 	return 0;
 }

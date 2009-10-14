@@ -80,7 +80,6 @@
 #define IDD_DLG_RECV                    313
 #define IDD_DLG_NEW_CLIENT              314
 #define IDD_DLG_CLIENT_OPTIONS          317
-#define IDB_BITMAP1                     320
 #define IDB_BMP_FLAG                    320
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
