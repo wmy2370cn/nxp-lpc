@@ -27,12 +27,10 @@ public:
 	//原始的，UNICODE编码
 	CString m_szRawSendTxt;
 
+	BOOL Connect( );
+
  
-
-#ifdef UNICODE
-	
-#endif // UNICODE
-
+ 
 
 // 操作
 public:

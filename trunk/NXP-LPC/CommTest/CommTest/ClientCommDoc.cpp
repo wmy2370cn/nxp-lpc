@@ -77,3 +77,8 @@ void CClientCommDoc::Dump(CDumpContext& dc) const
 
 
 // CClientCommDoc √¸¡Ó
+BOOL CClientCommDoc::Connect( )
+{
+	BOOL bRet = m_ClientComm.Connect();
+	return bRet;
+}

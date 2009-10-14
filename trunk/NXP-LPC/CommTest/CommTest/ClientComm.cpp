@@ -47,8 +47,11 @@ CClientComm::~CClientComm( )
 ********************************************************************************************************/
 BOOL CClientComm::Connect ( DWORD dwTimeout )
 {
+	ASSERT(m_pDocument);
 	if (m_pDocument == NULL)
 		return FALSE;
+
+	StopTask();
 
 	m_dwDestIp = m_pDocument->m_dwDestIp;
 	ASSERT(m_dwDestIp);
@@ -94,16 +97,36 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 		int nRet = Connect_Event(m_nSocket,(struct sockaddr *)&dst_addr,sizeof(dst_addr),dwTimeout);
 		if (nRet == SOCKET_SUCCESS)
 		{
+			StartTask();
 			return TRUE;
 		}
 	}
 	return FALSE;
-}
-
-//开始收发
-void CClientComm::StartEngine( )
+} 
+/*********************************************************************************************************
+** 函数名称: StartTask
+** 函数名称: CClientComm::StartTask
+**
+** 功能描述： 启动线程，建立连接时启动线程 
+**
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月14日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void CClientComm::StartTask( )
 {
-	StopEngine();
+	StopTask();
 	if (m_pCommTsk == NULL)
 	{
 		m_pCommTsk = AfxBeginThread( EthCommTask, (LPVOID)(this));
@@ -120,10 +143,18 @@ void CClientComm::StartEngine( )
 	return ;
 }
 //停止收发
-void CClientComm::StopEngine( )
+void CClientComm::StopTask( )
 {
 
 }
+
+void CClientComm::Engine( )
+{
+
+}
+
+
+
 UINT  EthCommTask (LPVOID lpParam)
 {
 

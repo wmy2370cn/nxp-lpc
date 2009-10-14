@@ -181,11 +181,17 @@ void CClientOptionView::OnBnClickedButtonStart()
 
 	m_wndDestIp.GetAddress(pDoc->m_dwDestIp);
 
-	BOOL bRet = pDoc->m_ClientComm.Connect();
+	BOOL bRet = pDoc->Connect();
+
+	CWnd *pWnd = GetDlgItem(IDC_BUTTON_START);
+	ASSERT(pWnd);
+
 	if (bRet)
 	{
-
+		pWnd->SetWindowText(_T("¶Ï¿ªÁ¬½Ó"))£»
 	}
+
+	return ;
 }
 
 void CClientOptionView::OnBnClickedButtonReset()
