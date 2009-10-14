@@ -6,6 +6,7 @@
 #include "CommTest.h"
 
 #include "ClientCommDoc.h"
+#include "ClientSendView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,7 +26,7 @@ END_MESSAGE_MAP()
 CClientCommDoc::CClientCommDoc()
 {
 	// TODO: 在此添加一次性构造代码
-
+	m_bConnected = FALSE;
 }
 
 CClientCommDoc::~CClientCommDoc()
@@ -80,5 +81,43 @@ void CClientCommDoc::Dump(CDumpContext& dc) const
 BOOL CClientCommDoc::Connect( )
 {
 	BOOL bRet = m_ClientComm.Connect();
+
+	//连接成功后，更新相关的界面
+
+	 
+
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		ASSERT_VALID(pView);
+		if (pView->IsKindOf( RUNTIME_CLASS(CClientSendView) ))
+		{
+		 	((CClientSendView*)pView)->OnConnected();
+		}		 		 
+	}
+
 	return bRet;
+}
+void  CClientCommDoc::Disconnect( )
+{
+	m_ClientComm.StopTask();
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		ASSERT_VALID(pView);
+		if (pView->IsKindOf( RUNTIME_CLASS(CClientSendView) ))
+		{
+			((CClientSendView*)pView)->OnDisconnected();
+		}		 		 
+	}
+}
+
+void CClientCommDoc::OnCloseDocument()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	m_ClientComm.StopTask();
+
+	CDocument::OnCloseDocument();
 }

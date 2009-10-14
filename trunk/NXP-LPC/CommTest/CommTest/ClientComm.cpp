@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "ClientComm.h"
 #include "ClientCommDoc.h"
+#include "Common.h"
 
 CClientComm::CClientComm( )
 {
@@ -145,7 +146,19 @@ void CClientComm::StartTask( )
 //停止收发
 void CClientComm::StopTask( )
 {
+	if( m_hStopEvent )
+		SetEvent( m_hStopEvent );
 
+	//等待线程退出
+	if ( m_pCommTsk != NULL && m_hTaskHandle)
+	{
+		Common::WaitForThreadToTerminate(m_hTaskHandle);
+		CloseHandle(m_hTaskHandle);
+		delete m_pCommTsk;
+		m_pCommTsk = NULL;
+
+		OutputDebugString(_T("文件传输线程退出 \n"));
+	}
 }
 
 void CClientComm::Engine( )

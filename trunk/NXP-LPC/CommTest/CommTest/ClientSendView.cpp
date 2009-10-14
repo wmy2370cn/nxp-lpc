@@ -92,6 +92,13 @@ void CClientSendView::OnSize(UINT nType, int cx, int cy)
 void CClientSendView::OnBnClickedButtonSend()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	CCommMsg msg(MSG_SEND_DATA);
+	pDoc->m_ClientComm.m_CommMsg.AddCommMsg(msg);
 }
 
 void CClientSendView::OnEnChangeEditSendTxt()
@@ -136,9 +143,40 @@ void CClientSendView::OnEnChangeEditSendTxt()
 			pDoc->m_ClientComm.m_SendBuf.SetData(szTxt.GetBuffer(szTxt.GetLength()) );
 			szTxt.ReleaseBuffer();
 		}
+	} 
+}
+
+void CClientSendView::OnConnected( )
+{
+	CWnd *pSndBtn = GetDlgItem(IDC_BUTTON_SEND);
+	ASSERT(pSndBtn);
+	if (pSndBtn)
+	{
+		pSndBtn->EnableWindow(TRUE);
 	}
- 
 
+	CWnd *pStopBnt = GetDlgItem(IDC_BUTTON_STOP);
+	ASSERT(pStopBnt);
+	if (pStopBnt)
+	{
+		pStopBnt->EnableWindow(TRUE);
+	}
 
-	 
+}
+
+void CClientSendView::OnDisconnected()
+{
+	CWnd *pSndBtn = GetDlgItem(IDC_BUTTON_SEND);
+	ASSERT(pSndBtn);
+	if (pSndBtn)
+	{
+		pSndBtn->EnableWindow(FALSE);
+	}
+
+	CWnd *pStopBnt = GetDlgItem(IDC_BUTTON_STOP);
+	ASSERT(pStopBnt);
+	if (pStopBnt)
+	{
+		pStopBnt->EnableWindow(FALSE);
+	}
 }

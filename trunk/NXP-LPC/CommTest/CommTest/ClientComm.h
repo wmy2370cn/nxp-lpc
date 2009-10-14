@@ -26,12 +26,11 @@ public:
 	void Engine( );
 
 	CDataBuf  m_SendBuf;
-
+	CCommMsgContainer m_CommMsg;
 protected:
 	SOCKET  m_nSocket;
 
-	CCommMsgContainer m_CommMsg;
-
+	
 
 	CClientCommDoc *m_pDocument;
 

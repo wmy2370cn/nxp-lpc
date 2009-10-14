@@ -29,6 +29,11 @@ public:
 
 	BOOL Connect( );
 
+	void  Disconnect( );
+
+
+	BOOL m_bConnected;
+
  
  
 
@@ -53,6 +58,8 @@ protected:
 // 生成的消息映射函数
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnCloseDocument();
 };
 
 
