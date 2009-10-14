@@ -164,33 +164,44 @@ void CClientOptionView::OnBnClickedButtonStart()
 	ASSERT(pDoc);
 	if (pDoc == NULL)
 		return;
-	//保存界面上面数据，然后校验一下是否合法
-
-	pDoc->m_nProtocolType = m_nProtocolType; //协议类型 0 TCP 1 UDP	 
-	pDoc->m_nDestPort = m_nDestPortNum;
-//	pDoc->m_nLocalPort = ; //0 表示随机端口 非0为指定端口
-
-	if (m_bRandromLocalPort)
-	{
-		pDoc->m_nLocalPort = m_nLocalPortNum;		 
-	}
-	else
-	{
-		pDoc->m_nLocalPort = 0;
-	}
-
-	m_wndDestIp.GetAddress(pDoc->m_dwDestIp);
-
-	BOOL bRet = pDoc->Connect();
 
 	CWnd *pWnd = GetDlgItem(IDC_BUTTON_START);
 	ASSERT(pWnd);
+	pWnd->EnableWindow(FALSE);
+	if(pDoc->m_bConnected == FALSE)
+	{//未连接上	
+		//保存界面上面数据，然后校验一下是否合法
+		pDoc->m_nProtocolType = m_nProtocolType; //协议类型 0 TCP 1 UDP	 
+		pDoc->m_nDestPort = m_nDestPortNum;
+		//	pDoc->m_nLocalPort = ; //0 表示随机端口 非0为指定端口
 
-	if (bRet)
-	{
-		pWnd->SetWindowText(_T("断开连接"))；
+		if (m_bRandromLocalPort)
+		{
+			pDoc->m_nLocalPort = m_nLocalPortNum;		 
+		}
+		else
+		{
+			pDoc->m_nLocalPort = 0;
+		}
+
+		m_wndDestIp.GetAddress(pDoc->m_dwDestIp);
+
+		BOOL bRet = pDoc->Connect();
+
+		if (bRet)
+		{
+			pWnd->SetWindowText(_T("断开连接"));
+		}
+		pWnd->EnableWindow();
 	}
+	else
+	{//断开连接
 
+		pDoc->Disconnect( );
+		pWnd->SetWindowText(_T("连接"));
+		pWnd->EnableWindow();
+	}
+	
 	return ;
 }
 

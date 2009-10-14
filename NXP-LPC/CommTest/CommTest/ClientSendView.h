@@ -22,6 +22,9 @@ public:
 #endif
 #endif
 
+	void OnConnected( );
+	void OnDisconnected();
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
 
