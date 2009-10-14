@@ -16,11 +16,16 @@ CClientComm::CClientComm( )
 	m_pCommTsk = NULL;
 	m_hTaskHandle = NULL;
 	m_hStopEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	m_pRawBuf = new unsigned char [MAX_DATA_LEN];
 }
 
 CClientComm::~CClientComm( )
 {
-
+	if(m_pRawBuf)
+	{
+		delete [] m_pRawBuf;
+		m_pRawBuf = NULL;
+	}
 }
 
 
@@ -161,15 +166,114 @@ void CClientComm::StopTask( )
 	}
 }
 
+void CClientComm::ExecMsgCmd( CCommMsg & msg  )
+{
+	if (msg.m_nMsgType == MSG_SEND_DATA)
+	{
+		if (m_nSocket == 0 || m_nSocket == INVALID_SOCKET )	
+		{
+			return;
+		}
+
+		unsigned int nLen = m_SendBuf.GetData(m_pRawBuf);
+		int nRetLen = 0;
+
+		if (nLen>0)
+		{
+			nRetLen = SendData_Event(m_nSocket,(const char *)m_pRawBuf,nLen);
+			if ( nRetLen == nLen )
+			{//发送成功
+
+			}
+			else 
+			{//
+				if (m_nSocket != 0 && m_nSocket != INVALID_SOCKET)
+				{
+					if (nRetLen == SOCKET_ERROR)
+					{//硬关闭
+						CloseSocket(m_nSocket,TRUE);
+						m_nSocket= INVALID_SOCKET;
+					}
+					else
+					{//从容关闭
+						CloseSocket(m_nSocket);
+						m_nSocket= INVALID_SOCKET;
+
+					}
+					// 通知界面
+				}
+			}				 
+		}
+	}
+}
+/*********************************************************************************************************
+** 函数名称: Engine
+** 函数名称: CClientComm::Engine
+**
+** 功能描述： 收发引擎 
+**
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月14日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 	//3.如果收发过程中发现socket已被对端关闭掉,则通知界面
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void CClientComm::Engine( )
 {
+	//1.先看看是否需要有发送，如果有发送，则发送数据
+	CCommMsg msg;
+	if(m_CommMsg.GetCommMsg(msg))
+	{
+		ExecMsgCmd(msg);
+	}
+	//2.接收数据，并推送到界面
+	int nRet = RecvData_Event(m_nSocket,(char*)m_pRawBuf,MAX_DATA_LEN);
+
+	if (nRet == SOCKET_ERROR)
+	{
+
+	}
+	else
+	{
+	
+	}
+
 
 }
 
 
 
 UINT  EthCommTask (LPVOID lpParam)
-{
+{	CClientComm *pComm = (CClientComm *)lpParam;
+	ASSERT(pComm);
+	if (pComm == NULL)
+		return 0x88;
+
+	CString szLog;
+
+	ResetEvent(pComm->m_hStopEvent);
+
+	while(1)
+	{
+		DWORD dwRtn = WaitForSingleObject(pComm->m_hStopEvent, 0);
+		if ( dwRtn == WAIT_OBJECT_0)
+		{   //	szLog = "退出函数..................\n";
+			OutputDebugString(_T("退出在线函数..................\n"));
+			return 0x88;
+		}	
+
+		pComm->Engine();
+		Sleep(50);
+	}
 
 	return 0;
 }

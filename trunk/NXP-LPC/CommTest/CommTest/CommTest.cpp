@@ -70,6 +70,9 @@ BOOL CCommTestApp::InitInstance()
 		AfxMessageBox(IDP_OLE_INIT_FAILED);
 		return FALSE;
 	}
+	
+	AfxSocketInit();
+
 	AfxEnableControlContainer();
 
 	globalData.SetDPIAware ();

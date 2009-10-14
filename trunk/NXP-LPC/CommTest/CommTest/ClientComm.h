@@ -11,7 +11,8 @@
 class CClientCommDoc;
 class CClientComm : public CEcBusSocket
 {
-	friend UINT  EthCommTask (LPVOID lpParam);		 
+	friend UINT  EthCommTask (LPVOID lpParam);	
+	friend class CClientCommDoc;
 public:
 	CClientComm( );
 	~CClientComm( );
@@ -24,13 +25,15 @@ public:
 	void StopTask( );
 
 	void Engine( );
-
-	CDataBuf  m_SendBuf;
 	CCommMsgContainer m_CommMsg;
+	CDataBuf  m_SendBuf;
 protected:
-	SOCKET  m_nSocket;
+	void ExecMsgCmd( CCommMsg & msg  );
 
 	
+	SOCKET  m_nSocket;
+	unsigned char *m_pRawBuf;
+
 
 	CClientCommDoc *m_pDocument;
 
