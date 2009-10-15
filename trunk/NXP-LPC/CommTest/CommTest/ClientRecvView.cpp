@@ -4,6 +4,10 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "ClientRecvView.h"
+#include "ClientCommDoc.h"
+#include "MainFrm.h"
+
+#include "ChildFrm.h"
 
 
 // CClientRecvView
@@ -28,6 +32,8 @@ void CClientRecvView::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CClientRecvView, CBCGPFormView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR_RECV, &CClientRecvView::OnBnClickedButtonClearRecv)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -81,7 +87,51 @@ void CClientRecvView::OnSize(UINT nType, int cx, int cy)
 		GetClientRect (rectClient);
 		rectClient.InflateRect (2, 2);
 
-		 rectClient.top = rectClient.top + 40;
+		rectClient.top = rectClient.top + 40;
 		m_wndGrid.MoveWindow(rectClient);
 	}
+}
+
+void CClientRecvView::OnBnClickedButtonClearRecv()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	//TEST
+//	GetParentFrame()
+	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	ASSERT(pFrame);
+	if (pFrame == NULL)
+		return;	
+
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	CMDIChildWnd *pChildWnd = NULL;
+ 
+	CCreateContext context;
+	context.m_pCurrentDoc = pDoc;
+	context.m_pCurrentFrame = pFrame;
+	context.m_pNewDocTemplate = (CDocTemplate*) theApp.m_pDocTemplate;
+
+	CRuntimeClass* pFrameClass = RUNTIME_CLASS(CChildFrame);   		 
+
+// 	HMENU hMenu = NULL;       // default menu resource for this frame
+// 	HACCEL hAccelTable = NULL;       // accelerator table
+// 	hAccelTable = ::LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FBD_FRAME));
+// 	//	ASSERT( hAccelTable );
+// 	hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FBD_FRAME));
+// 	ASSERT(hMenu);
+	pChildWnd = pFrame->CreateNewChild( pFrameClass, IDR_MAINFRAME );
+//	pChildWnd->SetHandles(hMenu,hAccelTable);
+
+	pFrame->MDIActivate( pChildWnd );
+
+}
+
+void CClientRecvView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CBCGPFormView::OnTimer(nIDEvent);
 }

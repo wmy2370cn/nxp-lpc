@@ -3,7 +3,7 @@
 #include "DataBuf.h"
 #include  "boost/memory.hpp"
 
-boost::auto_alloc g_alloc; 
+boost::auto_alloc g_databuf_alloc; 
 
 
 CDataBuf::CDataBuf()
@@ -33,7 +33,7 @@ bool CDataBuf::SetData( char * szData )
 	}	 
 	else
 	{//重新分配内存
-		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
+		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_databuf_alloc, unsigned char, nLen); 
 		ASSERT(m_pData);	
 	}
 	m_nLen = nLen;
@@ -55,7 +55,7 @@ bool  CDataBuf::SetData(unsigned char *pData, unsigned int nLen)
 	}
 	else
 	{//重新分配内存
-		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_alloc, unsigned char, nLen); 
+		m_pData = BOOST_MEMORY_ALLOC_ARRAY(g_databuf_alloc, unsigned char, nLen); 
 		ASSERT(m_pData);
 		m_nLen = nLen;
 	}
