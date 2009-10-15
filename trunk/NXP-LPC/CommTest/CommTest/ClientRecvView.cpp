@@ -81,10 +81,11 @@ int CPacketGridCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CBCGPGridCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	SetWholeRowSel (FALSE);
+	SetSingleSel(TRUE);
+	SetWholeRowSel (TRUE);
 	EnableMarkSortedColumn (FALSE);
 	EnableMultipleSort(FALSE);
-	EnableHeader (TRUE, BCGP_GRID_HEADER_SORT); 		 
+	EnableHeader (TRUE,BCGP_GRID_HEADER_MOVE_ITEMS); 		 
 
 	CBCGPGridColors theme;
 	CBCGPVisualManager::GetInstance ()->OnSetGridColorTheme (this, theme);
@@ -112,6 +113,30 @@ CBCGPGridRow* CPacketGridCtrl::CreateNewRow ()
 
 	return pRow;
 }
+
+CBCGPGridRow* CPacketGridCtrl::GetHeadRow ()
+{
+	POSITION pos = m_lstItems.GetHeadPosition ();
+	if (pos)
+	{
+		CBCGPGridRow* pItem = m_lstItems.GetNext (pos);
+		ASSERT_VALID (pItem);
+		return pItem;
+	}
+	return NULL;
+}
+CBCGPGridRow* CPacketGridCtrl::GetTailRow ()
+{
+	POSITION pos = m_lstItems.GetTailPosition ();
+	if (pos)
+	{
+		CBCGPGridRow* pItem = m_lstItems.GetPrev (pos);
+		ASSERT_VALID (pItem);
+		return pItem;
+	}
+	return NULL;
+}
+
 
 #ifdef _DEBUG
 class CBCGPGridRowEx : public CBCGPGridRow
@@ -164,6 +189,20 @@ CBCGPGridRow *CPacketGridCtrl::AddPacketRow ( CPacket *pPacket  )
 #endif // _DEBUG
 
 	pRow->SetData( (DWORD_PTR) pPacket );
+
+// 	CRect rectRow = pRow->GetRect();
+// 
+// 	if (rectRow.top < m_rectList.top - 1 || rectRow.bottom > m_rectList.bottom)
+// 	{ 
+// 		int nNewVertOffset = (rectRow.bottom > m_rectList.bottom) ?
+// 			// scroll down
+// 			m_nVertScrollOffset + (rectRow.bottom - m_rectList.bottom) :
+// 		// scroll up
+// 		m_nVertScrollOffset + (rectRow.top - m_rectList.top);
+// 
+// 		SetScrollPos (SB_VERT, nNewVertOffset*2, FALSE);
+// 		OnVScroll (SB_THUMBPOSITION, nNewVertOffset*2, NULL);
+// 	}
 
 	return pRow; 
 }
@@ -312,33 +351,45 @@ void CClientRecvView::LoadPacket( )
 	int nRowCnt = m_wndGrid.GetRowCount();
 
 	CPacket *pPacket = NULL;
+	bool bRet = false;
+	CBCGPGridRow *pRow = NULL;
 
 	while(nRowCnt > MAX_PACKET_CNT)
 	{
-		CBCGPGridRow *pRow = m_wndGrid.GetRow(0);
+		pRow = m_wndGrid.GetHeadRow();
 		ASSERT(pRow);
 		if (pRow)
 		{
 			pPacket = (CPacket*)pRow->GetData();
 			ASSERT(pPacket);
-			m_wndGrid.RemoveRow(0,FALSE);
+			m_wndGrid.RemoveRow(pRow->GetRowId(),FALSE);
 			if (pPacket)
 			{
-				pDoc->m_PacketCtnr.RemoveData(pPacket);
+				bRet = pDoc->m_PacketCtnr.RemoveData(pPacket);
+				ASSERT(bRet);
 			}
+			m_wndGrid.RebuildIndexes();		
 		}
 
 		nRowCnt = m_wndGrid.GetRowCount();
 	}
 
-	bool bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
+	bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
 	 
 	while(bRet)
 	{
 		ASSERT(pPacket);
 		//ÏÔÊ¾³öÀ´
-		m_wndGrid.AddPacketRow(pPacket);
+		pRow = m_wndGrid.AddPacketRow(pPacket);
 		bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
 	}
-	m_wndGrid.AdjustLayout();
+
+ //	pRow = m_wndGrid.GetTailRow();
+
+	if (pRow)
+	{
+//		m_wndGrid.SetCurSel(pRow);
+		m_wndGrid.AdjustLayout();
+		m_wndGrid.EnsureVisible(pRow);
+	}	 
 }

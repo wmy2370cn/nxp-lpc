@@ -11,8 +11,11 @@ public:
 	virtual ~CPacketGridCtrl();
 
 	CBCGPGridRow * AddEmptyRow ( BOOL bAllowEdit = FALSE ,BOOL bSetAutoID = TRUE);
-	CBCGPGridRow *AddPacketRow ( CPacket *pPacket  );
+	CBCGPGridRow * AddPacketRow ( CPacket *pPacket  );
 	CBCGPGridRow* CreateNewRow ();
+	CBCGPGridRow* GetHeadRow ();
+	CBCGPGridRow* GetTailRow ();
+
 protected:
 
 #ifdef _DEBUG

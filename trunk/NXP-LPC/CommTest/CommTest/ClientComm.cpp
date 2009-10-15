@@ -191,7 +191,7 @@ void CClientComm::StopTask( )
 		delete m_pCommTsk;
 		m_pCommTsk = NULL;
 
-		OutputDebugString(_T("文件传输线程退出 \n"));
+		OutputDebugString(_T("线程退出 \n"));
 	}
 }
 
