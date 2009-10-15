@@ -19,7 +19,7 @@
 
 
 #include "LogDataApi.h"
-
+#include  "boost/memory.hpp"
 
 
 #ifdef _DEBUG
@@ -46,6 +46,9 @@ CBCGPWorkspace (TRUE /* m_bResourceSmartUpdate */)
 	m_pClientDocTemplate = NULL;
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
+
+	NS_BOOST_MEMORY::enableMemoryLeakCheck();
+
 }
 
 // 唯一的一个 CCommTestApp 对象

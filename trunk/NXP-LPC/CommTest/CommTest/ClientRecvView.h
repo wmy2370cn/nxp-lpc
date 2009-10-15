@@ -1,7 +1,26 @@
 #pragma once
 #include "afxwin.h"
 
+class CPacket;
+class CPacketGridCtrl : public CBCGPGridCtrl
+{
+	DECLARE_DYNAMIC(CPacketGridCtrl)
 
+public:
+	CPacketGridCtrl();
+	virtual ~CPacketGridCtrl();
+
+	CBCGPGridRow * AddEmptyRow ( BOOL bAllowEdit = FALSE ,BOOL bSetAutoID = TRUE);
+	CBCGPGridRow *AddPacketRow ( CPacket *pPacket  );
+	CBCGPGridRow* CreateNewRow ();
+protected:
+	 
+protected:
+	DECLARE_MESSAGE_MAP()
+public:
+ 
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+};
 
 // CClientRecvView 窗体视图
 
@@ -23,8 +42,9 @@ public:
 #endif
 
 protected:
-	CBCGPGridCtrl		m_wndGrid;
+	CPacketGridCtrl		m_wndGrid;
 
+	void LoadPacket( );
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持

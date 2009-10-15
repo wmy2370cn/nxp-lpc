@@ -9,7 +9,137 @@
 
 #include "ChildFrm.h"
 
+static BCGP_GRID_COLOR_DATA sliver_theme = 
+{
+	-1,	// Grid background color
+	RGB (50, 50, 50),	// Grid foreground color
+	-1,	// Header foreground color
 
+	{	// Even rows colors:
+		RGB (238, 238, 238), -1, -1, 0, -1
+	},
+
+	{	// Odd rows colors:
+		-1, -1, -1, 0, -1
+	},
+
+	{	// Group colors:
+		RGB (222, 230, 240), RGB (72, 105, 148), RGB (255, 255, 255), 90, -1
+	},
+
+	{	// Selected group colors:
+		RGB (117, 150, 188), RGB (249, 250, 252), RGB (183, 200, 220), 90, -1
+	},
+
+	{	// Selected colors:
+		RGB (175, 194, 217), RGB (52, 77, 108), RGB (222, 230, 240), 90, RGB (175, 194, 217)
+	},
+
+	{	// Header item colors:
+		RGB (215, 218, 227), -1, RGB (244, 245, 248), 90, RGB (173, 183, 205)
+	},
+
+	{	// Selected header item colors:
+		RGB (251, 157, 105), -1, RGB (254, 204, 153), 90, RGB (173, 183, 205)
+	},
+
+	{	// Left offset colors:
+		RGB (215, 218, 227), -1, RGB (244, 245, 248), 0, RGB (173, 183, 205)
+	},
+
+	-1,	// Grid horizontal line
+	-1,	// Grid vertical line
+	-1,	// Description text color
+};
+
+typedef enum  PacketGridColumn
+{
+	PACKET_GRID_COLUMN_ID,  // 序号
+	PACKET_GRID_COLUMN_DATE,   // 日期 
+	PACKET_GRID_COLUMN_TIME , //时间
+	PACKET_GRID_COLUMN_LEN , //长度
+	PACKET_GRID_COLUMN_PACKET,    //报文
+	PACKET_GRID_COLUMN_COMMENT     //备注,可编辑
+};
+
+IMPLEMENT_DYNAMIC(CPacketGridCtrl, CBCGPGridCtrl)
+CPacketGridCtrl::CPacketGridCtrl( )
+{
+}
+
+CPacketGridCtrl::~CPacketGridCtrl( )
+{
+}
+
+BEGIN_MESSAGE_MAP(CPacketGridCtrl, CBCGPGridCtrl)
+	ON_WM_CREATE()
+END_MESSAGE_MAP()
+// CRegDefGridCtrl 消息处理程序
+
+int CPacketGridCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPGridCtrl::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	SetWholeRowSel (FALSE);
+	EnableMarkSortedColumn (FALSE);
+	EnableMultipleSort(FALSE);
+	EnableHeader (TRUE, BCGP_GRID_HEADER_SORT); 		 
+
+	CBCGPGridColors theme;
+	CBCGPVisualManager::GetInstance ()->OnSetGridColorTheme (this, theme);
+	SetColorTheme (sliver_theme);
+
+	InsertColumn (PACKET_GRID_COLUMN_ID, _T("序号"), 70);
+	InsertColumn (PACKET_GRID_COLUMN_DATE, _T("日期"), 90);
+	InsertColumn (PACKET_GRID_COLUMN_TIME, _T("时间"), 100);
+	InsertColumn (PACKET_GRID_COLUMN_LEN, _T("长度"),40);
+	InsertColumn (PACKET_GRID_COLUMN_PACKET, _T("报文"),180);
+	InsertColumn (PACKET_GRID_COLUMN_COMMENT, _T("备注"),80);
+ 
+	return 0;
+} 
+
+
+CBCGPGridRow* CPacketGridCtrl::CreateNewRow ()
+{
+	CBCGPGridRow* pRow = CreateRow (GetColumnCount());
+
+	for (int i = 0; i < GetColumnCount ();i++)
+	{
+		pRow->GetItem (i)->AllowEdit (FALSE);
+	}
+
+	return pRow;
+}
+CBCGPGridRow *CPacketGridCtrl::AddPacketRow ( CPacket *pPacket  )
+{
+	ASSERT(pPacket);
+	if (pPacket == NULL)
+		return NULL;
+	CBCGPGridRow *pRow = CreateNewRow ();
+
+	pRow->GetItem(PACKET_GRID_COLUMN_ID)->SetValue( pPacket->m_nId );
+	CString szTxt;
+
+	szTxt.Format(_T("%d-%02d-%02d"),pPacket->m_stBuild.wYear,pPacket->m_stBuild.wMonth,pPacket->m_stBuild.wDay);
+	pRow->GetItem(PACKET_GRID_COLUMN_DATE)->SetValue( (_variant_t)szTxt );
+
+	szTxt.Format(_T("%02d:%02d:%02d.%03d"),pPacket->m_stBuild.wHour,pPacket->m_stBuild.wMinute,pPacket->m_stBuild.wSecond,
+		pPacket->m_stBuild.wMilliseconds);
+	pRow->GetItem(PACKET_GRID_COLUMN_TIME)->SetValue( (_variant_t)szTxt );
+
+	unsigned int nLen = pPacket->GetPacket(szTxt);
+	pRow->GetItem(PACKET_GRID_COLUMN_LEN)->SetValue(  nLen );
+
+	pRow->GetItem(PACKET_GRID_COLUMN_PACKET)->SetValue(  (_variant_t)szTxt );
+
+
+	AddRow (pRow, TRUE);
+	pRow->SetData( (DWORD_PTR) pPacket );
+
+	return pRow; 
+}
 // CClientRecvView
 
 IMPLEMENT_DYNCREATE(CClientRecvView, CBCGPFormView)
@@ -56,6 +186,8 @@ void CClientRecvView::Dump(CDumpContext& dc) const
 
 // CClientRecvView 消息处理程序
 
+const UINT_PTR ID_LOG_PACKET = 2009;
+
 int CClientRecvView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CBCGPFormView::OnCreate(lpCreateStruct) == -1)
@@ -68,10 +200,9 @@ int CClientRecvView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectGrid.SetRectEmpty();
 	 
 	m_wndGrid.Create (WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectGrid, this, (UINT)-1);
-	
-	m_wndGrid.SetReadOnly ();
-	m_wndGrid.SetWholeRowSel ();
-	m_wndGrid.EnableHeader (TRUE, 0);
+ 
+	SetTimer(ID_LOG_PACKET,1000,NULL);
+
 
 	return 0;
 }
@@ -132,6 +263,36 @@ void CClientRecvView::OnBnClickedButtonClearRecv()
 void CClientRecvView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == ID_LOG_PACKET)
+	{
+		KillTimer(nIDEvent);
+		LoadPacket( );
+		SetTimer(ID_LOG_PACKET,1000,NULL);		
+	}
 
 	CBCGPFormView::OnTimer(nIDEvent);
+}
+
+void CClientRecvView::LoadPacket( )
+{
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+	if(m_wndGrid.GetSafeHwnd() == NULL)
+		return;
+
+	CPacket *pPacket = NULL;
+
+	bool bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
+	 
+	while(bRet)
+	{
+		ASSERT(pPacket);
+		//显示出来
+		m_wndGrid.AddPacketRow(pPacket);
+
+
+		 bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
+	}
 }

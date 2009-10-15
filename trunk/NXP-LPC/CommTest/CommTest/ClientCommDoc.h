@@ -5,6 +5,7 @@
 
 #pragma once
 #include "ClientComm.h"
+#include "Packet.h"
 
 const int MAX_SEND_LEN = 2048;
 
@@ -33,6 +34,8 @@ public:
 
 
 	BOOL m_bConnected;
+
+	CPacketContainer m_PacketCtnr;
 
  
  

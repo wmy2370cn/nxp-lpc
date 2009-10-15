@@ -34,7 +34,9 @@ boost::auto_alloc g_packet_alloc;
 
 CPacket::CPacket()
 {
-
+	m_pPacketData = NULL;
+	m_nLen = 0;;
+	m_nId = 0;
 }
 
 CPacket::~CPacket()
@@ -44,6 +46,10 @@ CPacket::~CPacket()
 
 CPacket::CPacket( unsigned char *pData,unsigned int nLen )
 {
+	m_pPacketData = NULL;
+	m_nLen = 0;;
+	m_nId = 0;
+
 	ASSERT( pData );
 	ASSERT(nLen >0  && nLen <= MAX_PACKET_LEN);
 	if (pData == NULL || nLen == 0 || nLen > MAX_PACKET_LEN)
@@ -68,15 +74,21 @@ void CPacket::SetPacket( unsigned char *pData,unsigned int nLen)
 	memcpy_s(m_pPacketData,m_nLen,pData,nLen);
 }
 
+unsigned int CPacket::GetPacket(CString &szPacket)
+{
+
+	return m_nLen;
+}
+
 
 CPacketContainer::CPacketContainer()
 {
-
+	m_nCurId = 0;
 }
 
 CPacketContainer::~CPacketContainer()
 {
-
+	FreeMem( );
 }
 /*********************************************************************************************************
 ** º¯ÊýÃû³Æ: PutData
@@ -212,5 +224,6 @@ bool  CPacketContainer::RemoveData( CPacket *pPacket )
 
 void CPacketContainer::FreeMem( )
 {
-
+	m_arrPongBuf.clear();
+	m_arrPingBuf.clear();
 }

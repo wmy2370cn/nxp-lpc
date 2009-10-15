@@ -271,14 +271,15 @@ void CClientComm::Engine( )
 	if (nRet == SOCKET_ERROR)
 	{
 
+
 	}
 	else
 	{
-
-		
+		if (m_pDocument)
+		{
+			m_pDocument->m_PacketCtnr.PutData(m_pRawBuf,nRet);
+		}		
 	}
-
-
 }
 
 
