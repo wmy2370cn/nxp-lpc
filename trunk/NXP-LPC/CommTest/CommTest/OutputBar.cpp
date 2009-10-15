@@ -152,6 +152,8 @@ void COutputBar::InitListControl()
 	//ListView_SetExtendedListViewStyle(m_wndList.m_hWnd, LVS_EX_GRIDLINES|LVS_EX_FULLROWSELECT);
 	ListView_SetExtendedListViewStyle(m_wndList.m_hWnd, LVS_EX_FULLROWSELECT);
 
+	m_wndList.SetBackgroundImage( IDR_MAINFRAME,48,48);
+
 	// 	m_listCtrl.InsertItem(0, NULL, 0);
 	// 	m_listCtrl.SetItemText(0, 3, _T("Click here to add a new task"));
 

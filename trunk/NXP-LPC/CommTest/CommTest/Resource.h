@@ -3,7 +3,7 @@
 // Used by CommTest.rc
 //
 #define IDD_ABOUTBOX                    100
-#define IDP_OLE_INIT_FAILED             100
+#define IDP_OLE_INIT_FAILED             101
 #define IDP_SOCKETS_INIT_FAILED         104
 #define IDR_POPUP_WORKSPACE             119
 #define ID_STATUSBAR_PANE1              120
@@ -112,8 +112,13 @@
 #define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_PROTOCOL             1021
 #define IDC_IPADDRESS_DEST_OPT          1022
+#define IDC_CHECK_AUTO_SEND             1022
 #define IDC_BUTTON_DISP                 1023
+#define IDC_EDIT1                       1023
+#define IDC_EDIT_INT_TIME               1023
 #define IDC_BUTTON_CLEAR_RECV           1024
+#define ID_WORKSPACE_NEW                1200
+#define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
 #define ID_VIEW_USER_TOOLBAR2           2794
 #define ID_VIEW_USER_TOOLBAR3           2795
@@ -135,8 +140,6 @@
 #define ID_EDIT_DELETE                  32851
 #define ID_TREE_EXPAND                  32852
 #define ID_TREE_COLLAPSE                32853
-#define ID_WORKSPACE_NEW                32854
-#define ID_WORKSPACE_DELETE             32855
 
 // Next default values for new objects
 // 
@@ -144,7 +147,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32856
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif
