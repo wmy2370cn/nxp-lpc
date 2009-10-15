@@ -18,7 +18,7 @@ public:
 private:
 	unsigned char *m_pData;
 	unsigned int  m_nLen;
-	CMutex  m_Mutex;
+	CCriticalSection  m_Mutex;
 
 	
 //	boost::memory::pool m_MemPool   ;

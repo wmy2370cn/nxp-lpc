@@ -264,6 +264,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Packet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PingChildFrm.cpp"
 				>
 			</File>
@@ -379,6 +383,10 @@
 			</File>
 			<File
 				RelativePath=".\OutputBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Packet.h"
 				>
 			</File>
 			<File

@@ -6,6 +6,8 @@
 #include "Common.h"
 #include "LogDataApi.h"
 
+#include "Packet.h"
+
 CClientComm::CClientComm( )
 {
 	m_pDocument = NULL;
@@ -272,7 +274,8 @@ void CClientComm::Engine( )
 	}
 	else
 	{
-	
+
+		
 	}
 
 
