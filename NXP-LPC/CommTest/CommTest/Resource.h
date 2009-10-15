@@ -111,6 +111,7 @@
 #define IDC_BUTTON_CLEAR                1019
 #define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_PROTOCOL             1021
+#define IDC_BUTTON_ADV                  1021
 #define IDC_IPADDRESS_DEST_OPT          1022
 #define IDC_CHECK_AUTO_SEND             1022
 #define IDC_BUTTON_DISP                 1023
