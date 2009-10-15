@@ -112,6 +112,29 @@ CBCGPGridRow* CPacketGridCtrl::CreateNewRow ()
 
 	return pRow;
 }
+
+#ifdef _DEBUG
+class CBCGPGridRowEx : public CBCGPGridRow
+{
+	friend CPacketGridCtrl;
+};
+
+int CPacketGridCtrl::AddRowEx (CBCGPGridRow* pItem )
+{
+	ASSERT_VALID (this);
+	ASSERT_VALID (pItem); 
+
+	((CBCGPGridRowEx*)pItem)->SetOwnerList (this);
+
+	m_lstItems.AddTail (pItem);
+	int nIndex = (int) m_lstItems.GetCount () - 1;
+	((CBCGPGridRowEx*)pItem)->m_nIdRow = nIndex;
+
+	SetRebuildTerminalItems ();
+	return nIndex;
+}
+#endif // _DEBUG
+
 CBCGPGridRow *CPacketGridCtrl::AddPacketRow ( CPacket *pPacket  )
 {
 	ASSERT(pPacket);
@@ -134,8 +157,12 @@ CBCGPGridRow *CPacketGridCtrl::AddPacketRow ( CPacket *pPacket  )
 
 	pRow->GetItem(PACKET_GRID_COLUMN_PACKET)->SetValue(  (_variant_t)szTxt );
 
+#ifdef _DEBUG
+	AddRowEx(pRow);
+#else
+	AddRow (pRow, FALSE);
+#endif // _DEBUG
 
-	AddRow (pRow, TRUE);
 	pRow->SetData( (DWORD_PTR) pPacket );
 
 	return pRow; 
@@ -282,7 +309,27 @@ void CClientRecvView::LoadPacket( )
 	if(m_wndGrid.GetSafeHwnd() == NULL)
 		return;
 
+	int nRowCnt = m_wndGrid.GetRowCount();
+
 	CPacket *pPacket = NULL;
+
+	while(nRowCnt > MAX_PACKET_CNT)
+	{
+		CBCGPGridRow *pRow = m_wndGrid.GetRow(0);
+		ASSERT(pRow);
+		if (pRow)
+		{
+			pPacket = (CPacket*)pRow->GetData();
+			ASSERT(pPacket);
+			m_wndGrid.RemoveRow(0,FALSE);
+			if (pPacket)
+			{
+				pDoc->m_PacketCtnr.RemoveData(pPacket);
+			}
+		}
+
+		nRowCnt = m_wndGrid.GetRowCount();
+	}
 
 	bool bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
 	 
@@ -291,8 +338,7 @@ void CClientRecvView::LoadPacket( )
 		ASSERT(pPacket);
 		//ÏÔÊ¾³öÀ´
 		m_wndGrid.AddPacketRow(pPacket);
-
-
-		 bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
+		bRet = pDoc->m_PacketCtnr.GetData(&pPacket);
 	}
+	m_wndGrid.AdjustLayout();
 }

@@ -41,6 +41,7 @@ public:
 	void SetPacket( unsigned char *pData,unsigned int nLen);
 	unsigned int m_nId;
 	unsigned int GetPacket(CString &szPacket);
+	unsigned char *GetPacket(unsigned int &nLen);
 protected:
 	unsigned char *m_pPacketData;
 	unsigned int  m_nLen;

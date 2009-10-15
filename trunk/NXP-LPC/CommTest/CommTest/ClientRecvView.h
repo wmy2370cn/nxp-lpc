@@ -14,7 +14,11 @@ public:
 	CBCGPGridRow *AddPacketRow ( CPacket *pPacket  );
 	CBCGPGridRow* CreateNewRow ();
 protected:
-	 
+
+#ifdef _DEBUG
+	int AddRowEx (CBCGPGridRow* pItem );
+#endif
+
 protected:
 	DECLARE_MESSAGE_MAP()
 public:

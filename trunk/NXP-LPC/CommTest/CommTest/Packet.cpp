@@ -76,10 +76,48 @@ void CPacket::SetPacket( unsigned char *pData,unsigned int nLen)
 
 unsigned int CPacket::GetPacket(CString &szPacket)
 {
-
+	if (m_nLen >0 && m_nLen <MAX_PACKET_LEN)
+	{
+//		char szMsgB[512] = {0};
+//		sprintf(szMsgB,"%02X ",pMsg->pData[0]);
+		unsigned int nLen =  m_nLen;
+		unsigned int i = 1;
+		TCHAR temp[10] = {0};
+		
+	//	_stprintf_s(temp,"%02X ",m_pPacketData[0]);
+		szPacket.Format(_T("%02X "),m_pPacketData[0]);
+		if (nLen >= 32)
+		{
+			nLen = 32;
+			for (i = 1; i<nLen; i++)
+			{
+				_stprintf_s(temp,6,_T("%02X "), m_pPacketData[i] );
+				szPacket += temp;
+			}
+			szPacket.Delete(szPacket.GetLength()-1);
+			szPacket += _T("...");
+		}
+		else
+		{
+			if (nLen>1)
+			{
+				for (i = 1; i<nLen; i++)
+				{
+					_stprintf_s(temp,6,_T("%02X "), m_pPacketData[i] );
+					szPacket += temp;
+				}
+			}			
+			szPacket.Delete(szPacket.GetLength()-1);			  
+		}
+	}
 	return m_nLen;
 }
 
+unsigned char *CPacket::GetPacket(unsigned int &nLen)
+{
+	nLen = m_nLen;
+	return m_pPacketData;
+}
 
 CPacketContainer::CPacketContainer()
 {
