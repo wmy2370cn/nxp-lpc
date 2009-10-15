@@ -10,7 +10,7 @@
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
 #endif
-#include "afxres.h"
+#include "afxres.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -23,6 +23,50 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 #pragma code_page(936)
 #endif //_WIN32
 
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\CommTest.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""          // 标准组件\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
+    "#endif\r\n"
+    "\r\n"
+    "#define _BCGCBPRO_STATIC_\r\n"
+    "// BCG ControlBar resources\r\n"
+    "#include ""L.chs\\bcgcontrolbar.rc""  \r\n"
+    "\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
@@ -34,7 +78,7 @@ BEGIN
     BEGIN
         MENUITEM "Standard Toolbar",            ID_VIEW_TOOLBAR
         MENUITEM "&Workspace",                  ID_VIEW_WORKSPACE
-        MENUITEM "&Output",                     ID_VIEW_OUTPUT
+        MENUITEM "输出栏(&O)",                     ID_VIEW_OUTPUT
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR1
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR2
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR3
@@ -46,7 +90,7 @@ BEGIN
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR9
         MENUITEM "<User Toolbar>",              ID_VIEW_USER_TOOLBAR10
         MENUITEM SEPARATOR
-        MENUITEM "&Customize...",               32770
+        MENUITEM "自定义（&C）...",                  32770
     END
 END
 
@@ -241,53 +285,9 @@ BEGIN
     END
     POPUP "帮助(&H)"
     BEGIN
-        MENUITEM "关于 CommTest(&A)...",          ID_APP_ABOUT
+        MENUITEM "关于(&A)",                      ID_APP_ABOUT
     END
 END
-
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#ifndef APSTUDIO_INVOKED\r\n"
-    "#include ""targetver.h""\r\n"
-    "#endif\r\n"
-    "#include ""afxres.h\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
-    "LANGUAGE 4, 2\r\n"
-    "#pragma code_page(936)\r\n"
-    "#include ""res\\CommTest.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
-    "#include ""l.CHS\\afxres.rc""          // 标准组件\r\n"
-    "#if !defined(_AFXDLL)\r\n"
-    "//#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
-    "#endif\r\n"
-    "\r\n"
-    "#define _BCGCBPRO_STATIC_\r\n"
-    "// BCG ControlBar resources\r\n"
-    "#include ""L.chs\\bcgcontrolbar.rc""  \r\n"
-    "\r\n"
-    "#endi\0"
-END
-
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "关于 CommTest"
+CAPTION "关于"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
@@ -434,12 +434,16 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "",IDC_STATIC,6,0,36,19,0,WS_EX_RTLREADING
     LTEXT           "发送区",IDC_STATIC,12,7,25,8
-    EDITTEXT        IDC_EDIT_SEND_TXT,6,42,324,18,ES_MULTILINE | ES_UPPERCASE | ES_AUTOHSCROLL | WS_VSCROLL
-    PUSHBUTTON      "发送",IDC_BUTTON_SEND,175,6,50,14
+    EDITTEXT        IDC_EDIT_SEND_TXT,6,42,324,18,ES_MULTILINE | ES_UPPERCASE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL
+    PUSHBUTTON      "发送",IDC_BUTTON_SEND,203,6,50,14
     CONTROL         "按16进制",IDC_CHECK_HEX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,25,48,10
-    PUSHBUTTON      "清空",IDC_BUTTON_CLEAR,175,24,50,14
-    PUSHBUTTON      "停止",IDC_BUTTON_STOP,250,6,50,14
-    PUSHBUTTON      "协议",IDC_BUTTON_PROTOCOL,250,24,50,14
+    PUSHBUTTON      "清空",IDC_BUTTON_CLEAR,203,24,50,14
+    PUSHBUTTON      "停止",IDC_BUTTON_STOP,278,6,50,14
+    PUSHBUTTON      "协议",IDC_BUTTON_PROTOCOL,278,24,50,14
+    CONTROL         "自动发送",IDC_CHECK_AUTO_SEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,58,7,48,10
+    LTEXT           "间隔",IDC_STATIC,113,7,17,8
+    LTEXT           "ms",IDC_STATIC,181,6,10,8
+    EDITTEXT        IDC_EDIT_INT_TIME,135,3,40,14,ES_AUTOHSCROLL | ES_NUMBER
 END
 
 IDD_DLG_RECV DIALOGEX 0, 0, 316, 186
@@ -776,6 +780,10 @@ BEGIN
     ID_EDIT_DELETE          "删除除选定的方案\n删除"
     ID_TREE_EXPAND          "将所选择的子项全部展开\n全部展开"
     ID_TREE_COLLAPSE        "将所选择的子项全部折叠\n全部折叠"
+END
+
+STRINGTABLE 
+BEGIN
     ID_WORKSPACE_NEW        "新建测试方案\n新建"
     ID_WORKSPACE_DELETE     "删除选定的测试方案\n删除"
 END
@@ -808,7 +816,9 @@ LANGUAGE 4, 2
 #pragma code_page(936)
 #include "res\CommTest.rc2"  // 非 Microsoft Visual C++ 编辑的资源
 #include "l.CHS\afxres.rc"          // 标准组件
-
+#if !defined(_AFXDLL)
+#include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
+#endif
 
 #define _BCGCBPRO_STATIC_
 // BCG ControlBar resources
