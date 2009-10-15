@@ -40,12 +40,12 @@ public:
 public:
 	void SetPacket( unsigned char *pData,unsigned int nLen);
 	unsigned int m_nId;
+	unsigned int GetPacket(CString &szPacket);
 protected:
 	unsigned char *m_pPacketData;
 	unsigned int  m_nLen;
-
+public:
 	SYSTEMTIME m_stBuild; 
-
 };
 
 
