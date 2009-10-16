@@ -137,6 +137,15 @@
 #define ID_MDI_MOVE_TO_PREV_GROUP       2840
 #define ID_MDI_CANCEL                   2841
 #define ID_MDI_MOVE_TO_NEXT_GROUP       2842
+
+#define XT_IDC_DRAGCOPY                 4133
+#define XT_IDC_DRAGMOVE                 4134
+#define XT_IDC_DRAGNONE                 4135
+#define XT_IDC_HANDNONE                 4136
+#define XT_IDC_HAND                     4137
+#define XTP_IDC_HSPLITBAR               4139
+#define XTP_IDC_VSPLITBAR               4141
+
 #define ID_EDIT_NEW                     32850
 #define ID_EDIT_DELETE                  32851
 #define ID_TREE_EXPAND                  32852

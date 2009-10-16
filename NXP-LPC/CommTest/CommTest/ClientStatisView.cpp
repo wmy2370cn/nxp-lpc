@@ -235,8 +235,7 @@ BOOL CGridChartWnd::Create (DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, U
 	m_pGrid = CreateGrid ();
 	m_pChart = CreateChart ();
 
-	 
-	BOOL bResult = CWnd::Create (globalData.RegisterWindowClass (_T("GridChartContainer")), _T(""), dwStyle, rect, pParentWnd, nID);
+	BOOL bResult = CWnd::Create (globalData.RegisterWindowClass (_T("GridChartCntnr")), _T(""), dwStyle, rect, pParentWnd, nID);
 	return bResult && m_pGrid != NULL && m_pChart != NULL;
 
 	//	return CWnd::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
@@ -278,7 +277,7 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
 
-	if (!m_wndSplitter.CreateStatic (this, 2, 1))
+	if (!m_wndSplitter.CreateStatic (this,1, 2))
 	{
 		ASSERT(FALSE);
 		return -1;
@@ -303,15 +302,12 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
  
-
 	CRect rect;
 	GetClientRect (rect);
 
-	m_wndSplitter.SetRowInfo (0, rect.Width () / 3, 30);
+	m_wndSplitter.SetColumnInfo (0, rect.Width () / 3, 30);
 	m_wndSplitter.SetWindowPos (NULL, 0, 0, rect.Width (), rect.Height (), SWP_NOZORDER | SWP_NOREDRAW);
-
  
-
 	return 0;
 }
 void CGridChartWnd::OnSize(UINT nType, int cx, int cy)
@@ -382,6 +378,7 @@ int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("CBCGPGanttControl::OnCreate: cannot create gantt control\n");
 		return -1;
 	}
+ 
 	return 0;
 }
 
@@ -401,12 +398,14 @@ void CClientStatisView::OnSize(UINT nType, int cx, int cy)
 			SWP_NOOWNERZORDER | SWP_NOACTIVATE);
 	}	
 	// TODO: 在此处添加消息处理程序代码
+
 }
+
 
 void CClientStatisView::OnInitialUpdate()
 {
-	CView::OnInitialUpdate();
- 	m_wndGridChart.CreateControls ();
+	CView::OnInitialUpdate(); 
+	m_wndGridChart.CreateControls();
 
 	// TODO: 在此添加专用代码和/或调用基类
 }

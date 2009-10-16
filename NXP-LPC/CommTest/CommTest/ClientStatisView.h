@@ -66,7 +66,9 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnDestroy();
 };
+ 
 // CClientStatisView йсм╪
+
 class CClientStatisView : public CView
 {
 	DECLARE_DYNCREATE(CClientStatisView)
@@ -83,8 +85,8 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 #endif
-
 	CGridChartWnd  m_wndGridChart;
+	void	RecalLayout();
 
 protected:
 	DECLARE_MESSAGE_MAP()
