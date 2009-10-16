@@ -8,7 +8,7 @@
 #include "MainFrm.h"
 #include "ClientChildFrm.h"
 #include "ClientSendView.h"
-#include "ClientRecvView.h"
+#include "ClientTabView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -146,7 +146,7 @@ BOOL CClientChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCon
 	GetClientRect (rectClient);
 
 	m_wndSplitter2.CreateView (0, 0, RUNTIME_CLASS (CClientSendView), CSize(0, 0), pContext);
-	m_wndSplitter2.CreateView (1, 0, RUNTIME_CLASS (CClientRecvView), CSize(0, 0), pContext);
+	m_wndSplitter2.CreateView (1, 0, RUNTIME_CLASS (CClientTabView), CSize(0, 0), pContext);
 
 //	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
 
