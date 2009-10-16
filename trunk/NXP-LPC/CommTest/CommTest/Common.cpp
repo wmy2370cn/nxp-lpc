@@ -49,4 +49,26 @@ namespace Common
 		}		 
 	}
 
+	unsigned char HexAscToInt( TCHAR data )
+	{
+		if ( isdigit(data) )
+		{
+			return static_cast <unsigned char>(_ttoi(&data));
+		}
+		else
+		{
+			if ((data >= L'a' && data <= L'f')) 
+			{
+				data -= L'a';
+				return static_cast <unsigned char>(10+data);
+			}
+			else if ((data >= L'A' && data <= L'F'))
+			{
+				data -= L'A';
+				return static_cast <unsigned char>(10+data);
+			}			   
+		}
+		return 0;
+	}
+
 }

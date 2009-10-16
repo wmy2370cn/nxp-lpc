@@ -29,7 +29,7 @@
 
 
 const unsigned int MAX_PACKET_LEN = 2048;
-const unsigned int MAX_PACKET_CNT = 64;
+const unsigned int MAX_PACKET_CNT = 1024;
 
 class CPacket
 {
