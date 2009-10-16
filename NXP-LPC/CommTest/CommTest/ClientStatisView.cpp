@@ -53,6 +53,7 @@ static BCGP_GRID_COLOR_DATA light_blue_theme =
 // CStatisGridCtrl
 
 IMPLEMENT_DYNAMIC(CStatisGridCtrl, CBCGPGridCtrl)
+
 CStatisGridCtrl::CStatisGridCtrl(void)
 {
 }
@@ -206,11 +207,19 @@ BEGIN_MESSAGE_MAP(CGridChartWnd, CWnd)
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
+	ON_MESSAGE(UM_OSCOPEPOSITION, OnOscopePositionMsg)
 END_MESSAGE_MAP()
 
 
 
 // CCtrlContainer 消息处理程序
+LRESULT CGridChartWnd::OnOscopePositionMsg(WPARAM wParam, LPARAM lParam)
+{
+	CWnd* pwndParent = GetParent();
+	if (pwndParent)
+		pwndParent->SendMessage(UM_OSCOPEPOSITION, wParam,lParam);
+	return TRUE;
+}
 
 void CGridChartWnd::OnDestroy()
 {
@@ -246,28 +255,17 @@ int CGridChartWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	CWnd* pParent = CWnd::FromHandle (lpCreateStruct->hwndParent);
+	CWnd* pParent = NULL;
+	if(lpCreateStruct)
+	{
+		pParent = CWnd::FromHandle (lpCreateStruct->hwndParent);
+	}
+
 	if (pParent != NULL && pParent->IsKindOf (RUNTIME_CLASS (CView)) == NULL)
 	{
 		return CreateControls ();
 	}
 
-// 	CChartTitle* pTitle = GetChart()->GetTitle();
-// 	//pTitle->RemoveAll();
-// 	ASSERT(pTitle);
-// 	pTitle->AddString(_T("编码值-开度关系曲线"));
-
-// 	TChartString szTxt;
-// 	CChartAxis* pAxis = GetChart()->CreateStandardAxis(COScopeCtrl::LeftAxis);
-// 	ASSERT(pAxis);
-// 
-// 	szTxt = _T("闸门开度");
-// 	pAxis->GetLabel()->SetText(szTxt);
-// 
-// 	pAxis = GetChart()->CreateStandardAxis(COScopeCtrl::BottomAxis);
-// 	ASSERT(pAxis);
-// 	szTxt = _T("编码值");
-// 	pAxis->GetLabel()->SetText(szTxt);
 	return 0;
 }
 int CGridChartWnd::CreateControls ()
@@ -277,7 +275,7 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
 
-	if (!m_wndSplitter.CreateStatic (this,1, 2))
+	if (!m_wndSplitter.CreateStatic (this,2,1))
 	{
 		ASSERT(FALSE);
 		return -1;
@@ -294,8 +292,7 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
 
-	dwStyle &= ~WS_BORDER;
-	if (!m_pChart->Create (dwStyle, rectDummy,&m_wndSplitter,  m_wndSplitter.IdFromRowCol (0, 1)))
+	if (!m_pChart->Create (dwStyle, rectDummy,&m_wndSplitter,  m_wndSplitter.IdFromRowCol (1, 0)))
 	{
 		TRACE0("Failed to create chart control\n");
 		ASSERT(FALSE);
@@ -305,8 +302,8 @@ int CGridChartWnd::CreateControls ()
 	CRect rect;
 	GetClientRect (rect);
 
-	m_wndSplitter.SetColumnInfo (0, rect.Width () / 3, 30);
-	m_wndSplitter.SetWindowPos (NULL, 0, 0, rect.Width (), rect.Height (), SWP_NOZORDER | SWP_NOREDRAW);
+	m_wndSplitter.SetRowInfo (0, rect.Height() / 3, 30);
+//	m_wndSplitter.SetWindowPos (NULL, 0, 0, rect.Width (), rect.Height (), SWP_NOZORDER | SWP_NOREDRAW);
  
 	return 0;
 }
@@ -336,6 +333,7 @@ BEGIN_MESSAGE_MAP(CClientStatisView, CView)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_MESSAGE(UM_OSCOPEPOSITION, OnOscopePositionMsg)
 END_MESSAGE_MAP()
 
 
@@ -378,14 +376,39 @@ int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("CBCGPGanttControl::OnCreate: cannot create gantt control\n");
 		return -1;
 	}
- 
+	m_wndGridChart.SendMessage(WM_CREATE);
+// 	m_wndGridChart.GetChart()->SetRange(0, 600, 0) ;
+// 	m_wndGridChart.GetChart()->SetRange(0, 600, 1) ;
+// 	m_wndGridChart.GetChart()->m_nYDecimals = 0;
+// 
+// 	m_wndGridChart.GetChart()->SetYUnits(_T("单位(byte)"),_T("0"),_T("600")) ;
+// 	m_wndGridChart.GetChart()->SetXUnits(_T("数据传输速度 (计算间隔2秒)")) ;
+// 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据接收"),0);
+// 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据发送"),1);
+// 
+// 	//	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 0, 164)) ;
+// 	//	m_wndGridChart.GetChart()->SetGridColor(RGB(192, 192, 255)) ;
+// 
+// 	m_wndGridChart.GetChart()->SetGridColor(RGB(0, 0, 0));		// Grid
+// 	m_wndGridChart.GetChart()->SetPlotColor(RGB(0, 255, 0), 0);	//  
+// 	m_wndGridChart.GetChart()->SetPlotColor(RGB(255, 0, 0), 1);	//  
+// 	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 64, 128)) ; 
+// 
+// 	m_wndGridChart.GetChart()->SetBarsPlot(true, 1);
+// 	m_wndGridChart.GetChart()->InvalidateCtrl();
+// 
+	m_TimeToolTips.Create(this);
+	m_TimeToolTips.AddTool(m_wndGridChart.GetChart(),	_T(""),NULL,0);
+	m_TimeToolTips.SetDelayTime(TTDT_INITIAL,	30000);
+	m_TimeToolTips.SetDelayTime(TTDT_RESHOW,	30000);
+	m_TimeToolTips.SetDelayTime(TTDT_AUTOPOP,	300);
 	return 0;
 }
 
 BOOL CClientStatisView::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	return TRUE;
+//	return TRUE;
 	return CView::OnEraseBkgnd(pDC);
 }
 
@@ -394,8 +417,7 @@ void CClientStatisView::OnSize(UINT nType, int cx, int cy)
 	CView::OnSize(nType, cx, cy);
 	if (m_wndGridChart.GetSafeHwnd () != NULL)
 	{
-		m_wndGridChart.SetWindowPos (this, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | 
-			SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+		m_wndGridChart.SetWindowPos (this, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
 	}	
 	// TODO: 在此处添加消息处理程序代码
 
@@ -405,7 +427,7 @@ void CClientStatisView::OnSize(UINT nType, int cx, int cy)
 void CClientStatisView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate(); 
-	m_wndGridChart.CreateControls();
+ 	m_wndGridChart.CreateControls();
 	
 	m_wndGridChart.GetChart()->SetRange(0, 600, 0) ;
 	m_wndGridChart.GetChart()->SetRange(0, 600, 1) ;
@@ -416,12 +438,30 @@ void CClientStatisView::OnInitialUpdate()
 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据接收"),0);
  	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据发送"),1);
 
-	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 0, 164)) ;
-	m_wndGridChart.GetChart()->SetGridColor(RGB(192, 192, 255)) ;
+//	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 0, 164)) ;
+//	m_wndGridChart.GetChart()->SetGridColor(RGB(192, 192, 255)) ;
 
 	m_wndGridChart.GetChart()->SetGridColor(RGB(0, 0, 0));		// Grid
 	m_wndGridChart.GetChart()->SetPlotColor(RGB(0, 255, 0), 0);	//  
 	m_wndGridChart.GetChart()->SetPlotColor(RGB(255, 0, 0), 1);	//  
 	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 64, 128)) ; 
+
+	m_wndGridChart.GetChart()->SetBarsPlot(true, 1);
+	m_wndGridChart.GetChart()->InvalidateCtrl();
+// 
+// 	m_TimeToolTips.Create(this);
+// 	m_TimeToolTips.AddTool(m_wndGridChart.GetChart(),	_T(""),NULL,0);
+// 	m_TimeToolTips.SetDelayTime(TTDT_INITIAL,	30000);
+// 	m_TimeToolTips.SetDelayTime(TTDT_RESHOW,	30000);
+// 	m_TimeToolTips.SetDelayTime(TTDT_AUTOPOP,	300);
+
 	// TODO: 在此添加专用代码和/或调用基类
+}
+
+LRESULT CClientStatisView::OnOscopePositionMsg(WPARAM /*wParam*/, LPARAM lParam)
+{
+	LPCTSTR pszInfo = (LPCTSTR)lParam;
+	m_TimeToolTips.UpdateTipText(pszInfo, m_wndGridChart.GetChart());
+ 	m_TimeToolTips.Update();
+	return 0;
 }

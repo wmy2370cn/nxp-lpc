@@ -1,10 +1,9 @@
 #pragma once
 
+#define  UM_OSCOPEPOSITION  (WM_USER + 0x100 + 19)
 /////////////////////////////////////////////////////////////////////////////
 // COScopeCtrl window
-#include "stdafx.h"
 
-#define UM_OSCOPEPOSITION WM_USER+191
 class COScopeCtrl : public CWnd
 {
 public:
@@ -83,7 +82,7 @@ protected:
 		int		iTrendRatio;
 		CString LegendLabel;
 		bool BarsPlot;
-		CList<double,double> lstPoints;
+		CList<double> lstPoints;
 	} PlotData_t;
 	PlotData_t* m_PlotData;
 
@@ -96,13 +95,18 @@ protected:
 	CRect	m_rectPlot;
 	CDC     m_dcGrid;
 	CDC     m_dcPlot;
-	CBitmap*m_pbitmapOldGrid;
-	CBitmap*m_pbitmapOldPlot;
+	CBitmap m_bitmapOldGrid;
+	CBitmap m_bitmapOldPlot;
 	CBitmap m_bitmapGrid;
 	CBitmap m_bitmapPlot;
 
+	static CFont	sm_fontAxis;
+	static LOGFONT	sm_logFontAxis;
+
 	bool m_bDoUpdate;
 	UINT m_nRedrawTimer;
+	UINT m_uLastMouseFlags;
+	CPoint m_ptLastMousePos;
 
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnPaint();
@@ -110,4 +114,5 @@ protected:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnSysColorChange();
 };
