@@ -24,6 +24,8 @@ public:
 
 	void OnConnected( );
 	void OnDisconnected();
+private:
+	void BuildSendTxt( BOOL bUpdata = TRUE );
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
@@ -36,6 +38,10 @@ public:
 	CEdit m_wndSend;
 	BOOL m_bHex;
 	afx_msg void OnEnChangeEditSendTxt();
+	afx_msg void OnBnClickedCheckAutoSend();
+	BOOL m_bAutoSend;
+	UINT m_nSendIntTime;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 

@@ -5,6 +5,7 @@
 #include "CommTest.h"
 #include "ClientSendView.h"
 #include "ClientCommDoc.h"
+#include "Common.h"
 
 
 // CClientSendView
@@ -14,6 +15,8 @@ IMPLEMENT_DYNCREATE(CClientSendView, CBCGPFormView)
 CClientSendView::CClientSendView()
 	: CBCGPFormView(CClientSendView::IDD)
 	, m_bHex(FALSE)
+	, m_bAutoSend(FALSE)
+	, m_nSendIntTime(200)
 {
 
 }
@@ -27,6 +30,9 @@ void CClientSendView::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT_SEND_TXT, m_wndSend);
 	DDX_Check(pDX, IDC_CHECK_HEX, m_bHex);
+	DDX_Check(pDX, IDC_CHECK_AUTO_SEND, m_bAutoSend);
+	DDX_Text(pDX, IDC_EDIT_INT_TIME, m_nSendIntTime);
+	DDV_MinMaxUInt(pDX, m_nSendIntTime, 100, 1000000);
 }
 
 BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
@@ -34,6 +40,8 @@ BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CClientSendView::OnBnClickedButtonSend)
 	ON_EN_CHANGE(IDC_EDIT_SEND_TXT, &CClientSendView::OnEnChangeEditSendTxt)
+	ON_BN_CLICKED(IDC_CHECK_AUTO_SEND, &CClientSendView::OnBnClickedCheckAutoSend)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -63,6 +71,7 @@ int CClientSendView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  在此添加您专用的创建代码
 	EnableVisualManagerStyle();
+	
 
 	return 0;
 }
@@ -100,15 +109,9 @@ void CClientSendView::OnBnClickedButtonSend()
 	CCommMsg msg(MSG_SEND_DATA);
 	pDoc->m_ClientComm.m_CommMsg.AddCommMsg(msg);
 }
-
-void CClientSendView::OnEnChangeEditSendTxt()
+const UINT_PTR ID_UPDATE_SEND_TXT = 200804;
+void CClientSendView::BuildSendTxt( BOOL bUpdata /*= TRUE*/ )
 {
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CBCGPFormView::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
 	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
 	ASSERT(pDoc);
 	if (pDoc == NULL)
@@ -121,12 +124,74 @@ void CClientSendView::OnEnChangeEditSendTxt()
 	int nLen = pDoc->m_szRawSendTxt.GetLength();
 	int i = 0;
 
+	UpdateData(TRUE);
+
 	if (m_bHex)
 	{//如果是16进制，那么只能是  0 - F
+		CString szTxt;
+		TCHAR tc;
 		for ( i = 0; i < nLen; i++)
 		{
-
+			tc = pDoc->m_szRawSendTxt.GetAt(i);
+			if (( tc >= L'0' &&  tc <= L'9' )||  ( tc >= L'A' &&  tc <= L'F' ))
+			{
+				szTxt.AppendChar( tc );
+			}
 		}
+		nLen = szTxt.GetLength();
+	    pDoc->m_szRawSendTxt.Empty();
+		if (nLen)
+		{
+			int nBufLen =(int)((nLen+1)/2);
+			unsigned char *pData = new unsigned char [nBufLen+10];
+			unsigned char low =0 ,high = 0;
+			unsigned char data  = 0;
+			unsigned int idx = 0;
+			for ( i = 0; i < (int)(nLen/2); i++)
+			{
+				tc = szTxt.GetAt(2*i);
+				high  =  Common::HexAscToInt(tc);
+				tc = szTxt.GetAt(2*i+1);
+				low  =  Common::HexAscToInt(tc);
+
+				pData[idx] = static_cast <unsigned char> (high << 4 | low);
+				idx++;
+			}
+			if (nLen%2)
+			{
+				tc = szTxt.GetAt( szTxt.GetLength()-1 );
+				pData[idx] = Common::HexAscToInt(tc);
+			}
+			pDoc->m_ClientComm.m_SendBuf.SetData( pData,nBufLen );
+			delete [] pData;
+
+			for ( i = 0; i < (int)(nLen/2); i++)
+			{
+				tc = szTxt.GetAt(2*i);
+				pDoc->m_szRawSendTxt.AppendChar(tc);
+				tc = szTxt.GetAt(2*i+1);
+				pDoc->m_szRawSendTxt.AppendChar(tc);
+				tc = L' ';
+				pDoc->m_szRawSendTxt.AppendChar(tc);
+			}
+
+			if (nLen%2)
+			{
+				tc = L'0';
+				pDoc->m_szRawSendTxt.AppendChar(tc);
+				tc = szTxt.GetAt(szTxt.GetLength()-1);
+				pDoc->m_szRawSendTxt.AppendChar(tc);
+			}
+			else
+			{
+				pDoc->m_szRawSendTxt.Delete(pDoc->m_szRawSendTxt.GetLength()-1 );
+			}
+		}
+		if (bUpdata)
+		{
+			SetTimer(ID_UPDATE_SEND_TXT,3000,NULL);
+		}
+		//	m_wndSend.SetWindowText( pDoc->m_szRawSendTxt );	
 	}
 	else
 	{//输入什么就发什么
@@ -146,6 +211,18 @@ void CClientSendView::OnEnChangeEditSendTxt()
 	} 
 }
 
+void CClientSendView::OnEnChangeEditSendTxt()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CBCGPFormView::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	BuildSendTxt();
+
+}
+
 void CClientSendView::OnConnected( )
 {
 	CWnd *pSndBtn = GetDlgItem(IDC_BUTTON_SEND);
@@ -161,7 +238,13 @@ void CClientSendView::OnConnected( )
 	{
 		pStopBnt->EnableWindow(TRUE);
 	}
-
+	
+	CWnd *pCheckWnd = GetDlgItem(IDC_CHECK_AUTO_SEND);
+	ASSERT(pCheckWnd);
+	if (pCheckWnd)
+	{
+		pCheckWnd->EnableWindow(TRUE);
+	}
 }
 
 void CClientSendView::OnDisconnected()
@@ -179,4 +262,71 @@ void CClientSendView::OnDisconnected()
 	{
 		pStopBnt->EnableWindow(FALSE);
 	}
+
+	CWnd *pTimeWnd = GetDlgItem(IDC_EDIT_INT_TIME);
+	ASSERT(pTimeWnd);
+	if (pTimeWnd)
+	{
+		pTimeWnd->EnableWindow(FALSE);
+	}
+	CWnd *pCheckWnd = GetDlgItem(IDC_CHECK_AUTO_SEND);
+	ASSERT(pCheckWnd);
+	if (pCheckWnd)
+	{
+		pCheckWnd->EnableWindow(FALSE);
+	}
+}
+
+const UINT_PTR ID_AUTO_SEND = 2010;
+
+void CClientSendView::OnBnClickedCheckAutoSend()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+	CWnd *pWnd = GetDlgItem(IDC_EDIT_INT_TIME);
+	ASSERT(pWnd);
+
+	if (m_bAutoSend)
+	{
+		pWnd->EnableWindow(TRUE);
+		if (m_nSendIntTime<100)
+		{
+			m_nSendIntTime = 100;
+		}
+		KillTimer(ID_AUTO_SEND);
+		SetTimer(ID_AUTO_SEND,m_nSendIntTime,NULL);
+	}
+	else
+	{
+		pWnd->EnableWindow(FALSE);
+	}
+}
+void CClientSendView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == ID_AUTO_SEND)
+	{
+		KillTimer(ID_AUTO_SEND);
+
+		CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+		ASSERT(pDoc);
+		if (pDoc != NULL)
+		{
+			CCommMsg msg(MSG_SEND_DATA);
+			pDoc->m_ClientComm.m_CommMsg.AddCommMsg(msg);
+			SetTimer(ID_AUTO_SEND,m_nSendIntTime,NULL);
+		}	
+	}
+	if ( nIDEvent == ID_UPDATE_SEND_TXT )
+	{
+		KillTimer(nIDEvent);
+		CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+		ASSERT(pDoc);
+		if (pDoc != NULL)
+		{
+			m_wndSend.SetWindowText( pDoc->m_szRawSendTxt );	
+		}
+	}
+
+	CBCGPFormView::OnTimer(nIDEvent);
 }
