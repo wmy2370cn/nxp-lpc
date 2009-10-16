@@ -10,7 +10,7 @@
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
 #endif
-#include "afxres.h"
+#include "afxres.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -610,7 +610,18 @@ BEGIN
     0
 END
 
-
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+IDC_HANDCUR             CURSOR  DISCARDABLE     "res\\handcur.cur"
+XTP_IDC_VSPLITBAR       CURSOR  DISCARDABLE     "res\\SPLITV.CUR"
+XTP_IDC_HSPLITBAR       CURSOR  DISCARDABLE     "res\\SPLITH.CUR"
+XT_IDC_HANDNONE         CURSOR  DISCARDABLE     "res\\handnone.cur"
+XT_IDC_HAND             CURSOR  DISCARDABLE     "res\\hand.cur"
+XT_IDC_DRAGNONE         CURSOR  DISCARDABLE     "res\\dragnone.cur"
+XT_IDC_DRAGMOVE         CURSOR  DISCARDABLE     "res\\dragmove.cur"
+XT_IDC_DRAGCOPY         CURSOR  DISCARDABLE     "res\\dragcopy.cur"
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table

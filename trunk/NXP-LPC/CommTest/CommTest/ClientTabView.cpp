@@ -58,36 +58,21 @@ void CClientTabView::Dump(CDumpContext& dc) const
 
 int CClientTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CView::OnCreate(lpCreateStruct) == -1)
+	if (CBCGPTabView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	CRect rectDummy;
-	rectDummy.SetRectEmpty ();
-
-	// Create tabs window:
-	if (!m_wndTabs.Create (  CBCGPTabWnd::STYLE_FLAT, rectDummy, this, 1))
-	{
-		TRACE0("Failed to create tab window\n");
-		return -1;      // fail to create
-	}
-
-	m_wndTabs.SetFlatFrame ();
-	m_wndTabs.SetTabBorderSize (0);
-	m_wndTabs.AutoDestroyWindow (FALSE);
-
-	CBCGPTabWnd::Style style = CBCGPTabWnd::STYLE_3D_ONENOTE;
-
-	m_wndTabs.ModifyTabStyle (style);
-
+	 
 //	CFrameWnd *pFrame = (CFrameWnd*)theApp.m_pMainWnd;
 	//	ASSERT(pFrame);
 	CClientCommDoc* pDoc = (CClientCommDoc*)GetDocument ();
 	ASSERT(pDoc);
 
 	// TODO:  在此添加您专用的创建代码
-	CCreateContext context;
-	memset(&context,0,sizeof(CCreateContext));	
-	context.m_pCurrentDoc = pDoc;	
+  	CCreateContext context;
+ 	memset(&context,0,sizeof(CCreateContext));	
+  	context.m_pCurrentDoc = pDoc;	
+//	AddView(_T("数据信息"),RUNTIME_CLASS(CClientRecvView),pDoc);
+//	AddView(_T("统计信息"),RUNTIME_CLASS(CClientStatisView),pDoc);
 	AddView(RUNTIME_CLASS(CClientRecvView),_T("数据信息"),-1,&context);
 	AddView(RUNTIME_CLASS(CClientStatisView),_T("统计信息"),-1,&context);
 
@@ -96,11 +81,8 @@ int CClientTabView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CClientTabView::OnSize(UINT nType, int cx, int cy)
 {
-	CView::OnSize(nType, cx, cy);
+	CBCGPTabView::OnSize(nType, cx, cy);
 
-	if (m_wndTabs.GetSafeHwnd())
-	{
-		m_wndTabs.SetWindowPos (NULL, -1, -1, cx + 1, cy + 1,SWP_NOACTIVATE | SWP_NOZORDER);
-	}
+	 
 	// TODO: 在此处添加消息处理程序代码
 }
