@@ -406,6 +406,22 @@ void CClientStatisView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate(); 
 	m_wndGridChart.CreateControls();
+	
+	m_wndGridChart.GetChart()->SetRange(0, 600, 0) ;
+	m_wndGridChart.GetChart()->SetRange(0, 600, 1) ;
+	m_wndGridChart.GetChart()->m_nYDecimals = 0;
 
+	m_wndGridChart.GetChart()->SetYUnits(_T("单位(byte)"),_T("0"),_T("600")) ;
+	m_wndGridChart.GetChart()->SetXUnits(_T("数据传输速度 (计算间隔2秒)")) ;
+	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据接收"),0);
+ 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据发送"),1);
+
+	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 0, 164)) ;
+	m_wndGridChart.GetChart()->SetGridColor(RGB(192, 192, 255)) ;
+
+	m_wndGridChart.GetChart()->SetGridColor(RGB(0, 0, 0));		// Grid
+	m_wndGridChart.GetChart()->SetPlotColor(RGB(0, 255, 0), 0);	//  
+	m_wndGridChart.GetChart()->SetPlotColor(RGB(255, 0, 0), 1);	//  
+	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 64, 128)) ; 
 	// TODO: 在此添加专用代码和/或调用基类
 }
