@@ -42,6 +42,12 @@ public:
 	BOOL m_bAutoSend;
 	UINT m_nSendIntTime;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedButtonClear();
+protected:
+	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+public:
+	virtual void OnInitialUpdate();
+	afx_msg void OnBnClickedButtonStop();
 };
 
 

@@ -42,6 +42,8 @@ BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
 	ON_EN_CHANGE(IDC_EDIT_SEND_TXT, &CClientSendView::OnEnChangeEditSendTxt)
 	ON_BN_CLICKED(IDC_CHECK_AUTO_SEND, &CClientSendView::OnBnClickedCheckAutoSend)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CClientSendView::OnBnClickedButtonClear)
+	ON_BN_CLICKED(IDC_BUTTON_STOP, &CClientSendView::OnBnClickedButtonStop)
 END_MESSAGE_MAP()
 
 
@@ -72,7 +74,6 @@ int CClientSendView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  在此添加您专用的创建代码
 	EnableVisualManagerStyle();
 	
-
 	return 0;
 }
 
@@ -189,7 +190,7 @@ void CClientSendView::BuildSendTxt( BOOL bUpdata /*= TRUE*/ )
 		}
 		if (bUpdata)
 		{
-			SetTimer(ID_UPDATE_SEND_TXT,3000,NULL);
+			SetTimer(ID_UPDATE_SEND_TXT,8000,NULL);
 		}
 		//	m_wndSend.SetWindowText( pDoc->m_szRawSendTxt );	
 	}
@@ -232,12 +233,12 @@ void CClientSendView::OnConnected( )
 		pSndBtn->EnableWindow(TRUE);
 	}
 
-	CWnd *pStopBnt = GetDlgItem(IDC_BUTTON_STOP);
-	ASSERT(pStopBnt);
-	if (pStopBnt)
-	{
-		pStopBnt->EnableWindow(TRUE);
-	}
+// 	CWnd *pStopBnt = GetDlgItem(IDC_BUTTON_STOP);
+// 	ASSERT(pStopBnt);
+// 	if (pStopBnt)
+// 	{
+// 		pStopBnt->EnableWindow(TRUE);
+// 	}
 	
 	CWnd *pCheckWnd = GetDlgItem(IDC_CHECK_AUTO_SEND);
 	ASSERT(pCheckWnd);
@@ -293,6 +294,12 @@ void CClientSendView::OnBnClickedCheckAutoSend()
 		{
 			m_nSendIntTime = 100;
 		}
+		CWnd *pStopBnt = GetDlgItem(IDC_BUTTON_STOP);
+		ASSERT(pStopBnt);
+		if (pStopBnt)
+		{
+			pStopBnt->EnableWindow(TRUE);
+		}
 		KillTimer(ID_AUTO_SEND);
 		SetTimer(ID_AUTO_SEND,m_nSendIntTime,NULL);
 	}
@@ -325,8 +332,36 @@ void CClientSendView::OnTimer(UINT_PTR nIDEvent)
 		if (pDoc != NULL)
 		{
 			m_wndSend.SetWindowText( pDoc->m_szRawSendTxt );	
+			int nNum=m_wndSend.GetWindowTextLength();
+			m_wndSend.SetSel(nNum, nNum);
 		}
 	}
 
 	CBCGPFormView::OnTimer(nIDEvent);
+}
+
+void CClientSendView::OnBnClickedButtonClear()
+{
+	// TODO: 在此添加控件通知处理程序代码
+//	m_wndSend.SetReadOnly(FALSE);
+	m_wndSend.SetSel(0, -1);	
+	m_wndSend.Clear();
+//	m_wndSend.SetReadOnly(TRUE);	
+}
+
+void CClientSendView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+}
+
+void CClientSendView::OnInitialUpdate()
+{
+	CBCGPFormView::OnInitialUpdate();
+	OnDisconnected();
+	// TODO: 在此添加专用代码和/或调用基类
+}
+
+void CClientSendView::OnBnClickedButtonStop()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }

@@ -58,8 +58,8 @@ typedef enum  PacketGridColumn
 	PACKET_GRID_COLUMN_DATE,   // 日期 
 	PACKET_GRID_COLUMN_TIME , //时间
 	PACKET_GRID_COLUMN_LEN , //长度
-	PACKET_GRID_COLUMN_PACKET,    //报文
-	PACKET_GRID_COLUMN_COMMENT     //备注,可编辑
+	PACKET_GRID_COLUMN_PACKET   //报文
+//	PACKET_GRID_COLUMN_COMMENT     //备注,可编辑
 };
 
 IMPLEMENT_DYNAMIC(CPacketGridCtrl, CBCGPGridCtrl)
@@ -95,8 +95,8 @@ int CPacketGridCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	InsertColumn (PACKET_GRID_COLUMN_DATE, _T("日期"), 90);
 	InsertColumn (PACKET_GRID_COLUMN_TIME, _T("时间"), 100);
 	InsertColumn (PACKET_GRID_COLUMN_LEN, _T("长度"),40);
-	InsertColumn (PACKET_GRID_COLUMN_PACKET, _T("报文"),180);
-	InsertColumn (PACKET_GRID_COLUMN_COMMENT, _T("备注"),80);
+	InsertColumn (PACKET_GRID_COLUMN_PACKET, _T("报文"),280);
+//	InsertColumn (PACKET_GRID_COLUMN_COMMENT, _T("备注"),80);
  
 	return 0;
 } 
@@ -292,6 +292,7 @@ void CClientRecvView::OnSize(UINT nType, int cx, int cy)
 void CClientRecvView::OnBnClickedButtonClearRecv()
 {
 	// TODO: 在此添加控件通知处理程序代码
+ 	
 	//TEST
 //	GetParentFrame()
 	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
