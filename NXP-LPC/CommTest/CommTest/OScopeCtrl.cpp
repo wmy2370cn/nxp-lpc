@@ -1,5 +1,5 @@
 //this file is part of eMule
-//Copyright (C)2002-2008 Merkur ( strEmail.Format("%s@%s", "devteam", "emule-project.net") / http://www.emule-project.net )
+//Copyright (C)2002 Merkur ( devs@emule-project.net / http://www.emule-project.net )
 //
 //This program is free software; you can redistribute it and/or
 //modify it under the terms of the GNU General Public License
@@ -15,8 +15,8 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include "stdafx.h"
-#include <math.h> 
-#include "OScopeCtrl.h" 
+#include <math.h>
+#include "OScopeCtrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,11 +24,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
 /////////////////////////////////////////////////////////////////////////////
 // COScopeCtrl
-
-CFont	COScopeCtrl::sm_fontAxis;
-LOGFONT	COScopeCtrl::sm_logFontAxis;
 
 BEGIN_MESSAGE_MAP(COScopeCtrl, CWnd)
 	ON_WM_PAINT()
@@ -36,13 +34,12 @@ BEGIN_MESSAGE_MAP(COScopeCtrl, CWnd)
 	ON_WM_TIMER()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_MOUSEMOVE()
-	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 COScopeCtrl::COScopeCtrl(int NTrends)
 {
 	int i;
-	static const COLORREF PresetColor[16] = 
+	COLORREF PresetColor[16] = 
 	{
 		RGB(0xFF, 0x00, 0x00),
 		RGB(0xFF, 0xC0, 0xC0),
@@ -66,23 +63,6 @@ COScopeCtrl::COScopeCtrl(int NTrends)
 		RGB(0xFF, 0xFF, 0xFF),
 		RGB(0x80, 0x80, 0x80)
 	};
-
-	//  *)	Using "Arial" or "MS Sans Serif" gives a more accurate small font,
-	//		but does not work for Korean fonts.
-	//	*)	Using "MS Shell Dlg" gives somewhat less accurate small fonts, but
-	//		does work for all languages which are currently supported by eMule.
-	// 8pt 'MS Shell Dlg' -- this shall be available on all Windows systems..
-// 	if (sm_fontAxis.m_hObject == NULL) 
-// 	{
-// 		if (CreatePointFont(sm_fontAxis, 8*10, theApp.GetDefaultFontFaceName()))
-// 			sm_fontAxis.GetLogFont(&sm_logFontAxis);
-// 		else if (sm_logFontAxis.lfHeight == 0)
-// 		{
-// 			memset(&sm_logFontAxis, 0, sizeof sm_logFontAxis);
-// 			sm_logFontAxis.lfHeight = 10;
-// 		}
-// 	}
-
 	// since plotting is based on a LineTo for each new point
 	// we need a starting point (i.e. a "previous" point)
 	// use 0.0 as the default first point.
@@ -143,7 +123,11 @@ COScopeCtrl::COScopeCtrl(int NTrends)
 	
 	// public member variables, can be set directly 
 	m_str.XUnits.Format(_T("Samples"));  // can also be set with SetXUnits
-	m_str.YUnits.Format(_T("Y units"));  // can also be set with SetYUnits
+	m_str.YUnits.Format(_T("单位(kb)"));  // can also be set with SetYUnits
+	
+	// protected bitmaps to restore the memory DC's
+	m_pbitmapOldGrid = NULL;
+	m_pbitmapOldPlot = NULL;
 	
 	// G.Hayduk: configurable number of grids init
 	// you are free to change those between contructing the object 
@@ -154,19 +138,16 @@ COScopeCtrl::COScopeCtrl(int NTrends)
 
 	m_bDoUpdate = true;
 	m_nRedrawTimer = 0;
-	m_uLastMouseFlags = 0;
-	m_ptLastMousePos.x = -1;
-	m_ptLastMousePos.y = -1;
 
 	ready = false;
 }
 
 COScopeCtrl::~COScopeCtrl()
 {
-	if (m_bitmapOldGrid.m_hObject)
-		m_dcGrid.SelectObject(m_bitmapOldGrid.Detach());
-	if (m_bitmapOldPlot.m_hObject)
-		m_dcPlot.SelectObject(m_bitmapOldPlot.Detach());
+	if (m_pbitmapOldGrid != NULL)
+		m_dcGrid.SelectObject(m_pbitmapOldGrid);  
+	if (m_pbitmapOldPlot != NULL)
+		m_dcPlot.SelectObject(m_pbitmapOldPlot);  
 	delete[] m_PlotData;
 }
 
@@ -175,14 +156,12 @@ BOOL COScopeCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT
 	BOOL result;
 	static CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW, AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 	
-	result = CWnd::CreateEx(/*WS_EX_CLIENTEDGE*/ // strong (default) border
-							WS_EX_STATICEDGE,	// lightweight border
+	result = CWnd::CreateEx(WS_EX_CLIENTEDGE /*| WS_EX_STATICEDGE*/, 
 							className, NULL, dwStyle, 
 							rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 							pParentWnd->GetSafeHwnd(), (HMENU)nID);
 	if (result != 0)
-		InvalidateCtrl();
-	
+		InvalidateCtrl();	
 	ready = true;
 	return result;
 }
@@ -203,11 +182,12 @@ BOOL COScopeCtrl::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT
 // iRatio is 1 by default (No change in scale of data for this trend)
 // This function now borrows a bit from eMule Plus v1
 //
-void COScopeCtrl::SetTrendRatio(int iTrend, UINT iRatio)
+void COScopeCtrl::SetTrendRatio(int iTrend, unsigned int iRatio)
 {
 	ASSERT(iTrend < m_NTrends && iRatio > 0);	// iTrend must be a valid trend in this plot.
 
-	if (iRatio != (UINT)m_PlotData[iTrend].iTrendRatio) {
+	if (iRatio != m_PlotData[iTrend].iTrendRatio) 
+	{
 		double dTrendModifier = (double)m_PlotData[iTrend].iTrendRatio / iRatio;
 		m_PlotData[iTrend].iTrendRatio = iRatio;
 
@@ -307,7 +287,7 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	int nCharacters;
 	CPen *oldPen;
 	CPen solidPen(PS_SOLID, 0, m_crGridColor);
-	CFont yUnitFont, *oldFont;
+	CFont axisFont, yUnitFont, *oldFont, LegendFont;
 	CString strTemp;
 	
 	CClientDC dc(this);  
@@ -318,24 +298,20 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		m_dcGrid.CreateCompatibleDC(&dc);
 		m_bitmapGrid.DeleteObject();
 		m_bitmapGrid.CreateCompatibleBitmap(&dc, m_nClientWidth, m_nClientHeight);
-		m_bitmapOldGrid.Attach(SelectObject(m_dcGrid, m_bitmapGrid));
+		m_pbitmapOldGrid = m_dcGrid.SelectObject(&m_bitmapGrid);
 	}
 	
 	COLORREF crLabelBk;
 	COLORREF crLabelFg;
-	bool bStraightGraphs = true;
-	if (bStraightGraphs) {
-		// Get the background color from the parent window. This way the controls which are
-		// embedded in a dialog window can get painted with the same background color as
-		// the dialog window.
-		HBRUSH hbr = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORSTATIC, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
-		if (hbr == GetSysColorBrush(COLOR_WINDOW))
-			crLabelBk = GetSysColor(COLOR_WINDOW);
-		else
-			crLabelBk = GetSysColor(COLOR_BTNFACE);
+	
+	//if (thePrefs.GetStraightWindowStyles()) 
+	if (1) 
+	{
+		crLabelBk = GetSysColor(COLOR_BTNFACE);
 		crLabelFg = GetSysColor(COLOR_WINDOWTEXT);
 	}
-	else {
+	else 
+	{
 		crLabelBk = m_crBackColor;
 		crLabelFg = m_crGridColor;
 	}
@@ -364,7 +340,8 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	m_nPlotWidth    = m_rectPlot.Width();
 	
 	// draw the plot rectangle
-	if (bStraightGraphs)
+	//if (thePrefs.GetStraightWindowStyles())
+	if (0)//不显示背景网格
 	{
 		m_dcGrid.FillSolidRect(m_rectPlot.left, m_rectPlot.top, m_rectPlot.right - m_rectPlot.left + 1, m_rectPlot.bottom - m_rectPlot.top + 1, m_crBackColor);
 
@@ -403,26 +380,33 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		// Lines are always right aligned and the gap scales accordingly to the user horizontal scale.
 		// Intervals of 10 hours are marked with slightly stronger lines that go beyond the bottom border.
 		int hourSize, partialSize, surplus=0, extra=0;
-		if (m_nXGrids > 0) {
+		if (m_nXGrids > 0) 
+		{
 			hourSize = (3600*m_rectPlot.Width())/(3600*m_nXGrids + m_nXPartial); // Size of an hour in pixels
 			partialSize = m_rectPlot.Width() - hourSize*m_nXGrids;
-			if (partialSize >= hourSize) {
+			if (partialSize >= hourSize)
+			{
 				partialSize = (hourSize*m_nXPartial)/3600; // real partial size
 				surplus = m_rectPlot.Width() - hourSize*m_nXGrids - partialSize; // Pixel surplus
 			}
 
 			GridPos = 0;
-			for(j = 1; j <= m_nXGrids; j++) {
+			for(j = 1; j <= m_nXGrids; j++) 
+			{
 				extra = 0;
-				if (surplus) {
+				if (surplus)
+				{
 					surplus--;
 					extra=1;
 				}
 				GridPos += (hourSize+extra);
-				if ((m_nXGrids - j + 1) % 10 == 0) {
+				if ((m_nXGrids - j + 1) % 10 == 0)
+				{
 					for(i = m_rectPlot.top; i < m_rectPlot.bottom; i += 2)
 						m_dcGrid.SetPixel(m_rectPlot.left + GridPos - hourSize + partialSize, i, m_crGridColor);
-				} else {
+				} 
+				else 
+				{
 					for(i = m_rectPlot.top; i < m_rectPlot.bottom; i += 4)
 						m_dcGrid.SetPixel(m_rectPlot.left + GridPos - hourSize + partialSize, i, m_crGridColor);
 				}
@@ -430,22 +414,21 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		}
 	}
 
-// 	if (afxIsWin95()) 
-// 	{
-// 		// Win98: To get a rotated font it has to be specified as "Arial" ("MS Shell Dlg" 
-// 		// and "MS Sans Serif" are not created with rotation)
-// 		yUnitFont.CreateFont(FontPointSizeToLogUnits(8*10), 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
-// 							 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Arial"));
-// 	}
-// 	else 
-// 	{
-// 		yUnitFont.CreateFont(FontPointSizeToLogUnits(8*10), 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
-// 							 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, theApp.GetDefaultFontFaceName());
-// 	}
-	yUnitFont.CreateStockObject(DEFAULT_GUI_FONT);
+	// create some fonts (horizontal and vertical)
+	// ---
+	//  *)	Using "Arial" or "MS Sans Serif" gives a more accurate small font,
+	//		but does not work for Korean fonts.
+	//	*)	Using "MS Shell Dlg" gives somewhat less accurate small fonts, but
+	//		does work for all languages which are currently supported by eMule.
+	axisFont.CreatePointFont(8*10, _T("MS Shell Dlg")); // 8pt 'MS Shell Dlg' -- this shall be available on all Windows systems..
+//	yUnitFont.CreateFont(FontPointSizeToLogUnits(8*10), 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
+//	yUnitFont.CreateFont((8*10), 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
+//		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Arial"));
+	yUnitFont.CreateFont((16), 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Arial"));
 
 	// grab the horizontal font
-	oldFont = m_dcGrid.SelectObject(&sm_fontAxis);
+	oldFont = m_dcGrid.SelectObject(&axisFont);
 	
 	// y max
 	m_dcGrid.SetTextColor(crLabelFg);
@@ -457,13 +440,17 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		strTemp = m_str.YMax;
 	m_dcGrid.TextOut(m_rectPlot.left - 4, m_rectPlot.top - 7, strTemp);
 	
-    if (m_rectPlot.Height() / (m_nYGrids + 1) >= 14) {
-	    for (j = 1; j < (m_nYGrids + 1); j++) {
+    if (m_rectPlot.Height() / (m_nYGrids + 1) >= 14) 
+	{
+	    for (j = 1; j < (m_nYGrids + 1); j++)
+		{
 		    GridPos = m_rectPlot.Height() * j / (m_nYGrids + 1) + m_rectPlot.top;
     	    strTemp.Format(_T("%.*lf"), m_nYDecimals, m_PlotData[0].dUpperLimit * (m_nYGrids - j + 1) / (m_nYGrids + 1));
     	    m_dcGrid.TextOut(m_rectPlot.left - 4, GridPos - 7, strTemp);
         }
-    } else {
+    } 
+	else 
+	{
 	    strTemp.Format(_T("%.*lf"), m_nYDecimals, m_PlotData[0].dUpperLimit / 2);
 	    m_dcGrid.TextOut(m_rectPlot.left - 2, m_rectPlot.bottom + ((m_rectPlot.top - m_rectPlot.bottom) / 2) - 7 , strTemp);
     }	
@@ -488,12 +475,17 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	
 	CRect rText(0,0,0,0);
 	m_dcGrid.DrawText(m_str.YUnits, rText, DT_CALCRECT);
-	m_dcGrid.TextOut((m_rectClient.left + m_rectPlot.left - 8) / 2 - rText.Height() / 2,
+	m_dcGrid.TextOut((m_rectClient.left + m_rectPlot.left + 4) / 2 - rText.Height() / 2,
 					 (m_rectPlot.bottom + m_rectPlot.top) / 2 - rText.Height() / 2,
-					 m_str.YUnits );
+					 m_str.YUnits);
 	m_dcGrid.SelectObject(oldFont);
 
-	oldFont = m_dcGrid.SelectObject(&sm_fontAxis);
+	//  *)	Using "Arial" or "MS Sans Serif" gives a more accurate small font,
+	//		but does not work for Korean fonts.
+	//	*)	Using "MS Shell Dlg" gives somewhat less accurate small fonts, but
+	//		does work for all languages which are currently supported by eMule.
+	LegendFont.CreatePointFont(8*10, _T("MS Shell Dlg")); // 8pt 'MS Shell Dlg' -- this shall be available on all Windows systems..
+	oldFont = m_dcGrid.SelectObject(&LegendFont);
 	m_dcGrid.SetTextAlign(TA_LEFT | TA_TOP);
 
 	int xpos = m_rectPlot.left + 2;
@@ -501,14 +493,14 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	for (i = 0; i < m_NTrends; i++)
 	{
 		CSize sizeLabel = m_dcGrid.GetTextExtent(m_PlotData[i].LegendLabel);
-		if (xpos + 12 + sizeLabel.cx + 12 > m_rectPlot.right) {
+		if (xpos + 12 + sizeLabel.cx + 12 > m_rectPlot.right)
+		{
 			xpos = m_rectPlot.left + 2;
-			ypos = m_rectPlot.bottom + sizeLabel.cy + 2;
+			ypos = m_rectPlot.bottom + sizeLabel.cy;
 		}
 
-//		if (bStraightGraphs)
+	//if (thePrefs.GetStraightWindowStyles())
 		if (0)
-
 		{
 			const int iLegFrmD = 1;
 			CPen penFrame(PS_SOLID, iLegFrmD, crLabelFg);
@@ -550,7 +542,7 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		m_dcPlot.CreateCompatibleDC(&dc);
 		m_bitmapPlot.DeleteObject();
 		m_bitmapPlot.CreateCompatibleBitmap(&dc, m_nClientWidth, m_nClientHeight);
-		m_bitmapOldPlot.Attach(SelectObject(m_dcPlot, m_bitmapPlot));
+		m_pbitmapOldPlot = m_dcPlot.SelectObject(&m_bitmapPlot);
 	}
 	
 	// make sure the plot bitmap is cleared
@@ -561,17 +553,17 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	if (m_nMaxPointCnt < iNewSize)
 		m_nMaxPointCnt = iNewSize;
 
-// 	if (theApp.emuledlg->IsRunning()) 
-// 	{
-// 		if (!thePrefs.IsGraphRecreateDisabled())
-// 		{
-// 			// The timer will redraw the previous points in 200ms
-// 			m_bDoUpdate = false;
-// 			if (m_nRedrawTimer)
-// 				KillTimer(m_nRedrawTimer);
-// 			VERIFY( (m_nRedrawTimer = SetTimer(1612, 200, NULL)) != NULL ); // reduce flickering
-// 		}
-// 	}
+/*	if (theApp.emuledlg->IsRunning()) 
+	{
+		if (!thePrefs.IsGraphRecreateDisabled())
+		{
+			// The timer will redraw the previous points in 200ms
+			m_bDoUpdate = false;
+			if (m_nRedrawTimer)
+				KillTimer(m_nRedrawTimer);
+			VERIFY( (m_nRedrawTimer = SetTimer(1612, 200, NULL)) != NULL ); // reduce flickering
+		}
+	}*/
 
 	InvalidateRect(m_rectClient);
 }
@@ -764,10 +756,12 @@ void COScopeCtrl::DrawPoint()
 			
 			// move to the previous point
 			prevX = m_rectPlot.right - m_nShiftPixels;
-			if (m_PlotData[iTrend].nPrevY > 0) {
+			if (m_PlotData[iTrend].nPrevY > 0) 
+			{
 				prevY = m_PlotData[iTrend].nPrevY;
 			}
-			else {
+			else 
+			{
 				prevY = m_rectPlot.bottom 
 						- (long)((m_PlotData[iTrend].dPreviousPosition - m_PlotData[iTrend].dLowerLimit) 
 						         * m_PlotData[iTrend].dVerticalFactor);
@@ -783,7 +777,8 @@ void COScopeCtrl::DrawPoint()
 			m_PlotData[iTrend].nPrevY = currY;
 			if (m_PlotData[iTrend].BarsPlot)
 				m_dcPlot.MoveTo(currX, m_rectPlot.bottom);
-			else {
+			else 
+			{
 				if (abs(prevX - currX) > abs(prevY - currY))
 					currX += prevX - currX > 0 ? -1 : 1;
 				else 
@@ -825,7 +820,7 @@ void COScopeCtrl::OnSize(UINT nType, int cx, int cy)
 	m_rectPlot.left = 20;
 	m_rectPlot.top = 10;
 	m_rectPlot.right = m_rectClient.right - 10;
-	m_rectPlot.bottom = m_rectClient.bottom - 3 - (abs(sm_logFontAxis.lfHeight) + 2)*2 - 3;
+	m_rectPlot.bottom = m_rectClient.bottom - 25;
 	
 	m_nPlotHeight = m_rectPlot.Height();
 	m_nPlotWidth = m_rectPlot.Width();
@@ -836,21 +831,21 @@ void COScopeCtrl::OnSize(UINT nType, int cx, int cy)
 	
 	// destroy and recreate the grid bitmap
 	CClientDC dc(this);
-	if (m_bitmapOldGrid.m_hObject && m_bitmapGrid.GetSafeHandle() && m_dcGrid.GetSafeHdc())
+	if (m_pbitmapOldGrid && m_bitmapGrid.GetSafeHandle() && m_dcGrid.GetSafeHdc())
 	{
-		m_dcGrid.SelectObject(m_bitmapOldGrid.Detach());
+		m_dcGrid.SelectObject(m_pbitmapOldGrid);
 		m_bitmapGrid.DeleteObject();
 		m_bitmapGrid.CreateCompatibleBitmap(&dc, m_nClientWidth, m_nClientHeight);
-		m_bitmapOldGrid.Attach(SelectObject(m_dcGrid, m_bitmapGrid));
+		m_pbitmapOldGrid = m_dcGrid.SelectObject(&m_bitmapGrid);
 	}
 	
 	// destroy and recreate the plot bitmap
-	if (m_bitmapOldPlot.m_hObject && m_bitmapPlot.GetSafeHandle() && m_dcPlot.GetSafeHdc())
+	if (m_pbitmapOldPlot && m_bitmapPlot.GetSafeHandle() && m_dcPlot.GetSafeHdc())
 	{
-		m_dcPlot.SelectObject(m_bitmapOldPlot.Detach());
+		m_dcPlot.SelectObject(m_pbitmapOldPlot);
 		m_bitmapPlot.DeleteObject();
 		m_bitmapPlot.CreateCompatibleBitmap(&dc, m_nClientWidth, m_nClientHeight);
-		m_bitmapOldPlot.Attach(SelectObject(m_dcPlot, m_bitmapPlot));
+		m_pbitmapOldPlot = m_dcPlot.SelectObject(&m_bitmapPlot);
 	}
 	
 	InvalidateCtrl();
@@ -936,65 +931,20 @@ void COScopeCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CWnd::OnMouseMove(nFlags, point);
 
-	if ((nFlags & MK_LBUTTON) == 0) {
-		if (m_uLastMouseFlags & MK_LBUTTON) {
-			// Mouse button was released -> explicitly clear the tooltip.
-			CWnd* pwndParent = GetParent();
-			if (pwndParent)
-				pwndParent->SendMessage(UM_OSCOPEPOSITION, 0, (LPARAM)(LPCTSTR)_T(""));
-		}
-		m_uLastMouseFlags = nFlags;
+	if (GetKeyState(VK_LBUTTON) >= 0)
 		return;
-	}
-	m_uLastMouseFlags = nFlags;
-
-	// If that check is not there, it may lead to 100% CPU usage because Windows (Vista?)
-	// keeps sending mouse messages even if the mouse does not move but when the mouse
-	// button stays pressed.
-	if (point == m_ptLastMousePos)
-		return;
-	m_ptLastMousePos = point;
-
 	CRect plotRect;
 	GetPlotRect(plotRect);
-	if (!plotRect.PtInRect(point))
+	if (point.x < 60 || point.x > plotRect.Width() + 60) // outside the axis
 		return;
-
+	
 	CWnd* pwndParent = GetParent();
-	if (pwndParent)
+	if (pwndParent && pwndParent->GetParent())
 	{
-		int yValue = -1;
-		int plotHeight = plotRect.Height();
-		if (plotHeight > 0) {
-			int yPixel = plotHeight - (point.y - plotRect.top);
-			yValue = (int)(m_PlotData[0].dLowerLimit + yPixel * m_PlotData[0].dRange / plotHeight);
-		}
-
-		int mypos = (plotRect.Width() - point.x) + plotRect.left;
+		int mypos = (plotRect.Width() - point.x) + 60;
+		//整个图表的时间
 		int shownsecs = plotRect.Width() * 1;//1秒刷一次， 
 		float apixel = (float)shownsecs / (float)plotRect.Width();
-
-		CString strInfo;
-		DWORD dwTime = (DWORD)(mypos * apixel);
-		time_t tNow = time(NULL) - dwTime;
-		TCHAR szDate[128] = _T("DDDDD");
-	//	_tcsftime(szDate, _countof(szDate), thePrefs.GetDateTimeFormat4Log(), localtime(&tNow));
-	//	strInfo.Format(_T("%s: %u @ %s ") + _T(" "(%s ago)""), m_str.YUnits, yValue, szDate, CastSecondsToLngHM(dwTime));
-
-		pwndParent->SendMessage(UM_OSCOPEPOSITION, 0, (LPARAM)(LPCTSTR)strInfo);
+		 pwndParent->GetParent()->SendMessage(UM_OSCOPEPOSITION, plotRect.Width(), (int)(mypos * apixel));
 	}
-}
-
-void COScopeCtrl::OnSysColorChange()
-{
-	if (m_bitmapOldGrid.m_hObject)
-		m_dcGrid.SelectObject(m_bitmapOldGrid.Detach());
-	VERIFY( m_dcGrid.DeleteDC() );
-
-	if (m_bitmapOldPlot.m_hObject)
-		m_dcPlot.SelectObject(m_bitmapOldPlot.Detach());
-	VERIFY( m_dcPlot.DeleteDC() );
-
-	CWnd::OnSysColorChange();
-	InvalidateCtrl(false);
 }

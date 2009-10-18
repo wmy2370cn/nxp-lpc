@@ -89,6 +89,7 @@ public:
 	CGridChartWnd  m_wndGridChart;
 	void	RecalLayout();
 	CBCGPToolTipCtrl  m_TimeToolTips;
+//	CToolTipCtrl  m_TimeToolTips;
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
@@ -97,6 +98,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual void OnInitialUpdate();
 	afx_msg LRESULT OnOscopePositionMsg(WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 
