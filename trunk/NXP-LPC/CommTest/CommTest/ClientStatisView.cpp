@@ -376,39 +376,14 @@ int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("CBCGPGanttControl::OnCreate: cannot create gantt control\n");
 		return -1;
 	}
-	m_wndGridChart.SendMessage(WM_CREATE);
-// 	m_wndGridChart.GetChart()->SetRange(0, 600, 0) ;
-// 	m_wndGridChart.GetChart()->SetRange(0, 600, 1) ;
-// 	m_wndGridChart.GetChart()->m_nYDecimals = 0;
-// 
-// 	m_wndGridChart.GetChart()->SetYUnits(_T("单位(byte)"),_T("0"),_T("600")) ;
-// 	m_wndGridChart.GetChart()->SetXUnits(_T("数据传输速度 (计算间隔2秒)")) ;
-// 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据接收"),0);
-// 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据发送"),1);
-// 
-// 	//	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 0, 164)) ;
-// 	//	m_wndGridChart.GetChart()->SetGridColor(RGB(192, 192, 255)) ;
-// 
-// 	m_wndGridChart.GetChart()->SetGridColor(RGB(0, 0, 0));		// Grid
-// 	m_wndGridChart.GetChart()->SetPlotColor(RGB(0, 255, 0), 0);	//  
-// 	m_wndGridChart.GetChart()->SetPlotColor(RGB(255, 0, 0), 1);	//  
-// 	m_wndGridChart.GetChart()->SetBackgroundColor(RGB(0, 64, 128)) ; 
-// 
-// 	m_wndGridChart.GetChart()->SetBarsPlot(true, 1);
-// 	m_wndGridChart.GetChart()->InvalidateCtrl();
-// 
-	m_TimeToolTips.Create(this);
-	m_TimeToolTips.AddTool(m_wndGridChart.GetChart(),	_T(""),NULL,0);
-	m_TimeToolTips.SetDelayTime(TTDT_INITIAL,	30000);
-	m_TimeToolTips.SetDelayTime(TTDT_RESHOW,	30000);
-	m_TimeToolTips.SetDelayTime(TTDT_AUTOPOP,	300);
+  
 	return 0;
 }
 
 BOOL CClientStatisView::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-//	return TRUE;
+	return TRUE;
 	return CView::OnEraseBkgnd(pDC);
 }
 
@@ -433,7 +408,7 @@ void CClientStatisView::OnInitialUpdate()
 	m_wndGridChart.GetChart()->SetRange(0, 600, 1) ;
 	m_wndGridChart.GetChart()->m_nYDecimals = 0;
 
-	m_wndGridChart.GetChart()->SetYUnits(_T("单位(byte)"),_T("0"),_T("600")) ;
+	m_wndGridChart.GetChart()->SetYUnits(_T("单位(byte)"),_T("0"),_T("1000")) ;
 	m_wndGridChart.GetChart()->SetXUnits(_T("数据传输速度 (计算间隔2秒)")) ;
 	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据接收"),0);
  	m_wndGridChart.GetChart()->SetLegendLabel(_T("数据发送"),1);
@@ -449,19 +424,59 @@ void CClientStatisView::OnInitialUpdate()
 	m_wndGridChart.GetChart()->SetBarsPlot(true, 1);
 	m_wndGridChart.GetChart()->InvalidateCtrl();
 // 
-// 	m_TimeToolTips.Create(this);
-// 	m_TimeToolTips.AddTool(m_wndGridChart.GetChart(),	_T(""),NULL,0);
-// 	m_TimeToolTips.SetDelayTime(TTDT_INITIAL,	30000);
-// 	m_TimeToolTips.SetDelayTime(TTDT_RESHOW,	30000);
-// 	m_TimeToolTips.SetDelayTime(TTDT_AUTOPOP,	300);
+ 	m_TimeToolTips.Create(this);
+	m_TimeToolTips.AddTool(m_wndGridChart.GetChart(),	_T(""),NULL,0);
+	m_TimeToolTips.SetDelayTime(TTDT_INITIAL,	30000);
+	m_TimeToolTips.SetDelayTime(TTDT_RESHOW,	30000);
+	m_TimeToolTips.SetDelayTime(TTDT_AUTOPOP,	300);
 
 	// TODO: 在此添加专用代码和/或调用基类
 }
-
+#define ARRSIZE(x)	(sizeof(x)/sizeof(x[0]))
 LRESULT CClientStatisView::OnOscopePositionMsg(WPARAM /*wParam*/, LPARAM lParam)
 {
-	LPCTSTR pszInfo = (LPCTSTR)lParam;
-	m_TimeToolTips.UpdateTipText(pszInfo, m_wndGridChart.GetChart());
- 	m_TimeToolTips.Update();
+	time_t m_tNow= time(NULL)-lParam;
+
+	TCHAR szDate[128] = {0};
+	TCHAR szAgo[64] = {0};
+	_tcsftime(szDate, ARRSIZE(szDate), _T("  %X  "),  localtime(&m_tNow));
+
+	CString buffer;
+	if (lParam<60)
+	{
+		buffer.Format(_T("%d %s"), lParam, _T("秒"));
+	}
+	else if (( lParam >60 ) && ( lParam <3600 ))
+	{
+		//	buffer.Format(_T("%d %s"), lParam, "秒");
+		buffer.Format(_T("%d:%d %s"), lParam/60, ((UINT)(lParam - (lParam/60)*60)), _T("分钟"));
+	}
+	else if (lParam < 86400)
+	{
+		buffer.Format(_T("%d:%d %s"), lParam/3600, ((UINT)((lParam - (lParam/3600)*3600)/60)), _T("小时"));
+	}
+	else
+	{
+		ULONGLONG cntDays = lParam/86400;
+		ULONGLONG cntHrs = (lParam - (lParam/86400)*86400)/3600;
+		if (cntHrs)
+			buffer.Format(_T("%d %s %d:%d %s"), cntDays, _T("天"), cntHrs, ((UINT32)(lParam - (cntDays*86400) - (cntHrs*3600))/60), _T("小时"));
+		else
+			buffer.Format(_T("%d %s %u %s"), cntDays, _T("天"), (UINT32)(lParam - (cntDays*86400) - (cntHrs*3600))/60,_T("分钟"));
+	}
+
+	//	wsprintf(szAgo,_T(" ") + GetResString(IDS_TIMEBEFORE),CastSecondsToLngHM(lParam));
+	wsprintf(szAgo,_T("%s %s "),  _T("前"),buffer);
+	_tcscat(szDate,szAgo);
+
+	m_TimeToolTips.UpdateTipText(szDate, m_wndGridChart.GetChart());
+
+	m_TimeToolTips.Update();
 	return 0;
+}
+BOOL CClientStatisView::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	m_TimeToolTips.RelayEvent(pMsg);
+	return CView::PreTranslateMessage(pMsg);
 }
