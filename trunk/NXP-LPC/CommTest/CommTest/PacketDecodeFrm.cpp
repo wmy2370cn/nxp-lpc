@@ -6,6 +6,10 @@
 #include "PacketDecodeFrm.h" 
 #include "PacketTreeView.h"
 
+#include "ClientCommDoc.h"
+//#include "PingTestDoc.h"
+
+
 // CPacketDecodeFrm
 
 IMPLEMENT_DYNCREATE(CPacketDecodeFrm, CBCGPMDIChildWnd)
@@ -22,6 +26,7 @@ CPacketDecodeFrm::~CPacketDecodeFrm()
 
 BEGIN_MESSAGE_MAP(CPacketDecodeFrm, CBCGPMDIChildWnd)
 	ON_WM_CREATE()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -67,4 +72,20 @@ BOOL CPacketDecodeFrm::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCont
 
 	return TRUE;
 //	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
+}
+
+void CPacketDecodeFrm::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CDocument *pDoc = GetActiveDocument();
+	if (pDoc->IsKindOf(RUNTIME_CLASS( CClientCommDoc )))
+	{
+		((CClientCommDoc*)pDoc)->m_pDecodeFrm = NULL;
+		DestroyWindow();
+		return;
+	}
+//	else
+
+
+	CBCGPMDIChildWnd::OnClose();
 }

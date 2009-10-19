@@ -330,6 +330,7 @@ BEGIN
     POPUP "POPUP_PACKET"
     BEGIN
         MENUITEM "解码(&E)",                      ID_PACKET_DECODE
+        MENUITEM "详细(&T)",                      ID_PACKET_DETAIL
     END
 END
 
@@ -923,6 +924,7 @@ BEGIN
     ID_TREE_EXPAND          "将所选择的子项全部展开\n全部展开"
     ID_TREE_COLLAPSE        "将所选择的子项全部折叠\n全部折叠"
     ID_PACKET_DECODE        "在新窗口中解码并显示数据包\n解码数据包"
+    ID_PACKET_DETAIL        "在新窗口中详细显示数据包细节\n显示数据包"
 END
 
 STRINGTABLE 

@@ -163,13 +163,14 @@
 #define ID_TREE_COLLAPSE                32853
 #define ID_POPUP_32856                  32856
 #define ID_PACKET_DECODE                32857
+#define ID_PACKET_DETAIL                32858
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        324
-#define _APS_NEXT_COMMAND_VALUE         32858
+#define _APS_NEXT_COMMAND_VALUE         32859
 #define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           316
 #endif

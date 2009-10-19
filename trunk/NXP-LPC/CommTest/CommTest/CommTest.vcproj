@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gdiplus.lib"
 				OutputFile="..\..\BIN\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -292,6 +293,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PieChartWnd.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\ping.cpp"
 				>
 			</File>
@@ -447,6 +460,10 @@
 			</File>
 			<File
 				RelativePath=".\PacketTreeView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PieChartWnd.h"
 				>
 			</File>
 			<File

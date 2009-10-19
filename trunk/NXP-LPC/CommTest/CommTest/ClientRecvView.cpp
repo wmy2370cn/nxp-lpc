@@ -89,6 +89,7 @@ int CPacketGridCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableMarkSortedColumn (FALSE);
 	EnableMultipleSort(FALSE);
 	EnableHeader (TRUE,BCGP_GRID_HEADER_MOVE_ITEMS); 		 
+	EnableLineNumbers(TRUE);
 
 	CBCGPGridColors theme;
 	CBCGPVisualManager::GetInstance ()->OnSetGridColorTheme (this, theme);
@@ -217,7 +218,7 @@ CClientRecvView::CClientRecvView()
 	: CBCGPFormView(CClientRecvView::IDD)
 {
 
-	m_pDecodeFrm = NULL;
+//	m_pDecodeFrm = NULL;
 }
 
 CClientRecvView::~CClientRecvView()
@@ -237,6 +238,7 @@ BEGIN_MESSAGE_MAP(CClientRecvView, CBCGPFormView)
 //	ON_WM_RBUTTONDOWN()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_PACKET_DECODE, &CClientRecvView::OnPacketDecode)
+	ON_COMMAND(ID_PACKET_DETAIL, &CClientRecvView::OnPacketDetail)
 END_MESSAGE_MAP()
 
 
@@ -300,38 +302,7 @@ void CClientRecvView::OnBnClickedButtonClearRecv()
 {
 	// TODO: 在此添加控件通知处理程序代码
  	
-	//TEST
-//	GetParentFrame()
-	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
-	ASSERT(pFrame);
-	if (pFrame == NULL)
-		return;	
-
-	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
-	ASSERT(pDoc);
-	if (pDoc == NULL)
-		return;
-
-	CMDIChildWnd *pChildWnd = NULL;
  
-	CCreateContext context;
-	context.m_pCurrentDoc = pDoc;
-	context.m_pCurrentFrame = pFrame;
-	context.m_pNewDocTemplate = (CDocTemplate*) theApp.m_pDocTemplate;
-
-	CRuntimeClass* pFrameClass = RUNTIME_CLASS(CChildFrame);   		 
-
-// 	HMENU hMenu = NULL;       // default menu resource for this frame
-// 	HACCEL hAccelTable = NULL;       // accelerator table
-// 	hAccelTable = ::LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FBD_FRAME));
-// 	//	ASSERT( hAccelTable );
-// 	hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_FBD_FRAME));
-// 	ASSERT(hMenu);
-	pChildWnd = pFrame->CreateNewChild( pFrameClass, IDR_MAINFRAME );
-//	pChildWnd->SetHandles(hMenu,hAccelTable);
-
-	pFrame->MDIActivate( pChildWnd );
-
 }
 
 void CClientRecvView::OnTimer(UINT_PTR nIDEvent)
@@ -339,7 +310,7 @@ void CClientRecvView::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (nIDEvent == ID_LOG_PACKET)
 	{
-		KillTimer(nIDEvent);
+		KillTimer(ID_LOG_PACKET);
 		LoadPacket( );
 		SetTimer(ID_LOG_PACKET,1000,NULL);		
 	}
@@ -442,7 +413,11 @@ void CClientRecvView::OnPacketDecode()
 	if (pDoc == NULL)
 		return;
 
-	if (m_pDecodeFrm && m_pDecodeFrm->GetSafeHwnd())
+//	m_wndGrid.GetSelR
+
+	KillTimer(ID_LOG_PACKET);
+ 
+	if (pDoc->m_pDecodeFrm && pDoc->m_pDecodeFrm->GetSafeHwnd())
 	{
 
 	}
@@ -487,9 +462,15 @@ void CClientRecvView::OnPacketDecode()
 		pChildWnd->SetHandles(hMenu,hAccelTable);
 
 		pChildWnd->InitialUpdateFrame(NULL, TRUE);		
-		m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
+		pDoc->m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
 	}
-	pFrame->MDIActivate( m_pDecodeFrm  ); 	
-	m_pDecodeFrm->SetWindowText(_T("xxx"));
+	pFrame->MDIActivate( pDoc->m_pDecodeFrm  ); 	
+	pDoc->m_pDecodeFrm->SetWindowText(_T("xxx"));
 
+	SetTimer(ID_LOG_PACKET,1000,NULL);		
+}
+
+void CClientRecvView::OnPacketDetail()
+{
+	// TODO: 在此添加命令处理程序代码
 }

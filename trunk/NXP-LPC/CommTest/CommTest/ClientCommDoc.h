@@ -9,6 +9,7 @@
 
 const int MAX_SEND_LEN = 2048;
 
+class CPacketDecodeFrm;
 class CClientCommDoc : public CDocument
 {
 protected: // 仅从序列化创建
@@ -23,6 +24,8 @@ public:
 	unsigned int m_nLocalPort; //0 表示随机端口 非0为指定端口
 
 	CClientComm  m_ClientComm;
+
+	CPacketDecodeFrm    *m_pDecodeFrm;
 
 
 	//原始的，UNICODE编码
