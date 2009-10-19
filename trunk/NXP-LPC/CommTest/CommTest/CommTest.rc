@@ -382,7 +382,7 @@ IDR_CommTestTYPE        ICON                    "res\\CommTestDoc.ico"
 IDI_CLASS_VIEW_HC       ICON                    "res\\class_view_hc.ico"
 IDI_OUTPUT_WND_HC       ICON                    "res\\output_wnd_hc.ico"
 IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
-IDR_PING_TEST           ICON                    "res\\idr_comm.ico"
+IDR_PING_TEST           ICON                    "res\\ping_test.ico"
 IDR_CLIENT_COMM         ICON                    "res\\ClientComm.ico"
 IDR_PACKET_DECODE       ICON                    "res\\packet_decode.ico"
 
@@ -603,6 +603,28 @@ BEGIN
     CONTROL         "超时后自动延长间隔",IDC_CHECK_TIMEOUT_DELAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,169,63,88,10
 END
 
+IDD_DLG_PING_OPTIONS DIALOGEX 0, 0, 98, 260
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_IPADDRESS_PING_DEST_OPT,"SysIPAddress32",WS_TABSTOP,6,18,78,12
+    PUSHBUTTON      "开始",IDC_BUTTON_PING_START,23,156,50,14
+    PUSHBUTTON      "复位计数",IDC_BUTTON_RESET,24,239,50,14
+    LTEXT           "目标IP：",IDC_STATIC,9,7,32,8
+    LTEXT           "计数",IDC_STATIC,6,177,17,8
+    LTEXT           "发送",IDC_STATIC,6,196,17,8
+    LTEXT           "接收",IDC_STATIC,6,220,17,8
+    LTEXT           "0",IDC_STATIC_SND_CNT,35,196,55,8
+    LTEXT           "0",IDC_STATIC_RCV_CNT,35,220,55,8
+    EDITTEXT        IDC_EDIT_PING_DATA_SIZE,6,84,78,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "数据包长度（字节）",IDC_STATIC,6,71,78,8
+    EDITTEXT        IDC_EDIT_PING_THREAD_CNT_OPT,44,45,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "线程数",IDC_STATIC,6,48,32,8
+    EDITTEXT        IDC_EDIT_PING_INT_TIME,6,120,78,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "时间间隔（毫秒）",IDC_STATIC,6,108,72,8
+    CONTROL         "超时后自动延长间隔",IDC_CHECK_TIMEOUT_DELAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,138,88,10
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -694,6 +716,14 @@ BEGIN
         RIGHTMARGIN, 270
         TOPMARGIN, 7
         BOTTOMMARGIN, 118
+    END
+
+    IDD_DLG_PING_OPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 91
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 253
     END
 END
 #endif    // APSTUDIO_INVOKED

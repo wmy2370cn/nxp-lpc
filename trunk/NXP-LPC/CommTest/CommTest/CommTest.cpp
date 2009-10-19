@@ -16,7 +16,8 @@
 #include "ClientOptionView.h"
 
 #include "PingChildFrm.h"
-
+#include "PingTestDoc.h"
+#include "PingOptionView.h"
 
 #include "LogDataApi.h"
 #include  "boost/memory.hpp"
@@ -123,9 +124,9 @@ BOOL CCommTestApp::InitInstance()
 	AddDocTemplate(m_pDocTemplate);
 
 	m_pPingDocTemplate = new CMultiDocTemplate(IDR_PING_TEST,
-		RUNTIME_CLASS(CCommTestDoc),
+		RUNTIME_CLASS(CPingTestDoc),
 		RUNTIME_CLASS(CPingChildFrame), // 自定义 MDI 子框架
-		RUNTIME_CLASS(CCommTestView));
+		RUNTIME_CLASS(CPingOptionView));
 	if (!m_pPingDocTemplate)
 		return FALSE;
 	AddDocTemplate(m_pPingDocTemplate);

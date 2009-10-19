@@ -432,8 +432,8 @@ int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CStatisGridCtrl*   pGrid =  m_wndGridChart.GetGrid();
 	ASSERT(pGrid);
 	if (pGrid)
-	{
-		pGrid->InsertColumn (STAT_COL_NAME, _T("当前速度"), 80);
+	{ 
+		pGrid->InsertColumn (STAT_COL_NAME, _T("类型"), 80);
 		pGrid->InsertColumn (STAT_COL_CUR_SPEED, _T("当前速度"), 80);
 		pGrid->InsertColumn (STAT_COL_AVR_SPEED, _T("平均速度"), 90);
 		pGrid->InsertColumn (STAT_COL_DATA_CNT, _T("累计长度"), 100);

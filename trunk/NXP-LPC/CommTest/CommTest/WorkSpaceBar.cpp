@@ -8,6 +8,7 @@
 #include "ClientCommDoc.h"
 
 #include "NewPingDlg.h"
+#include "PingTestDoc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -324,6 +325,38 @@ void CWorkSpaceBar::OnNewTest()
 		if (nRet != IDOK)
 			return;
 
+		in_addr stuIp;
+		memset(&stuIp,0,sizeof(in_addr));
+		stuIp.s_addr = htonl (dlg.m_dwDestIp);	
+		char szIp[128] = {0};
+		strcpy_s(szIp ,64, inet_ntoa(stuIp));
+		CString tmp = CA2W (szIp);			 
+		szItem.Format(_T("%s-[%d]"),tmp,dlg.m_nPingDataSize);
+
+		hItem = m_wndTree.InsertItem(szItem,83,83,m_hPingMode);
+		m_wndTree.Expand(m_hClientMode,TVE_EXPAND);
+
+		CPingTestDoc *pPingDoc = NULL;
+
+		if (theApp.m_pPingDocTemplate)
+		{
+			pDoc = theApp.m_pPingDocTemplate->OpenDocumentFile(NULL);
+			pDoc->SetTitle( szItem );
+
+			pPingDoc = (CPingTestDoc *)pDoc;
+			//保存值到doc里面
+// 			pPingDoc->m_nDestPort = dlg.m_nDestPort;
+// 			pPingDoc->m_dwDestIp = dlg.m_dwDestIp;
+// 			pClientCommDoc->m_nProtocolType = dlg.m_nProtocolType;
+// 			if (dlg.m_bRandomPort && dlg.m_nLocalPort )
+// 			{
+// 				pClientCommDoc->m_nLocalPort = dlg.m_nLocalPort;
+// 			}
+// 			else
+// 				pClientCommDoc->m_nLocalPort = 0;
+
+			pDoc->UpdateAllViews(NULL,1);
+		}
 
 	}
 
