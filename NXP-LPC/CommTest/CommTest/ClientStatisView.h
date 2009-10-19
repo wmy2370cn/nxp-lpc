@@ -3,6 +3,41 @@
 
 #include "OScopeCtrl.h"
 
+
+
+class CStatisGridCtrlSplitter: public CBCGPSplitterWnd
+{
+	DECLARE_DYNAMIC(CStatisGridCtrlSplitter)
+	// Construction
+public:
+	CStatisGridCtrlSplitter();
+
+	// Attributes
+public:
+
+	// Operations
+public:
+
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CStatisGridCtrlSplitter)
+	//}}AFX_VIRTUAL
+
+
+	// Implementation
+public:
+	virtual ~CStatisGridCtrlSplitter();
+
+	// Generated message map functions
+protected:
+	//{{AFX_MSG(CStatisGridCtrlSplitter)
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+};
+
 class CStatisGridCtrl: public CBCGPGridCtrl
 {
 	DECLARE_DYNAMIC(CStatisGridCtrl)
@@ -51,7 +86,7 @@ public:
 
 protected:
 	CWnd*	        m_pParentWnd;
-	CBCGPSplitterWnd    m_wndSplitter;
+	CStatisGridCtrlSplitter    m_wndSplitter;
 
 	CStatisGridCtrl   *m_pGrid;
 	COScopeCtrl      *m_pChart;

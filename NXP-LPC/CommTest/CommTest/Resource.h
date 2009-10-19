@@ -81,10 +81,14 @@
 #define IDD_DLG_NEW_CLIENT              314
 #define IDD_DLG_CLIENT_OPTIONS          317
 #define IDB_BMP_FLAG                    320
+#define IDR_POPUP_PACKET                321
+#define IDR_PACKET_DECODE               322
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
 #define IDR_PING_TEST                   401
+#define IDR_CLIENT_COMM                 402
+#define IDR_CLIENT_COMM1                403
 #define ID_STRING_ETH                   500
 #define ID_STRING_CLIENT_MODE           501
 #define ID_STRING_SVR_MODE              502
@@ -137,7 +141,6 @@
 #define ID_MDI_MOVE_TO_PREV_GROUP       2840
 #define ID_MDI_CANCEL                   2841
 #define ID_MDI_MOVE_TO_NEXT_GROUP       2842
-
 #define XT_IDC_DRAGCOPY                 4133
 #define XT_IDC_DRAGMOVE                 4134
 #define XT_IDC_DRAGNONE                 4135
@@ -145,18 +148,19 @@
 #define XT_IDC_HAND                     4137
 #define XTP_IDC_HSPLITBAR               4139
 #define XTP_IDC_VSPLITBAR               4141
-
 #define ID_EDIT_NEW                     32850
 #define ID_EDIT_DELETE                  32851
 #define ID_TREE_EXPAND                  32852
 #define ID_TREE_COLLAPSE                32853
+#define ID_POPUP_32856                  32856
+#define ID_PACKET_DECODE                32857
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        321
-#define _APS_NEXT_COMMAND_VALUE         32856
+#define _APS_NEXT_RESOURCE_VALUE        323
+#define _APS_NEXT_COMMAND_VALUE         32858
 #define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

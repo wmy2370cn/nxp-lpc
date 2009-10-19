@@ -9,6 +9,9 @@
 
 #include "ChildFrm.h"
 
+#include "PacketDecodeFrm.h"
+#include "PacketTreeView.h"
+
 static BCGP_GRID_COLOR_DATA sliver_theme = 
 {
 	-1,	// Grid background color
@@ -214,6 +217,7 @@ CClientRecvView::CClientRecvView()
 	: CBCGPFormView(CClientRecvView::IDD)
 {
 
+	m_pDecodeFrm = NULL;
 }
 
 CClientRecvView::~CClientRecvView()
@@ -230,6 +234,9 @@ BEGIN_MESSAGE_MAP(CClientRecvView, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON_CLEAR_RECV, &CClientRecvView::OnBnClickedButtonClearRecv)
 	ON_WM_TIMER()
+//	ON_WM_RBUTTONDOWN()
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_PACKET_DECODE, &CClientRecvView::OnPacketDecode)
 END_MESSAGE_MAP()
 
 
@@ -393,4 +400,94 @@ void CClientRecvView::LoadPacket( )
 		m_wndGrid.AdjustLayout();
 		m_wndGrid.EnsureVisible(pRow);
 	}	 
+}
+
+void CClientRecvView::OnContextMenu(CWnd*  pWnd , CPoint  point )
+{
+	if (pWnd != &m_wndGrid)
+	{
+		__super::OnContextMenu(pWnd, point);
+		return;
+	}
+	if (m_wndGrid.GetSafeHwnd())
+	{
+		CRect rc;
+		m_wndGrid.GetWindowRect(&rc);
+	 
+		if (rc.PtInRect(point))
+		{
+			CMenu menu;
+			menu.LoadMenu(IDR_POPUP_PACKET);
+
+			CMenu* pSumMenu = menu.GetSubMenu(0);
+			ASSERT(pSumMenu);
+			m_wndGrid.	SetFocus();
+			UINT nResult = 	g_pContextMenuManager->TrackPopupMenu(pSumMenu->GetSafeHmenu(),point.x,point.y,this);
+			SendMessage(WM_COMMAND,nResult);
+		}
+	}
+	// TODO: 在此处添加消息处理程序代码
+}
+
+void CClientRecvView::OnPacketDecode()
+{
+	// TODO: 在此添加命令处理程序代码
+	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	ASSERT(pFrame);
+	if (pFrame == NULL)
+		return;	
+
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	if (m_pDecodeFrm && m_pDecodeFrm->GetSafeHwnd())
+	{
+
+	}
+	else
+	{		
+		CMDIChildWnd *pChildWnd = NULL;
+
+		CCreateContext context;
+		context.m_pCurrentDoc = pDoc;
+		context.m_pCurrentFrame = pFrame;
+		context.m_pNewDocTemplate = (CDocTemplate*) theApp.m_pClientDocTemplate;
+		context.m_pNewViewClass = RUNTIME_CLASS(CPacketTreeView);
+
+		CRuntimeClass* pFrameClass = RUNTIME_CLASS(CPacketDecodeFrm);   		 
+ 
+		pChildWnd = (CMDIChildWnd*)pFrameClass->CreateObject();
+		if (pChildWnd == NULL)
+		{
+			TRACE(traceAppMsg, 0, "Warning: Dynamic create of frame %hs failed.\n",	pFrameClass->m_lpszClassName);
+			return  ;
+		}
+		ASSERT_KINDOF(CMDIChildWnd, pChildWnd);
+
+		if (context.m_pNewViewClass == NULL)
+			TRACE(traceAppMsg, 0, "Warning: creating frame with no default view.\n");
+
+		// create new from resource
+		if (!pChildWnd->LoadFrame(IDR_PACKET_DECODE,
+			WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,   // default frame styles
+			NULL, &context))
+		{
+			TRACE(traceAppMsg, 0, "Warning: CDocTemplate couldn't create a frame.\n");
+			// frame will be deleted in PostNcDestroy cleanup
+			return  ;
+		}
+		HMENU hMenu = NULL;       // default menu resource for this frame
+		HACCEL hAccelTable = NULL;       // accelerator table
+	//	hAccelTable = ::LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
+		// 	//	ASSERT( hAccelTable );
+		hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
+		ASSERT(hMenu);
+		pChildWnd->SetHandles(hMenu,hAccelTable);
+
+		pChildWnd->InitialUpdateFrame(NULL, TRUE);		
+		m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
+	}
+	pFrame->MDIActivate( m_pDecodeFrm  ); 	
 }
