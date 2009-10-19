@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "SplitterWndExt.h"
 class CPingChildFrame : public CBCGPMDIChildWnd
 {
 	DECLARE_DYNCREATE(CPingChildFrame)
@@ -12,7 +13,8 @@ public:
 
 // ÊôÐÔ
 public:
-
+	CSplitterWndExt  m_wndSplitter1;
+	CBCGPSplitterWnd  m_wndSplitter2;
 // ²Ù×÷
 public:
 
@@ -33,4 +35,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+protected:
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 };

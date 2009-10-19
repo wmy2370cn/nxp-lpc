@@ -13,50 +13,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-
-IMPLEMENT_DYNAMIC(CSplitterWndEx,CBCGPSplitterWnd)
-
-/////////////////////////////////////////////////////////////////////////////
-// CBCGPSplitterWnd
-
-CSplitterWndEx::CSplitterWndEx()
-{
-}
-
-CSplitterWndEx::~CSplitterWndEx()
-{
-}
-
-
-BEGIN_MESSAGE_MAP(CSplitterWndEx ,CBCGPSplitterWnd)
-	//{{AFX_MSG_MAP(CSplitterWndEx)
-	// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
-	ON_WM_MOUSEMOVE()
-END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CSplitterWndEx message handlers 
-
-void CSplitterWndEx::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	// 限制切分条的运动范围。 
-	if(point.x< 144 ||point.x > 180) 
-	{ 
-		CWnd::OnMouseMove(nFlags, point); 
-	} 
-	else 
-	{ 
-		CBCGPSplitterWnd::OnMouseMove(nFlags, point); 
-	} 
-
- //	CBCGPSplitterWnd::OnMouseMove(nFlags, point);
-}
-
-
+  
 // CClientChildFrame
 
 IMPLEMENT_DYNCREATE(CClientChildFrame, CBCGPMDIChildWnd)
@@ -127,7 +84,8 @@ BOOL CClientChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCon
 	// TODO: 在此添加专用代码和/或调用基类
 	if (!m_wndSplitter1.CreateStatic(this, 1, 2))
 		return FALSE;
-	
+	m_wndSplitter1.SetXMoveLimit(144,180);
+
 	if (!m_wndSplitter1.CreateView(0, 0, pContext->m_pNewViewClass, CSize(200, 100), pContext) )
 	{
 		m_wndSplitter1.DestroyWindow();

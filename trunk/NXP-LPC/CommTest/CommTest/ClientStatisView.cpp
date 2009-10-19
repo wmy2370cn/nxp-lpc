@@ -5,50 +5,6 @@
 #include "CommTest.h"
 #include "ClientStatisView.h"
 
-
-
-IMPLEMENT_DYNAMIC(CStatisGridCtrlSplitter,CBCGPSplitterWnd)
-
-/////////////////////////////////////////////////////////////////////////////
-// CBCGPSplitterWnd
-
-CStatisGridCtrlSplitter::CStatisGridCtrlSplitter()
-{
-}
-
-CStatisGridCtrlSplitter::~CStatisGridCtrlSplitter()
-{
-}
-
-
-BEGIN_MESSAGE_MAP(CStatisGridCtrlSplitter ,CBCGPSplitterWnd)
-	//{{AFX_MSG_MAP(CStatisGridCtrlSplitter)
-	// NOTE - the ClassWizard will add and remove mapping macros here.
-	//}}AFX_MSG_MAP
-	ON_WM_MOUSEMOVE()
-END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CStatisGridCtrlSplitter message handlers 
-
-void CStatisGridCtrlSplitter::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	// 限制切分条的运动范围。 
-	if(point.y< 100 ||point.y> 120) 
-	{ 
-		CWnd::OnMouseMove(nFlags, point); 
-	} 
-	else 
-	{ 
-		CBCGPSplitterWnd::OnMouseMove(nFlags, point); 
-	} 
-
-	//	CBCGPSplitterWnd::OnMouseMove(nFlags, point);
-}
-
-
 static BCGP_GRID_COLOR_DATA light_blue_theme = 
 {
 	-1,	// Grid background color
@@ -317,6 +273,8 @@ int CGridChartWnd::CreateControls ()
 	{
 		return -1;
 	}
+
+	m_wndSplitter.SetYMoveLimit(80,100);
 
 	if (!m_wndSplitter.CreateStatic (this,2,1))
 	{

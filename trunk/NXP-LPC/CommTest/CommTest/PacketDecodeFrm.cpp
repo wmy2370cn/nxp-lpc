@@ -5,6 +5,7 @@
 #include "CommTest.h"
 #include "PacketDecodeFrm.h" 
 #include "PacketTreeView.h"
+#include "PacketHexView.h"
 
 #include "ClientCommDoc.h"
 //#include "PingTestDoc.h"
@@ -67,7 +68,7 @@ BOOL CPacketDecodeFrm::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCont
 	GetClientRect (rectClient);
 
 	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CPacketTreeView), CSize (0, rectClient.Width() / 2), pContext);
-	m_wndSplitter.CreateView (1,0, RUNTIME_CLASS (CPacketTreeView), CSize (0, rectClient.Width () / 2), pContext);
+	m_wndSplitter.CreateView (1,0, RUNTIME_CLASS (CPacketHexView), CSize (0, rectClient.Width () / 2), pContext);
 
 	return TRUE;
 //	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);

@@ -289,6 +289,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PacketHexView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PacketTreeView.cpp"
 				>
 			</File>
@@ -317,7 +321,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingStatisView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PingTestDoc.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PingTestView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SplitterWndExt.cpp"
 				>
 			</File>
 			<File
@@ -342,18 +358,6 @@
 			</File>
 			<File
 				RelativePath=".\WorkSpaceBar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\XTColorRef.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\xtDataType.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\XTHexEdit.cpp"
 				>
 			</File>
 		</Filter>
@@ -471,6 +475,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PacketHexView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PacketTreeView.h"
 				>
 			</File>
@@ -491,7 +499,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingStatisView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PingTestDoc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PingTestView.h"
 				>
 			</File>
 			<File
@@ -500,6 +516,10 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SplitterWndExt.h"
 				>
 			</File>
 			<File
@@ -512,26 +532,6 @@
 			</File>
 			<File
 				RelativePath=".\WorkSpaceBar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\XTColorRef.h"
-				>
-			</File>
-			<File
-				RelativePath=".\xtDataType.h"
-				>
-			</File>
-			<File
-				RelativePath=".\xtDefines.h"
-				>
-			</File>
-			<File
-				RelativePath=".\XTHexEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\XTResource.h"
 				>
 			</File>
 		</Filter>
@@ -710,6 +710,42 @@
 			</File>
 			<File
 				RelativePath=".\boost\memory\type_traits.hpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="xt"
+			>
+			<File
+				RelativePath=".\XTColorRef.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\XTColorRef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDataType.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDataType.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDefines.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XTHexEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\XTHexEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XTResource.h"
 				>
 			</File>
 		</Filter>

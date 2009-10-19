@@ -334,7 +334,7 @@ void CWorkSpaceBar::OnNewTest()
 		szItem.Format(_T("%s-[%d]"),tmp,dlg.m_nPingDataSize);
 
 		hItem = m_wndTree.InsertItem(szItem,83,83,m_hPingMode);
-		m_wndTree.Expand(m_hClientMode,TVE_EXPAND);
+		m_wndTree.Expand(m_hPingMode,TVE_EXPAND);
 
 		CPingTestDoc *pPingDoc = NULL;
 
