@@ -80,6 +80,7 @@
 #define IDD_DLG_RECV                    313
 #define IDD_DLG_NEW_CLIENT              314
 #define IDD_DLG_CLIENT_OPTIONS          317
+#define IDD_DLG_NEW_PING                318
 #define IDB_BMP_FLAG                    320
 #define IDR_POPUP_PACKET                321
 #define IDR_PACKET_DECODE               322
@@ -88,7 +89,6 @@
 #define IDR_POPUP_DROP_MDITABS          352
 #define IDR_PING_TEST                   401
 #define IDR_CLIENT_COMM                 402
-#define IDR_CLIENT_COMM1                403
 #define ID_STRING_ETH                   500
 #define ID_STRING_CLIENT_MODE           501
 #define ID_STRING_SVR_MODE              502
@@ -122,6 +122,12 @@
 #define IDC_EDIT1                       1023
 #define IDC_EDIT_INT_TIME               1023
 #define IDC_BUTTON_CLEAR_RECV           1024
+#define IDC_IPADDRESS_PING_DEST         1025
+#define IDC_EDIT_PING_DATA_SIZE         1026
+#define IDC_EDIT_PING_DATA_SIZE2        1027
+#define IDC_EDIT_PING_THREAD_CNT        1027
+#define IDC_EDIT_PING_INT_TIME          1028
+#define IDC_CHECK_TIMEOUT_DELAY         1029
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
@@ -159,9 +165,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        323
+#define _APS_NEXT_RESOURCE_VALUE        324
 #define _APS_NEXT_COMMAND_VALUE         32858
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

@@ -48,9 +48,9 @@ BOOL CNewClientDlg::OnInitDialog()
 	CBCGPDialog::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
-	EnableVisualManagerStyle();
+ 	EnableVisualManagerStyle();
 
-	DWORD dwIp = htonl( inet_addr("192.9.200.101"));
+	DWORD dwIp = htonl( inet_addr("192.9.200.57"));
 	m_ctlDestIp.SetAddress(dwIp);
 	m_nDestPort = 505;
 
