@@ -7,6 +7,7 @@
 
 #include "ClientCommDoc.h"
 #include "ClientSendView.h"
+#include "PacketDecodeFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,6 +29,7 @@ CClientCommDoc::CClientCommDoc()
 	// TODO: 在此添加一次性构造代码
 	m_bConnected = FALSE;
 	m_ClientComm.m_pDocument = this;
+	m_pDecodeFrm = NULL;
 }
 
 CClientCommDoc::~CClientCommDoc()

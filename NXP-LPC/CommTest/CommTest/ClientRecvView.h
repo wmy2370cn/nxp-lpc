@@ -30,7 +30,7 @@ public:
 };
 
 // CClientRecvView ¥∞ÃÂ ”Õº
-class CPacketDecodeFrm;
+//class CPacketDecodeFrm;
 class CClientRecvView : public CBCGPFormView
 {
 	DECLARE_DYNCREATE(CClientRecvView)
@@ -51,7 +51,7 @@ public:
 protected:
 	CPacketGridCtrl		m_wndGrid;
 
-	CPacketDecodeFrm    *m_pDecodeFrm;
+//	CPacketDecodeFrm    *m_pDecodeFrm;
 
 	void LoadPacket( );
 
@@ -66,6 +66,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent); 
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnPacketDecode();
+	afx_msg void OnPacketDetail();
 };
 
 
