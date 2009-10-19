@@ -6,6 +6,49 @@
 #include "ClientStatisView.h"
 
 
+
+IMPLEMENT_DYNAMIC(CStatisGridCtrlSplitter,CBCGPSplitterWnd)
+
+/////////////////////////////////////////////////////////////////////////////
+// CBCGPSplitterWnd
+
+CStatisGridCtrlSplitter::CStatisGridCtrlSplitter()
+{
+}
+
+CStatisGridCtrlSplitter::~CStatisGridCtrlSplitter()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CStatisGridCtrlSplitter ,CBCGPSplitterWnd)
+	//{{AFX_MSG_MAP(CStatisGridCtrlSplitter)
+	// NOTE - the ClassWizard will add and remove mapping macros here.
+	//}}AFX_MSG_MAP
+	ON_WM_MOUSEMOVE()
+END_MESSAGE_MAP()
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CStatisGridCtrlSplitter message handlers 
+
+void CStatisGridCtrlSplitter::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	// 限制切分条的运动范围。 
+	if(point.y< 100 ||point.y> 120) 
+	{ 
+		CWnd::OnMouseMove(nFlags, point); 
+	} 
+	else 
+	{ 
+		CBCGPSplitterWnd::OnMouseMove(nFlags, point); 
+	} 
+
+	//	CBCGPSplitterWnd::OnMouseMove(nFlags, point);
+}
+
+
 static BCGP_GRID_COLOR_DATA light_blue_theme = 
 {
 	-1,	// Grid background color
@@ -365,6 +408,16 @@ void CClientStatisView::Dump(CDumpContext& dc) const
 
 // CClientStatisView 消息处理程序
 
+typedef enum  STAT_COL
+{
+	STAT_COL_NAME,  // 
+
+	STAT_COL_CUR_SPEED,  // 当前速度
+	STAT_COL_AVR_SPEED,   // 平均速度
+	STAT_COL_DATA_CNT , //累计长度
+	STAT_COL_PACKET_CNT  //累计数据包
+};
+
 int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CView::OnCreate(lpCreateStruct) == -1)
@@ -376,7 +429,22 @@ int CClientStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("CBCGPGanttControl::OnCreate: cannot create gantt control\n");
 		return -1;
 	}
-  
+	CStatisGridCtrl*   pGrid =  m_wndGridChart.GetGrid();
+	ASSERT(pGrid);
+	if (pGrid)
+	{
+		pGrid->InsertColumn (STAT_COL_NAME, _T("当前速度"), 80);
+		pGrid->InsertColumn (STAT_COL_CUR_SPEED, _T("当前速度"), 80);
+		pGrid->InsertColumn (STAT_COL_AVR_SPEED, _T("平均速度"), 90);
+		pGrid->InsertColumn (STAT_COL_DATA_CNT, _T("累计长度"), 100);
+		pGrid->InsertColumn (STAT_COL_PACKET_CNT, _T("累计数据包"),100);	 
+		pGrid->AddEmptyRow();
+		pGrid->AddEmptyRow();
+
+	}
+
+
+
 	return 0;
 }
 

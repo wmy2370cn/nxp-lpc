@@ -130,7 +130,7 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 	AddDocTemplate(m_pPingDocTemplate);
 
-	m_pClientDocTemplate = new CMultiDocTemplate(IDR_PING_TEST,
+	m_pClientDocTemplate = new CMultiDocTemplate(IDR_CLIENT_COMM,
 		RUNTIME_CLASS(CClientCommDoc),
 		RUNTIME_CLASS(CClientChildFrame), // 自定义 MDI 子框架
 		RUNTIME_CLASS(CClientOptionView));

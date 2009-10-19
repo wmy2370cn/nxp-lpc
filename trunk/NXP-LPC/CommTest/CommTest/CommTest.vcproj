@@ -280,6 +280,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PacketDecodeFrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketTreeView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ping.cpp"
 				>
 			</File>
@@ -418,6 +426,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PacketDecodeFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PacketTreeView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ping.h"
 				>
 			</File>
@@ -465,6 +481,10 @@
 			</File>
 			<File
 				RelativePath=".\res\classview_hc.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ClientComm.ico"
 				>
 			</File>
 			<File
@@ -517,6 +537,10 @@
 			</File>
 			<File
 				RelativePath=".\res\output_wnd_hc.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\packet_decode.ico"
 				>
 			</File>
 			<File
