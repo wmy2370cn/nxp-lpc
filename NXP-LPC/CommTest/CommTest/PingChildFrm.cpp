@@ -105,7 +105,7 @@ BOOL CPingChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pConte
 
 	//	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
 
-	m_wndSplitter2.SetRowInfo(0, rectClient.Height () *2/5 , 40);
+	m_wndSplitter2.SetRowInfo(0, rectClient.Height () *3/4 , 120);
 	m_wndSplitter2.SetWindowPos (NULL, 0, 0, rectClient.Width (), rectClient.Height (), SWP_NOZORDER | SWP_NOREDRAW);
 	m_wndSplitter2.RecalcLayout();
 
