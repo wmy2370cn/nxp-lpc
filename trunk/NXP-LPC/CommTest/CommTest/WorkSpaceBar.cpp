@@ -7,6 +7,8 @@
 #include "NewClientDlg.h"
 #include "ClientCommDoc.h"
 
+#include "NewPingDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -317,6 +319,11 @@ void CWorkSpaceBar::OnNewTest()
 	}
 	else if ( m_wndTree.GetParentItem(ItemSel) == m_hPingMode || ItemSel == m_hPingMode)
 	{
+		CNewPingDlg dlg;
+		INT_PTR nRet = dlg.DoModal();
+		if (nRet != IDOK)
+			return;
+
 
 	}
 

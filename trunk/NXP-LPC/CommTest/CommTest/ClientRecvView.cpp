@@ -490,4 +490,6 @@ void CClientRecvView::OnPacketDecode()
 		m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
 	}
 	pFrame->MDIActivate( m_pDecodeFrm  ); 	
+	m_pDecodeFrm->SetWindowText(_T("xxx"));
+
 }

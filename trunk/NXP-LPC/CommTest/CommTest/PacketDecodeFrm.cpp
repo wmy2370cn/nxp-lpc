@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 #include "CommTest.h"
-#include "PacketDecodeFrm.h"
-
+#include "PacketDecodeFrm.h" 
+#include "PacketTreeView.h"
 
 // CPacketDecodeFrm
 
@@ -42,6 +42,7 @@ int CPacketDecodeFrm::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  在此添加您专用的创建代码
+	SetWindowText(_T("xxx"));
 
 	return 0;
 }
@@ -50,5 +51,20 @@ BOOL CPacketDecodeFrm::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pCont
 {
 	// TODO: 在此添加专用代码和/或调用基类
 
-	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
+	if (!m_wndSplitter.CreateStatic (this, 2,1))
+	{
+		ASSERT(FALSE);
+		return -1;
+	}
+
+	m_wndSplitter.ModifyStyle (WS_HSCROLL | WS_VSCROLL, 0);
+
+	CRect rectClient;
+	GetClientRect (rectClient);
+
+	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CPacketTreeView), CSize (0, rectClient.Width() / 2), pContext);
+	m_wndSplitter.CreateView (1,0, RUNTIME_CLASS (CPacketTreeView), CSize (0, rectClient.Width () / 2), pContext);
+
+	return TRUE;
+//	return CBCGPMDIChildWnd::OnCreateClient(lpcs, pContext);
 }

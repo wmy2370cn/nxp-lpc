@@ -10,6 +10,7 @@ protected:
 	CPacketDecodeFrm();           // 动态创建所使用的受保护的构造函数
 	virtual ~CPacketDecodeFrm();
 
+	CBCGPSplitterWnd m_wndSplitter;
 protected:
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

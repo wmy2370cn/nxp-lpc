@@ -268,6 +268,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NewPingDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OScopeCtrl.cpp"
 				>
 			</File>
@@ -411,6 +415,10 @@
 			</File>
 			<File
 				RelativePath=".\NewClientDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NewPingDlg.h"
 				>
 			</File>
 			<File
