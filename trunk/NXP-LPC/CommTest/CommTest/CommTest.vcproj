@@ -344,6 +344,18 @@
 				RelativePath=".\WorkSpaceBar.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\XTColorRef.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDataType.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\XTHexEdit.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -500,6 +512,26 @@
 			</File>
 			<File
 				RelativePath=".\WorkSpaceBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XTColorRef.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDataType.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xtDefines.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XTHexEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XTResource.h"
 				>
 			</File>
 		</Filter>
