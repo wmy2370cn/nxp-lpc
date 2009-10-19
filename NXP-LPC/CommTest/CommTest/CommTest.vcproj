@@ -300,6 +300,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingOptionView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PingTestDoc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -450,6 +458,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingOptionView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PingTestDoc.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PotocolTree.h"
 				>
 			</File>
@@ -549,6 +565,10 @@
 			</File>
 			<File
 				RelativePath=".\res\packet_decode.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ping_test.ico"
 				>
 			</File>
 			<File
