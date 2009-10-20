@@ -512,7 +512,7 @@ void CClientRecvView::OnPacketDecode()
 	{	 
 		szTxt.Format(_T("%s - [%d]"),pDoc->GetTitle(),pDoc->m_nPacketId);
 		pDoc->m_pDecodeFrm->SetWindowText(szTxt);
-		pDoc->UpdateAllViews(this);
+		pDoc->UpdateAllViews(this,UPDATA_VIEW_CLIENT_PACKET);
 	}
 	else
 	{

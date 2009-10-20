@@ -1,4 +1,5 @@
 #pragma once
+#include "afxcmn.h"
 
 
 
@@ -27,6 +28,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+protected:
+	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+public:
+	CIPAddressCtrl m_wndDestIp;
+	UINT m_nTaskCnt;
+	UINT m_nPingDataSize;
+	UINT m_nIntTime;
+	BOOL m_bAutoDelay;
+	afx_msg void OnBnClickedButtonPingStart();
 };
 
 
