@@ -26,4 +26,8 @@ public:
 	DWORD m_dwDestIp;
 protected:
 	virtual void OnOK();
+public:
+	UINT m_nIntTime;
+	UINT m_nTaskCnt;
+	BOOL m_bAutoDelay;
 };

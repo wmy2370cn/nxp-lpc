@@ -42,6 +42,9 @@ public:
 	unsigned int m_nId;
 	unsigned int GetPacket(CString &szPacket);
 	unsigned char *GetPacket(unsigned int &nLen);
+	void GetPacket ( CPacket &Dest);
+	CPacket operator= (const CPacket &Src);
+
 protected:
 	unsigned char *m_pPacketData;
 	unsigned int  m_nLen;
@@ -62,6 +65,8 @@ public:
 	void PutData( unsigned char *pData,unsigned int nLen  );
 	//view从ping中取数据
 	bool GetData( CPacket ** ppPacket );
+
+	bool FindData(unsigned int nId,CPacket &packet);
 
 	//view调用删除数据
 	bool RemoveData( CPacket *pPacket );

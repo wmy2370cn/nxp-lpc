@@ -73,6 +73,22 @@ void CPacket::SetPacket( unsigned char *pData,unsigned int nLen)
 	m_nLen = nLen;
 	memcpy_s(m_pPacketData,m_nLen,pData,nLen);
 }
+void CPacket::GetPacket ( CPacket &Dest)
+{
+	Dest.m_pPacketData = BOOST_MEMORY_ALLOC_ARRAY(g_packet_alloc, unsigned char, m_nLen); 
+	Dest.m_nLen = m_nLen;
+	memcpy_s(Dest.m_pPacketData,m_nLen,m_pPacketData,m_nLen);
+}
+
+CPacket CPacket::operator= (const CPacket &Src)
+{
+//	m_nMsgType = Src.m_nMsgType;  // 消息类型
+	m_pPacketData = BOOST_MEMORY_ALLOC_ARRAY(g_packet_alloc, unsigned char,Src.m_nLen); 
+	m_nLen = Src.m_nLen;
+	memcpy_s(m_pPacketData,m_nLen,Src.m_pPacketData,m_nLen);
+
+	return *this;
+}
 
 unsigned int CPacket::GetPacket(CString &szPacket)
 {
@@ -217,6 +233,38 @@ bool  CPacketContainer::GetData( CPacket **ppPacket )
 
 	return true;
 }
+
+bool CPacketContainer::FindData(unsigned int nId,CPacket &packet)
+{
+	if (nId == 0 || nId > m_nCurId)
+		return false;	
+	CSingleLock lock( & m_Mutex); 
+	std::deque<CPacket *>::iterator iter = m_arrPongBuf.begin();
+
+	for (; iter != m_arrPongBuf.end() ;++iter)
+	{
+		if ((*iter)->m_nId == nId)
+		{
+			packet = *(*iter);
+			lock.Unlock();
+			return true;
+		}
+	}
+	lock.Unlock();
+
+// 	iter = std::find(m_arrPongBuf.begin(), m_arrPongBuf.end(),pPacket );
+// 	if (iter != m_arrPongBuf.end())
+// 	{
+// 		ASSERT( (*iter)->m_nId == pPacket->m_nId );
+// 		m_arrPongBuf.erase( iter);
+// 		return true;
+// 	}
+
+	//	CSingleLock lock( & m_Mutex);
+
+	return false;
+}
+
 /*********************************************************************************************************
 ** 函数名称: RemoveData
 ** 函数名称: CPacketContainer::RemoveData

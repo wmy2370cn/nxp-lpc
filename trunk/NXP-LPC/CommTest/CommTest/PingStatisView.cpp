@@ -5,8 +5,8 @@
 #include "CommTest.h"
 #include "PingStatisView.h"
 
-static int GRID_WIDTH = 200;
-static int PIE_OFFSET = 2;
+static int GRID_WIDTH = 320;
+static int PIE_OFFSET = 1;
 // CPingStatisView
 
 IMPLEMENT_DYNCREATE(CPingStatisView, CView)
@@ -106,7 +106,7 @@ int CPingStatisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	szElem.Format(_T("·µ»Ø %d"),0);
 	dVal = 1;
-	m_wndPieChart.InsertItem(szTxt, szTxt, dVal,Gdiplus::Color::BlueViolet);	 
+//	m_wndPieChart.InsertItem(szTxt, szTxt, dVal,Gdiplus::Color::BlueViolet);	 
 	return 0;
 }
 

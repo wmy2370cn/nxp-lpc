@@ -20,6 +20,7 @@ CPacketTreeView::~CPacketTreeView()
 }
 
 BEGIN_MESSAGE_MAP(CPacketTreeView, CView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -50,3 +51,13 @@ void CPacketTreeView::Dump(CDumpContext& dc) const
 
 
 // CPacketTreeView 消息处理程序
+
+int CPacketTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+
+	return 0;
+}

@@ -30,6 +30,7 @@ CClientCommDoc::CClientCommDoc()
 	m_bConnected = FALSE;
 	m_ClientComm.m_pDocument = this;
 	m_pDecodeFrm = NULL;
+	m_nPacketId = 0;
 }
 
 CClientCommDoc::~CClientCommDoc()

@@ -40,6 +40,9 @@ public:
 
 	CPacketContainer m_PacketCtnr;
 
+	unsigned int m_nPacketId;
+
+	 
  
  
 
