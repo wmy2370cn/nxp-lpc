@@ -774,7 +774,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_PING_TEST           "\nPING测试\nPING测试\n\n\nCommTest.Document\nCommTest.Document"
+    IDR_PING_TEST           "PING测试"
 END
 
 STRINGTABLE 
@@ -940,6 +940,11 @@ BEGIN
     ID_STRING_SVR_MODE      "服务端模式"
     ID_STRING_PING_MODE     "PING模式"
     ID_STRING_COM           "串行口"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_PACKET_DECODE       "报文解码"
 END
 
 #endif    // 中文(中华人民共和国) resources

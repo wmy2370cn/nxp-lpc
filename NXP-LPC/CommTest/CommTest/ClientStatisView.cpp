@@ -274,7 +274,7 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
 
-	m_wndSplitter.SetYMoveLimit(80,100);
+	m_wndSplitter.SetYMoveLimit(90,110);
 
 	if (!m_wndSplitter.CreateStatic (this,2,1))
 	{
@@ -304,7 +304,7 @@ int CGridChartWnd::CreateControls ()
 	GetClientRect (rect);
 
 	m_wndSplitter.SetRowInfo (0, rect.Height() / 3, 30);
-//	m_wndSplitter.SetWindowPos (NULL, 0, 0, rect.Width (), rect.Height (), SWP_NOZORDER | SWP_NOREDRAW);
+ 	m_wndSplitter.SetWindowPos (NULL, 0, 0, rect.Width (), rect.Height (), SWP_NOZORDER | SWP_NOREDRAW);
  
 	return 0;
 }
@@ -313,7 +313,11 @@ void CGridChartWnd::OnSize(UINT nType, int cx, int cy)
 	CWnd::OnSize(nType, cx, cy);
 	if (m_wndSplitter.GetSafeHwnd () != NULL)
 	{
-		m_wndSplitter.SetWindowPos (this, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
+		CRect rc;
+		GetClientRect(rc);
+		m_wndSplitter.MoveWindow(rc);
+	//	m_wndSplitter.MoveWindow()
+	//	m_wndSplitter.SetWindowPos (this, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
 	}
 	// TODO: 在此处添加消息处理程序代码
 }

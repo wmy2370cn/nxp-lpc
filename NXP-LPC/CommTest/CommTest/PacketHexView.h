@@ -1,5 +1,7 @@
 #pragma once
 
+#include "XTHexEdit.h"
+
 
 // CPacketHexView 视图
 
@@ -12,6 +14,9 @@ protected:
 	virtual ~CPacketHexView();
 
 public:
+	CXTHexEdit  m_wndEdit;
+
+public:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -22,6 +27,8 @@ public:
 
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 

@@ -465,8 +465,59 @@ void CClientRecvView::OnPacketDecode()
 		pDoc->m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
 	}
 	pFrame->MDIActivate( pDoc->m_pDecodeFrm  ); 	
-	pDoc->m_pDecodeFrm->SetWindowText(_T("xxx"));
 
+
+	CBCGPGridRow* pRow = NULL;
+	BOOL bSel = FALSE;
+
+	int nRowCnt = m_wndGrid.GetRowCount();
+	int i = 0;
+	CPacket *pPacket = NULL;
+
+//	pRow = m_wndGrid.GetCurSel();
+	CPoint curPoint;
+	GetCursorPos(&curPoint);
+	m_wndGrid.ScreenToClient(&curPoint);
+
+	pRow = m_wndGrid.HitTest(curPoint);
+	if (pRow)
+	{
+		pPacket = (CPacket*) pRow->GetData();
+		if (pPacket )
+			pDoc->m_nPacketId = pPacket->m_nId;
+	}
+	 
+// 	for ( i = 0;i < nRowCnt; i++)
+// 	{
+// 		pRow = m_wndGrid.GetRow(i);
+// 		ASSERT(pRow);
+// 		if (pRow )
+// 		{
+// 			bSel = pRow->IsSelected(); 
+// 			pPacket = (CPacket*) pRow->GetData();
+// 			ASSERT(pPacket);
+// 			if (pPacket && bSel)
+// 			{
+// 				pDoc->m_pDeocodePacket = pPacket;
+// 				break;
+// 			}		
+// 		}
+// 	}
+
+//	ASSERT(pDoc->m_pDeocodePacket );
+	CString szTxt;
+
+	if ( pDoc->m_nPacketId )
+	{	 
+		szTxt.Format(_T("%s - [%d]"),pDoc->GetTitle(),pDoc->m_nPacketId);
+		pDoc->m_pDecodeFrm->SetWindowText(szTxt);
+		pDoc->UpdateAllViews(this);
+	}
+	else
+	{
+		szTxt.Format(_T("%s - ±¨ÎÄ·ÖÎö"),pDoc->GetTitle());
+		pDoc->m_pDecodeFrm->SetWindowText(szTxt);
+	}
 	SetTimer(ID_LOG_PACKET,1000,NULL);		
 }
 

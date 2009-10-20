@@ -37,7 +37,7 @@ BOOL CPacketDecodeFrm::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: 在此添加专用代码和/或调用基类
 	cs.style &= ~WS_SYSMENU;
-//	cs.style  &= ~FWS_ADDTOTITLE ;
+ 	cs.style  &= ~FWS_ADDTOTITLE ;
 
 	return CBCGPMDIChildWnd::PreCreateWindow(cs);
 }

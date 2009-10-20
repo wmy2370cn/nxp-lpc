@@ -115,12 +115,10 @@
 #define IDC_BUTTON_SEND                 1018
 #define IDC_BUTTON_CLEAR                1019
 #define IDC_BUTTON_STOP                 1020
-#define IDC_BUTTON_PROTOCOL             1021
+
 #define IDC_BUTTON_ADV                  1021
 #define IDC_IPADDRESS_DEST_OPT          1022
-#define IDC_CHECK_AUTO_SEND             1022
-#define IDC_BUTTON_DISP                 1023
-#define IDC_EDIT1                       1023
+
 #define IDC_EDIT_INT_TIME               1023
 #define IDC_BUTTON_CLEAR_RECV           1024
 #define IDC_IPADDRESS_PING_DEST         1025
@@ -131,6 +129,10 @@
 #define IDC_IPADDRESS_PING_DEST_OPT     1030
 #define IDC_EDIT_PING_THREAD_CNT_OPT    1031
 #define IDC_BUTTON_PING_START           1032
+
+#define IDC_CHECK_AUTO_SEND             1033
+#define IDC_BUTTON_DISP                 1034
+
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793

@@ -20,6 +20,7 @@ CPacketHexView::~CPacketHexView()
 }
 
 BEGIN_MESSAGE_MAP(CPacketHexView, CView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -50,3 +51,13 @@ void CPacketHexView::Dump(CDumpContext& dc) const
 
 
 // CPacketHexView 消息处理程序
+
+int CPacketHexView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+
+	return 0;
+}
