@@ -73,6 +73,7 @@ void CPacket::SetPacket( unsigned char *pData,unsigned int nLen)
 	m_nLen = nLen;
 	memcpy_s(m_pPacketData,m_nLen,pData,nLen);
 }
+
 void CPacket::GetPacket ( CPacket &Dest)
 {
 	Dest.m_pPacketData = BOOST_MEMORY_ALLOC_ARRAY(g_packet_alloc, unsigned char, m_nLen); 

@@ -11,6 +11,7 @@
 
 #include "PacketDecodeFrm.h"
 #include "PacketTreeView.h"
+#include "PacketDetailDlg.h"
 
 static BCGP_GRID_COLOR_DATA sliver_theme = 
 {
@@ -524,4 +525,28 @@ void CClientRecvView::OnPacketDecode()
 void CClientRecvView::OnPacketDetail()
 {
 	// TODO: 在此添加命令处理程序代码
+
+
+	CBCGPGridRow* pRow = NULL;
+	BOOL bSel = FALSE;
+
+	int nRowCnt = m_wndGrid.GetRowCount();
+	int i = 0;
+	CPacket *pPacket = NULL;
+
+	//	pRow = m_wndGrid.GetCurSel();
+	CPoint curPoint;
+	GetCursorPos(&curPoint);
+	m_wndGrid.ScreenToClient(&curPoint);
+
+	pRow = m_wndGrid.HitTest(curPoint);
+	if (pRow)
+	{
+		pPacket = (CPacket*) pRow->GetData();
+		if (pPacket )
+		{
+			CPacketDetailDlg dlg(pPacket);
+			dlg.DoModal();
+		}
+	}
 }
