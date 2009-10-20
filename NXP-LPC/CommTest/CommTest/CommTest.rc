@@ -626,6 +626,17 @@ BEGIN
     CONTROL         "超时后自动延长间隔",IDC_CHECK_TIMEOUT_DELAY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,138,88,10
 END
 
+IDD_DLG_PACKET_DETAIL DIALOGEX 0, 0, 219, 262
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "报文内容"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "序号",IDC_STATIC,6,1,17,8
+    LTEXT           "时间",IDC_STATIC,76,1,17,8
+    LTEXT           "静态",IDC_STATIC_PACKET_TIME,106,1,90,8
+    LTEXT           "静态",IDC_STATIC_PACKET_ID,34,1,29,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -725,6 +736,14 @@ BEGIN
         RIGHTMARGIN, 91
         TOPMARGIN, 7
         BOTTOMMARGIN, 253
+    END
+
+    IDD_DLG_PACKET_DETAIL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 255
     END
 END
 #endif    // APSTUDIO_INVOKED
