@@ -88,7 +88,7 @@ void CClientOptionView::OnInitialUpdate()
 void CClientOptionView::OnUpdate(CView*  pSender , LPARAM  lHint, CObject* /*pHint*/)
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	if(lHint)
+	if(lHint == UPDATA_VIEW_CLIENT_NORMAL)
 	{
 		CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
 		ASSERT(pDoc);

@@ -9,6 +9,9 @@
 
 const int MAX_SEND_LEN = 2048;
 
+const unsigned int UPDATA_VIEW_CLIENT_NORMAL = 1;
+const unsigned int UPDATA_VIEW_CLIENT_PACKET = 2;
+
 class CPacketDecodeFrm;
 class CClientCommDoc : public CDocument
 {

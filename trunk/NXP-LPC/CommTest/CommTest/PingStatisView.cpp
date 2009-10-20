@@ -118,6 +118,7 @@ void CPingStatisView::OnSize(UINT nType, int cx, int cy)
 	GetClientRect(rect);
 	CRect rcPie = rect;
 	rcPie.left = rect.left + GRID_WIDTH + PIE_OFFSET; 
+	rcPie.InflateRect(1,1);
 
 	if(m_wndPieChart.GetSafeHwnd())
 		m_wndPieChart.MoveWindow(rcPie);

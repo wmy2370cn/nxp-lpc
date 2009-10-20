@@ -329,6 +329,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PingTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PingTestDoc.cpp"
 				>
 			</File>
@@ -508,6 +512,10 @@
 			</File>
 			<File
 				RelativePath=".\PingStatisView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PingTest.h"
 				>
 			</File>
 			<File

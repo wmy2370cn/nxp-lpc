@@ -315,7 +315,7 @@ void CWorkSpaceBar::OnNewTest()
 			else
 				pClientCommDoc->m_nLocalPort = 0;
 
-			pDoc->UpdateAllViews(NULL,1);
+			pDoc->UpdateAllViews(NULL,UPDATA_VIEW_CLIENT_NORMAL);
 		}
 	}
 	else if ( m_wndTree.GetParentItem(ItemSel) == m_hPingMode || ItemSel == m_hPingMode)
@@ -345,17 +345,13 @@ void CWorkSpaceBar::OnNewTest()
 
 			pPingDoc = (CPingTestDoc *)pDoc;
 			//保存值到doc里面
-// 			pPingDoc->m_nDestPort = dlg.m_nDestPort;
-// 			pPingDoc->m_dwDestIp = dlg.m_dwDestIp;
-// 			pClientCommDoc->m_nProtocolType = dlg.m_nProtocolType;
-// 			if (dlg.m_bRandomPort && dlg.m_nLocalPort )
-// 			{
-// 				pClientCommDoc->m_nLocalPort = dlg.m_nLocalPort;
-// 			}
-// 			else
-// 				pClientCommDoc->m_nLocalPort = 0;
+			pPingDoc->m_nIntTime = dlg.m_nIntTime;
+			pPingDoc->m_nPingDataSize = dlg.m_nPingDataSize;
+			pPingDoc->m_nTaskCnt = dlg.m_nTaskCnt;
+ 			pPingDoc->m_dwDestIp = dlg.m_dwDestIp;
+			pPingDoc->m_bAutoDelay = dlg.m_bAutoDelay;
 
-			pDoc->UpdateAllViews(NULL,1);
+			pDoc->UpdateAllViews(NULL,UPDATA_VIEW_PING_NORMAL);
 		}
 
 	}

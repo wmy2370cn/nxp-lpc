@@ -274,7 +274,7 @@ int CGridChartWnd::CreateControls ()
 		return -1;
 	}
 
-	m_wndSplitter.SetYMoveLimit(90,110);
+	m_wndSplitter.SetYMoveLimit(100,120);
 
 	if (!m_wndSplitter.CreateStatic (this,2,1))
 	{

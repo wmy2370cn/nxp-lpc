@@ -12,6 +12,7 @@ IMPLEMENT_DYNCREATE(CPingTestDoc, CDocument)
 
 CPingTestDoc::CPingTestDoc()
 {
+	m_dwDestIp = 0;
 }
 
 BOOL CPingTestDoc::OnNewDocument()

@@ -114,7 +114,7 @@
 #define IDC_CB_PROTO_TYPE_OPT           1016
 #define IDC_EDIT_SEND_TXT               1017
 #define IDC_BUTTON_SEND                 1018
-#define IDC_BUTTON_CLEAR                1019
+#define IDC_BUTTON_CLEAR_SEND           1019
 #define IDC_BUTTON_STOP                 1020
 #define IDC_BUTTON_ADV                  1021
 #define IDC_IPADDRESS_DEST_OPT          1022

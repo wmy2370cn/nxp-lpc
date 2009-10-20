@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(CClientSendView, CBCGPFormView)
 	ON_EN_CHANGE(IDC_EDIT_SEND_TXT, &CClientSendView::OnEnChangeEditSendTxt)
 	ON_BN_CLICKED(IDC_CHECK_AUTO_SEND, &CClientSendView::OnBnClickedCheckAutoSend)
 	ON_WM_TIMER()
-	ON_BN_CLICKED(IDC_BUTTON_CLEAR, &CClientSendView::OnBnClickedButtonClear)
+	ON_BN_CLICKED(IDC_BUTTON_CLEAR_SEND, &CClientSendView::OnBnClickedButtonClear)
 	ON_BN_CLICKED(IDC_BUTTON_STOP, &CClientSendView::OnBnClickedButtonStop)
 END_MESSAGE_MAP()
 
