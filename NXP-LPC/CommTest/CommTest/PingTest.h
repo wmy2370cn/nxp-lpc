@@ -19,6 +19,8 @@ class CPingTask
 	friend UINT  PingTestTask (LPVOID lpParam);	
 public:
 	CPingTask( );
+	CPingTask( CPingTestDoc *pDoc );
+
 	~CPingTask( );
 public:
 	//开始收发
@@ -27,12 +29,13 @@ public:
 	void StopTask( );
 
 	void Engine( );
+	unsigned short   m_nID;
 private:
+	CPingTestDoc *m_pDocument;
 	CWinThread *m_pPingTsk;
 	HANDLE      m_hStopEvent;
 	HANDLE      m_hTaskHandle;
 
-	DWORD       m_nThreadID;
 	unsigned short m_nSeq;
 
 	unsigned char m_nTTL;
@@ -49,6 +52,8 @@ private:
 	unsigned char  *m_pSendBuf;
 	unsigned char  *m_pRecvBuf;
 
+	void InitDefault();
+
 	BOOL InitPing( );
 	void StopPing( );
 	BOOL PingTest( );
@@ -56,7 +61,7 @@ private:
 	BOOL IsSocketReadible(SOCKET socket, DWORD dwTimeout, BOOL& bReadible);
 	USHORT	GenerateIPChecksum(USHORT* pBuffer, int nSize);
 	void	FillIcmpData(LPICMP_HEADER pIcmp, int nData);
-	int	DecodeResponse(unsigned char* pBuf, int nBytes, sockaddr_in* from) ;
+	unsigned char DecodeResponse(unsigned char* pBuf, int nBytes, sockaddr_in* from) ;
 };
  
   
