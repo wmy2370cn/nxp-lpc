@@ -96,4 +96,28 @@ void CPingOptionView::OnUpdate(CView*  pSender , LPARAM lHint, CObject*  pHint )
 void CPingOptionView::OnBnClickedButtonPingStart()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	CPingTestDoc *pDoc = (CPingTestDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+	CWnd *pWnd = GetDlgItem(IDC_BUTTON_PING_START);
+	ASSERT(pWnd);
+	pWnd->EnableWindow(FALSE);
+
+	if(pDoc->m_bPinging)
+	{
+		pDoc->StopTask();
+
+		pWnd->SetWindowText(_T("开始"));
+		pWnd->EnableWindow();
+		pDoc->m_bPinging = FALSE;
+	}
+	else
+	{
+		pDoc->StartTask();
+
+		pWnd->SetWindowText(_T("停止"));
+		pWnd->EnableWindow();
+		pDoc->m_bPinging = TRUE;
+	}
 }

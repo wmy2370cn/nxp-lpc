@@ -22,6 +22,8 @@ public:
 	UINT m_nIntTime;
 	BOOL m_bAutoDelay;
 
+	BOOL m_bPinging;
+
 	//开始收发
 	void StartTask( );
 	//停止收发
@@ -46,4 +48,6 @@ protected:
 	virtual BOOL OnNewDocument();
 
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnCloseDocument();
 };
