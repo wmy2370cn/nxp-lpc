@@ -171,11 +171,11 @@ BOOL CPingTask::InitPing( )
 		return FALSE;
 	}
  
-// 	SOCKADDR_IN sockLocalAddress;
-// 	ZeroMemory(&sockLocalAddress, sizeof(sockLocalAddress));
-// 	sockLocalAddress.sin_family = AF_INET;
-// 	sockLocalAddress.sin_port = htons((u_short)0);
-// 	sockLocalAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+	SOCKADDR_IN sockLocalAddress;
+	ZeroMemory(&sockLocalAddress, sizeof(sockLocalAddress));
+	sockLocalAddress.sin_family = AF_INET;
+	sockLocalAddress.sin_port = htons((u_short)0);
+	sockLocalAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 
 // 	LPHOSTENT lphost;
 // 	lphost = gethostbyname(NULL);
@@ -186,12 +186,18 @@ BOOL CPingTask::InitPing( )
 // 		return FALSE; 
 // 	}
 
-// 	if (bind(m_hSocketRaw, (sockaddr*) &sockLocalAddress, sizeof(sockLocalAddress)) == SOCKET_ERROR)
-// 	{
-// 		TRACE(_T("PingUsingWinsock, Failed to bind to specified address\n"));
-// 		return FALSE;
-// 	}
- 
+	if (bind(m_hSocketRaw, (sockaddr*) &sockLocalAddress, sizeof(sockLocalAddress)) == SOCKET_ERROR)
+	{
+		TRACE(_T("PingUsingWinsock, Failed to bind to specified address\n"));
+		return FALSE;
+	}
+	int nActivate = 1;
+	//允许地址重用
+	if (setsockopt(m_hSocketRaw, SOL_SOCKET, SO_REUSEADDR, (const char *) &nActivate,sizeof(nActivate)) == SOCKET_ERROR )
+	{
+		TRACE(_T("CPing::PingUsingWinsock, Failed to set the TTL value on the socket\n"));
+		return FALSE;
+	}
 	//Set the TTL on the socket  
 	int nTempTTL = m_nTTL;
 	if (setsockopt(m_hSocketRaw, IPPROTO_IP, IP_TTL, (char*) &nTempTTL, sizeof(nTempTTL)) == SOCKET_ERROR)
@@ -311,7 +317,7 @@ void CPingTask::FillIcmpData(LPICMP_HEADER pIcmp, int nData)
 	pIcmp->i_type    = ICMP_ECHOREQ; //ICMP_ECHO type
 	pIcmp->i_code    = 0;
 	pIcmp->i_id      =  (USHORT) m_nID;
-	pIcmp->i_seq     = ++m_nSeq;
+	pIcmp->i_seq     = m_nID*10;
 	pIcmp->i_cksum   = 0;
 	pIcmp->timestamp = GetTickCount();
 
@@ -350,6 +356,11 @@ UINT  PingTestTask (LPVOID lpParam)
 
 		return 0x88;
 	}
+
+	szLog.Format(_T("PING %d.%d.%d.%d 线程[%d] socket = %d "),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+		dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,pTask->m_nID,pTask->m_hSocketRaw );
+	LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
+	szLog.ReleaseBuffer();
 
 	ResetEvent(pTask->m_hStopEvent);
 	while(1)
