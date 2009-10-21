@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include "PingTest.h"
+
 // CPingTestDoc 文档
 const unsigned int UPDATA_VIEW_PING_NORMAL = 1;
 //const unsigned int UPDATA_VIEW_CLIENT_PACKET = 2;
@@ -18,6 +21,16 @@ public:
 	UINT m_nPingDataSize;
 	UINT m_nIntTime;
 	BOOL m_bAutoDelay;
+
+	//开始收发
+	void StartTask( );
+	//停止收发
+	void StopTask( );
+	std::vector <CPingTask *> m_arrTask;
+
+private:
+	void FreeMem( );
+
 
 #ifndef _WIN32_WCE
 	virtual void Serialize(CArchive& ar);   // 为文档 I/O 重写

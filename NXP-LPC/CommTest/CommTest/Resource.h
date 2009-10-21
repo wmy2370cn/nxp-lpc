@@ -132,7 +132,11 @@
 #define IDC_STATIC_PACKET_ID            1034
 #define IDC_STATIC_TREE_LOC             1035
 #define IDC_BUTTON_DISP                 1036
+#define IDC_STATIC_PING_SND_CNT         1036
 #define IDC_CHECK_AUTO_SEND             1037
+#define IDC_STATIC_PING_RTN_CNT         1037
+#define IDC_STATIC_PING_RTN_CNT2        1038
+#define IDC_STATIC_PING_LOST_CNT        1038
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
@@ -173,7 +177,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        324
 #define _APS_NEXT_COMMAND_VALUE         32859
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_CONTROL_VALUE         1038
 #define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif
