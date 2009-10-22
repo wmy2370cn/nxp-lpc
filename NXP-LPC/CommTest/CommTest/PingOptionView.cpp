@@ -108,6 +108,14 @@ void CPingOptionView::OnBnClickedButtonPingStart()
 	ASSERT(pDoc);
 	if (pDoc == NULL)
 		return;
+
+	UpdateData(TRUE);
+
+	pDoc->m_nTaskCnt = m_nTaskCnt;
+	pDoc->m_nPingDataSize = m_nPingDataSize;
+	pDoc->m_nIntTime = m_nIntTime;
+	pDoc->m_bAutoDelay = m_bAutoDelay;
+
 	CWnd *pWnd = GetDlgItem(IDC_BUTTON_PING_START);
 	ASSERT(pWnd);
 	pWnd->EnableWindow(FALSE);
