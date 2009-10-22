@@ -2,10 +2,12 @@
 
 #include "stdafx.h" 
 #include "PingTest.h"
-#include "PingTestDoc.h"
-#include  <ws2tcpip.h>
+#include "PingTestDoc.h" 
 #include "Common.h"
 #include "LogDataApi.h"
+#include "TimerEx.h"
+
+CTimerEx g_Timer;
 
 #define MIN_ICMP_PACKET_SIZE 8    //minimum 8 byte icmp packet (just header)
 #define MAX_ICMP_PACKET_SIZE 65500 //Maximum icmp packet size
@@ -27,7 +29,6 @@ void CPingTask::InitDefault()
 	m_nTTL = 255;
 	m_nTOS = 0;
 	m_dwTimeout = 2000;
-	 
 }
 
 
@@ -76,7 +77,6 @@ BOOL  CPingTask::PingTest( )
 
 		if (bRet == TRUE)
 		{
-			
 			// 		CString szLog;
 			// 		szLog.Format(_T("[#%d]Pinging %d.%d.%d.%d %d字节 返回[%d ms]。"),m_nID, m_PingReply.Address.s_net,m_PingReply.Address.s_host ,
 			// 			m_PingReply.Address.s_lh ,m_PingReply.Address.s_impno ,m_nPacketSize,m_PingReply.RTT    );
@@ -88,8 +88,7 @@ BOOL  CPingTask::PingTest( )
 		{
 
 		}
-	} 
- 
+	}  
 	return bRet;
 }
  
@@ -110,7 +109,9 @@ UINT  PingTestTask (LPVOID lpParam)
 	LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
 	szLog.ReleaseBuffer();
 
-	BOOL bRet = FALSE;
+	BOOL bRet = FALSE,bLastRet = FALSE;
+
+	g_Timer.InitTimer(pTask->m_nID,pTask->m_pDocument->m_nIntTime);
 
 	ResetEvent(pTask->m_hStopEvent);
 	while(1)
@@ -122,8 +123,20 @@ UINT  PingTestTask (LPVOID lpParam)
 			break;
 		}	
 
-		 bRet =pTask->PingTest();
-		 Sleep(1000);
+		if (g_Timer.IsTimeTo(pTask->m_nID))
+		{
+			bRet =pTask->PingTest();
+			if (bRet == FALSE && bLastRet == TRUE && pTask->m_pDocument->m_bAutoDelay)
+			{//如果不通，
+				g_Timer.InitTimer(pTask->m_nID,10*1000);
+			}
+			else if ( bRet == TRUE && bLastRet == FALSE )
+			{
+				g_Timer.InitTimer(pTask->m_nID,pTask->m_pDocument->m_nIntTime);
+			}
+			bLastRet = bRet;
+		}
+		 Sleep(10);
 	}
 
 	return 0;

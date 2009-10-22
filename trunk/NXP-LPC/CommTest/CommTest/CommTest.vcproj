@@ -365,6 +365,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TimerEx.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WorkSpaceBar.cpp"
 				>
 			</File>
@@ -544,6 +548,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimerEx.h"
 				>
 			</File>
 			<File
