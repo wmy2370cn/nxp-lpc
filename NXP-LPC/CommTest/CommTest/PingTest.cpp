@@ -60,20 +60,35 @@ BOOL  CPingTask::PingTest( )
 
 	DWORD dwAddr = htonl(m_dwDestIp);
 	BOOL bRet = FALSE;
+	CPingMsg  msg;
+	msg.m_Address.S_un.S_addr = dwAddr;
 	bRet = PingUsingICMP(dwAddr, m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize);
 //	bRet = PingUsingWinsock(dwAddr,m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize,m_nSeq,m_nID);
+		
+	ASSERT(m_pDocument);
 
-	if (bRet == TRUE)
+	if (m_pDocument)
 	{
-		CString szLog;
-		szLog.Format(_T("[#%d]Pinging %d.%d.%d.%d %d字节 返回[%d ms]。"),m_nID, m_PingReply.Address.s_net,m_PingReply.Address.s_host ,
-			m_PingReply.Address.s_lh ,m_PingReply.Address.s_impno ,m_nPacketSize,m_PingReply.RTT    );
+		msg.m_nStatus = m_PingReply.EchoReplyStatus;
+		msg.m_dwRTT = m_PingReply.RTT;
+		msg.m_nTaskId = m_nID;
+		m_pDocument->m_PingMsgCntnr.AddPingMsg(msg);
 
-		LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
-		szLog.ReleaseBuffer();
-	}
+		if (bRet == TRUE)
+		{
+			
+			// 		CString szLog;
+			// 		szLog.Format(_T("[#%d]Pinging %d.%d.%d.%d %d字节 返回[%d ms]。"),m_nID, m_PingReply.Address.s_net,m_PingReply.Address.s_host ,
+			// 			m_PingReply.Address.s_lh ,m_PingReply.Address.s_impno ,m_nPacketSize,m_PingReply.RTT    );
+			// 
+			// 		LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
+			// 		szLog.ReleaseBuffer();
+		}
+		else
+		{
 
- 
+		}
+	} 
  
 	return bRet;
 }
