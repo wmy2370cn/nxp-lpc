@@ -317,10 +317,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ping.h"
-				>
-			</File>
-			<File
 				RelativePath=".\PingChildFrm.cpp"
 				>
 			</File>
@@ -500,6 +496,10 @@
 			</File>
 			<File
 				RelativePath=".\PieChartWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ping.h"
 				>
 			</File>
 			<File

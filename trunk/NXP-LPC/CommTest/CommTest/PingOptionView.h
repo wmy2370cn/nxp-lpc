@@ -37,6 +37,11 @@ public:
 	UINT m_nIntTime;
 	BOOL m_bAutoDelay;
 	afx_msg void OnBnClickedButtonPingStart();
+	afx_msg void OnBnClickedButtonReset();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	UINT m_nPingCnt;
+	UINT m_nReplyCnt;
+	UINT m_nLostCnt;
 };
 
 

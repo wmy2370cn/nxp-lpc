@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "PingTest.h"
+#include "CommMsg.h"
 
 // CPingTestDoc ÎÄµµ
 const unsigned int UPDATA_VIEW_PING_NORMAL = 1;
@@ -30,6 +31,7 @@ public:
 	void StopTask( );
 	std::vector <CPingTask *> m_arrTask;
 
+	CPingMsgContainer m_PingMsgCntnr;
 private:
 	void FreeMem( );
 
