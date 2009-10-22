@@ -142,7 +142,13 @@ protected:
 	LPICMPCREATEFILE  m_pIcmpCreateFile;
 	LPICMPSENDECHO    m_pIcmpSendEcho;
 	LPICMPCLOSEHANDLE m_pIcmpCloseHandle;
+
+	HANDLE m_hIP;
+	void InitPing( );
+	void  ExitPing( );
 #endif
+
+
 
 	static BOOL IsSocketReadible(SOCKET socket, DWORD dwTimeout, BOOL& bReadible);
 };

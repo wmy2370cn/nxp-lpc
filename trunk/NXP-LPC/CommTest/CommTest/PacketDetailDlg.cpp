@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 
 // CPacketDetailDlg 消息处理程序
 
-const int GRID_TOP = 28;
+const int GRID_TOP = 24;
 BOOL CPacketDetailDlg::OnInitDialog()
 {
 	CBCGPDialog::OnInitDialog();

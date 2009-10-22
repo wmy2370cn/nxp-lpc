@@ -81,7 +81,7 @@ void CPingTestDoc::FreeMem()
 
 void CPingTestDoc::StartTask( )
 {
-	if (m_nTaskCnt >0 && m_nTaskCnt <= 16)
+	if (m_nTaskCnt >0 && m_nTaskCnt <= MAX_PING_TASK)
 	{
 		unsigned int i = 0;
 		CPingTask *pTask = NULL;

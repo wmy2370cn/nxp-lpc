@@ -63,8 +63,8 @@ BOOL  CPingTask::PingTest( )
 	BOOL bRet = FALSE;
 	CPingMsg  msg;
 	msg.m_Address.S_un.S_addr = dwAddr;
-	bRet = PingUsingICMP(dwAddr, m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize);
-//	bRet = PingUsingWinsock(dwAddr,m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize,m_nSeq,m_nID);
+ 	bRet = PingUsingICMP(dwAddr, m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize);
+// 	bRet = PingUsingWinsock(dwAddr,m_PingReply,m_nTTL,m_dwTimeout,m_nPacketSize,m_nSeq,m_nID);
 		
 	ASSERT(m_pDocument);
 
@@ -73,7 +73,7 @@ BOOL  CPingTask::PingTest( )
 		msg.m_nStatus = m_PingReply.EchoReplyStatus;
 		msg.m_dwRTT = m_PingReply.RTT;
 		msg.m_nTaskId = m_nID;
-		m_pDocument->m_PingMsgCntnr.AddPingMsg(msg);
+	 	m_pDocument->m_PingMsgCntnr.AddPingMsg(msg);
 
 		if (bRet == TRUE)
 		{
@@ -112,6 +112,7 @@ UINT  PingTestTask (LPVOID lpParam)
 	BOOL bRet = FALSE,bLastRet = FALSE;
 
 	g_Timer.InitTimer(pTask->m_nID,pTask->m_pDocument->m_nIntTime);
+	pTask->InitPing( );
 
 	ResetEvent(pTask->m_hStopEvent);
 	while(1)
@@ -136,8 +137,9 @@ UINT  PingTestTask (LPVOID lpParam)
 			}
 			bLastRet = bRet;
 		}
-		 Sleep(10);
+		Sleep(100);
 	}
+	pTask->ExitPing( );
 
 	return 0;
 }

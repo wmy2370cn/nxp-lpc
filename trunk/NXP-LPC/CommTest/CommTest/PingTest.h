@@ -2,9 +2,9 @@
 #pragma  once 
 #include "ping.h"
 
-class CPingTestDoc;
- 
+const int MAX_PING_TASK = 10;
 
+class CPingTestDoc;
 class CPingTask :public CPing
 {
 	friend UINT  PingTestTask (LPVOID lpParam);	
@@ -39,6 +39,7 @@ private:
 	CPingReply  m_PingReply;
 
  	void InitDefault();
+
 
  	BOOL PingTest( ); 
 };

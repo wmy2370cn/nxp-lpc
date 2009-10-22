@@ -32,7 +32,7 @@ void CPingOptionView::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_IPADDRESS_PING_DEST_OPT, m_wndDestIp);
 	DDX_Text(pDX, IDC_EDIT_PING_THREAD_CNT_OPT, m_nTaskCnt);
-	DDV_MinMaxUInt(pDX, m_nTaskCnt, 1, 16);
+	DDV_MinMaxUInt(pDX, m_nTaskCnt, 1, MAX_PING_TASK);
 	DDX_Text(pDX, IDC_EDIT_PING_DATA_SIZE, m_nPingDataSize);
 	DDV_MinMaxUInt(pDX, m_nPingDataSize, 32, 64000);
 	DDX_Text(pDX, IDC_EDIT_PING_INT_TIME, m_nIntTime);
