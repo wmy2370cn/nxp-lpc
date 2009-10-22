@@ -890,6 +890,22 @@ BOOL CPing::PingUsingICMP(LPCTSTR pszHostName, CPingReply& pr, UCHAR nTTL, DWORD
 	//return the status
 	return bSuccess; 
 }
+void  CPing::InitPing( )
+{
+	//Create the ICMP handle
+	ASSERT(m_pIcmpCreateFile);
+	m_hIP = m_pIcmpCreateFile();
+	if (m_hIP == INVALID_HANDLE_VALUE)
+	{
+		TRACE(_T("CPing::PingUsingICMP, Could not get a valid ICMP handle\n"));
+		return  ;
+	}
+}
+void  CPing::ExitPing( )
+{
+	ASSERT(m_pIcmpCloseHandle);
+	m_pIcmpCloseHandle(m_hIP);
+}
 
 BOOL CPing::PingUsingICMP(DWORD dwDestIp, CPingReply& pr, UCHAR nTTL, DWORD dwTimeout, WORD wDataSize, UCHAR nTOS, BOOL bDontFragment) const
 {
@@ -901,18 +917,8 @@ BOOL CPing::PingUsingICMP(DWORD dwDestIp, CPingReply& pr, UCHAR nTTL, DWORD dwTi
 		return FALSE;
 	}
 
-	//Convert from dotted notation if required
-	 
+	//Convert from dotted notation if required	 
 	unsigned long	addr = dwDestIp;	 
-
-	//Create the ICMP handle
-	ASSERT(m_pIcmpCreateFile);
-	HANDLE hIP = m_pIcmpCreateFile();
-	if (hIP == INVALID_HANDLE_VALUE)
-	{
-		TRACE(_T("CPing::PingUsingICMP, Could not get a valid ICMP handle\n"));
-		return FALSE;
-	}
 
 	//Set up the option info structure
 	IP_OPTION_INFORMATION OptionInfo;
@@ -944,7 +950,7 @@ BOOL CPing::PingUsingICMP(DWORD dwDestIp, CPingReply& pr, UCHAR nTTL, DWORD dwTi
 
 	ICMP_ECHO_REPLY* pEchoReply = reinterpret_cast<ICMP_ECHO_REPLY*>(reply.m_pData);
 	ASSERT(m_pIcmpSendEcho);
-	DWORD nRecvPackets = m_pIcmpSendEcho(hIP, addr, sendBuf.m_pData, wDataSize, &OptionInfo, reply.m_pData, dwReplySize, dwTimeout);
+	DWORD nRecvPackets = m_pIcmpSendEcho(m_hIP, addr, sendBuf.m_pData, wDataSize, &OptionInfo, reply.m_pData, dwReplySize, dwTimeout);
 
 	//Check we got the packet back
 	BOOL bSuccess = (nRecvPackets == 1);
@@ -964,9 +970,7 @@ BOOL CPing::PingUsingICMP(DWORD dwDestIp, CPingReply& pr, UCHAR nTTL, DWORD dwTi
 	}
 
 	//Close the ICMP handle
-	ASSERT(m_pIcmpCloseHandle);
-	m_pIcmpCloseHandle(hIP);
-
+	
 	if (bSuccess)
 	{
 		//Ping was successful, copy over the pertinent info
