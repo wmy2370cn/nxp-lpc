@@ -1,20 +1,11 @@
 
 #pragma  once 
-
-#include "ipstructs.h"
+#include "ping.h"
 
 class CPingTestDoc;
+ 
 
-struct CPingReply
-{
-	in_addr	 Address;		//The IP address of the replier
-	unsigned long avgRTT;	//Round Trip time in Milliseconds
-	unsigned long maxRTT;	
-	unsigned long minRTT;
-	int nError;
-};
-
-class CPingTask
+class CPingTask :public CPing
 {
 	friend UINT  PingTestTask (LPVOID lpParam);	
 public:
@@ -41,27 +32,15 @@ private:
 	unsigned char m_nTTL;
 	unsigned char m_nTOS;
 	BOOL 	m_bDontFragment;
-	SOCKET  m_hSocketRaw;
-
-	unsigned int m_nPacketSize;
+ 	unsigned int m_nPacketSize;
 	DWORD  m_dwDestIp;
 	DWORD  m_dwTimeout;
 
 	CPingReply  m_PingReply;
 
-	unsigned char  *m_pSendBuf;
-	unsigned char  *m_pRecvBuf;
+ 	void InitDefault();
 
-	void InitDefault();
-
-	BOOL InitPing( );
-	void StopPing( );
-	BOOL PingTest( );
-
-	BOOL IsSocketReadible(SOCKET socket, DWORD dwTimeout, BOOL& bReadible);
-	USHORT	GenerateIPChecksum(USHORT* pBuffer, int nSize);
-	void	FillIcmpData(LPICMP_HEADER pIcmp, int nData);
-	unsigned char DecodeResponse(unsigned char* pBuf, int nBytes, sockaddr_in* from) ;
+ 	BOOL PingTest( ); 
 };
  
   

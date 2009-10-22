@@ -89,7 +89,7 @@ void CPingOptionView::OnUpdate(CView*  pSender , LPARAM lHint, CObject*  pHint )
 		m_bAutoDelay = pDoc->m_bAutoDelay;
 		m_nIntTime = pDoc->m_nIntTime;		
 
-		UpdateData(TRUE);
+		UpdateData(FALSE);
 	}
 }
 
