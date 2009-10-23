@@ -29,6 +29,7 @@
 #define ID_CLASS_PROPERTIES             142
 #define ID_NEW_FOLDER                   143
 #define ID_SORT_MENU                    144
+
 #define ID_SORTING_GROUPBYTYPE          145
 #define ID_SORTING_SORTALPHABETIC       146
 #define ID_SORTING_SORTBYTYPE           147
@@ -46,9 +47,8 @@
 #define IDI_CLASS_VIEW_HC               164
 #define IDI_OUTPUT_WND_HC               166
 #define IDI_PROPERTIES_WND_HC           168
-#define IDR_EXPLORER                    169
-#define IDB_EXPLORER_24                 170
-#define IDR_SORT                        171
+#define IDB_WORKSPACE_NEW               170
+#define IDR_WORKSPACE_NEW               171
 #define IDR_POPUP_SORT                  173
 #define IDR_POPUP_EXPLORER              174
 #define IDB_CLASS_VIEW_24               178
@@ -58,6 +58,7 @@
 #define IDR_OUTPUT_POPUP                182
 #define IDR_PROPERTIES                  183
 #define IDB_PROPERTIES_HC               184
+#define ID_WORKSPACE_NEW_TEST           185
 #define IDR_THEME_MENU                  200
 #define ID_SET_STYLE                    201
 #define ID_VIEW_APPLOOK_WIN_2000        210
@@ -91,6 +92,8 @@
 #define IDR_POPUP_DROP_MDITABS          352
 #define IDR_PING_TEST                   401
 #define IDR_CLIENT_COMM                 402
+#define IDR_POPUP_SORT1                 403
+#define IDR_POPUP_WORKSPACE_TOOLBAR     404
 #define ID_STRING_ETH                   500
 #define ID_STRING_CLIENT_MODE           501
 #define ID_STRING_SVR_MODE              502
@@ -135,7 +138,6 @@
 #define IDC_STATIC_PING_SND_CNT         1036
 #define IDC_CHECK_AUTO_SEND             1037
 #define IDC_STATIC_PING_RTN_CNT         1037
-#define IDC_STATIC_PING_RTN_CNT2        1038
 #define IDC_STATIC_PING_LOST_CNT        1038
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
@@ -175,7 +177,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        324
+#define _APS_NEXT_RESOURCE_VALUE        325
 #define _APS_NEXT_COMMAND_VALUE         32859
 #define _APS_NEXT_CONTROL_VALUE         1038
 #define _APS_NEXT_SYMED_VALUE           316

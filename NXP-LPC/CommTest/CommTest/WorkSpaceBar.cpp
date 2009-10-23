@@ -17,6 +17,39 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 const int nBorderSize = 1;
+
+class CWorkspaceMenuButton : public CBCGPToolbarMenuButton
+{
+	friend class CClassViewBar;
+
+	DECLARE_SERIAL(CWorkspaceMenuButton)
+
+public:
+	CWorkspaceMenuButton(HMENU hMenu = NULL) :
+	  CBCGPToolbarMenuButton ((UINT)-1, hMenu, -1)
+	  {
+	  }
+
+	  virtual void OnDraw (CDC* pDC, const CRect& rect, CBCGPToolBarImages* pImages,
+		  BOOL bHorz = TRUE, BOOL bCustomizeMode = FALSE,
+		  BOOL bHighlight = FALSE,
+		  BOOL bDrawBorder = TRUE,
+		  BOOL bGrayDisabledButtons = TRUE)
+	  {
+		  pImages = CBCGPToolBar::GetImages ();
+
+		  CBCGPDrawState ds;
+		  pImages->PrepareDrawImage (ds);
+
+		  CBCGPToolbarMenuButton::OnDraw (pDC, rect, 
+			  pImages, bHorz, 
+			  bCustomizeMode, bHighlight, bDrawBorder, bGrayDisabledButtons);
+
+		  pImages->EndDrawImage (ds);
+	  }
+};
+
+IMPLEMENT_SERIAL(CWorkspaceMenuButton, CBCGPToolbarMenuButton, 1)
 /////////////////////////////////////////////////////////////////////////////
 // CWorkSpaceBar
 
@@ -69,6 +102,40 @@ int CWorkSpaceBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create workspace view\n");
 		return -1;      // fail to create
 	}
+
+	m_wndToolBar.Create (this, dwDefaultToolbarStyle, IDR_WORKSPACE_NEW);
+	m_wndToolBar.LoadToolBar (IDR_WORKSPACE_NEW, 0, 0, TRUE /* Is locked */);
+
+	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+
+	m_wndToolBar.SetBarStyle (
+		m_wndToolBar.GetBarStyle () & 
+		~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+
+	m_wndToolBar.SetOwner (this);
+
+	// All commands will be routed via this control , not via the parent frame:
+	m_wndToolBar.SetRouteCommandsViaFrame (FALSE);
+	m_wndToolBar.CleanUpLockedImages ();
+	m_wndToolBar.LoadBitmap (IDB_WORKSPACE_NEW, 0, 0, TRUE /* Locked */);
+	
+	CBCGPToolBarImages* pImages = CBCGPToolBar::GetImages ();
+	ASSERT_VALID (pImages);
+
+	CMenu menuSort;
+	menuSort.LoadMenu (IDR_POPUP_WORKSPACE_TOOLBAR);
+
+	m_wndToolBar.ReplaceButton (ID_WORKSPACE_NEW_TEST, CWorkspaceMenuButton (menuSort.GetSubMenu (0)->GetSafeHmenu ()));
+
+	CWorkspaceMenuButton* pButton =  DYNAMIC_DOWNCAST (CWorkspaceMenuButton,m_wndToolBar.GetButton (0));
+
+// 	if (pButton != NULL)
+// 	{
+// 		pButton->m_bText = FALSE;
+// 		pButton->m_bImage = TRUE;
+// 	 	pButton->SetImage (CImageHash::GetImageOfCommand (0));
+// 		pButton->SetMessageWnd (this);
+// 	}
 
 	InitImages( );
 
@@ -138,11 +205,23 @@ int CWorkSpaceBar::InitImages( )
 void CWorkSpaceBar::OnSize(UINT nType, int cx, int cy) 
 {
 	CBCGPDockingControlBar::OnSize(nType, cx, cy);
+	CRect rectClient;
+	GetClientRect (rectClient);
+
+	int cyTlb = m_wndToolBar.CalcFixedLayout (FALSE, TRUE).cy;
+
+	m_wndToolBar.SetWindowPos (NULL, rectClient.left, rectClient.top, 
+		rectClient.Width (), cyTlb,
+		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_wndTree.SetWindowPos (NULL, rectClient.left + 1, rectClient.top + cyTlb + 1,
+		rectClient.Width () - 2, rectClient.Height () - cyTlb - 2,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Tab control should cover a whole client area:
-	m_wndTree.SetWindowPos (NULL, nBorderSize, nBorderSize, 
-		cx - 2 * nBorderSize, cy - 2 * nBorderSize,
-		SWP_NOACTIVATE | SWP_NOZORDER);
+// 	m_wndTree.SetWindowPos (NULL, nBorderSize, nBorderSize, 
+// 		cx - 2 * nBorderSize, cy - 2 * nBorderSize,
+// 		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CWorkSpaceBar::OnPaint() 
