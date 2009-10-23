@@ -365,7 +365,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\SvrCommMsg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TimerEx.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UEServer.cpp"
 				>
 			</File>
 			<File
@@ -547,11 +555,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SvrCommMsg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\targetver.h"
 				>
 			</File>
 			<File
 				RelativePath=".\TimerEx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UEServer.h"
 				>
 			</File>
 			<File
@@ -674,6 +690,10 @@
 			</File>
 			<File
 				RelativePath=".\UserImages.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\workspac.bmp"
 				>
 			</File>
 			<File

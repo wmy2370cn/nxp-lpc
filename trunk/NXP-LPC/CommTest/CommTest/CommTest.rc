@@ -370,6 +370,17 @@ BEGIN
     END
 END
 
+IDR_POPUP_WORKSPACE_TOOLBAR MENU 
+BEGIN
+    POPUP "排序"
+    BEGIN
+        MENUITEM "按字母顺序排序(&S)",                 ID_SORTING_SORTALPHABETIC
+        MENUITEM "按类型排序(&T)",                   ID_SORTING_SORTBYTYPE
+        MENUITEM "按访问排序(&E)",                   ID_SORTING_SORTBYACCESS
+        MENUITEM "按类型分组(&Y)",                   ID_SORTING_GROUPBYTYPE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -395,8 +406,7 @@ IDR_PACKET_DECODE       ICON                    "res\\packet_decode.ico"
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_256       BITMAP                  "res\\Toolbar256.bmp"
 IDB_CLASS_VIEW_24       BITMAP                  "res\\classview_hc.bmp"
-IDR_EXPLORER            BITMAP                  "res\\explorer.bmp"
-IDB_EXPLORER_24         BITMAP                  "res\\explorer_hc.bmp"
+IDB_WORKSPACE_NEW       BITMAP                  "res\\explorer_hc.bmp"
 IDR_MENU_IMAGES         BITMAP                  "res\\menuimages.bmp"
 IDB_MENU_IMAGES_24      BITMAP                  "res\\menuimages_hc.bmp"
 IDR_PROPERTIES          BITMAP                  "res\\properties.bmp"
@@ -404,6 +414,7 @@ IDB_PROPERTIES_HC       BITMAP                  "res\\properties_hc.bmp"
 IDB_WORKSPACE           BITMAP                  "res\\Workspace.bmp"
 IDB_BITMAP_LIST         BITMAP                  "res\\bmplist.bmp"
 IDB_BMP_FLAG            BITMAP                  "res\\list.bmp"
+IDR_WORKSPACE_NEW       BITMAP                  "res\\workspac.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -438,15 +449,9 @@ BEGIN
     BUTTON      ID_APP_ABOUT
 END
 
-IDR_SORT TOOLBAR  16, 16
+IDR_WORKSPACE_NEW TOOLBAR  16, 16
 BEGIN
-    BUTTON      ID_SORT_MENU
-    BUTTON      ID_NEW_FOLDER
-END
-
-IDR_EXPLORER TOOLBAR  16, 16
-BEGIN
-    BUTTON      ID_PROPERTIES
+    BUTTON      ID_WORKSPACE_NEW_TEST
 END
 
 IDR_MENU_IMAGES TOOLBAR  16, 16

@@ -14,6 +14,16 @@
 typedef stdext::hash_map <DWORD_PTR ,HTREEITEM> CTreeItemMap ;
 typedef std::pair <DWORD_PTR,HTREEITEM> TreeItem_Pair;
 
+class CWorkSpaceToolBar : public CBCGPToolBar
+{
+	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)	
+	{		
+		CBCGPToolBar::OnUpdateCmdUI ((CFrameWnd*) GetOwner (), bDisableIfNoHndler);
+	}
+
+	virtual BOOL AllowShowOnList () const		{	return FALSE;	}
+};
+
 class CWorkSpaceBar : public CBCGPDockingControlBar
 {
 public:
@@ -21,6 +31,8 @@ public:
 
 // Attributes
 protected:
+	CWorkSpaceToolBar	m_wndToolBar;
+
 	CTreeCtrl	m_wndTree;
 	int  InitImages( );
 	CImageList	m_Images;
