@@ -303,7 +303,6 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 	if (pThis == NULL)
 		return 0;
 
-
 	DWORD dwIoSize;
 	ClientContext* lpClientContext = NULL; 
 	CUEPacket *pOverlapBuff = NULL;
@@ -2090,4 +2089,336 @@ void CUEServer::ShutDown()
 		FreeBuffers();
 		m_bServerStarted=FALSE;
 	}
+}
+BOOL CUEServer::Start(int nPort,int iMaxNumConnections,int iMaxIOWorkers,int nOfWorkers,int iMaxNumberOfFreeBuffer,int iMaxNumberOfFreeContext, BOOL bOrderedSend, BOOL bOrderedRead, int iNumberOfPendlingReads)
+{
+	m_iMaxNumberOfFreeBuffer=iMaxNumberOfFreeBuffer;
+	m_iMaxNumConnections=iMaxNumConnections;
+	m_nPortNumber=nPort;
+	m_iMaxIOWorkers=iMaxIOWorkers;
+	m_nOfWorkers=nOfWorkers;
+	m_iMaxNumberOfFreeContext=iMaxNumberOfFreeContext;
+	m_bShutDown=FALSE;
+	m_bReadInOrder=bOrderedRead;
+	m_bSendInOrder=bOrderedSend;
+	m_iNumberOfPendlingReads=iNumberOfPendlingReads;
+	return Startup();
+}
+/*
+* Starts the IOWorkers. 
+*
+*/
+BOOL CUEServer::SetupIOWorkers()
+{
+	CWinThread* pWorkerThread=NULL;
+	for(int i=0; i<m_iMaxIOWorkers;i++)
+	{
+		pWorkerThread=AfxBeginThread(CUEServer::IOWorkerThreadProc, (void*)this,THREAD_PRIORITY_NORMAL);
+		if(pWorkerThread)
+			m_IOWorkerList.push_back(pWorkerThread);
+			//m_IOWorkerList.AddHead((void*)pWorkerThread);
+		else
+		{
+			CString msg;
+		//	msg.Format("Error Couldnot start worker: %s",ErrorCode2Text(WSAGetLastError()));
+		//	AppendLog(msg); 
+			return FALSE;
+		}
+	}
+	m_nIOWorkers=m_IOWorkerList.GetCount();
+	return TRUE; 
+}
+
+/*
+* Shuttingdown the IOWOrkers.. 
+* 
+* We put a NULL in CompletionPort and set the m_bShutDown FLAG.
+* Then we wait for the IOWorkes to finish the works in the CompletionPort and exit. 
+*
+*/
+void CUEServer::ShutDownIOWorkers()
+{
+	DWORD dwExitCode;
+	m_bShutDown=TRUE;
+	// Should wait for All IOWorkers to Shutdown.. 
+	BOOL bIOWorkersRunning=TRUE;
+	CWinThread* pThread=NULL;
+	while(bIOWorkersRunning)
+	{
+		// Send Empty Message into CompletionPort so that the threads die. 
+		if(bIOWorkersRunning)
+			PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
+		//	Sleep(60);
+		// Check if the IOWorkers are terminated.. 	
+// 		POSITION pos = m_IOWorkerList.GetHeadPosition ();
+// 		while (pos != NULL) 
+// 		{
+// 			pThread = (CWinThread* )m_IOWorkerList.GetNext (pos);
+// 			if(pThread)
+// 			{
+// 				if (::GetExitCodeThread (pThread->m_hThread, &dwExitCode)&&dwExitCode == STILL_ACTIVE) 
+// 					bIOWorkersRunning=TRUE;
+// 				else
+// 					bIOWorkersRunning=FALSE;
+// 			}
+// 
+// 		}
+
+	}
+	m_IOWorkerList.RemoveAll();
+}
+/*********************************************************************************************************
+** 函数名称: Startup
+** 函数名称: CUEServer::Startup
+**
+** 功能描述：  
+**
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月24日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+BOOL CUEServer::Startup()
+{
+	// Some special cleanup 
+#if defined SIMPLESECURITY	
+	m_OneIPPerConnectionList.RemoveAll();
+	m_BanIPList.RemoveAll();
+#endif
+	CString msg;
+// 	AppendLog(m_sServerVersion);
+// 	AppendLog("---------------------------------");
+// 	AppendLog("Starting system.."); 
+	m_NumberOfActiveConnections=0;   
+
+	BOOL bRet=TRUE;
+	m_bAcceptConnections=TRUE;
+
+	if ( !m_bServerStarted )
+	{
+		m_bShutDown=FALSE;
+		/*
+		*	When using multiple pendling reads (eg m_iNumberOfPendlingReads>1) 
+		*  with multiple IOworkers (eg m_iMaxIOWorkers>1), the order of the 
+		*  packages are broken, because of IOCP internal design, Furthermore there is no 
+		*  Performance gain to have multiple pendling reads if we use more than one IO-worker.
+		*  The throughput is going upp because of serveral pendling reads, but is going down because of 
+		*  the ordering part. 
+		*/
+		if ( m_iMaxIOWorkers>1 ) // we have some sort of bugg somewhere.. 
+			m_iNumberOfPendlingReads=1;
+
+		if(m_iNumberOfPendlingReads<=0)
+			m_iNumberOfPendlingReads=1;
+
+		msg.Format("Maximum nr of simultaneous connections: %i",m_iMaxNumConnections);
+	//	AppendLog(msg);
+
+		msg.Format("Number of pendling asynchronous reads: %d",m_iNumberOfPendlingReads);
+   //	AppendLog(msg);
+
+		// No need to make in order read or write
+		if ( m_iMaxIOWorkers==1 )
+		{
+			m_bReadInOrder=FALSE;
+			m_bSendInOrder=FALSE;
+		}
+
+		// If we have several Penling Reads and Several IO workers. We must read in order. 
+		if ( m_iNumberOfPendlingReads>1&&m_iMaxIOWorkers>1 )
+		{
+			m_bReadInOrder=TRUE;
+			m_bSendInOrder=TRUE;
+		}
+
+		if ( m_bSendInOrder )
+	//		AppendLog("Send ordering initialized. (Decreases the performance by ~3%)");
+
+		if ( m_bReadInOrder )
+	//		AppendLog("Read ordering initialized.(Decreases the performance by ~3%)");
+
+		// The map must be empty
+// 		m_ContextMap.RemoveAll();
+// 		m_ContextMap.InitHashTable(m_iMaxNumConnections);
+		m_ContextMap.clear();
+
+		// Create the CompletionPort used by IO Worker Threads.  
+		bRet&=CreateCompletionPort();
+		if( bRet)
+		{
+	//		AppendLog("Completionport successfully created.");		
+		}
+		// Config the Listner.. 
+		if ( m_nPortNumber>0 )
+		{
+			bRet&=SetupListner();
+
+			if( bRet )
+			{
+	//			AppendLog("Connection listner thread successfully started.");		
+			}
+		}
+		// Setup the IOWorkers.. 
+		bRet&=SetupIOWorkers();
+
+
+		if ( bRet )
+		{
+			msg.Format("Successfully started %i Input Output Worker thread(s).",m_nIOWorkers );
+		//	AppendLog(msg);
+		}
+		// Start the logical Workers. (SetWorkes can be callen in runtime..). 
+// 		bRet&=SetWorkers(m_nOfWorkers);
+// 		if ( bRet )
+// 		{
+// 			msg.Format("Successfully started %i logical Worker(s).",m_nOfWorkers);
+// 			AppendLog(msg);
+// 		}
+
+		// Accept incoming Job. 
+//		m_bAcceptJobs=TRUE;
+		m_bServerStarted=TRUE;
+	}
+
+	if ( bRet )
+	{
+		if ( m_nPortNumber>0 )
+		{
+			msg.Format("Server successfully started.");
+		//	AppendLog(msg);
+			msg.Format("Waiting for clients on adress: %s, port:%i.",GetHostIP(),m_nPortNumber);
+		//	AppendLog(msg);	
+		}
+		else 
+		{
+			msg.Format("Client successfully started.");
+		//	AppendLog(msg);	
+		}
+	}
+	return bRet; 	
+}
+#if 0
+UINT CUEServer::WorkerThreadProc(LPVOID pParam)
+{
+	CUEServer* pPoolServer= reinterpret_cast<CUEServer*>(pParam);
+	CWinThread* pThis=NULL;
+	if(pPoolServer)
+		pThis=pPoolServer->GetWorker((WORD)::GetCurrentThreadId());
+
+	if(pThis)
+	{
+		TRACE("Thread %i is alive.\r\n",::GetCurrentThreadId());
+		JobItem *pJob=NULL;
+		while(pThis->m_hThread!=INVALID_HANDLE_VALUE)	
+		{
+			pJob=NULL;	
+			pJob=pPoolServer->GetJob();
+			if(pJob) 
+			{
+				pPoolServer->ProcessJob(pJob,pPoolServer);
+				pPoolServer->FreeJob(pJob);
+			}
+			else
+				::SuspendThread(::GetCurrentThread());
+		}
+
+
+	}
+	TRACE("Thread %i RIP.\r\n",::GetCurrentThreadId());
+	return 0xdead;
+}
+#endif
+
+#if 0
+BOOL CUEServer::SetWorkers(int nThreads)
+{
+	int iNumberToKill=0;
+	int iNumberToStart=0;
+
+	m_WorkerThreadMapLock.Lock();
+	int iNumberOfThreads=m_WorkerThreadMap.GetCount();
+	m_WorkerThreadMapLock.Unlock();
+
+	if(nThreads<iNumberOfThreads)
+		iNumberToKill=iNumberOfThreads-nThreads;
+	else
+		iNumberToStart=nThreads-iNumberOfThreads;
+
+	// No interference while admin the threads. 
+	BOOL bAcceptJobs=m_bAcceptJobs;
+	m_bAcceptJobs=FALSE;
+	
+	// if nThreads is bigger than our current thread count, remove all excess threads
+	// Kill some of the workers. 
+	m_WorkerThreadMapLock.Lock();
+	POSITION pos = m_WorkerThreadMap.GetStartPosition ();
+	while (pos != NULL&&iNumberToKill>0) 
+	{
+		WORD strKey;
+		CWinThread* pThread=NULL;
+		m_WorkerThreadMap.GetNextAssoc (pos, strKey,(void *&)pThread);
+		if(pThread)
+		{
+			HANDLE hThread = pThread->m_hThread;
+			// notify the thread that it should die. 
+			pThread->m_hThread=INVALID_HANDLE_VALUE;  
+			// now let the thread terminate itself
+
+			//::GetExitCodeThread(hThread, &dwExit) && (dwExit != 0xdead)
+
+			::ResumeThread(hThread);
+
+
+			DWORD dwExit = NULL;
+			while(::GetExitCodeThread(hThread, &dwExit) && (dwExit != 0xdead))
+			{
+				::Sleep(50);	// give it a chance to finish
+			}
+			::CloseHandle (hThread);
+			iNumberToKill--;
+			m_WorkerThreadMap.RemoveKey(strKey);
+			delete[] pThread;
+		}	
+	}
+	m_WorkerThreadMapLock.Unlock();
+	 
+	// Start some Workers.  
+	m_WorkerThreadMapLock.Lock();
+	while (iNumberToStart>0) 
+	{
+		CWinThread* pWorkerThread=AfxBeginThread(CUEServer::WorkerThreadProc, (void*)this,THREAD_PRIORITY_NORMAL,0,CREATE_SUSPENDED);  
+		pWorkerThread->m_bAutoDelete=FALSE;  
+		if(pWorkerThread)
+		{
+			pWorkerThread->ResumeThread();
+			m_WorkerThreadMap[(WORD)pWorkerThread->m_nThreadID]=(void*)pWorkerThread;
+			iNumberToStart--;
+		}else
+			return FALSE;
+	}
+
+	m_WorkerThreadMapLock.Unlock();
+	m_bAcceptJobs=bAcceptJobs;
+	return TRUE;
+}
+#endif
+CString CUEServer::GetHostIP()
+{
+	CString sRet="";
+	hostent* thisHost;
+	char* ip;
+	thisHost = gethostbyname("");
+	ip = inet_ntoa (*(struct in_addr *)*thisHost->h_addr_list);
+	sRet=ip;
+	return ip; 
 }

@@ -99,13 +99,19 @@ public:
 	CUEServer( );
 	~CUEServer( );
 public:
-	static	void CleanupLibrary(void);
-	static int InitLibrary(void);
+// 	static	void CleanupLibrary(void);
+// 	static int InitLibrary(void);
 
 	BOOL CreateCompletionPort();
 	BOOL SetupListner();
 	// ShutDowns The Server. 
 	void ShutDown();
+	// Starts the server. 
+	BOOL Startup();
+
+	// Starts the server, 
+	BOOL Start(int nPort=999,int nMaxNumConnections=1201,int nMaxIOWorkers=1,int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
+	CString GetHostIP();
 private:
 	// Used to bin sockets to Completionport. 
 	inline BOOL AssociateSocketWithCompletionPort(SOCKET socket, HANDLE hCompletionPort, DWORD dwCompletionKey);
@@ -126,6 +132,7 @@ private:
 	inline BOOL AddAndFlush(CUEPacket *pFromBuff, CUEPacket *pToBuff, unsigned int nSize);
 	inline CUEPacket * SplitBuffer(CUEPacket *pBuff, UINT nSize);
 protected:
+	static UINT WorkerThreadProc(LPVOID pParam);
 	static UINT ListnerThreadProc(LPVOID pParam);
 	static UINT IOWorkerThreadProc(LPVOID pParam);
 	//Signals No more Accepting Connections.. 
@@ -224,7 +231,13 @@ private:
 	CWinThread* m_pListenThread;
 	HANDLE m_hListenHandle;
 
-
+	// IO Worker Thread list. 
+	std:: vector <CWinThread *> m_IOWorkerList;
+	// Number of IOWorkers running..
+	int m_nIOWorkers;
+	// Number of IOWorker. 
+	int m_iMaxIOWorkers;
+ 
 	// Maximum number of Contexts who is in the FreeContextList
 	int m_iMaxNumberOfFreeContext;
 
