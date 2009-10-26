@@ -273,6 +273,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NewSvrDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OScopeCtrl.cpp"
 				>
 			</File>
@@ -479,6 +483,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NewSvrDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OScopeCtrl.h"
 				>
 			</File>
@@ -622,10 +630,6 @@
 			</File>
 			<File
 				RelativePath=".\res\explorer_hc.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\fileview_hc.bmp"
 				>
 			</File>
 			<File

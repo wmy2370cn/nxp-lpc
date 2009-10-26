@@ -29,7 +29,6 @@
 #define ID_CLASS_PROPERTIES             142
 #define ID_NEW_FOLDER                   143
 #define ID_SORT_MENU                    144
-
 #define ID_SORTING_GROUPBYTYPE          145
 #define ID_SORTING_SORTALPHABETIC       146
 #define ID_SORTING_SORTBYTYPE           147
@@ -87,6 +86,7 @@
 #define IDR_POPUP_PACKET                321
 #define IDR_PACKET_DECODE               322
 #define IDD_DLG_PACKET_DETAIL           323
+#define IDD_DLG_NEW_SVR                 324
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352

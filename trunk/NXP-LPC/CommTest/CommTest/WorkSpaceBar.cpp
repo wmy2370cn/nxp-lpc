@@ -9,6 +9,7 @@
 
 #include "NewPingDlg.h"
 #include "PingTestDoc.h"
+#include "NewSvrDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -432,6 +433,14 @@ void CWorkSpaceBar::OnNewTest()
 
 			pDoc->UpdateAllViews(NULL,UPDATA_VIEW_PING_NORMAL);
 		}
+
+	}
+	else if ( m_wndTree.GetParentItem(ItemSel) == m_hSvrMode || ItemSel == m_hSvrMode)
+	{
+		CNewSvrDlg dlg;
+		INT_PTR nRet = dlg.DoModal();
+		if (nRet != IDOK)
+			return;
 
 	}
 

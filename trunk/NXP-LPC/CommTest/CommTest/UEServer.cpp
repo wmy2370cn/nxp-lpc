@@ -58,6 +58,7 @@ CUEServer::CUEServer()
 
 CUEServer::~CUEServer()
 {
+	ShutDown();
 
 }
 /*********************************************************************************************************
@@ -2111,7 +2112,8 @@ BOOL CUEServer::Start(int nPort,int iMaxNumConnections,int iMaxIOWorkers,int nOf
 BOOL CUEServer::SetupIOWorkers()
 {
 	CWinThread* pWorkerThread=NULL;
-	for(int i=0; i<m_iMaxIOWorkers;i++)
+	unsigned int i = 0;
+	for( i=0; i<m_iMaxIOWorkers;i++)
 	{
 		pWorkerThread=AfxBeginThread(CUEServer::IOWorkerThreadProc, (void*)this,THREAD_PRIORITY_NORMAL);
 		if(pWorkerThread)
@@ -2125,17 +2127,31 @@ BOOL CUEServer::SetupIOWorkers()
 			return FALSE;
 		}
 	}
-	m_nIOWorkers=m_IOWorkerList.GetCount();
+	m_nIOWorkers=m_IOWorkerList.size();
 	return TRUE; 
 }
-
-/*
-* Shuttingdown the IOWOrkers.. 
-* 
-* We put a NULL in CompletionPort and set the m_bShutDown FLAG.
-* Then we wait for the IOWorkes to finish the works in the CompletionPort and exit. 
-*
-*/
+/*********************************************************************************************************
+** 函数名称: ShutDownIOWorkers
+** 函数名称: CUEServer::ShutDownIOWorkers
+**
+** 功能描述：  Shuttingdown the IOWOrkers..
+**
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月25日
+** 备  注:  We put a NULL in CompletionPort and set the m_bShutDown FLAG.Then we wait for the IOWorkes to 
+            finish the works in the CompletionPort and exit. 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void CUEServer::ShutDownIOWorkers()
 {
 	DWORD dwExitCode;
@@ -2165,7 +2181,7 @@ void CUEServer::ShutDownIOWorkers()
 // 		}
 
 	}
-	m_IOWorkerList.RemoveAll();
+	m_IOWorkerList.clear();
 }
 /*********************************************************************************************************
 ** 函数名称: Startup
@@ -2221,10 +2237,10 @@ BOOL CUEServer::Startup()
 		if(m_iNumberOfPendlingReads<=0)
 			m_iNumberOfPendlingReads=1;
 
-		msg.Format("Maximum nr of simultaneous connections: %i",m_iMaxNumConnections);
+		msg.Format(_T("Maximum nr of simultaneous connections: %i"),m_iMaxNumConnections);
 	//	AppendLog(msg);
 
-		msg.Format("Number of pendling asynchronous reads: %d",m_iNumberOfPendlingReads);
+		msg.Format(_T("Number of pendling asynchronous reads: %d"),m_iNumberOfPendlingReads);
    //	AppendLog(msg);
 
 		// No need to make in order read or write
@@ -2274,7 +2290,7 @@ BOOL CUEServer::Startup()
 
 		if ( bRet )
 		{
-			msg.Format("Successfully started %i Input Output Worker thread(s).",m_nIOWorkers );
+			msg.Format(_T("Successfully started %i Input Output Worker thread(s)."),m_nIOWorkers );
 		//	AppendLog(msg);
 		}
 		// Start the logical Workers. (SetWorkes can be callen in runtime..). 
@@ -2294,14 +2310,14 @@ BOOL CUEServer::Startup()
 	{
 		if ( m_nPortNumber>0 )
 		{
-			msg.Format("Server successfully started.");
+			msg.Format(_T("Server successfully started."));
 		//	AppendLog(msg);
-			msg.Format("Waiting for clients on adress: %s, port:%i.",GetHostIP(),m_nPortNumber);
+			msg.Format(_T("Waiting for clients on adress: %s, port:%i."),GetHostIP(),m_nPortNumber);
 		//	AppendLog(msg);	
 		}
 		else 
 		{
-			msg.Format("Client successfully started.");
+			msg.Format(_T("Client successfully started."));
 		//	AppendLog(msg);	
 		}
 	}
@@ -2414,11 +2430,54 @@ BOOL CUEServer::SetWorkers(int nThreads)
 #endif
 CString CUEServer::GetHostIP()
 {
-	CString sRet="";
+	CString sRet=_T("");
 	hostent* thisHost;
 	char* ip;
-	thisHost = gethostbyname("");
+	thisHost = gethostbyname( "" );
 	ip = inet_ntoa (*(struct in_addr *)*thisHost->h_addr_list);
 	sRet=ip;
-	return ip; 
+	return (CString)ip; 
 }
+/*********************************************************************************************************
+** 函数名称: GetIpList
+** 函数名称: CUEServer::GetIpList
+**
+** 功能描述： 获取本机所有IP地址 
+**
+** 输　入:  std::list<std::string> & r_iplist
+**          
+** 输　出:   bool
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+bool CUEServer::GetIpList( std::list<std::string> & r_iplist )
+{
+	char szhn[256] ={0};
+	int nStatus = gethostname(szhn, sizeof(szhn));
+	if (nStatus == SOCKET_ERROR )
+	{
+	//cout << "gethostname failed, Error code: " << WSAGetLastError() << endl; 
+		return false;
+	}
+	HOSTENT *host = gethostbyname(szhn);
+	if (host != NULL)
+	{
+		for ( int i=0; ; i++ )
+		{
+			r_iplist.push_back( inet_ntoa( *(IN_ADDR*)host->h_addr_list[i] ) ) ; 
+			if ( host->h_addr_list[i] + host->h_length >= host->h_name ) 
+				break;
+		} 
+	}
+	return true; 
+ } 
