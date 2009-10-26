@@ -28,6 +28,7 @@ public:
 	CMultiDocTemplate* m_pDocTemplate;
 	CMultiDocTemplate* m_pPingDocTemplate;
 	CMultiDocTemplate* m_pClientDocTemplate;
+	CMultiDocTemplate* m_pSvrDocTemplate;
 
 
 // й╣ож

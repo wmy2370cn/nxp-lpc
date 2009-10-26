@@ -27,6 +27,7 @@
 #include "stdafx.h"
 #include "UEServer.h"
 #include <algorithm>
+#include "LogDataApi.h"
 
 void WaitForThreadToTerminate(HANDLE hThread)
 {
@@ -2312,7 +2313,7 @@ BOOL CUEServer::Startup()
 		{
 			msg.Format(_T("Server successfully started."));
 		//	AppendLog(msg);
-			msg.Format(_T("Waiting for clients on adress: %s, port:%i."),GetHostIP(),m_nPortNumber);
+		//	msg.Format(_T("Waiting for clients on adress: %s, port:%i."),GetHostIP(),m_nPortNumber);
 		//	AppendLog(msg);	
 		}
 		else 
@@ -2481,3 +2482,8 @@ bool CUEServer::GetIpList( std::list<std::string> & r_iplist )
 	}
 	return true; 
  } 
+void  CUEServer::LogString(TCHAR* lpszTxt ,int nStrType)
+{
+	::LogString(lpszTxt,nStrType);
+
+}
