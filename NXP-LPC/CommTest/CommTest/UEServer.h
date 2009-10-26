@@ -27,7 +27,9 @@
 #include "SvrCommMsg.h"
 #include <vector>
 #include <deque>
+#include <list>
 #include <hash_map>
+#include <string>
 
 const int MAX_SEQ_NUM = 5001;
 
@@ -101,10 +103,10 @@ public:
 public:
 // 	static	void CleanupLibrary(void);
 // 	static int InitLibrary(void);
+	static	bool GetIpList( std::list <std::string> &r_iplist ) ;
 
 	BOOL CreateCompletionPort();
-	BOOL SetupListner();
-	// ShutDowns The Server. 
+		// ShutDowns The Server. 
 	void ShutDown();
 	// Starts the server. 
 	BOOL Startup();
@@ -113,6 +115,10 @@ public:
 	BOOL Start(int nPort=999,int nMaxNumConnections=1201,int nMaxIOWorkers=1,int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
 	CString GetHostIP();
 private:
+	BOOL SetupIOWorkers();
+
+	BOOL SetupListner();
+
 	// Used to bin sockets to Completionport. 
 	inline BOOL AssociateSocketWithCompletionPort(SOCKET socket, HANDLE hCompletionPort, DWORD dwCompletionKey);
 	// Makes tha last peperation for an connection so IOWORKER can start to work with it. 
@@ -131,6 +137,11 @@ private:
 	// Adds nSize bytes to buffer and flush the other buffer. 
 	inline BOOL AddAndFlush(CUEPacket *pFromBuff, CUEPacket *pToBuff, unsigned int nSize);
 	inline CUEPacket * SplitBuffer(CUEPacket *pBuff, UINT nSize);
+	//Closes The Worker Threads
+	inline void ShutDownWorkers();
+	// Closes The IO Workers
+	inline void ShutDownIOWorkers();
+
 protected:
 	static UINT WorkerThreadProc(LPVOID pParam);
 	static UINT ListnerThreadProc(LPVOID pParam);
@@ -166,7 +177,7 @@ protected:
 
 
 
-	volatile int m_NumberOfActiveConnections;
+	volatile unsigned int m_NumberOfActiveConnections;
 	// Called when a new connection have been established.. 
 	virtual void NotifyNewConnection(ClientContext *pcontext);
 	// Called when a empty ClientContext structure are allocated. 
@@ -219,9 +230,11 @@ private:
 	SOCKET	m_nListenSocket;   
 	HANDLE	m_hEvent; 
 	// Port number. 
-	int m_nPortNumber; 
+	unsigned int m_nPortNumber; 
 	// Maximum Number of Connections. 
-	int m_iMaxNumConnections;
+	unsigned int m_iMaxNumConnections;
+	// Number of Workers running intitially. 
+	unsigned int m_nOfWorkers;
 
 	//Signals ShutDown
 	volatile BOOL m_bShutDown;
@@ -234,15 +247,15 @@ private:
 	// IO Worker Thread list. 
 	std:: vector <CWinThread *> m_IOWorkerList;
 	// Number of IOWorkers running..
-	int m_nIOWorkers;
+	unsigned int m_nIOWorkers;
 	// Number of IOWorker. 
-	int m_iMaxIOWorkers;
+	unsigned int m_iMaxIOWorkers;
  
 	// Maximum number of Contexts who is in the FreeContextList
-	int m_iMaxNumberOfFreeContext;
+	unsigned int m_iMaxNumberOfFreeContext;
 
 	// Maximum number of buffer which is not used. 
-	int m_iMaxNumberOfFreeBuffer;
+	unsigned int m_iMaxNumberOfFreeBuffer;
 
 	CCriticalSection m_FreeContextListLock;
 	std::vector <ClientContext *> m_arrFreeContext;

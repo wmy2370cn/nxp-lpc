@@ -644,6 +644,16 @@ BEGIN
     LTEXT           "静态",IDC_STATIC_PACKET_ID,34,1,29,8
 END
 
+IDD_DLG_NEW_SVR DIALOGEX 0, 0, 277, 125
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "新建"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,63,104,50,14
+    PUSHBUTTON      "取消",IDCANCEL,169,104,50,14
+    CONTROL         "",-1,"Static",SS_ETCHEDHORZ,7,93,262,1
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -751,6 +761,14 @@ BEGIN
         RIGHTMARGIN, 218
         TOPMARGIN, 7
         BOTTOMMARGIN, 255
+    END
+
+    IDD_DLG_NEW_SVR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
     END
 END
 #endif    // APSTUDIO_INVOKED
