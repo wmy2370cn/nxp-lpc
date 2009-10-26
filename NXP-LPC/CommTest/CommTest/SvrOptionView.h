@@ -4,7 +4,7 @@
 
 // CSvrOptionView 窗体视图
 
-class CSvrOptionView : public CFormView
+class CSvrOptionView : public CBCGPFormView
 {
 	DECLARE_DYNCREATE(CSvrOptionView)
 
@@ -25,6 +25,9 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedButtonSvrStart();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 

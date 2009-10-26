@@ -385,6 +385,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SvrListView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SvrOptionView.cpp"
 				>
 			</File>
@@ -592,6 +596,10 @@
 			</File>
 			<File
 				RelativePath=".\SvrCommMsg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrListView.h"
 				>
 			</File>
 			<File

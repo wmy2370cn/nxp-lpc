@@ -14,7 +14,7 @@ public:
 // ÊôĞÔ
 public:
 	CSplitterWndExt  m_wndSplitter1;
-	CBCGPSplitterWnd  m_wndSplitter2;
+//	CBCGPSplitterWnd  m_wndSplitter2;
 // ²Ù×÷
 public:
 

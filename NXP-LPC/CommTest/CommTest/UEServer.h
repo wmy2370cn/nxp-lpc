@@ -108,14 +108,20 @@ public:
 	BOOL CreateCompletionPort();
 		// ShutDowns The Server. 
 	void ShutDown();
-	// Starts the server. 
-	BOOL Startup();
-
+	
 	// Starts the server, 
 	BOOL Start(int nPort=999,int nMaxNumConnections=1201,int nMaxIOWorkers=1,int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
 	CString GetHostIP();
 	DWORD m_dwLocalIp;
+
+	// Disconnects all the clients. 
+	void DisconnectAll();
+
+
 private:
+	// Starts the server. 
+	BOOL Startup();
+
 	void LogString(CString &szLog ,int nStrType);
 	BOOL SetupIOWorkers();
 

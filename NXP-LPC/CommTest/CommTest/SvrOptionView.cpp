@@ -4,14 +4,15 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "SvrOptionView.h"
+#include "SvrCommDoc.h"
 
 
 // CSvrOptionView
 
-IMPLEMENT_DYNCREATE(CSvrOptionView, CFormView)
+IMPLEMENT_DYNCREATE(CSvrOptionView, CBCGPFormView)
 
 CSvrOptionView::CSvrOptionView()
-	: CFormView(CSvrOptionView::IDD)
+	: CBCGPFormView(CSvrOptionView::IDD)
 {
 
 }
@@ -22,10 +23,12 @@ CSvrOptionView::~CSvrOptionView()
 
 void CSvrOptionView::DoDataExchange(CDataExchange* pDX)
 {
-	CFormView::DoDataExchange(pDX);
+	CBCGPFormView::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CSvrOptionView, CFormView)
+BEGIN_MESSAGE_MAP(CSvrOptionView, CBCGPFormView)
+	ON_BN_CLICKED(IDC_BUTTON_SVR_START, &CSvrOptionView::OnBnClickedButtonSvrStart)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -34,16 +37,39 @@ END_MESSAGE_MAP()
 #ifdef _DEBUG
 void CSvrOptionView::AssertValid() const
 {
-	CFormView::AssertValid();
+	CBCGPFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
 void CSvrOptionView::Dump(CDumpContext& dc) const
 {
-	CFormView::Dump(dc);
+	CBCGPFormView::Dump(dc);
 }
 #endif
 #endif //_DEBUG
 
 
 // CSvrOptionView 消息处理程序
+
+
+int CSvrOptionView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPFormView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+	EnableVisualManagerStyle();
+
+	// TODO:  在此添加您专用的创建代码
+
+	return 0;
+}
+
+void CSvrOptionView::OnBnClickedButtonSvrStart()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CSvrCommDoc *pDoc = (CSvrCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+	pDoc->m_SvrComm.Start();
+
+}
