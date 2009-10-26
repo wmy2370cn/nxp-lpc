@@ -12,6 +12,7 @@ IMPLEMENT_DYNAMIC(CNewSvrDlg, CBCGPDialog)
 
 CNewSvrDlg::CNewSvrDlg(CWnd* pParent /*=NULL*/)
 	: CBCGPDialog(CNewSvrDlg::IDD, pParent)
+	, m_nSvrPortNum(0)
 {
 
 }
@@ -23,6 +24,7 @@ CNewSvrDlg::~CNewSvrDlg()
 void CNewSvrDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_SVR_PORTNUM, m_nSvrPortNum);
 }
 
 

@@ -373,6 +373,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SvrComm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SvrCommDoc.cpp"
 				>
 			</File>
@@ -576,6 +580,10 @@
 			</File>
 			<File
 				RelativePath=".\SvrChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrComm.h"
 				>
 			</File>
 			<File

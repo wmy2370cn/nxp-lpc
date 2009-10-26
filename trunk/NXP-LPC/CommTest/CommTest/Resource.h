@@ -141,6 +141,8 @@
 #define IDC_STATIC_PING_RTN_CNT         1037
 #define IDC_STATIC_PING_LOST_CNT        1038
 #define IDC_BUTTON_SVR_START            1038
+#define IDC_EDIT1                       1039
+#define IDC_EDIT_SVR_PORTNUM            1039
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
@@ -181,7 +183,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        325
 #define _APS_NEXT_COMMAND_VALUE         32859
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif

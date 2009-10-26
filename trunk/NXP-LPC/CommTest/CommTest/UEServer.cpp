@@ -28,33 +28,12 @@
 #include "UEServer.h"
 #include <algorithm>
 #include "LogDataApi.h"
-
-void WaitForThreadToTerminate(HANDLE hThread)
-{
-	CString szLog = _T("线程超时退出\n");
-
-	DWORD dwRet = ::WaitForSingleObject( hThread,  2000);
-	switch (dwRet)
-	{
-	case WAIT_OBJECT_0:
-		//  The thread has terminated - do something
-		break;
-
-	case WAIT_TIMEOUT:
-		//  The timeout has elapsed but the thread is still running
-		//  do something appropriate for a timeout
-		OutputDebugString(szLog);
-		TerminateThread(hThread,0x88);
-		break;
-	default:
-		ASSERT(false);
-		break;
-	}		 
-}
+#include  "boost/memory.hpp"
 
 CUEServer::CUEServer()
 {
 	m_pListenThread = NULL;
+	m_dwLocalIp = 0;
 }
 
 CUEServer::~CUEServer()
@@ -113,7 +92,7 @@ BOOL CUEServer::CreateCompletionPort()
 ** 函数名称: SetupListner
 ** 函数名称: CUEServer::SetupListner
 **
-** 功能描述：  
+** 功能描述：  启动监听
 **
 **          
 ** 输　出:   BOOL
@@ -160,7 +139,14 @@ BOOL CUEServer::SetupListner()
 	saServer.sin_port = htons(m_nPortNumber);
 	// Fill in the rest of the address structure
 	saServer.sin_family = AF_INET;
-	saServer.sin_addr.s_addr = INADDR_ANY;
+	if (m_dwLocalIp != 0 && m_dwLocalIp != INADDR_NONE)
+	{
+		saServer.sin_addr.s_addr =  htonl( m_dwLocalIp );
+	}
+	else
+	{
+		saServer.sin_addr.s_addr = INADDR_ANY;
+	}
 	// bind our name to the socket
 	nRet = bind(m_nListenSocket, (LPSOCKADDR)&saServer, sizeof(struct sockaddr));
 	if ( nRet == SOCKET_ERROR )
@@ -224,7 +210,7 @@ UINT CUEServer::ListnerThreadProc(LPVOID pParam)
 	while( !pThis->m_bShutDown )
 	{
 		DWORD dwRet;
-		dwRet = WSAWaitForMultipleEvents(1, &pThis->m_hEvent,FALSE,	600,FALSE);	
+		dwRet = WSAWaitForMultipleEvents(1, &pThis->m_hEvent,FALSE,	500,FALSE);	
   		if(pThis->m_bShutDown)
  			break;
 		//超时,继续
@@ -246,9 +232,8 @@ UINT CUEServer::ListnerThreadProc(LPVOID pParam)
 				SOCKET		clientSocket=INVALID_SOCKET;
 				int			nRet=-1;
 				int			nLen=-1;
-				//
-				// accept the new socket descriptor
-				//
+				 
+				// accept the new socket descriptor			 
 				nLen = sizeof(SOCKADDR_IN);
 #ifdef SIMPLESECURITY
 				clientSocket = WSAAccept(pThis->m_nListenSocket, NULL, &nLen,ConnectAcceptCondition,(DWORD)pThis); 
@@ -259,8 +244,11 @@ UINT CUEServer::ListnerThreadProc(LPVOID pParam)
 				{
 					nRet = WSAGetLastError();
 					if (nRet != WSAEWOULDBLOCK)
-					{					 
-					 
+					{							 
+						// Just log the error and return					 
+						CString szLog;
+					 	szLog.Format(_T("Wsaaccept() error: %s"),pThis->ErrorCode2Text(WSAGetLastError()));
+						pThis->LogString(szLog,ERR_STR);
 					}
 				}
 				else
@@ -307,7 +295,7 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 
 	DWORD dwIoSize;
 	ClientContext* lpClientContext = NULL; 
-	CUEPacket *pOverlapBuff = NULL;
+	CSvrCommPacket *pOverlapBuff = NULL;
 
 	bool bError=false;
 	HANDLE hCompletionPort = pThis->m_hCompletionPort;
@@ -323,17 +311,62 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 		//Sleep(20);
 
 		if (!bIORet)  
-		{
+		{	// If Something whent wrong..
 			DWORD dwIOError = GetLastError();
 			if(dwIOError != WAIT_TIMEOUT) // It was not an Time out event we wait for ever (INFINITE) 
-			{
+			{	
+				TRACE(_T("GetQueuedCompletionStatus errorCode: %i, %s\n"),WSAGetLastError(),pThis->ErrorCode2Text(dwIOError));			
 
+				if (lpClientContext!=NULL)
+				{					 
+					//	 ERROR_NETNAME_DELETED Happens when the communication socket
+					//	 is cancelled and you have pendling WSASend/WSARead that are not finished. 
+					//	 Then the Pendling I/O (WSASend/WSARead etc..) is cancelled and we return with 
+					//	 ERROR_NETNAME_DELETED.. 
+					if(dwIOError==ERROR_NETNAME_DELETED) 
+					{
+						//TRACE("ERROR_NETNAME_DELETED\r\n");
+						pThis->DisconnectClient(lpClientContext); 
+						TRACE(">IOWORKER1 (%x)\r\n",lpClientContext);
+						pThis->ReleaseClientContext(lpClientContext); //Later Implementati
+					}
+					else
+					{
+						// Should not get here if we do: disconnect the client and cleanup & report. 
+						pThis->LogString( pThis->ErrorCode2Text(dwIOError),ERR_STR );
+						pThis->DisconnectClient(lpClientContext); 
+						TRACE(">IOWORKER2 (%x)\r\n",lpClientContext);
+						pThis->ReleaseClientContext(lpClientContext); //Should we do this ? 
+					}
+					// Clear the buffer if returned. 
+					pOverlapBuff=NULL;
+					if(lpOverlapped!=NULL)
+						pOverlapBuff=CONTAINING_RECORD(lpOverlapped, CSvrCommPacket, m_ol);
+					if(pOverlapBuff!=NULL)
+						pThis->ReleaseBuffer(pOverlapBuff);			
+					continue;
+				}
+				// We shall never come here  
+				// anyway this was an error and we should exit the worker thread
+				bError = true;
+				CString szLog;
+				szLog = pThis->ErrorCode2Text(dwIOError);
+				pThis->LogString(szLog,ERR_STR ); 
+				szLog = _T("IOWORKER KILLED BECAUSE OF ERROR IN GetQueuedCompletionStatus");
+				pThis->LogString(szLog,ERR_STR );
+
+				pOverlapBuff=NULL;
+				if(lpOverlapped!=NULL)
+					pOverlapBuff=CONTAINING_RECORD(lpOverlapped, CSvrCommPacket, m_ol);
+				if(pOverlapBuff!=NULL)
+					pThis->ReleaseBuffer(pOverlapBuff);
+				continue;
 			}
 		}
 
 		if(bIORet && lpOverlapped && lpClientContext) 
 		{
-			pOverlapBuff=CONTAINING_RECORD(lpOverlapped, CUEPacket, m_ol);
+			pOverlapBuff=CONTAINING_RECORD(lpOverlapped, CSvrCommPacket, m_ol);
 	 		if(pOverlapBuff!=NULL)
 				pThis->ProcessIOMessage(pOverlapBuff, lpClientContext, dwIoSize);
 		}	
@@ -347,19 +380,36 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 
 	return 0x88;
 }
-/*
-* AssociateIncomingClientWithContext
-* 
-* This function do the Following: 
-* 1) Does some simpleSecutity Stuff (e.g one connection per client, etc..)
-* 2) Allocates an Context for the Socket. 
-* 3) Configures the Socket. 
-* 4) Associate the Socket and the context with the completion port. 
-* 5) Fires an IOInitialize So the IOWORKERS Start to work on the connection. 
-*/
-
+/*********************************************************************************************************
+** 函数名称: AssociateIncomingClientWithContext
+** 函数名称: CUEServer::AssociateIncomingClientWithContext
+**
+** 功能描述：  
+**
+** 输　入:  SOCKET clientSocket
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  This function do the Following: 
+             1) Does some simpleSecutity Stuff (e.g one connection per client, etc..)
+			 2) Allocates an Context for the Socket. 
+			 3) Configures the Socket. 
+			 4) Associate the Socket and the context with the completion port. 
+			 5) Fires an IOInitialize So the IOWORKERS Start to work on the connection. 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 {	
+	ASSERT(clientSocket != 0 && clientSocket != INVALID_SOCKET);
 	if (clientSocket == INVALID_SOCKET)
 		return FALSE;
 
@@ -377,7 +427,6 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 		lingerStruct.l_onoff = 1;
 		lingerStruct.l_linger = 0;
 		setsockopt( clientSocket, SOL_SOCKET, SO_LINGER,(char *)&lingerStruct, sizeof(lingerStruct) );
-
 		// Now close the socket handle. This will do an abortive or graceful close, as requested. 
 		CancelIo((HANDLE) clientSocket);
 
@@ -386,8 +435,6 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 	}
 	m_ContextMapLock.Unlock();
 
-	if (clientSocket == INVALID_SOCKET)
-		return FALSE; 
 	// Create the Client context to be associated with the completion port
 	ClientContext* pContext = AllocateContext();
 	if(pContext!=NULL)
@@ -408,7 +455,7 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 			ReleaseClientContext(pContext);
 			return FALSE;
 		}
-
+		//添加到HASH表中
 		if(AddClientContext(pContext))
 		{	
 			// Associate the new socket with a completion port.
@@ -418,7 +465,6 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 				ReleaseClientContext(pContext);
 				return FALSE;
 			}
-
 			// Trigger first IO Completion Request
 			// Otherwise the Worker thread will remain blocked waiting for GetQueuedCompletionStatus...
 			// The first message that gets queued up is ClientIoInitializing - see ThreadPoolFunc and 
@@ -429,7 +475,7 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 			// This is nessesary to avoid Access violation. 
 			
 			EnterIOLoop(pContext);
-			CUEPacket *pOverlapBuff =AllocateBuffer(IOInitialize);
+			CSvrCommPacket *pOverlapBuff =AllocateBuffer(IOInitialize);
 			if(pOverlapBuff!=NULL)
 			{
 				BOOL bSuccess = PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) pContext, &pOverlapBuff->m_ol);
@@ -456,14 +502,15 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 		}
 	}
 	else
-	{
+	{//分配一个上下文环境失败
+		shutdown(clientSocket,2);
 		closesocket(clientSocket);
 		return FALSE;
 	}
 	return TRUE;
 }
 
-void CUEServer::ProcessIOMessage(CUEPacket *pOverlapBuff, ClientContext *pContext, DWORD dwSize)
+void CUEServer::ProcessIOMessage(CSvrCommPacket *pOverlapBuff, ClientContext *pContext, DWORD dwSize)
 {
 	if(pOverlapBuff==NULL)
 		return;
@@ -656,7 +703,7 @@ int CUEServer::ExitIOLoop(ClientContext *pContext)
 * A workaround the WSAENOBUFS error problem. (For more info please see OnZeroBytesRead  
 * Unlock the memory used by the OVELAPPED struktures. 
 */
-BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CUEPacket *pOverlapBuff)
+BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapBuff)
 {
 	if (pContext == NULL)
 		return FALSE;
@@ -699,12 +746,12 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CUEPacket *pOverlapBuff)
 * Assumes that Packages arrive with A MINIMUMPACKAGESIZE header and builds Packages that  
 * are noticed by the virtual function NotifyReceivedPackage 
 */
-void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CUEPacket *pOverlapBuff)
+void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pOverlapBuff)
 {
  	// We may have Several Pending reads. And therefor we have to 
 	// check and handle partial Messages.  	 
 	// First handle partial packages.  
-	CUEPacket *pBuffPartialMessage=NULL;
+	CSvrCommPacket *pBuffPartialMessage=NULL;
 	pBuffPartialMessage=pContext->m_pBuffOverlappedPackage;
 	// if we had a partial message in previous message process. 
 	if ( pBuffPartialMessage!=NULL )
@@ -790,7 +837,7 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CUEPacke
 			else if ( nUsedBuffer-MIN_PACKAGE_SIZE >nSize )
 			{
 				// We have more data 
-				CUEPacket *pBuff=SplitBuffer(pOverlapBuff,nSize+MIN_PACKAGE_SIZE);
+				CSvrCommPacket *pBuff=SplitBuffer(pOverlapBuff,nSize+MIN_PACKAGE_SIZE);
 				NotifyReceivedPackage(pBuff,nSize,pContext);
 				ReleaseBuffer(pBuff);
 				// loop again, we may have another complete message in there...
@@ -836,7 +883,7 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CUEPacke
 }
 
 
-void CUEServer::OnInitialize(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff)
+void CUEServer::OnInitialize(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
 	// Do some init here.. 
 
@@ -861,7 +908,7 @@ void CUEServer::OnInitialize(ClientContext *pContext, DWORD dwIoSize,CUEPacket *
  	}
 }
 
-void CUEServer::OnRead(ClientContext *pContext,CUEPacket *pOverlapBuff)
+void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 {
 	// issue a read request 
 	if(pContext&&!m_bShutDown)
@@ -914,7 +961,7 @@ void CUEServer::OnRead(ClientContext *pContext,CUEPacket *pOverlapBuff)
 		}
 	}
 }
-void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff)
+void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
 
 	if (dwIoSize == 0||pOverlapBuff==NULL)
@@ -966,7 +1013,7 @@ void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacke
 		ARead(pContext);
 	}
 }
-void CUEServer::OnWrite(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff)
+void CUEServer::OnWrite(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
 	if(pContext!=NULL&&pContext->m_nSocket!=INVALID_SOCKET)
 	{	
@@ -1052,7 +1099,7 @@ void CUEServer::OnWrite(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOver
 	}
 }
 
-void CUEServer::OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff)
+void CUEServer::OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
 	if(pContext!=NULL)
 	{
@@ -1080,7 +1127,7 @@ void CUEServer::OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPack
 }
 
 
-void CUEServer::OnPostedPackage(ClientContext *pContext, CUEPacket *pOverlapBuff)
+void CUEServer::OnPostedPackage(ClientContext *pContext, CSvrCommPacket *pOverlapBuff)
 {
 	ASSERT(pContext);
 	if( pContext == NULL)
@@ -1102,14 +1149,14 @@ void CUEServer::OnPostedPackage(ClientContext *pContext, CUEPacket *pOverlapBuff
 * Returns The in order Buffer or NULL if not processed. 
 * Same as GetReadBuffer
 */
-CUEPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CUEPacket *pBuff)
+CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommPacket *pBuff)
 {
 	ASSERT(pContext);
 	// We must have a ClientContext to begin with. 
 	if (pContext==NULL)
 		return NULL;
-	CUEPacket* pRetBuff=NULL;
-	stdext::hash_map <unsigned int,CUEPacket*>::iterator iter;
+	CSvrCommPacket* pRetBuff=NULL;
+	stdext::hash_map <unsigned int,CSvrCommPacket*>::iterator iter;
 
 	pContext->m_ContextLock.Lock();
 	// We have a buffer
@@ -1156,15 +1203,15 @@ CUEPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CUEPacket *pBu
 * Used to avoid inorder packaging. 
 * Returns The inorder Buffer or NULL if not processed. 
 */
-CUEPacket* CUEServer::GetNextSendBuffer(ClientContext *pContext,CUEPacket *pBuff)
+CSvrCommPacket* CUEServer::GetNextSendBuffer(ClientContext *pContext,CSvrCommPacket *pBuff)
 {
 	ASSERT(pContext);
 	// We must have a ClientContext to begin with. 
 	if (pContext==NULL)
 		return NULL;
 
-	stdext::hash_map <unsigned int,CUEPacket*>::iterator iter;
-	CUEPacket* pRetBuff=NULL;
+	stdext::hash_map <unsigned int,CSvrCommPacket*>::iterator iter;
+	CSvrCommPacket* pRetBuff=NULL;
 	pContext->m_ContextLock.Lock();
 	// We have a buffer
 	if (pBuff!=NULL)
@@ -1209,7 +1256,7 @@ CUEPacket* CUEServer::GetNextSendBuffer(ClientContext *pContext,CUEPacket *pBuff
 /*
 * Sets the Sequence number to a Buffer and adds the sequence buffer. 
 */
-void CUEServer::MakeOrderdRead(ClientContext *pContext, CUEPacket *pBuff)
+void CUEServer::MakeOrderdRead(ClientContext *pContext, CSvrCommPacket *pBuff)
 {
 	if (pContext!=NULL&&pBuff!=NULL)
 	{
@@ -1262,8 +1309,8 @@ void CUEServer::MakeOrderdRead(ClientContext *pContext, CUEPacket *pBuff)
 void CUEServer::FreeBuffers()
 {
 	//Free the buffer in the Free buffer list.. 
-	CUEPacket *pBuff=NULL;
-	std::deque <CUEPacket *> ::iterator iter;
+	CSvrCommPacket *pBuff=NULL;
+	std::deque <CSvrCommPacket *> ::iterator iter;
 	m_FreeBufferListLock.Lock();
 
 	for (iter = m_arrFreeBuffer.begin();iter != m_arrFreeBuffer.end(); ++iter)
@@ -1308,15 +1355,15 @@ void CUEServer::FreeBuffers()
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-CUEPacket* CUEServer::AllocateBuffer(int nType)
+CSvrCommPacket* CUEServer::AllocateBuffer(int nType)
 {
-	CUEPacket *pMsg = NULL;
+	CSvrCommPacket *pMsg = NULL;
 	int nCnt = 0;
 	m_FreeBufferListLock.Lock();
 	nCnt = m_arrFreeBuffer.size();
 	if(!m_arrFreeBuffer.empty())
 	{
-	//	pMsg=(CUEPacket *)m_arrFreeBuffer.pop_front();
+	//	pMsg=(CSvrCommPacket *)m_arrFreeBuffer.pop_front();
 		pMsg= m_arrFreeBuffer.front();
 		m_arrFreeBuffer.pop_front();
 	}
@@ -1324,7 +1371,7 @@ CUEPacket* CUEServer::AllocateBuffer(int nType)
 
 	if (pMsg == NULL)
 	{//创建一个新的
-		pMsg= new CUEPacket();
+		pMsg= new CSvrCommPacket();
 	}
 	ASSERT(pMsg);
 	if (pMsg == NULL)
@@ -1359,12 +1406,12 @@ CUEPacket* CUEServer::AllocateBuffer(int nType)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-BOOL CUEServer::ReleaseBuffer(CUEPacket *pBuff)
+BOOL CUEServer::ReleaseBuffer(CSvrCommPacket *pBuff)
 {
 	ASSERT(pBuff);
 	if(pBuff==NULL)
 		return FALSE;
-	std::deque<CUEPacket *>::iterator iter;
+	std::deque<CSvrCommPacket *>::iterator iter;
 
 	m_BufferListLock.Lock();
 	iter = std::find(m_arrBuffer.begin(), m_arrBuffer.end(),pBuff  );
@@ -1444,7 +1491,7 @@ BOOL CUEServer::ReleaseBuffer(CUEPacket *pBuff)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-BOOL CUEServer::ASend(ClientContext *pContext,CUEPacket *pOverlapBuff)
+BOOL CUEServer::ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 {
 	if(pContext==NULL)
 		return FALSE;
@@ -1485,7 +1532,7 @@ BOOL CUEServer::ASend(ClientContext *pContext,CUEPacket *pOverlapBuff)
 *
 * The read is not made directly to distribute CPU power fairly between the connections. 
 */
-BOOL CUEServer::ARead(ClientContext *pContext,CUEPacket *pOverlapBuff)
+BOOL CUEServer::ARead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 {
 	if (pContext == NULL)
 		return FALSE;
@@ -1830,7 +1877,7 @@ void CUEServer::ReleaseBufferMap(BUFFER_MAP *pMap)
 	ASSERT(pMap);
 	if(pMap == NULL)
 		return;
-	stdext::hash_map<unsigned int,CUEPacket*>::iterator iter = pMap->begin();
+	stdext::hash_map<unsigned int,CSvrCommPacket*>::iterator iter = pMap->begin();
 
 	for (; iter != pMap->end(); ++iter)
 	{
@@ -1868,7 +1915,7 @@ void CUEServer::NotifyFileCompleted(ClientContext *pcontext)
 *  for progressbars etc (e.g indicates how much is send in bytes) 
 */
 
-void CUEServer::NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize, CUEPacket *pOverlapBuff)
+void CUEServer::NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pOverlapBuff)
 {
 	// The pOverlapBuff Buffer are Successfully sended. 
 }
@@ -1876,7 +1923,7 @@ void CUEServer::NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize, CU
 /*
 *	An package is received.. 
 */
-void CUEServer::NotifyReceivedPackage(CUEPacket *pOverlapBuff,int nSize,ClientContext *pContext)
+void CUEServer::NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,ClientContext *pContext)
 {
 
 }
@@ -1884,7 +1931,7 @@ void CUEServer::NotifyReceivedPackage(CUEPacket *pOverlapBuff,int nSize,ClientCo
 
 
 
-void CUEServer::OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff)
+void CUEServer::OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
 	if(pContext)
 	{
@@ -1927,7 +1974,7 @@ data. If the server knows that clients send data in bursts, then once the
 zero-byte receive completes, it may post one or more overlapped receives 
 in case the client sends a substantial amount of data 
 (greater than the per-socket receive buffer that is 8 KB by default). */
-void CUEServer::OnZeroByteRead(ClientContext *pContext,CUEPacket *pOverlapBuff)
+void CUEServer::OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 {
 	if(pContext)
 	{
@@ -1997,9 +2044,9 @@ void CUEServer::IncreaseSendSeqNum(ClientContext *pContext)
 /*
 * Move to CIOBUFFER ? 
 */
-CUEPacket * CUEServer::SplitBuffer(CUEPacket *pBuff, UINT nSize)
+CSvrCommPacket * CUEServer::SplitBuffer(CSvrCommPacket *pBuff, UINT nSize)
 {
-	CUEPacket *pBuff2=NULL;
+	CSvrCommPacket *pBuff2=NULL;
 	pBuff2=AllocateBuffer(0);
 	if(pBuff2==NULL)
 		return NULL;
@@ -2023,7 +2070,7 @@ CUEPacket * CUEServer::SplitBuffer(CUEPacket *pBuff, UINT nSize)
 * Adds the nSize bytes from pFromBuff to pToBuff, and 
 * removes the data from pFromBuff.  
 */
-BOOL CUEServer::AddAndFlush(CUEPacket *pFromBuff, CUEPacket *pToBuff, UINT nSize)
+BOOL CUEServer::AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, UINT nSize)
 {
 	if(pFromBuff==NULL||pToBuff==NULL||nSize<=0)
 		return FALSE;
@@ -2106,10 +2153,28 @@ BOOL CUEServer::Start(int nPort,int iMaxNumConnections,int iMaxIOWorkers,int nOf
 	m_iNumberOfPendlingReads=iNumberOfPendlingReads;
 	return Startup();
 }
-/*
-* Starts the IOWorkers. 
-*
-*/
+ 
+/*********************************************************************************************************
+** 函数名称: SetupIOWorkers
+** 函数名称: CUEServer::SetupIOWorkers
+**
+** 功能描述：  启动IO工作线程
+**
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  需要优化下
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CUEServer::SetupIOWorkers()
 {
 	CWinThread* pWorkerThread=NULL;
@@ -2123,8 +2188,8 @@ BOOL CUEServer::SetupIOWorkers()
 		else
 		{
 			CString msg;
-		//	msg.Format("Error Couldnot start worker: %s",ErrorCode2Text(WSAGetLastError()));
-		//	AppendLog(msg); 
+		//	szLog.Format("Error Couldnot start worker: %s",ErrorCode2Text(WSAGetLastError()));
+		//	AppendLog(szLog); 
 			return FALSE;
 		}
 	}
@@ -2188,7 +2253,7 @@ void CUEServer::ShutDownIOWorkers()
 ** 函数名称: Startup
 ** 函数名称: CUEServer::Startup
 **
-** 功能描述：  
+** 功能描述：  启动服务
 **
 **          
 ** 输　出:   BOOL
@@ -2212,10 +2277,11 @@ BOOL CUEServer::Startup()
 	m_OneIPPerConnectionList.RemoveAll();
 	m_BanIPList.RemoveAll();
 #endif
-	CString msg;
-// 	AppendLog(m_sServerVersion);
-// 	AppendLog("---------------------------------");
-// 	AppendLog("Starting system.."); 
+	CString szLog; 
+
+	szLog = _T("服务启动");
+	LogString(szLog ,NORMAL_STR);
+	 
 	m_NumberOfActiveConnections=0;   
 
 	BOOL bRet=TRUE;
@@ -2238,11 +2304,11 @@ BOOL CUEServer::Startup()
 		if(m_iNumberOfPendlingReads<=0)
 			m_iNumberOfPendlingReads=1;
 
-		msg.Format(_T("Maximum nr of simultaneous connections: %i"),m_iMaxNumConnections);
-	//	AppendLog(msg);
+		szLog.Format(_T("Maximum nr of simultaneous connections: %i"),m_iMaxNumConnections);
+	//	AppendLog(szLog);
 
-		msg.Format(_T("Number of pendling asynchronous reads: %d"),m_iNumberOfPendlingReads);
-   //	AppendLog(msg);
+		szLog.Format(_T("Number of pendling asynchronous reads: %d"),m_iNumberOfPendlingReads);
+   //	AppendLog(szLog);
 
 		// No need to make in order read or write
 		if ( m_iMaxIOWorkers==1 )
@@ -2264,9 +2330,7 @@ BOOL CUEServer::Startup()
 		if ( m_bReadInOrder )
 	//		AppendLog("Read ordering initialized.(Decreases the performance by ~3%)");
 
-		// The map must be empty
-// 		m_ContextMap.RemoveAll();
-// 		m_ContextMap.InitHashTable(m_iMaxNumConnections);
+		// The map must be empty 
 		m_ContextMap.clear();
 
 		// Create the CompletionPort used by IO Worker Threads.  
@@ -2279,27 +2343,28 @@ BOOL CUEServer::Startup()
 		if ( m_nPortNumber>0 )
 		{
 			bRet&=SetupListner();
-
+			ASSERT(bRet);
 			if( bRet )
 			{
-	//			AppendLog("Connection listner thread successfully started.");		
+				szLog = _T("监听线程启动成功");
+				LogString(szLog,NORMAL_STR);
 			}
 		}
 		// Setup the IOWorkers.. 
 		bRet&=SetupIOWorkers();
 
-
 		if ( bRet )
 		{
-			msg.Format(_T("Successfully started %i Input Output Worker thread(s)."),m_nIOWorkers );
-		//	AppendLog(msg);
+		//	szLog.Format(_T("Successfully started %i Input Output Worker thread(s)."),m_nIOWorkers );
+			szLog.Format(_T("启动 %i  IO工作线程成功。"),m_nIOWorkers );
+			LogString(szLog,NORMAL_STR); 
 		}
 		// Start the logical Workers. (SetWorkes can be callen in runtime..). 
 // 		bRet&=SetWorkers(m_nOfWorkers);
 // 		if ( bRet )
 // 		{
-// 			msg.Format("Successfully started %i logical Worker(s).",m_nOfWorkers);
-// 			AppendLog(msg);
+// 			szLog.Format("Successfully started %i logical Worker(s).",m_nOfWorkers);
+// 			AppendLog(szLog);
 // 		}
 
 		// Accept incoming Job. 
@@ -2311,15 +2376,15 @@ BOOL CUEServer::Startup()
 	{
 		if ( m_nPortNumber>0 )
 		{
-			msg.Format(_T("Server successfully started."));
-		//	AppendLog(msg);
-		//	msg.Format(_T("Waiting for clients on adress: %s, port:%i."),GetHostIP(),m_nPortNumber);
-		//	AppendLog(msg);	
+			szLog.Format(_T("Server successfully started."));
+		//	AppendLog(szLog);
+		//	szLog.Format(_T("Waiting for clients on adress: %s, port:%i."),GetHostIP(),m_nPortNumber);
+		//	AppendLog(szLog);	
 		}
 		else 
 		{
-			msg.Format(_T("Client successfully started."));
-		//	AppendLog(msg);	
+			szLog.Format(_T("Client successfully started."));
+		//	AppendLog(szLog);	
 		}
 	}
 	return bRet; 	
@@ -2482,8 +2547,89 @@ bool CUEServer::GetIpList( std::list<std::string> & r_iplist )
 	}
 	return true; 
  } 
-void  CUEServer::LogString(TCHAR* lpszTxt ,int nStrType)
-{
-	::LogString(lpszTxt,nStrType);
 
+void  CUEServer::LogString(CString &szLog,int nStrType)
+{
+	::LogString(szLog.GetBuffer(szLog.GetLength()),nStrType);
+	szLog.ReleaseBuffer();
 }
+CString CUEServer::ErrorCode2Text(DWORD dw)
+{
+	CString error= _T("");
+	// Put your own common error text here (give more explaination etc..) 
+	switch(dw)
+	{
+	case WSAEFAULT:
+		error= _T("WSAEFAULT	The buf parameter is not completely contained in a valid part of the user address space.");
+		break; 
+	case WSAENOTCONN:
+		error=_T("WSAENOTCONN	The socket is not connected."); 
+		break;
+	case WSAEINTR:
+		error=_T("WSAEINTR	The (blocking) call was canceled through WSACancelBlockingCall.	"); 
+		break;
+	case WSAENOTSOCK:
+		error=_T(" WSAENOTSOCK	The descriptor s is not a socket."); 
+		break; 
+	case WSANOTINITIALISED:
+		error=_T("WSANOTINITIALISED: A successful WSAStartup call must occur before using this function.");
+		break; 
+	case WSAENETDOWN:
+		error=_T("WSAENETDOWN	The network subsystem has failed."); 
+		break;
+	case WSAEINPROGRESS:
+		error=_T("WSAEINPROGRESS	A blocking Windows Sockets 1.1 call is in progress, or the service provider is still processing a callback function."); 
+		break;
+	case WSAENETRESET:
+		error=_T(" WSAENETRESET	The connection has been broken due to the keep-alive activity detecting a failure while the operation was in progress."); 
+		break; 
+	case WSAEOPNOTSUPP:
+		error=_T("WSAEOPNOTSUPP	MSG_OOB was specified, but the socket is not stream-style such as type SOCK_STREAM, OOB data is not supported in the communication domain associated with this socket, or the socket is unidirectional and supports only send operations.	"); 
+		break; 
+	case WSAESHUTDOWN:
+		error=_T("WSAESHUTDOWN	The socket has been shut down; it is not possible to receive on a socket after shutdown has been invoked with how set to SD_RECEIVE or SD_BOTH."); 
+		break;
+	case WSAEWOULDBLOCK:
+		error=_T(" WSAEWOULDBLOCK	The socket is marked as nonblocking and the receive operation would block.	"); 
+		break; 
+	case WSAEMSGSIZE:
+		error=_T(" WSAENOTSOCK		The message was too large to fit into the specified buffer and was truncated."); 
+		break;
+	case WSAEINVAL:
+		error=_T("WSAEINVAL	The socket has not been bound with bind, or an unknown flag was specified, or MSG_OOB was specified for a socket with SO_OOBINLINE enabled or (for byte stream sockets only) len was zero or negative.	"); 
+	case WSAECONNABORTED:
+		error=_T(" 	WSAECONNABORTED	The virtual circuit was terminated due to a time-out or other failure. The application should close the socket as it is no longer usable."); 
+		break; 
+	case WSAETIMEDOUT:
+		error=_T("WSAETIMEDOUT	The connection has been dropped because of a network failure or because the peer system failed to respond.	"); 
+		break; 
+	case WSAECONNRESET:
+		//error="WSAECONNRESET	The virtual circuit was reset by the remote side executing a hard or abortive close."; 
+		error=_T("WSAECONNRESET Connection dropped..");
+		break;
+
+	default:
+		error=_T("");  
+		break;
+	}
+
+	// Use system format..  
+	if(error.IsEmpty())
+	{
+		LPVOID lpMsgBuf;
+		error=_T("");
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+			FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			dw,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR) &lpMsgBuf,
+			0, NULL );
+		error.Format(_T("%s"),lpMsgBuf);
+		LocalFree(lpMsgBuf);
+	}
+	return error;
+}
+
+
