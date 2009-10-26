@@ -34,6 +34,19 @@ CUEServer::CUEServer()
 {
 	m_pListenThread = NULL;
 	m_dwLocalIp = 0;
+	m_bServerStarted = FALSE;
+	m_nListenSocket=0;
+ 	m_iMaxNumberOfFreeContext=2;
+	m_bAcceptConnections=TRUE;
+	m_bServerStarted=FALSE;
+	m_iMaxNumConnections=1201;
+//	m_bAcceptJobs=TRUE;
+	m_nOfWorkers=2;
+	m_nPortNumber=999;
+	m_NumberOfActiveConnections=0;
+	m_bSendInOrder=FALSE;
+	m_bReadInOrder=FALSE;
+	m_iNumberOfPendlingReads=3;
 }
 
 CUEServer::~CUEServer()
@@ -1524,16 +1537,33 @@ BOOL CUEServer::ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 	ReleaseBuffer(pOverlapBuff);
 	pOverlapBuff=NULL;
 	return FALSE;
-}
-
-/*
-* Makes a asynchrony Read by posting a IORead message into completion port 
-* who invoces a Onread.
-*
-* The read is not made directly to distribute CPU power fairly between the connections. 
-*/
+} 
+/*********************************************************************************************************
+** 函数名称: ARead
+** 函数名称: CUEServer::ARead
+**
+** 功能描述： Makes a asynchrony Read by posting a IORead message into completion port who invoces a Onread.  
+**
+** 输　入:  ClientContext * pContext
+** 输　入:  CSvrCommPacket * pOverlapBuff
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  The read is not made directly to distribute CPU power fairly between the connections. 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CUEServer::ARead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 {
+	ASSERT(pContext);
 	if (pContext == NULL)
 		return FALSE;
 
@@ -1785,9 +1815,28 @@ inline BOOL CUEServer::ReleaseClientContext(ClientContext *pContext)
 	}
 	return FALSE; 
 }
-/*
-* Adds the A client context to the Context Map.
-*/
+/*********************************************************************************************************
+** 函数名称: AddClientContext
+** 函数名称: CUEServer::AddClientContext
+**
+** 功能描述：  添加一个客户端的上下文到 HASH表中
+**
+** 输　入:  ClientContext * pContext
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CUEServer::AddClientContext(ClientContext *pContext)
 {
 	ClientContext *pTempContext=NULL;
@@ -2010,6 +2059,9 @@ void CUEServer::OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapB
 #ifndef _DEBUG
 				// Remove Unnecessary disconnect messages in release mode.. 
 				if(WSAGetLastError()!=WSAECONNRESET&&WSAGetLastError()!=WSAECONNABORTED)
+				{
+					;
+				}
 #endif	
 			}
 			ReleaseBuffer(pOverlapBuff);
@@ -2086,8 +2138,66 @@ BOOL CUEServer::AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, 
 	}
 	return TRUE;
 }
+/*********************************************************************************************************
+** 函数名称: DisconnectAll
+** 函数名称: CUEServer::DisconnectAll
+**
+** 功能描述：  Just fakes that the client side have closed the connection.. 
+**              We leave everyting to the IOWorkers to handle with Disconnectclient. 
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void CUEServer::DisconnectAll()
+{
+	m_ContextMapLock.Lock();
+	// First Delete all the objects.
+	CONTEXT_ITER iter  = m_ContextMap.begin();
+	for ( ; iter != m_ContextMap.end() ; ++iter)
+	{
+		ASSERT(  (iter)->second);
+		if ( (iter)->second )
+		{
+			DisconnectClient((iter)->second);
+		}
+	} 
+	m_ContextMapLock.Unlock(); 
 
+#ifdef _DEBUG
+	m_BufferListLock.Lock();
 
+	int nSize = m_arrBuffer.size();
+	if (nSize >0)
+	{
+		TRACE("Warning Buffer is still in use even if all users are gone. %i Buffers are inuse state. \r\n",nSize);
+		std::deque <CSvrCommPacket *>::iterator iter = m_arrBuffer.begin();
+		for ( ; iter != m_arrBuffer.end(); ++iter)
+		{
+			ASSERT(*iter);
+			if (*iter)
+			{
+				TRACE("pBuff(%x)->GetOperation()=%i\r\n",*iter,(*iter)->GetOperation());
+			}
+		}	 
+	}
+	else
+	{
+		TRACE("BUFFER is now Empty\r\n");
+	}
+	m_BufferListLock.Unlock();
+#endif
+} 
 /*
 * Closes the Server and frees the memory. 
 * We are leaking some small amount of memory (OVERLAPPEDSTRUKTUR)
@@ -2097,7 +2207,7 @@ BOOL CUEServer::AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, 
 
 void CUEServer::ShutDown()
 {
-	CString msg;
+	CString szLog;
 	if(m_bServerStarted)
 	{
 #if defined SIMPLESECURITY	
@@ -2110,31 +2220,46 @@ void CUEServer::ShutDown()
 		m_BanIPList.RemoveAll();
 		m_BanIPLock.Unlock();
 #endif
-//		AppendLog("Shutdown initialized.");
+		szLog = _T("Shutdown initialized."); 
+		LogString(szLog,NORMAL_STR);
 		m_bAcceptConnections=FALSE;
-//		AppendLog("Sending shutdown signal to logical worker threads.");
-//  	ShutDownWorkers();
+		szLog = _T("Sending shutdown signal to logical worker threads.");  
+		LogString(szLog,NORMAL_STR);
+
+	// 	ShutDownWorkers();
 
 		// We Let the IOWorker Take care of the last packets and die. 
-//		AppendLog("Disconnecting all the Connections...");
-//		DisconnectAll();
+		szLog = _T("Disconnecting all the Connections...");   
+		LogString(szLog,NORMAL_STR);
 
-//		AppendLog("Sending shutdown signal to IO worker threads.");
+ 		DisconnectAll();
+
+		szLog = _T("Sending shutdown signal to IO worker threads.");   
+		LogString(szLog,NORMAL_STR);
+
 		m_bShutDown=TRUE;
-//		ShutDownIOWorkers();
+ 		ShutDownIOWorkers();
 
-//		AppendLog("Closing Completion port..");
+		szLog = _T("Closing Completion port..");   
+		LogString(szLog,NORMAL_STR);
+ 
 		// Close the CompletionPort and stop any more requests (Stops the Listner) 
 		CloseHandle(m_hCompletionPort);
 		if(m_nPortNumber>0)
 		{
-//			AppendLog("Closing listner thread.");
+ 			szLog = _T("Closing listner thread.");   
+			LogString(szLog,NORMAL_STR);
+
 			WSACloseEvent(m_hEvent);
 			closesocket(m_nListenSocket);
 		}
-//		AppendLog("Deallocate memory used for Clients. ");
+		szLog = _T("Deallocate memory used for Clients. ");   
+		LogString(szLog,NORMAL_STR);
+ 
 		FreeClientContext();
-//		AppendLog("Deallocate memory used for Buffers. ");
+		szLog = _T("Deallocate memory used for Buffers. ");   
+		LogString(szLog,NORMAL_STR);
+ 
 		FreeBuffers();
 		m_bServerStarted=FALSE;
 	}
@@ -2187,8 +2312,9 @@ BOOL CUEServer::SetupIOWorkers()
 			//m_IOWorkerList.AddHead((void*)pWorkerThread);
 		else
 		{
-			CString msg;
-		//	szLog.Format("Error Couldnot start worker: %s",ErrorCode2Text(WSAGetLastError()));
+			CString szLog;
+		 	szLog.Format(_T("Error Couldnot start worker: %s"),ErrorCode2Text(WSAGetLastError()));
+			LogString(szLog,ERR_STR);
 		//	AppendLog(szLog); 
 			return FALSE;
 		}
@@ -2305,11 +2431,9 @@ BOOL CUEServer::Startup()
 			m_iNumberOfPendlingReads=1;
 
 		szLog.Format(_T("Maximum nr of simultaneous connections: %i"),m_iMaxNumConnections);
-	//	AppendLog(szLog);
-
+		LogString(szLog,NORMAL_STR);
 		szLog.Format(_T("Number of pendling asynchronous reads: %d"),m_iNumberOfPendlingReads);
-   //	AppendLog(szLog);
-
+		LogString(szLog,NORMAL_STR);
 		// No need to make in order read or write
 		if ( m_iMaxIOWorkers==1 )
 		{
@@ -2325,11 +2449,17 @@ BOOL CUEServer::Startup()
 		}
 
 		if ( m_bSendInOrder )
-	//		AppendLog("Send ordering initialized. (Decreases the performance by ~3%)");
-
+		{
+			szLog = _T("Send ordering initialized. (Decreases the performance by ~3%)");
+			LogString(szLog,NORMAL_STR);
+		}
+ 
 		if ( m_bReadInOrder )
-	//		AppendLog("Read ordering initialized.(Decreases the performance by ~3%)");
-
+		{
+			szLog = _T("Read ordering initialized.(Decreases the performance by ~3%)");
+			LogString(szLog,NORMAL_STR);
+		}
+ 
 		// The map must be empty 
 		m_ContextMap.clear();
 
@@ -2337,8 +2467,9 @@ BOOL CUEServer::Startup()
 		bRet&=CreateCompletionPort();
 		if( bRet)
 		{
-	//		AppendLog("Completionport successfully created.");		
-		}
+			szLog = _T("Completionport successfully created.");
+			LogString(szLog,NORMAL_STR);
+ 		}
 		// Config the Listner.. 
 		if ( m_nPortNumber>0 )
 		{

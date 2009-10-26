@@ -7,6 +7,7 @@
 
 #include "SvrChildFrm.h" 
 #include "SvrOptionView.h"
+#include "SvrListView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -86,7 +87,7 @@ BOOL CSvrChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 		m_wndSplitter1.DestroyWindow();
 		return FALSE;
 	}
-	m_wndSplitter2.CreateView (0, 1, RUNTIME_CLASS (CSvrOptionView), CSize(0, 0), pContext);
+	m_wndSplitter1.CreateView (0, 1, RUNTIME_CLASS (CSvrListView), CSize(0, 0), pContext);
 // 	if (!m_wndSplitter2.CreateStatic(&m_wndSplitter1,	// our parent window is the first splitter
 // 		2, 1,											// the new splitter is 2 rows, 1 column
 // 		WS_CHILD | WS_VISIBLE | WS_BORDER,				// style, WS_BORDER is needed
@@ -96,14 +97,14 @@ BOOL CSvrChildFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 // 		return FALSE;
 // 	}
 
-	//	m_wndSplitter1.ModifyStyle (WS_HSCROLL | WS_VSCROLL, 0);
+	m_wndSplitter1.ModifyStyle (WS_HSCROLL | WS_VSCROLL, 0);
 	CRect rectClient;
 	GetClientRect (rectClient);
 
 // 	m_wndSplitter2.CreateView (0, 0, RUNTIME_CLASS (CPingTestView), CSize(0, 0), pContext);
 // 	m_wndSplitter2.CreateView (1, 0, RUNTIME_CLASS (CPingStatisView), CSize(0, 0), pContext);
 // 
-// 	//	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
+ 	m_wndSplitter1.SetColumnInfo(0, rectClient.Width() / 4 , 30);
 // 
 // 	m_wndSplitter2.SetRowInfo(0, rectClient.Height () *3/4 , 120);
 // 	m_wndSplitter2.SetWindowPos (NULL, 0, 0, rectClient.Width (), rectClient.Height (), SWP_NOZORDER | SWP_NOREDRAW);
