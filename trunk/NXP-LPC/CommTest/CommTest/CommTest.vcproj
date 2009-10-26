@@ -369,7 +369,19 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\SvrChildFrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrCommDoc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SvrCommMsg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrOptionView.cpp"
 				>
 			</File>
 			<File
@@ -563,7 +575,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SvrChildFrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrCommDoc.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SvrCommMsg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrOptionView.h"
 				>
 			</File>
 			<File

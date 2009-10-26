@@ -115,6 +115,7 @@ public:
 	BOOL Start(int nPort=999,int nMaxNumConnections=1201,int nMaxIOWorkers=1,int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
 	CString GetHostIP();
 private:
+	void LogString(TCHAR* lpszTxt ,int nStrType);
 	BOOL SetupIOWorkers();
 
 	BOOL SetupListner();
@@ -141,7 +142,6 @@ private:
 	inline void ShutDownWorkers();
 	// Closes The IO Workers
 	inline void ShutDownIOWorkers();
-
 protected:
 	static UINT WorkerThreadProc(LPVOID pParam);
 	static UINT ListnerThreadProc(LPVOID pParam);

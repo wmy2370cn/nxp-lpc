@@ -19,6 +19,10 @@
 #include "PingTestDoc.h"
 #include "PingOptionView.h"
 
+#include "SvrChildFrm.h"
+#include "SvrCommDoc.h"
+#include "SvrOptionView.h"
+
 #include "LogDataApi.h"
 #include  "boost/memory.hpp"
 
@@ -45,6 +49,7 @@ CBCGPWorkspace (TRUE /* m_bResourceSmartUpdate */)
 	m_pDocTemplate = NULL;
 	m_pPingDocTemplate = NULL;
 	m_pClientDocTemplate = NULL;
+	m_pSvrDocTemplate  = NULL;
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 
@@ -139,6 +144,16 @@ BOOL CCommTestApp::InitInstance()
 		return FALSE;
 
 	AddDocTemplate(m_pClientDocTemplate);
+
+	m_pSvrDocTemplate = new CMultiDocTemplate(IDR_CLIENT_COMM,
+		RUNTIME_CLASS(CSvrCommDoc),
+		RUNTIME_CLASS(CSvrChildFrame), // 自定义 MDI 子框架
+		RUNTIME_CLASS(CSvrOptionView));
+	if (!m_pSvrDocTemplate)
+		return FALSE;
+
+	AddDocTemplate(m_pSvrDocTemplate);
+
 	// 创建主 MDI 框架窗口
 	CMainFrame* pMainFrame = new CMainFrame;
 	if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))
