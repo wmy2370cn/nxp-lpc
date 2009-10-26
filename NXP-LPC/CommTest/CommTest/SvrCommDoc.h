@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector> 
-
+#include "SvrComm.h"
 // CSvrCommDoc 文档
 //const unsigned int UPDATA_VIEW_PING_NORMAL = 1;
 //const unsigned int UPDATA_VIEW_CLIENT_PACKET = 2;
@@ -15,6 +14,7 @@ public:
 	virtual ~CSvrCommDoc();
 
 public:
+	CSvrComm  m_SvrComm;
  
 	//开始收发
 	void StartTask( );

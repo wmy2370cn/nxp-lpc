@@ -10,6 +10,7 @@
 #include "NewPingDlg.h"
 #include "PingTestDoc.h"
 #include "NewSvrDlg.h"
+#include "SvrCommDoc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -441,7 +442,22 @@ void CWorkSpaceBar::OnNewTest()
 		INT_PTR nRet = dlg.DoModal();
 		if (nRet != IDOK)
 			return;
+		szItem = _T("ddddd");
+		hItem = m_wndTree.InsertItem(szItem,83,83,m_hSvrMode);
+		m_wndTree.Expand(m_hSvrMode,TVE_EXPAND);
 
+		CSvrCommDoc  *pSvrDoc = NULL;
+
+		if (theApp.m_pSvrDocTemplate)
+		{
+			pDoc = theApp.m_pSvrDocTemplate->OpenDocumentFile(NULL);
+			pDoc->SetTitle( szItem );
+
+			pSvrDoc = (CSvrCommDoc *)pDoc;
+			//保存值到doc里面
+			 
+	//		pDoc->UpdateAllViews(NULL,UPDATA_VIEW_PING_NORMAL);
+		}
 	}
 
 

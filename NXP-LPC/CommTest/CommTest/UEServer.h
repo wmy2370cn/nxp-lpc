@@ -35,9 +35,9 @@ const int MAX_SEQ_NUM = 5001;
 
 struct ClientContext; 
 
-typedef stdext::hash_map <unsigned int,CUEPacket*> BUFFER_MAP ;
-typedef stdext::hash_map <unsigned int,CUEPacket*>::iterator BUFFER_ITER;
-typedef std::pair <unsigned int, CUEPacket*> BUFFER_PAIR;
+typedef stdext::hash_map <unsigned int,CSvrCommPacket*> BUFFER_MAP ;
+typedef stdext::hash_map <unsigned int,CSvrCommPacket*>::iterator BUFFER_ITER;
+typedef std::pair <unsigned int, CSvrCommPacket*> BUFFER_PAIR;
 
 typedef stdext::hash_map <SOCKET,ClientContext*> CONTEXT_MAP ;
 typedef stdext::hash_map <SOCKET,ClientContext*>::iterator CONTEXT_ITER;
@@ -74,7 +74,7 @@ struct ClientContext
 
 	// Package Overlapped Buffer..
 	// Used to get a complete package when we have several pending reads. 
-	CUEPacket* m_pBuffOverlappedPackage;	
+	CSvrCommPacket* m_pBuffOverlappedPackage;	
 
 	// Extra info you can put what ever you whant here.. 
 	CString m_sReceived;
@@ -114,8 +114,9 @@ public:
 	// Starts the server, 
 	BOOL Start(int nPort=999,int nMaxNumConnections=1201,int nMaxIOWorkers=1,int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
 	CString GetHostIP();
+	DWORD m_dwLocalIp;
 private:
-	void LogString(TCHAR* lpszTxt ,int nStrType);
+	void LogString(CString &szLog ,int nStrType);
 	BOOL SetupIOWorkers();
 
 	BOOL SetupListner();
@@ -136,8 +137,8 @@ private:
 	inline void FreeBuffers();
 
 	// Adds nSize bytes to buffer and flush the other buffer. 
-	inline BOOL AddAndFlush(CUEPacket *pFromBuff, CUEPacket *pToBuff, unsigned int nSize);
-	inline CUEPacket * SplitBuffer(CUEPacket *pBuff, UINT nSize);
+	inline BOOL AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, unsigned int nSize);
+	inline CSvrCommPacket * SplitBuffer(CSvrCommPacket *pBuff, UINT nSize);
 	//Closes The Worker Threads
 	inline void ShutDownWorkers();
 	// Closes The IO Workers
@@ -156,15 +157,15 @@ protected:
 
 
 	// Used to avoid SYSTEM Blocking Bugg. 
-	inline void OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff=NULL);
-	inline void OnZeroByteRead(ClientContext *pContext,CUEPacket *pOverlapBuff=NULL);
+	inline void OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
+	inline void OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
 
 	// Process the internal messages. 
-	inline void ProcessIOMessage(CUEPacket *pOverlapBuff, ClientContext* pContext, DWORD dwSize);	
+	inline void ProcessIOMessage(CSvrCommPacket *pOverlapBuff, ClientContext* pContext, DWORD dwSize);	
 	// Process received Packages 
-	inline void ProcessPackage(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff);
+	inline void ProcessPackage(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
 
-	BOOL ReleaseBuffer(CUEPacket *pBuff);
+	BOOL ReleaseBuffer(CSvrCommPacket *pBuff);
 
 	// Release buffers. 
 	inline void ReleaseBufferMap(BUFFER_MAP *map);
@@ -187,43 +188,45 @@ protected:
 	// File send/Transefer Completed. 
 	virtual void NotifyFileCompleted(ClientContext *pcontext);
 	// A Package have arrived. 
-	virtual inline void NotifyReceivedPackage(CUEPacket *pOverlapBuff,int nSize,ClientContext *pContext);
+	virtual inline void NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,ClientContext *pContext);
 	// An ClientContext is going to be deleted insert more cleanup code if nesseary.  
 	virtual void NotifyContextRelease(ClientContext *pContext);
 	// An Write have been Completed
-	virtual inline void NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff);
+	virtual inline void NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
 	// Used for log
 //	virtual void AppendLog(CString msg);
 
 	// Creates a new buffer or returns a buffer from the FreeBufferList and configure the buffer. 
-	CUEPacket* AllocateBuffer(int nType);
+	CSvrCommPacket* AllocateBuffer(int nType);
 
 
 	// Unlocks the memory used by the overlapped IO, to avoid WSAENOBUFS problem. 
-	inline BOOL AZeroByteRead(ClientContext *pContext,CUEPacket *pOverlapBuff);
+	inline BOOL AZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
 
 	// Used by IO Workers. 
-	inline void OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff);
-	inline void OnWrite(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff);
-	inline void OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff=NULL);
-	inline void OnRead(ClientContext *pContext,CUEPacket *pOverlapBuff=NULL);
-	inline void OnInitialize(ClientContext* pContext, DWORD dwIoSize,CUEPacket *pOverlapBuff=NULL);
-	inline void OnPostedPackage(ClientContext *pContext,CUEPacket *pOverlapBuff);
+	inline void OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
+	inline void OnWrite(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
+	inline void OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
+	inline void OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
+	inline void OnInitialize(ClientContext* pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
+	inline void OnPostedPackage(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
 
 	// Do a Asyncorn Send. Never call this function outside of Notifyxxxx(...) functions. 
-	inline BOOL ASend(ClientContext *pContext,CUEPacket *pOverlapBuff);
+	inline BOOL ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
 	// Do a Asyncorn Read.
-	inline BOOL ARead(ClientContext *pContext,CUEPacket *pOverlapBuff=NULL);
+	inline BOOL ARead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
 
 		// Used to  avoid inorder packages (if you are useing more than one I/O Worker Thread)  
-	inline CUEPacket * GetNextReadBuffer(ClientContext *pContext,CUEPacket *pBuff=NULL);
+	inline CSvrCommPacket * GetNextReadBuffer(ClientContext *pContext,CSvrCommPacket *pBuff=NULL);
 	// Used to  avoid inorder packages (if you are useing more than one I/O Worker Thread)  
-	inline CUEPacket* GetNextSendBuffer(ClientContext *pContext,CUEPacket *pBuff=NULL);
+	inline CSvrCommPacket* GetNextSendBuffer(ClientContext *pContext,CSvrCommPacket *pBuff=NULL);
 	inline void IncreaseSendSeqNum(ClientContext *pContext);
 	inline void IncreaseReadSeqNum(ClientContext *pContext);
 
 	// Used to avoid inorder Read packages
-	inline void MakeOrderdRead(ClientContext *pContext,CUEPacket *pBuff);
+	inline void MakeOrderdRead(ClientContext *pContext,CSvrCommPacket *pBuff);
+	// Error Convertion.. 
+	CString ErrorCode2Text(DWORD dw);
 
 private:
 	HANDLE	m_hCompletionPort;
@@ -265,13 +268,13 @@ private:
 	// Free Buffer List.. 
 	CCriticalSection m_FreeBufferListLock;
 //	CPtrList m_FreeBufferList;
-	std::deque <CUEPacket *> m_arrFreeBuffer;
+	std::deque <CSvrCommPacket *> m_arrFreeBuffer;
 
 
 	// OccupiedBuffer List.. (Buffers that is currently used) 
 	CCriticalSection m_BufferListLock;
 //	CPtrList m_BufferList;
-	std::deque <CUEPacket *> m_arrBuffer;
+	std::deque <CSvrCommPacket *> m_arrBuffer;
 
 	CCriticalSection m_ContextMapLock;
 	CONTEXT_MAP m_ContextMap;

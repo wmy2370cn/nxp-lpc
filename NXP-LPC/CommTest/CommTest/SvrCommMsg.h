@@ -36,15 +36,15 @@
 const int MIN_PACKAGE_SIZE = sizeof(unsigned int);
 const int MAX_PACKAGE_SIZE = 512;
 
-class CUEPacket;
+class CSvrCommPacket;
 
-typedef std::deque<CUEPacket *>::iterator MSG_POS; 
+typedef std::deque<CSvrCommPacket *>::iterator MSG_POS; 
 
-class CUEPacket
+class CSvrCommPacket
 {
 public:
-	CUEPacket( );
-	~CUEPacket( );
+	CSvrCommPacket( );
+	~CSvrCommPacket( );
 public:
 	// Used with overlapped.. 
 	OVERLAPPED			m_ol;

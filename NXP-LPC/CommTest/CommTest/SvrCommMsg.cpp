@@ -27,18 +27,18 @@
 #include "stdafx.h"
 #include "SvrCommMsg.h"
 
-CUEPacket::CUEPacket()
+CSvrCommPacket::CSvrCommPacket()
 {
 	Init();
 }
 
-CUEPacket::~CUEPacket()
+CSvrCommPacket::~CSvrCommPacket()
 {
 
 }
 
 
-void CUEPacket::Init()
+void CSvrCommPacket::Init()
 {
 	m_nUsed=0;
 	m_nOperation=-1;
@@ -46,7 +46,7 @@ void CUEPacket::Init()
 	ZeroMemory(&m_Buffer,sizeof(m_Buffer));
 }
 // Setup Setup the buffer for a Read. 
-void CUEPacket::SetupRead()
+void CSvrCommPacket::SetupRead()
 {
 	if (m_nUsed == 0)
 	{
@@ -61,43 +61,43 @@ void CUEPacket::SetupRead()
 }
 
 // Setup the buffer for a Write
-void CUEPacket::SetupWrite()
+void CSvrCommPacket::SetupWrite()
 {
 	m_wsabuf.buf = reinterpret_cast<char*>(m_Buffer);
 	m_wsabuf.len = m_nUsed;
 }
 
 // cheks if the Buffer is valid. 
-BOOL CUEPacket::IsValid()
+BOOL CSvrCommPacket::IsValid()
 {
 	return TRUE;
 }
 
-UINT CUEPacket::GetUsed()
+UINT CSvrCommPacket::GetUsed()
 {
 	return m_nUsed;
 }
 
 // Used to indicate that we did have  a successfull Receive 
-UINT CUEPacket::Use(UINT nSize)
+UINT CSvrCommPacket::Use(UINT nSize)
 {
 	m_nUsed+=nSize;
 	return m_nUsed;
 }
 
 // Empty A used structure. 
-void CUEPacket::EmptyUsed()
+void CSvrCommPacket::EmptyUsed()
 {
 	m_nUsed=0;
 }
 
 
 // removes nSize byte from the Buffer. 
-BOOL CUEPacket::Flush(UINT nBytesToRemove)
+BOOL CSvrCommPacket::Flush(UINT nBytesToRemove)
 {
 	if ((nBytesToRemove > MAX_PACKAGE_SIZE) || (nBytesToRemove > m_nUsed) ) 
 	{
-		TRACE("ERROR BOOL CUEPacket::Flush(UINT nBytesToRemove)");
+		TRACE("ERROR BOOL CSvrCommPacket::Flush(UINT nBytesToRemove)");
 		return FALSE;
 	}
 	m_nUsed-=nBytesToRemove;
@@ -106,17 +106,17 @@ BOOL CUEPacket::Flush(UINT nBytesToRemove)
 }
 
 
-BOOL CUEPacket::AddData(BYTE data)
+BOOL CSvrCommPacket::AddData(BYTE data)
 {
 	return AddData(&data, 1);
 }
 
-BOOL CUEPacket::AddData(UINT data)
+BOOL CSvrCommPacket::AddData(UINT data)
 {
 	return AddData(reinterpret_cast<const BYTE*>(&data), sizeof(UINT));
 }
 
-BOOL CUEPacket::AddData(unsigned short data)
+BOOL CSvrCommPacket::AddData(unsigned short data)
 {
 	return AddData(reinterpret_cast<const BYTE*>(&data), sizeof(unsigned short));
 }
@@ -124,7 +124,7 @@ BOOL CUEPacket::AddData(unsigned short data)
 /*
 * Adds a stream of char to the buffer. 
 */
-BOOL CUEPacket::AddData(const char *const pData, UINT nSize)
+BOOL CSvrCommPacket::AddData(const char *const pData, UINT nSize)
 { 
 	return AddData(reinterpret_cast<const BYTE*>(pData),nSize);
 }
@@ -132,7 +132,7 @@ BOOL CUEPacket::AddData(const char *const pData, UINT nSize)
 /*
 * Adds a stream of BYTES to the buffer. 
 */
-BOOL CUEPacket::AddData(const BYTE *const pData, UINT nSize)
+BOOL CSvrCommPacket::AddData(const BYTE *const pData, UINT nSize)
 {
 	if ( nSize > MAX_PACKAGE_SIZE-m_nUsed )
 		return FALSE;
@@ -144,7 +144,7 @@ BOOL CUEPacket::AddData(const BYTE *const pData, UINT nSize)
 	}
 }
 // Setup the buffer for a ZeroByteRead. 
-void CUEPacket::SetupZeroByteRead()
+void CSvrCommPacket::SetupZeroByteRead()
 {
 	m_wsabuf.buf =(char*)m_Buffer;
 	m_wsabuf.len = 0; 
