@@ -2404,10 +2404,11 @@ void CUEServer::ShutDownIOWorkers()
  
 	// Check if the IOWorkers are terminated.. 	
 	std::vector <CWinThread *>::iterator iter = m_IOWorkerList.begin();
+	 
 	for ( ; iter != m_IOWorkerList.end(); ++iter)
 	{
 		// Send Empty Message into CompletionPort so that the threads die. 
-		PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
+	 	PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
 		Sleep(10);
 	 	pThread = *iter;
 		ASSERT(pThread);
@@ -2452,7 +2453,6 @@ void CUEServer::ShutDownListenProc( )
 		OutputDebugString(_T("监听线程退出 \n"));
 	}
 }
-
 /*********************************************************************************************************
 ** 函数名称: Startup
 ** 函数名称: CUEServer::Startup
