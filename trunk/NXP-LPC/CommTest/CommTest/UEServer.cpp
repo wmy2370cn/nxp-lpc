@@ -29,6 +29,7 @@
 #include <algorithm>
 #include "LogDataApi.h"
 #include  "boost/memory.hpp"
+#include "Common.h"
 
 CUEServer::CUEServer()
 {
@@ -324,7 +325,7 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 		//Sleep(20);
 
 		if (!bIORet)  
-		{	// If Something whent wrong..
+		{	// If Something whent wrong.. 出现错误了，不正常
 			DWORD dwIOError = GetLastError();
 			if(dwIOError != WAIT_TIMEOUT) // It was not an Time out event we wait for ever (INFINITE) 
 			{	
@@ -376,21 +377,21 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 				continue;
 			}
 		}
-
+		if(lpClientContext==NULL&&pOverlapBuff==NULL&&pThis->m_bShutDown)
+		{
+			TRACE("lpClientContext==NULL \r\n"); 
+			bError=true;
+			OutputDebugString(_T("IO服务线程收到信号准备退出 \n"));
+			break;
+		}
 		if(bIORet && lpOverlapped && lpClientContext) 
 		{
 			pOverlapBuff=CONTAINING_RECORD(lpOverlapped, CSvrCommPacket, m_ol);
 	 		if(pOverlapBuff!=NULL)
 				pThis->ProcessIOMessage(pOverlapBuff, lpClientContext, dwIoSize);
-		}	
-
-		if(lpClientContext==NULL&&pOverlapBuff==NULL&&pThis->m_bShutDown)
-		{
-			TRACE("lpClientContext==NULL \r\n"); 
-			bError=true;
-		}
+		}			
 	}
-
+	OutputDebugString(_T("IO服务线程退出 \n"));
 	return 0x88;
 }
 /*********************************************************************************************************
@@ -647,7 +648,6 @@ void CUEServer::DisconnectClient(ClientContext *pContext, BOOL bGraceful)
 					}
 					m_OneIPPerConnectionLock.Unlock();	
 				}
-
 			}
 #endif	
 			// If we're supposed to abort the connection, set the linger value on the socket to 0.
@@ -728,8 +728,9 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 
 		if(pOverlapBuff==NULL) 
 		{			
-		//	AppendLog("AllocateBuffer(IOZeroByteRead) == NULL.");
-		//	ReleaseClientContext(pContext);
+			CString szLog = _T("AllocateBuffer(IOZeroByteRead) == NULL.");
+			LogString(szLog,ERR_STR);
+		 	ReleaseClientContext(pContext);
 			return FALSE;
 		}
 
@@ -742,7 +743,9 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 		 	DisconnectClient(pContext);
 			TRACE(">OnZeroByteRead(%x)\r\n",pContext);
 		 	ReleaseClientContext(pContext);
-		
+			CString szLog;
+			szLog.Format(_T("Disconnect in AZeroByteRead Possible Socket Error: %s"),ErrorCode2Text(WSAGetLastError()));
+			LogString(szLog,ERR_STR);
 			return FALSE;
 		}
 	}
@@ -759,7 +762,7 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 ** 函数名称: ProcessPackage
 ** 函数名称: CUEServer::ProcessPackage
 **
-** 功能描述：  
+** 功能描述：   把现在收到的报文整合到前面的一个报文中
 **
 ** 输　入:  ClientContext * pContext
 ** 输　入:  DWORD dwIoSize
@@ -782,8 +785,7 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 ********************************************************************************************************/
 void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pOverlapBuff)
 {
- 	// We may have Several Pending reads. And therefor we have to 
-	// check and handle partial Messages.  	 
+ 	// We may have Several Pending reads. And therefor we have to check and handle partial Messages.  	 
 	// First handle partial packages.  
 	CSvrCommPacket *pBuffPartialMessage=NULL;
 	pBuffPartialMessage=pContext->m_pBuffOverlappedPackage;
@@ -793,33 +795,13 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 		// Check how big the message is...
 		UINT nUsedBuffer=pBuffPartialMessage->GetUsed();
 
-		if ( nUsedBuffer < MIN_PACKAGE_SIZE )
-		{
-			//Header to small.. 
-			UINT nHowMuchIsNeeded=MIN_PACKAGE_SIZE-nUsedBuffer;
-			// too little Data to determine the size. 
-			if ( nHowMuchIsNeeded > pOverlapBuff->GetUsed() )
-			{
-				AddAndFlush(pOverlapBuff,pBuffPartialMessage,pOverlapBuff->GetUsed());
-				// Release the buffer if not used. 
-				if ( pOverlapBuff!=NULL )
-				{
-					ReleaseBuffer(pOverlapBuff);
-				}
-				return; // wait for more data..
-			}
-			else
-				AddAndFlush(pOverlapBuff,pBuffPartialMessage,nHowMuchIsNeeded);
-		}
-		// Check how big the message is...
-		nUsedBuffer=pBuffPartialMessage->GetUsed();
 		if ( nUsedBuffer )
 		{
 			// Get The size.. 
 			UINT nSize = dwIoSize;
 			UINT nHowMuchIsNeeded=0;
 		//	memmove(&nSize,pBuffPartialMessage->GetBuffer(),MIN_PACKAGE_SIZE);
-			// The Overlapped Package is good. Never send packages bigger that the MAXIMUMPACKAGESIZE-MINIMUMPACKAGESIZE
+			// The Overlapped Package is good. Never send packages bigger that the MAXIMUMPACKAGESIZE 
 			if ( nSize<=MAX_PACKAGE_SIZE )
 			{
 				nHowMuchIsNeeded=nSize-nUsedBuffer;
@@ -837,7 +819,7 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 				}
 			}
 			else
-			{
+			{//报文太大了
 				ReleaseBuffer(pOverlapBuff);
 				pOverlapBuff=NULL;
 				ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
@@ -870,7 +852,7 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 			else if ( nUsedBuffer >nSize )
 			{
 				// We have more data 
-				CSvrCommPacket *pBuff=SplitBuffer(pOverlapBuff,nSize+MIN_PACKAGE_SIZE);
+				CSvrCommPacket *pBuff=SplitBuffer(pOverlapBuff,nSize);
 				NotifyReceivedPackage(pBuff,nSize,pContext);
 				ReleaseBuffer(pBuff);
 				// loop again, we may have another complete message in there...
@@ -1173,7 +1155,7 @@ void CUEServer::OnPostedPackage(ClientContext *pContext, CSvrCommPacket *pOverla
 	if ( pOverlapBuff)
 	{
 		UINT nSize = 0;
-		memmove(&nSize,pOverlapBuff->GetBuffer(),MIN_PACKAGE_SIZE);
+	//	memmove(&nSize,pOverlapBuff->GetBuffer(),MIN_PACKAGE_SIZE);
 		pContext->m_ContextLock.Lock();
 		NotifyReceivedPackage(pOverlapBuff,nSize,pContext);
 		pContext->m_ContextLock.Unlock();
@@ -1604,7 +1586,7 @@ void CUEServer::FreeClientContext()
 	CONTEXT_ITER iter = m_ContextMap.begin();
 	for ( ; iter != m_ContextMap.end(); ++iter)
 	{
-		if (iter->first >= 0)
+		if (iter->first != 0 && iter->first != INVALID_SOCKET)
 		{
 			pContext = iter->second;
 			LINGER lingerStruct;
@@ -1860,22 +1842,40 @@ BOOL CUEServer::AssociateSocketWithCompletionPort(SOCKET socket, HANDLE hComplet
 	HANDLE h = CreateIoCompletionPort((HANDLE) socket, hCompletionPort, dwCompletionKey, 0);
 	return h == hCompletionPort;
 }
-/*
-* Same as Disconnect Client but we does not try to 
-* remove the context from the Context Map m_ContextMap.
-*/
+/*********************************************************************************************************
+** 函数名称: AbortiveClose
+** 函数名称: CUEServer::AbortiveClose
+**
+** 功能描述：异常关闭  
+**
+** 输　入:  ClientContext * mp
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月27日
+** 备  注:   Same as Disconnect Client but we does not try to remove the context from the Context Map 
+             m_ContextMap.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void CUEServer::AbortiveClose(ClientContext *mp)
 {
 	// Notify that we are going to Disconnect A client. 
 	NotifyDisconnectedClient(mp);
 	// If we have an active  socket close it. 
-	if(mp->m_nSocket>=0)
+	if(mp->m_nSocket!= INVALID_SOCKET && mp->m_nSocket != 0 )
 	{
 		LINGER lingerStruct;
 		lingerStruct.l_onoff = 1;
 		lingerStruct.l_linger = 0;
 		setsockopt( mp->m_nSocket, SOL_SOCKET, SO_LINGER,(char *)&lingerStruct, sizeof(lingerStruct) );	
-		//
 		// Now close the socket handle.  This will do an abortive or  graceful close, as requested.  
 		CancelIo((HANDLE) mp->m_nSocket);
 		closesocket( mp->m_nSocket );
@@ -2105,13 +2105,15 @@ CSvrCommPacket * CUEServer::SplitBuffer(CSvrCommPacket *pBuff, UINT nSize)
 
 	if(!pBuff2->AddData(pBuff->GetBuffer(),nSize))
 	{
-		delete pBuff2;
+		ReleaseBuffer(pBuff2);
+	//	delete pBuff2;
 		return NULL;
 	}
 
 	if(!pBuff->Flush(nSize))
 	{
-		delete pBuff2;
+		ReleaseBuffer(pBuff2);
+	//	delete pBuff2;
 		return NULL;
 	}
 
@@ -2246,6 +2248,8 @@ void CUEServer::ShutDown()
 		szLog = _T("Sending shutdown signal to logical worker threads.");  
 		LogString(szLog,NORMAL_STR);
 
+		ShutDownListenProc( );
+
 	// 	ShutDownWorkers();
 
 		// We Let the IOWorker Take care of the last packets and die. 
@@ -2284,21 +2288,24 @@ void CUEServer::ShutDown()
 		m_bServerStarted=FALSE;
 	}
 }
-BOOL CUEServer::Start(int nPort,int iMaxNumConnections,int iMaxIOWorkers,int nOfWorkers,int iMaxNumberOfFreeBuffer,int iMaxNumberOfFreeContext, BOOL bOrderedSend, BOOL bOrderedRead, int iNumberOfPendlingReads)
+BOOL CUEServer::Start(int nPort,int iMaxNumConnections, int nOfWorkers,int iMaxNumberOfFreeBuffer,int iMaxNumberOfFreeContext, BOOL bOrderedSend, BOOL bOrderedRead, int iNumberOfPendlingReads)
 {
 	m_iMaxNumberOfFreeBuffer=iMaxNumberOfFreeBuffer;
 	m_iMaxNumConnections=iMaxNumConnections;
 	m_nPortNumber=nPort;
-	m_iMaxIOWorkers=iMaxIOWorkers;
 	m_nOfWorkers=nOfWorkers;
 	m_iMaxNumberOfFreeContext=iMaxNumberOfFreeContext;
 	m_bShutDown=FALSE;
 	m_bReadInOrder=bOrderedRead;
 	m_bSendInOrder=bOrderedSend;
 	m_iNumberOfPendlingReads=iNumberOfPendlingReads;
+	SYSTEM_INFO SystemInf;
+	GetSystemInfo(&SystemInf);
+
+	m_iMaxIOWorkers=SystemInf.dwNumberOfProcessors*2;
+
 	return Startup();
 }
- 
 /*********************************************************************************************************
 ** 函数名称: SetupIOWorkers
 ** 函数名称: CUEServer::SetupIOWorkers
@@ -2328,8 +2335,12 @@ BOOL CUEServer::SetupIOWorkers()
 	{
 		pWorkerThread=AfxBeginThread(CUEServer::IOWorkerThreadProc, (void*)this,THREAD_PRIORITY_NORMAL);
 		if(pWorkerThread)
+		{
+			pWorkerThread->m_bAutoDelete = FALSE;
+			pWorkerThread->ResumeThread();
+
 			m_IOWorkerList.push_back(pWorkerThread);
-			//m_IOWorkerList.AddHead((void*)pWorkerThread);
+		}
 		else
 		{
 			CString szLog;
@@ -2366,35 +2377,61 @@ BOOL CUEServer::SetupIOWorkers()
 ********************************************************************************************************/
 void CUEServer::ShutDownIOWorkers()
 {
-	DWORD dwExitCode;
 	m_bShutDown=TRUE;
 	// Should wait for All IOWorkers to Shutdown.. 
 	BOOL bIOWorkersRunning=TRUE;
 	CWinThread* pThread=NULL;
-	while(bIOWorkersRunning)
+ 
+	// Check if the IOWorkers are terminated.. 	
+	std::vector <CWinThread *>::iterator iter = m_IOWorkerList.begin();
+	for ( ; iter != m_IOWorkerList.end(); ++iter)
 	{
 		// Send Empty Message into CompletionPort so that the threads die. 
-		if(bIOWorkersRunning)
-			PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
-		//	Sleep(60);
-		// Check if the IOWorkers are terminated.. 	
-// 		POSITION pos = m_IOWorkerList.GetHeadPosition ();
-// 		while (pos != NULL) 
-// 		{
-// 			pThread = (CWinThread* )m_IOWorkerList.GetNext (pos);
-// 			if(pThread)
-// 			{
-// 				if (::GetExitCodeThread (pThread->m_hThread, &dwExitCode)&&dwExitCode == STILL_ACTIVE) 
-// 					bIOWorkersRunning=TRUE;
-// 				else
-// 					bIOWorkersRunning=FALSE;
-// 			}
-// 
-// 		}
-
+		PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
+		pThread = *iter;
+		ASSERT(pThread);
+		if(pThread)
+		{
+			Common::WaitForThreadToTerminate(pThread->m_hThread);
+			delete pThread;
+			pThread = NULL;
+		}
 	}
 	m_IOWorkerList.clear();
 }
+/*********************************************************************************************************
+** 函数名称: ShutDownListenProc
+** 函数名称: CUEServer::ShutDownListenProc
+**
+** 功能描述：  退出监听线程
+**
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月27日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void CUEServer::ShutDownListenProc( )
+{
+	if (m_pListenThread && m_hListenHandle )
+	{
+		Common::WaitForThreadToTerminate(m_hListenHandle);
+		CloseHandle(m_hListenHandle);
+		delete m_pListenThread;
+		m_pListenThread = NULL;
+		OutputDebugString(_T("监听线程退出 \n"));
+	}
+}
+
 /*********************************************************************************************************
 ** 函数名称: Startup
 ** 函数名称: CUEServer::Startup
