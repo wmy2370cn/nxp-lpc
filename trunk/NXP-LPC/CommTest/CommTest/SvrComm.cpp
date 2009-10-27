@@ -9,7 +9,7 @@
 
 CSvrComm::CSvrComm( )
 {
-
+	m_bStart = FALSE;
 }
 
 CSvrComm::~CSvrComm( )

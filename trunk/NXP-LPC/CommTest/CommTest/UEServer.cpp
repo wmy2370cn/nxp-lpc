@@ -56,6 +56,158 @@ CUEServer::~CUEServer()
 
 }
 /*********************************************************************************************************
+** 函数名称: FreeBuffers
+** 函数名称: CUEServer::FreeBuffers
+**
+** 功能描述： 退出前，回收所有的内存 
+**
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月19日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void CUEServer::FreeBuffers()
+{
+	//Free the buffer in the Free buffer list.. 
+	CSvrCommPacket *pBuff=NULL;
+	std::list <CSvrCommPacket *> ::iterator iter;
+	m_FreeBufferListLock.Lock();
+
+	for (iter = m_arrFreeBuffer.begin();iter != m_arrFreeBuffer.end(); ++iter)
+	{
+		pBuff = *iter;
+		delete pBuff;
+		pBuff = NULL;
+	}
+	m_arrFreeBuffer.clear();
+	m_FreeBufferListLock.Unlock();
+
+	// Free the buffers in the Occupied buffer list (if any).  
+	m_BufferListLock.Lock();
+	for (iter = m_arrBuffer.begin();iter != m_arrBuffer.end(); ++iter)
+	{
+		pBuff = *iter;
+		delete pBuff;
+		pBuff = NULL;
+	}
+	m_arrBuffer.clear(); 
+	m_BufferListLock.Unlock();
+}
+/*********************************************************************************************************
+** 函数名称: AllocateBuffer
+** 函数名称: CUEServer::AllocateBuffer
+**
+** 功能描述：  申请一个buf
+**
+** 输　入:  int nType
+**          
+** 输　出:   CUEPacket*
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月17日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+CSvrCommPacket* CUEServer::AllocateBuffer(int nType)
+{
+	CSvrCommPacket *pMsg = NULL;
+	int nCnt = 0;
+	m_FreeBufferListLock.Lock();
+	if(!m_arrFreeBuffer.empty())
+	{ //如果空闲列表中为空的话，那么从头部取出一个
+		pMsg= m_arrFreeBuffer.front();
+		m_arrFreeBuffer.pop_front();
+	}
+	m_FreeBufferListLock.Unlock();
+
+	if (pMsg == NULL)
+	{//创建一个新的
+		pMsg= new CSvrCommPacket();
+	}
+	ASSERT(pMsg);
+	if (pMsg == NULL)
+		return NULL;
+
+	pMsg->m_nSeqNum = 0;
+	pMsg->EmptyUsed();
+	pMsg->SetOperation(nType);
+
+	m_BufferListLock.Lock();
+	m_arrBuffer.push_front(pMsg); //放在头部
+	m_BufferListLock.Unlock();
+	return pMsg;
+}
+/*********************************************************************************************************
+** 函数名称: ReleaseBuffer
+** 函数名称: CUEServer::ReleaseBuffer
+**
+** 功能描述：  释放
+**
+** 输　入:  CUEPacket * pBuff
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年7月17日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+BOOL CUEServer::ReleaseBuffer(CSvrCommPacket *pBuff)
+{
+	if(pBuff==NULL)
+		return FALSE;
+	std::list<CSvrCommPacket *>::iterator iter;
+
+	m_BufferListLock.Lock();
+// 	iter = std::find(m_arrBuffer.begin(), m_arrBuffer.end(),pBuff  );
+// 	if (iter != m_arrBuffer.end())
+// 	{
+// 		m_arrBuffer.erase( iter);
+// 	}
+	m_arrBuffer.remove(pBuff);
+	m_BufferListLock.Unlock();
+	//添加到空闲列表中
+	m_FreeBufferListLock.Lock();
+	if(m_iMaxNumberOfFreeBuffer==0|| m_arrFreeBuffer.size() <m_iMaxNumberOfFreeBuffer)
+	{//放在头或者尾都无所谓
+	//	m_arrFreeBuffer.push_front( pBuff );
+		m_arrFreeBuffer.push_back( pBuff );
+	}
+	else
+	{
+		// Delete the buffer. 
+		if ( pBuff!=NULL )
+			delete pBuff;
+	}
+	m_FreeBufferListLock.Unlock();
+	pBuff=NULL;
+	return TRUE;
+}
+/*********************************************************************************************************
 ** 函数名称: CreateCompletionPort
 ** 函数名称: CUEServer::CreateCompletionPort
 **
@@ -224,7 +376,7 @@ UINT CUEServer::ListnerThreadProc(LPVOID pParam)
 	while( !pThis->m_bShutDown )
 	{
 		DWORD dwRet;
-		dwRet = WSAWaitForMultipleEvents(1, &pThis->m_hEvent,FALSE,	500,FALSE);	
+		dwRet = WSAWaitForMultipleEvents(1, &pThis->m_hEvent,FALSE,	300,FALSE);	
   		if(pThis->m_bShutDown)
  			break;
 		//超时,继续
@@ -1175,7 +1327,7 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 	if (pContext==NULL)
 		return NULL;
 	CSvrCommPacket* pRetBuff=NULL;
-	stdext::hash_map <unsigned int,CSvrCommPacket*>::iterator iter;
+	BUFFER_ITER iter;
 
 	pContext->m_ContextLock.Lock();
 	// We have a buffer
@@ -1303,159 +1455,6 @@ void CUEServer::MakeOrderdRead(ClientContext *pContext, CSvrCommPacket *pBuff)
 			//pContext->m_ContextLock.Unlock();
 		}
 	}
-}
-/*********************************************************************************************************
-** 函数名称: FreeBuffers
-** 函数名称: CUEServer::FreeBuffers
-**
-** 功能描述：  
-**
-**          
-** 输　出:   void
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月19日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-void CUEServer::FreeBuffers()
-{
-	//Free the buffer in the Free buffer list.. 
-	CSvrCommPacket *pBuff=NULL;
-	std::deque <CSvrCommPacket *> ::iterator iter;
-	m_FreeBufferListLock.Lock();
-
-	for (iter = m_arrFreeBuffer.begin();iter != m_arrFreeBuffer.end(); ++iter)
-	{
-		pBuff = *iter;
-		delete pBuff;
-		pBuff = NULL;
-	}
-	m_arrFreeBuffer.clear();
-	m_FreeBufferListLock.Unlock();
-
-	// Free the buffers in the Occupied buffer list (if any).  
-	m_BufferListLock.Lock();
-	for (iter = m_arrBuffer.begin();iter != m_arrBuffer.end(); ++iter)
-	{
-		pBuff = *iter;
-		delete pBuff;
-		pBuff = NULL;
-	}
-	m_arrBuffer.clear(); 
-	m_BufferListLock.Unlock();
-}
-/*********************************************************************************************************
-** 函数名称: AllocateBuffer
-** 函数名称: CUEServer::AllocateBuffer
-**
-** 功能描述：  
-**
-** 输　入:  int nType
-**          
-** 输　出:   CUEPacket*
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月17日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-CSvrCommPacket* CUEServer::AllocateBuffer(int nType)
-{
-	CSvrCommPacket *pMsg = NULL;
-	int nCnt = 0;
-	m_FreeBufferListLock.Lock();
-	nCnt = m_arrFreeBuffer.size();
-	if(!m_arrFreeBuffer.empty())
-	{
-	//	pMsg=(CSvrCommPacket *)m_arrFreeBuffer.pop_front();
-		pMsg= m_arrFreeBuffer.front();
-		m_arrFreeBuffer.pop_front();
-	}
-	m_FreeBufferListLock.Unlock();
-
-	if (pMsg == NULL)
-	{//创建一个新的
-		pMsg= new CSvrCommPacket();
-	}
-	ASSERT(pMsg);
-	if (pMsg == NULL)
-		return NULL;
-
-	pMsg->m_nSeqNum = 0;
-	pMsg->EmptyUsed();
-	pMsg->SetOperation(nType);
-
-	m_BufferListLock.Lock();
-	m_arrBuffer.push_front(pMsg);
-	m_BufferListLock.Unlock();
-	return pMsg;
-}
-/*********************************************************************************************************
-** 函数名称: ReleaseBuffer
-** 函数名称: CUEServer::ReleaseBuffer
-**
-** 功能描述：  释放
-**
-** 输　入:  CUEPacket * pBuff
-**          
-** 输　出:   BOOL
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年7月17日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-BOOL CUEServer::ReleaseBuffer(CSvrCommPacket *pBuff)
-{
-	ASSERT(pBuff);
-	if(pBuff==NULL)
-		return FALSE;
-	std::deque<CSvrCommPacket *>::iterator iter;
-
-	m_BufferListLock.Lock();
-	iter = std::find(m_arrBuffer.begin(), m_arrBuffer.end(),pBuff  );
-	if (iter != m_arrBuffer.end())
-	{
-		m_arrBuffer.erase( iter);
-	}
-	m_BufferListLock.Unlock();
-	//添加到空闲列表中
-	m_FreeBufferListLock.Lock();
-	if(m_iMaxNumberOfFreeBuffer==0|| m_arrFreeBuffer.size() <m_iMaxNumberOfFreeBuffer)
-	{
-		m_arrFreeBuffer.push_front( pBuff );
-	}
-	else
-	{
-		// Delete the buffer. 
-		if ( pBuff!=NULL )
-			delete pBuff;
-	}
-	m_FreeBufferListLock.Unlock();
-	pBuff=NULL;
-	return TRUE;
 }
 /*********************************************************************************************************
 ** 函数名称: ASend
@@ -1619,7 +1618,7 @@ void CUEServer::FreeClientContext()
 	 
 	// Remove The stuff in FreeContext list
 	m_bAcceptConnections=FALSE;
-	std::vector <ClientContext *> ::iterator iter_free;
+	std::list <ClientContext *> ::iterator iter_free;
 	m_FreeContextListLock.Lock(); 
 	
 	for (iter_free = m_arrFreeContext.begin(); iter_free != m_arrFreeContext.end();++ iter_free)
@@ -1770,9 +1769,10 @@ inline BOOL CUEServer::ReleaseClientContext(ClientContext *pContext)
 			m_FreeContextListLock.Lock();	
 
 			if(m_arrFreeContext.size()<m_iMaxNumberOfFreeContext||m_iMaxNumberOfFreeContext==0)
-			{	
+			{
+				m_arrFreeContext.push_front(pContext);
 			//	bRet=m_arrFreeContext.AddHead((void*)pContext)!=NULL;
-				m_arrFreeContext.insert( m_arrFreeContext.begin(), pContext );
+			//	m_arrFreeContext.insert( m_arrFreeContext.begin(), pContext );
 				TRACE("Putting (%x) in Freecontext list nNumberOfPendlingIO=%i.\r\n",pContext,nNumberOfPendlingIO);
 			}
 			else // Or just delete it. 
@@ -1833,8 +1833,8 @@ BOOL CUEServer::AddClientContext(ClientContext *pContext)
 	pContext->m_nID=KeyID;
 	m_ContextMap.insert(CONTEXT_PAIR(KeyID,pContext));	 
 	m_NumberOfActiveConnections++;
-	m_ContextMapLock.Unlock();
-	return TRUE;
+	m_ContextMapLock.Unlock(); 
+ 	return TRUE;
 }
 
 BOOL CUEServer::AssociateSocketWithCompletionPort(SOCKET socket, HANDLE hCompletionPort, DWORD dwCompletionKey)
@@ -2183,7 +2183,12 @@ BOOL CUEServer::AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, 
 ********************************************************************************************************/
 void CUEServer::DisconnectAll()
 {
+	std::list <ClientContext *> arrContex;
+	std::list <ClientContext*>::iterator it_list;
+	ClientContext *pClientContext = NULL;
+
 	m_ContextMapLock.Lock();
+	
 	// First Delete all the objects.
 	CONTEXT_ITER iter  = m_ContextMap.begin();
 	for ( ; iter != m_ContextMap.end() ; ++iter)
@@ -2191,9 +2196,19 @@ void CUEServer::DisconnectAll()
 		ASSERT(  (iter)->second);
 		if ( (iter)->second )
 		{
-			DisconnectClient((iter)->second);
+			pClientContext = iter->second;
+			arrContex.push_back( pClientContext );
+		//	DisconnectClient((iter)->second);
 		}
 	} 
+	for ( it_list = arrContex.begin(); it_list != arrContex.end(); ++it_list )
+	{
+		DisconnectClient(*it_list);
+	}
+
+	m_ContextMap.clear();
+	arrContex.clear();
+	 
 	m_ContextMapLock.Unlock(); 
 
 #ifdef _DEBUG
@@ -2203,7 +2218,7 @@ void CUEServer::DisconnectAll()
 	if (nSize >0)
 	{
 		TRACE("Warning Buffer is still in use even if all users are gone. %i Buffers are inuse state. \r\n",nSize);
-		std::deque <CSvrCommPacket *>::iterator iter = m_arrBuffer.begin();
+		std::list <CSvrCommPacket *>::iterator iter = m_arrBuffer.begin();
 		for ( ; iter != m_arrBuffer.end(); ++iter)
 		{
 			ASSERT(*iter);
@@ -2393,7 +2408,8 @@ void CUEServer::ShutDownIOWorkers()
 	{
 		// Send Empty Message into CompletionPort so that the threads die. 
 		PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
-		pThread = *iter;
+		Sleep(10);
+	 	pThread = *iter;
 		ASSERT(pThread);
 		if(pThread)
 		{
