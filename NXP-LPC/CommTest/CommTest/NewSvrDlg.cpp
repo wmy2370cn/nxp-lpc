@@ -12,7 +12,7 @@ IMPLEMENT_DYNAMIC(CNewSvrDlg, CBCGPDialog)
 
 CNewSvrDlg::CNewSvrDlg(CWnd* pParent /*=NULL*/)
 	: CBCGPDialog(CNewSvrDlg::IDD, pParent)
-	, m_nSvrPortNum(0)
+	, m_nSvrPortNum(999)
 {
 
 }
@@ -43,10 +43,43 @@ BOOL CNewSvrDlg::OnInitDialog()
 	bool bRet = false;
 
 	bRet = CUEServer::GetIpList(ip_list);
+	CComboBox *pBox =(CComboBox *) GetDlgItem(IDC_COMBO_HOST_IP);
+	ASSERT(pBox);
+	if(pBox)
+	{
+		pBox->ResetContent();
+		CString szTxt;
+
+		if(bRet && ip_list.size())
+		{
+			std::list <std::string>::iterator iter = ip_list.begin();
+			for ( ; iter != ip_list.end(); ++iter)
+			{
+				szTxt = CA2W(iter->c_str());
+				pBox->AddString( szTxt  );
+			}
+		}
+		if (pBox->GetCount() <= 0)
+		{
+			szTxt = _T("127.0.0.1");
+			pBox->AddString( szTxt  );
+		}
+		if (pBox->GetCount())
+		{
+			pBox->SetCurSel(pBox->GetCount()-1);
+		}
+	}
 
 
 	// TODO:  在此添加额外的初始化
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
+}
+
+void CNewSvrDlg::OnOK()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	CBCGPDialog::OnOK();
 }

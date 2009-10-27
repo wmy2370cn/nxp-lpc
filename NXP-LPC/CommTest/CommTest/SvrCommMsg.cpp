@@ -91,8 +91,28 @@ void CSvrCommPacket::EmptyUsed()
 	m_nUsed=0;
 }
 
-
-// removes nSize byte from the Buffer. 
+/*********************************************************************************************************
+** 函数名称: Flush
+** 函数名称: CSvrCommPacket::Flush
+**
+** 功能描述： 报文删除掉部分内容 
+**
+** 输　入:  UINT nBytesToRemove
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  removes nSize byte from the Buffer. 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CSvrCommPacket::Flush(UINT nBytesToRemove)
 {
 	if ((nBytesToRemove > MAX_PACKAGE_SIZE) || (nBytesToRemove > m_nUsed) ) 
@@ -134,11 +154,13 @@ BOOL CSvrCommPacket::AddData(const char *const pData, UINT nSize)
 */
 BOOL CSvrCommPacket::AddData(const BYTE *const pData, UINT nSize)
 {
+	ASSERT(nSize+m_nUsed < MAX_PACKAGE_SIZE);
 	if ( nSize > MAX_PACKAGE_SIZE-m_nUsed )
 		return FALSE;
 	else
 	{
-		memcpy(m_Buffer + m_nUsed, pData, nSize);
+	//	memcpy(m_Buffer + m_nUsed, pData, nSize);
+		memcpy_s(m_Buffer + m_nUsed, MAX_PACKAGE_SIZE-m_nUsed, pData, nSize);
 		m_nUsed += nSize;
 		return TRUE;
 	}

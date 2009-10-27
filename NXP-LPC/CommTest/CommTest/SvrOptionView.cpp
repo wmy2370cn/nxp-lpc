@@ -13,6 +13,7 @@ IMPLEMENT_DYNCREATE(CSvrOptionView, CBCGPFormView)
 
 CSvrOptionView::CSvrOptionView()
 	: CBCGPFormView(CSvrOptionView::IDD)
+	, m_nPortNum(999)
 {
 
 }
@@ -24,6 +25,7 @@ CSvrOptionView::~CSvrOptionView()
 void CSvrOptionView::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_SVR_PORTNUM_OPT, m_nPortNum);
 }
 
 BEGIN_MESSAGE_MAP(CSvrOptionView, CBCGPFormView)
@@ -59,7 +61,7 @@ int CSvrOptionView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableVisualManagerStyle();
 
 	// TODO:  在此添加您专用的创建代码
-
+	
 	return 0;
 }
 
@@ -71,5 +73,40 @@ void CSvrOptionView::OnBnClickedButtonSvrStart()
 	if (pDoc == NULL)
 		return;
 	pDoc->m_SvrComm.Start();
+
+}
+void CSvrOptionView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	std::list<std::string> ip_list;
+	bool bRet = false;
+
+	bRet = CUEServer::GetIpList(ip_list);
+	CComboBox *pBox =(CComboBox *) GetDlgItem(IDC_COMBO_HOST_IP_OPT);
+	ASSERT(pBox);
+	if(pBox)
+	{
+		pBox->ResetContent();
+		CString szTxt;
+
+		if(bRet && ip_list.size())
+		{
+			std::list <std::string>::iterator iter = ip_list.begin();
+			for ( ; iter != ip_list.end(); ++iter)
+			{
+				szTxt = CA2W(iter->c_str());
+				pBox->AddString( szTxt  );
+			}
+		}
+		if (pBox->GetCount() <= 0)
+		{
+			szTxt = _T("127.0.0.1");
+			pBox->AddString( szTxt  );
+		}
+		if (pBox->GetCount())
+		{
+			pBox->SetCurSel(pBox->GetCount()-1);
+		}
+	}
 
 }

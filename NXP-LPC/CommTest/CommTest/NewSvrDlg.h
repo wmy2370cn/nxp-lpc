@@ -21,4 +21,6 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	UINT m_nSvrPortNum;
+protected:
+	virtual void OnOK();
 };
