@@ -2288,17 +2288,22 @@ void CUEServer::ShutDown()
 		m_bServerStarted=FALSE;
 	}
 }
+
 BOOL CUEServer::Start(int nPort,int iMaxNumConnections, int nOfWorkers,int iMaxNumberOfFreeBuffer,int iMaxNumberOfFreeContext, BOOL bOrderedSend, BOOL bOrderedRead, int iNumberOfPendlingReads)
 {
 	m_iMaxNumberOfFreeBuffer=iMaxNumberOfFreeBuffer;
-	m_iMaxNumConnections=iMaxNumConnections;
-	m_nPortNumber=nPort;
+	
+	m_iMaxNumConnections=iMaxNumConnections; //最大连接数 
+	m_nPortNumber=nPort;                     //服务器端口号
+
 	m_nOfWorkers=nOfWorkers;
+
 	m_iMaxNumberOfFreeContext=iMaxNumberOfFreeContext;
 	m_bShutDown=FALSE;
 	m_bReadInOrder=bOrderedRead;
 	m_bSendInOrder=bOrderedSend;
 	m_iNumberOfPendlingReads=iNumberOfPendlingReads;
+
 	SYSTEM_INFO SystemInf;
 	GetSystemInfo(&SystemInf);
 
