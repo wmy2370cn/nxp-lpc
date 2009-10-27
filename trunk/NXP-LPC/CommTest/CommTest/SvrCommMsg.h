@@ -26,19 +26,11 @@
 ********************************************************************************************************/
 
 #pragma  once
-
 #include <deque>
-#include <iterator>
-
- 
 
 // Determines the size of the first bytes who tells you how big the message are. (pakage heap)  
 const int MIN_PACKAGE_SIZE = sizeof(unsigned int);
 const int MAX_PACKAGE_SIZE = 512;
-
-class CSvrCommPacket;
-
-typedef std::deque<CSvrCommPacket *>::iterator MSG_POS; 
 
 class CSvrCommPacket
 {

@@ -28,6 +28,10 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonSvrStart();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+protected:
+	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+public:
+	UINT m_nPortNum;
 };
 
 

@@ -318,7 +318,7 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 		pOverlapBuff=NULL;
 		lpClientContext=NULL;
 
-		// Get a completed IO request.
+		// Get a completed IO request. 永远等待
 		BOOL bIORet = GetQueuedCompletionStatus(hCompletionPort,&dwIoSize,(LPDWORD) &lpClientContext,&lpOverlapped, INFINITE);
 		// Simulate workload (for debugging, to find possible reordering)
 		//Sleep(20);
@@ -755,10 +755,31 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 	}
 	return TRUE;
 }
-/*
-* Assumes that Packages arrive with A MINIMUMPACKAGESIZE header and builds Packages that  
-* are noticed by the virtual function NotifyReceivedPackage 
-*/
+/*********************************************************************************************************
+** 函数名称: ProcessPackage
+** 函数名称: CUEServer::ProcessPackage
+**
+** 功能描述：  
+**
+** 输　入:  ClientContext * pContext
+** 输　入:  DWORD dwIoSize
+** 输　入:  CSvrCommPacket * pOverlapBuff
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  Assumes that Packages arrive with A MINIMUMPACKAGESIZE header and builds Packages that 
+           are noticed by the virtual function NotifyReceivedPackage 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pOverlapBuff)
 {
  	// We may have Several Pending reads. And therefor we have to 
@@ -792,27 +813,26 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 		}
 		// Check how big the message is...
 		nUsedBuffer=pBuffPartialMessage->GetUsed();
-		if ( nUsedBuffer >= MIN_PACKAGE_SIZE )
+		if ( nUsedBuffer )
 		{
 			// Get The size.. 
-			UINT nSize = 0;
+			UINT nSize = dwIoSize;
 			UINT nHowMuchIsNeeded=0;
-			memmove(&nSize,pBuffPartialMessage->GetBuffer(),MIN_PACKAGE_SIZE);
+		//	memmove(&nSize,pBuffPartialMessage->GetBuffer(),MIN_PACKAGE_SIZE);
 			// The Overlapped Package is good. Never send packages bigger that the MAXIMUMPACKAGESIZE-MINIMUMPACKAGESIZE
-			if ( nSize<=(MAX_PACKAGE_SIZE-MIN_PACKAGE_SIZE) )
+			if ( nSize<=MAX_PACKAGE_SIZE )
 			{
-				nHowMuchIsNeeded=nSize-(nUsedBuffer-MIN_PACKAGE_SIZE);
+				nHowMuchIsNeeded=nSize-nUsedBuffer;
 				// If we need just a little data add it.. 
 				if ( nHowMuchIsNeeded<=pOverlapBuff->GetUsed() )
-				{
-					// Add the remain into pBuffPartialMessage. 
+				{   // Add the remain into pBuffPartialMessage. 
 					AddAndFlush(pOverlapBuff,pBuffPartialMessage,nHowMuchIsNeeded);
 					NotifyReceivedPackage(pBuffPartialMessage,nSize,pContext);
 					ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
 					pContext->m_pBuffOverlappedPackage=NULL;
-				}else
-				{
-					// Put everything in.. 
+				}
+				else
+				{	// Put everything in.. 
 					AddAndFlush(pOverlapBuff,pBuffPartialMessage,pOverlapBuff->GetUsed());
 				}
 			}
@@ -836,18 +856,18 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 	{
 		UINT nUsedBuffer=pOverlapBuff->GetUsed();
 		done=true;	
-		if ( nUsedBuffer >= MIN_PACKAGE_SIZE )
+		if ( nUsedBuffer)
 		{
-			UINT nSize = 0;
-			memmove(&nSize,pOverlapBuff->GetBuffer(),MIN_PACKAGE_SIZE);
+			UINT nSize = dwIoSize;
+			//memmove(&nSize,pOverlapBuff->GetBuffer(),MIN_PACKAGE_SIZE);
 			// We Have a full Package..
-			if ( nSize==nUsedBuffer-MIN_PACKAGE_SIZE )
+			if ( nSize==nUsedBuffer )
 			{
 				NotifyReceivedPackage(pOverlapBuff,nSize,pContext);
 				pOverlapBuff->EmptyUsed();
 				done = true;
 			}
-			else if ( nUsedBuffer-MIN_PACKAGE_SIZE >nSize )
+			else if ( nUsedBuffer >nSize )
 			{
 				// We have more data 
 				CSvrCommPacket *pBuff=SplitBuffer(pOverlapBuff,nSize+MIN_PACKAGE_SIZE);
@@ -856,7 +876,7 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 				// loop again, we may have another complete message in there...
 				done = false;
 			}
-			else if ( nUsedBuffer-MIN_PACKAGE_SIZE<nSize && nSize<MAX_PACKAGE_SIZE)
+			else if ( nUsedBuffer<nSize && nSize<MAX_PACKAGE_SIZE)
 			{
 				//
 				// The package is overlapped between this byte chunk stream and the next. 
@@ -945,7 +965,7 @@ void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 			else
 			{
 				DWORD dwIoSize=0;
-				ULONG			ulFlags = MSG_PARTIAL;
+				ULONG ulFlags = MSG_PARTIAL;
 				UINT nRetVal = WSARecv(pContext->m_nSocket, 
 					pOverlapBuff->GetWSABuffer(),
 					1,
@@ -976,6 +996,7 @@ void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 }
 void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
 {
+	ASSERT(pContext);
 
 	if (dwIoSize == 0||pOverlapBuff==NULL)
 	{
@@ -1000,8 +1021,7 @@ void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrComm
 		*/
 		//pContext->m_ContextLock.Lock(); 
 	
-		// Insure That the Packages arrive in order. 
-		
+		// Insure That the Packages arrive in order. 		
 		if(m_bReadInOrder)
 			pOverlapBuff=GetNextReadBuffer(pContext,pOverlapBuff);
 
@@ -1120,6 +1140,10 @@ void CUEServer::OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCom
 		{
 			if(pOverlapBuff->GetUsed()!=dwIoSize)
 			{
+				CString szLog;
+				szLog.Format(_T("The whole message was not Sent.: %s"),ErrorCode2Text(WSAGetLastError()));
+				ReleaseBuffer(pOverlapBuff);
+				LogString(szLog,ERR_STR);
 			}
 			else
 			{
@@ -1390,6 +1414,8 @@ CSvrCommPacket* CUEServer::AllocateBuffer(int nType)
 	if (pMsg == NULL)
 		return NULL;
 
+	pMsg->m_nSeqNum = 0;
+	pMsg->EmptyUsed();
 	pMsg->SetOperation(nType);
 
 	m_BufferListLock.Lock();
@@ -1428,14 +1454,15 @@ BOOL CUEServer::ReleaseBuffer(CSvrCommPacket *pBuff)
 
 	m_BufferListLock.Lock();
 	iter = std::find(m_arrBuffer.begin(), m_arrBuffer.end(),pBuff  );
-	m_arrBuffer.erase( iter);
+	if (iter != m_arrBuffer.end())
+	{
+		m_arrBuffer.erase( iter);
+	}
 	m_BufferListLock.Unlock();
 	//添加到空闲列表中
 	m_FreeBufferListLock.Lock();
 	if(m_iMaxNumberOfFreeBuffer==0|| m_arrFreeBuffer.size() <m_iMaxNumberOfFreeBuffer)
 	{
-// 		pos=m_FreeBufferList.AddHead((void*)pBuff);
-// 		pBuff->SetPosition(NULL);
 		m_arrFreeBuffer.push_front( pBuff );
 	}
 	else
@@ -1446,39 +1473,6 @@ BOOL CUEServer::ReleaseBuffer(CSvrCommPacket *pBuff)
 	}
 	m_FreeBufferListLock.Unlock();
 	pBuff=NULL;
-#if 0
-	// First Remove it from the BufferList. 
-	m_BufferListLock.Lock();
-	POSITION pos=pBuff->GetPosition();
-	//TRACE("Buffer %i is going to be released.\n",pBuff);
-	if(pos==NULL)
-	{
-	 	m_BufferListLock.Unlock();
-		return FALSE;
-	}
-
-	m_BufferList.RemoveAt(pos);
-	//TRACE("Buffer %i is released.\n",pBuff);
-	m_BufferListLock.Unlock();
-
-	// Add it to the FreeBufferList or delete it. 
-	
-	m_FreeBufferListLock.Lock();
-	if(m_iMaxNumberOfFreeBuffer==0||m_FreeBufferList.GetCount()<m_iMaxNumberOfFreeBuffer)
-	{
-		pos=m_FreeBufferList.AddHead((void*)pBuff);
-		pBuff->SetPosition(NULL);
-	}
-	else
-	{
-		// Delete the buffer. 
-		if ( pBuff!=NULL )
-			delete pBuff;
-	}
-	m_FreeBufferListLock.Unlock();
-	pBuff=NULL;
-#endif
-
 	return TRUE;
 }
 /*********************************************************************************************************
@@ -1974,7 +1968,12 @@ void CUEServer::NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize, CS
 */
 void CUEServer::NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,ClientContext *pContext)
 {
-
+	if(pContext)
+	{
+		CString szLog;
+		szLog.Format(_T("Recv %d"),nSize);
+		LogString(szLog,NORMAL_STR);
+	}
 }
 
 
@@ -2117,13 +2116,34 @@ CSvrCommPacket * CUEServer::SplitBuffer(CSvrCommPacket *pBuff, UINT nSize)
 	}
 
 	return pBuff2;
-}
-/*
-* Adds the nSize bytes from pFromBuff to pToBuff, and 
-* removes the data from pFromBuff.  
-*/
+} 
+/*********************************************************************************************************
+** 函数名称: AddAndFlush
+** 函数名称: CUEServer::AddAndFlush
+**
+** 功能描述：  从From移动数据到To
+**
+** 输　入:  CSvrCommPacket * pFromBuff
+** 输　入:  CSvrCommPacket * pToBuff
+** 输　入:  UINT nSize
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月26日
+** 备  注:  Adds the nSize bytes from pFromBuff to pToBuff, and removes the data from pFromBuff.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 BOOL CUEServer::AddAndFlush(CSvrCommPacket *pFromBuff, CSvrCommPacket *pToBuff, UINT nSize)
 {
+	ASSERT(pFromBuff && pToBuff && nSize);
 	if(pFromBuff==NULL||pToBuff==NULL||nSize<=0)
 		return FALSE;
 

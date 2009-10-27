@@ -136,13 +136,15 @@
 #define IDC_STATIC_PACKET_ID            1034
 #define IDC_STATIC_TREE_LOC             1035
 #define IDC_BUTTON_DISP                 1036
-#define IDC_STATIC_PING_SND_CNT         1036
 #define IDC_CHECK_AUTO_SEND             1037
-#define IDC_STATIC_PING_RTN_CNT         1037
 #define IDC_STATIC_PING_LOST_CNT        1038
-#define IDC_BUTTON_SVR_START            1038
-#define IDC_EDIT1                       1039
 #define IDC_EDIT_SVR_PORTNUM            1039
+#define IDC_COMBO_HOST_IP               1040
+#define IDC_BUTTON_SVR_START            1041
+#define IDC_STATIC_PING_RTN_CNT         1042
+#define IDC_COMBO_HOST_IP_OPT           1043
+#define IDC_STATIC_PING_SND_CNT         1044
+#define IDC_EDIT_SVR_PORTNUM_OPT        1045
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
@@ -183,7 +185,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        325
 #define _APS_NEXT_COMMAND_VALUE         32859
-#define _APS_NEXT_CONTROL_VALUE         1040
+#define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif
