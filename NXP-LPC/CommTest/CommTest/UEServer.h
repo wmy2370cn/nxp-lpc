@@ -268,24 +268,20 @@ private:
 	unsigned int m_iMaxNumberOfFreeBuffer;
 
 	CCriticalSection m_FreeContextListLock;
-	std::vector <ClientContext *> m_arrFreeContext;
+	std::list <ClientContext *> m_arrFreeContext;
  //	CPtrList m_FreeContextList;
+	CCriticalSection m_ContextMapLock;
+	CONTEXT_MAP m_ContextMap;
 
 
 	// Free Buffer List.. 
 	CCriticalSection m_FreeBufferListLock;
-//	CPtrList m_FreeBufferList;
-	std::deque <CSvrCommPacket *> m_arrFreeBuffer;
-
-
+	std::list <CSvrCommPacket *> m_arrFreeBuffer;
 	// OccupiedBuffer List.. (Buffers that is currently used) 
 	CCriticalSection m_BufferListLock;
-//	CPtrList m_BufferList;
-	std::deque <CSvrCommPacket *> m_arrBuffer;
+	std::list <CSvrCommPacket *> m_arrBuffer;
 
-	CCriticalSection m_ContextMapLock;
-	CONTEXT_MAP m_ContextMap;
-
+	
 
 	// One ipPerConnection 
 	BOOL m_bOneIPPerConnection;

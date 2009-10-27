@@ -9,5 +9,6 @@ class CSvrComm :public CUEServer
 	 CSvrComm( );
 	 ~CSvrComm( );
  public:
+	 BOOL m_bStart;
 
  };

@@ -72,8 +72,25 @@ void CSvrOptionView::OnBnClickedButtonSvrStart()
 	ASSERT(pDoc);
 	if (pDoc == NULL)
 		return;
-	pDoc->m_SvrComm.Start();
+	CWnd *pWnd = GetDlgItem(IDC_BUTTON_SVR_START);
+	ASSERT(pWnd);
+	pWnd->EnableWindow(FALSE);
 
+	if (pDoc->m_SvrComm.m_bStart == FALSE)
+	{	 
+		pDoc->m_SvrComm.m_bStart = pDoc->m_SvrComm.Start();
+		if (pDoc->m_SvrComm.m_bStart)
+		{
+			pWnd->SetWindowText(_T("Í£Ö¹"));	
+		}
+	}
+	else
+	{
+		pDoc->m_SvrComm.ShutDown();
+		pDoc->m_SvrComm.m_bStart = FALSE;
+		pWnd->SetWindowText(_T("¿ªÊ¼"));	
+	}
+	pWnd->EnableWindow();
 }
 void CSvrOptionView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
 {
