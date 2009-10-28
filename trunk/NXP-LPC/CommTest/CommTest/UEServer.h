@@ -45,10 +45,24 @@ typedef std::pair <SOCKET,ClientContext*> CONTEXT_PAIR;
 // This struct is used to past around some information about the client. 
 struct ClientContext
 {
+public:
+	ClientContext( )
+	{
+		m_nSocket = INVALID_SOCKET;
+		m_nID = 0;
+		m_nNumberOfPendlingIO = 0;
+		m_nSendSeqNum = 0;
+		m_nCurSendSeqNum = 0;
+
+		m_nReadSeqNum  = 0;
+		m_nCurReadSeqNum  = 0;
+
+
+	}
 	 // The Connection socket. 
 	SOCKET				m_nSocket;
 	 // The lock used to update and read variabels.
-	CCriticalSection m_ContextLock; 
+	CCriticalSection m_Lock; 
 	// Reserved for DisconnectClient if needed. 
 	unsigned int			m_nID; 
 	// Very Important variable used with ReleaseClientContext. (Avoids Access Violation)
