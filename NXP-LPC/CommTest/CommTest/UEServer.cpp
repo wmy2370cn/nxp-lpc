@@ -544,7 +544,7 @@ UINT CUEServer::IOWorkerThreadProc(LPVOID pParam)
 		}			
 	}
 	OutputDebugString(_T("IO服务线程退出 \n"));
-	return 0x88;
+	return 0x1;
 }
 /*********************************************************************************************************
 ** 函数名称: AssociateIncomingClientWithContext
@@ -583,7 +583,22 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 	{
 		closesocket(clientSocket);
 		return FALSE;
-	} 	
+	}
+
+	struct sockaddr from_addr;
+	memset((void*)&from_addr,0,sizeof(from_addr));
+	int nLen = sizeof(from_addr);
+
+	int nRtn = getpeername(clientSocket,&from_addr,&nLen);
+	if (nRtn != SOCKET_ERROR)
+	{
+		sockaddr_in *pAddr = (sockaddr_in *)&from_addr;
+		CString szLog;
+ 		szLog.Format(_T("收到来自%d.%d.%d.%d:%d的连接。"),pAddr->sin_addr.s_net ,pAddr->sin_addr.s_host ,
+  			pAddr->sin_addr.s_lh ,pAddr->sin_addr.s_impno, htons(pAddr->sin_port));
+  		LogString(szLog,NORMAL_STR);
+	}
+
 	// Close connection if we have reached the maximum nr of connections... 	
 	m_ContextMapLock.Lock(); // Mus lock the m_ContextMapLock Protect (m_NumberOfActiveConnections) ??
 	if(m_NumberOfActiveConnections>=m_iMaxNumConnections)
@@ -716,12 +731,9 @@ void CUEServer::ProcessIOMessage(CSvrCommPacket *pOverlapBuff, ClientContext *pC
 	case IOPostedPackage : 
 		OnPostedPackage(pContext,pOverlapBuff);
 		break;
-
-
 	default:
 		ReleaseBuffer(pOverlapBuff);
 		break;
-
 	} 
 }
 
@@ -2265,7 +2277,7 @@ void CUEServer::ShutDown()
 
 		ShutDownListenProc( );
 
-	// 	ShutDownWorkers();
+	  //	ShutDownWorkers();
 
 		// We Let the IOWorker Take care of the last packets and die. 
 		szLog = _T("Disconnecting all the Connections...");   
@@ -2351,23 +2363,35 @@ BOOL CUEServer::SetupIOWorkers()
 {
 	CWinThread* pWorkerThread=NULL;
 	unsigned int i = 0;
+	CIOWorkTask *pTask = NULL;
 	for( i=0; i<m_iMaxIOWorkers;i++)
 	{
 		pWorkerThread=AfxBeginThread(CUEServer::IOWorkerThreadProc, (void*)this,THREAD_PRIORITY_NORMAL);
+		ASSERT(pWorkerThread);
 		if(pWorkerThread)
 		{
 			pWorkerThread->m_bAutoDelete = FALSE;
 			pWorkerThread->ResumeThread();
 
-			m_IOWorkerList.push_back(pWorkerThread);
+			pTask = new CIOWorkTask;
+			pTask->m_nId = i+1;
+			pTask->m_pThread = pWorkerThread;
+
+			HANDLE pProcess = ::GetCurrentProcess();
+			ASSERT(pProcess);
+			//将句柄复制
+			BOOL bRet = ::DuplicateHandle(pProcess,pWorkerThread->m_hThread,pProcess,& (pTask->m_hTask),DUPLICATE_SAME_ACCESS,true,DUPLICATE_SAME_ACCESS);
+			//保证所复制的句柄要有效
+			ASSERT(bRet);
+
+			m_IOWorkerList.push_back(pTask);
 		}
 		else
 		{
 			CString szLog;
 		 	szLog.Format(_T("Error Couldnot start worker: %s"),ErrorCode2Text(WSAGetLastError()));
 			LogString(szLog,ERR_STR);
-		//	AppendLog(szLog); 
-			return FALSE;
+ 			return FALSE;
 		}
 	}
 	m_nIOWorkers=m_IOWorkerList.size();
@@ -2403,20 +2427,27 @@ void CUEServer::ShutDownIOWorkers()
 	CWinThread* pThread=NULL;
  
 	// Check if the IOWorkers are terminated.. 	
-	std::vector <CWinThread *>::iterator iter = m_IOWorkerList.begin();
-	 
+	std::vector <CIOWorkTask *>::iterator iter = m_IOWorkerList.begin();
 	for ( ; iter != m_IOWorkerList.end(); ++iter)
 	{
 		// Send Empty Message into CompletionPort so that the threads die. 
-	 	PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
+		PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
 		Sleep(10);
-	 	pThread = *iter;
-		ASSERT(pThread);
-		if(pThread)
+	} 
+	iter = m_IOWorkerList.begin();
+	for ( ; iter != m_IOWorkerList.end(); ++iter)
+	{
+	 //	 Send Empty Message into CompletionPort so that the threads die. 
+	 //	PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) NULL, NULL);
+	 //	Sleep(10);
+	 	pThread = (*iter)->m_pThread;
+		ASSERT(pThread && (*iter)->m_hTask);
+		if(pThread && (*iter)->m_hTask )
 		{
-			Common::WaitForThreadToTerminate(pThread->m_hThread);
+			Common::WaitForThreadToTerminate( (*iter)->m_hTask );
 			delete pThread;
 			pThread = NULL;
+			delete (*iter);
 		}
 	}
 	m_IOWorkerList.clear();

@@ -72,7 +72,7 @@ void CSvrCommDoc::Serialize(CArchive& ar)
 
 void CSvrCommDoc::StopTask( )
 {
-	 
+	m_SvrComm.ShutDown();
 }
 
 
