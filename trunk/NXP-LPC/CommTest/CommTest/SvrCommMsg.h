@@ -29,7 +29,7 @@
 #include <deque>
 
 // Determines the size of the first bytes who tells you how big the message are. (pakage heap)  
-const int MAX_PACKAGE_SIZE = 1024;
+const int MAX_PACKAGE_SIZE = 1536;
 
 class CSvrCommPacket
 {

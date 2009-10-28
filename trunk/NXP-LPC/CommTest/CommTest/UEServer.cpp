@@ -812,7 +812,7 @@ void CUEServer::NotifyNewConnection(ClientContext *pcontext)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void CUEServer::DisconnectClient(ClientContext *pContext, BOOL bGraceful)
+void CUEServer::DisconnectClient(ClientContext *pContext, BOOL bGraceful/*=FALSE*/)
 {	
 	if(pContext!=NULL)
 	{	
@@ -994,7 +994,7 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 ** 函数名称: ProcessPackage
 ** 函数名称: CUEServer::ProcessPackage
 **
-** 功能描述：   把现在收到的报文整合到前面的一个报文中
+** 功能描述：   把现在收到的报文进行整理，如果有分包的情况则整合到一个报文中
 **
 ** 输　入:  ClientContext * pContext
 ** 输　入:  DWORD dwIoSize
@@ -1015,18 +1015,21 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pOverlapB
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pOverlapBuff)
+void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrCommPacket *pPacket)
 {
+	ASSERT(dwIoSize <= MAX_PACKAGE_SIZE);
  	// We may have Several Pending reads. And therefor we have to check and handle partial Messages.  	 
 	// First handle partial packages.  
 	CSvrCommPacket *pBuffPartialMessage=NULL;
-	pBuffPartialMessage=pContext->m_pBuffOverlappedPackage;
+	pBuffPartialMessage=pContext->m_pPacket;
+	ASSERT(pBuffPartialMessage);
+	
+#if 0  //我们不在这里做应用层的组包，需要应用层的支持才可以实现，所以以下不会用到
 	// if we had a partial message in previous message process. 
 	if ( pBuffPartialMessage!=NULL )
-	{
+	{//如果有分包存在
 		// Check how big the message is...
 		UINT nUsedBuffer=pBuffPartialMessage->GetUsed();
-
 		if ( nUsedBuffer )
 		{
 			// Get The size.. 
@@ -1038,24 +1041,25 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 			{
 				nHowMuchIsNeeded=nSize-nUsedBuffer;
 				// If we need just a little data add it.. 
-				if ( nHowMuchIsNeeded<=pOverlapBuff->GetUsed() )
+				if ( nHowMuchIsNeeded<=pPacket->GetUsed() )
 				{   // Add the remain into pBuffPartialMessage. 
-					AddAndFlush(pOverlapBuff,pBuffPartialMessage,nHowMuchIsNeeded);
+					//拼到前面的一个包中
+					AddAndFlush(pPacket,pBuffPartialMessage,nHowMuchIsNeeded);
 					NotifyReceivedPackage(pBuffPartialMessage,nSize,pContext);
-					ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
-					pContext->m_pBuffOverlappedPackage=NULL;
+					ReleaseBuffer(pContext->m_pPacket);
+					pContext->m_pPacket=NULL;
 				}
 				else
 				{	// Put everything in.. 
-					AddAndFlush(pOverlapBuff,pBuffPartialMessage,pOverlapBuff->GetUsed());
+					AddAndFlush(pPacket,pBuffPartialMessage,pPacket->GetUsed());
 				}
 			}
 			else
 			{//报文太大了
-				ReleaseBuffer(pOverlapBuff);
-				pOverlapBuff=NULL;
-				ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
-				pContext->m_pBuffOverlappedPackage=NULL;
+				ReleaseBuffer(pPacket);
+				pPacket=NULL;
+				ReleaseBuffer(pContext->m_pPacket);
+				pContext->m_pPacket=NULL;
 #ifdef SIMPLESECURITY
 				AddToBanList(pContext->m_Socket);
 #endif
@@ -1064,50 +1068,52 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 			}
 		}
 	} 
-	// Process the incoming byte stream in pOverlapBuff
-	bool done;
+#endif
+
+	// Process the incoming byte stream in pPacket
+	bool done = false;
 	do 
 	{
-		UINT nUsedBuffer=pOverlapBuff->GetUsed();
+		UINT nUsedBuffer=pPacket->GetUsed();
 		done=true;	
 		if ( nUsedBuffer)
 		{
 			UINT nSize = dwIoSize;
-			//memmove(&nSize,pOverlapBuff->GetBuffer(),MIN_PACKAGE_SIZE);
+			//memmove(&nSize,pPacket->GetBuffer(),MIN_PACKAGE_SIZE);
 			// We Have a full Package..
+			ASSERT(nSize == dwIoSize);
 			if ( nSize==nUsedBuffer )
 			{
-				NotifyReceivedPackage(pOverlapBuff,nSize,pContext);
-				pOverlapBuff->EmptyUsed();
+				NotifyReceivedPackage(pPacket,nSize,pContext);
+				pPacket->EmptyUsed();
 				done = true;
 			}
 			else if ( nUsedBuffer >nSize )
-			{
+			{//这个报文里面有2封以上组成，把本报文取出
 				// We have more data 
-				CSvrCommPacket *pBuff=SplitBuffer(pOverlapBuff,nSize);
+				CSvrCommPacket *pBuff=SplitBuffer(pPacket,nSize);
 				NotifyReceivedPackage(pBuff,nSize,pContext);
 				ReleaseBuffer(pBuff);
 				// loop again, we may have another complete message in there...
 				done = false;
 			}
 			else if ( nUsedBuffer<nSize && nSize<MAX_PACKAGE_SIZE)
-			{
-				//
+			{			 
 				// The package is overlapped between this byte chunk stream and the next. 
-				//
-				pContext->m_pBuffOverlappedPackage=pOverlapBuff;
-				pOverlapBuff=NULL;
+				//本报文比较长，分成多个报文组成，需要分包
+				pContext->m_pPacket=pPacket;
+				pPacket=NULL;
 				TRACE("new Partial Buffer >\r\n");
 				done=true;
 			}
 			else if ( nSize>MAX_PACKAGE_SIZE )
-			{			
-				//pOverlapBuff->DUMP();
+			{//错误的报文			
+				//pPacket->DUMP();
 #ifdef SIMPLESECURITY
 				AddToBanList(pContext->m_nSocket);
 #endif
-				ReleaseBuffer(pOverlapBuff);
-				pOverlapBuff=NULL;
+				ReleaseBuffer(pPacket);
+				pPacket=NULL;
 				DisconnectClient(pContext);
 				break; 
 			}
@@ -1117,15 +1123,15 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 			// nUsedBuffer < MINIMUMPACKAGESIZE
 			// Add it to to the package overlapped buffer. 	
 			// Let the remain be handled later. 
-			pContext->m_pBuffOverlappedPackage=pOverlapBuff;
-			pOverlapBuff=NULL;
+			pContext->m_pPacket=pPacket;
+			pPacket=NULL;
 			done=true;
 		}
 	} while ( !done );
 	// Release the buffer if not used. 
-	if ( pOverlapBuff!=NULL )
+	if ( pPacket!=NULL )
 	{
-		ReleaseBuffer(pOverlapBuff);
+		ReleaseBuffer(pPacket);
 	}
 }
 
@@ -1161,7 +1167,7 @@ void CUEServer::OnInitialize(ClientContext *pContext, DWORD dwIoSize,CSvrCommPac
 ** 功能描述：  
 **
 ** 输　入:  ClientContext * pContext
-** 输　入:  CSvrCommPacket * pOverlapBuff
+** 输　入:  CSvrCommPacket * pPacket
 **          
 ** 输　出:   void
 **         
@@ -1177,38 +1183,38 @@ void CUEServer::OnInitialize(ClientContext *pContext, DWORD dwIoSize,CSvrCommPac
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff/*=NULL*/)
+void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pPacket/*=NULL*/)
 {
 	// issue a read request 
-	ASSERT(pContext && pOverlapBuff);
+	ASSERT(pContext && pPacket);
 	if(pContext&&!m_bShutDown)
 	{
-// 		if(pOverlapBuff==NULL)
+// 		if(pPacket==NULL)
 // 		{
-// 			pOverlapBuff=AllocateBuffer(IOReadCompleted);
-// 			if(pOverlapBuff==NULL)
+// 			pPacket=AllocateBuffer(IOReadCompleted);
+// 			if(pPacket==NULL)
 // 			{ 
 // 				DisconnectClient(pContext);
 // 				ReleaseClientContext(pContext);
 // 				return;
 // 			}
 // 		}
-		if(pOverlapBuff!=NULL)
+		if(pPacket!=NULL)
 		{
-			pOverlapBuff->SetOperation(IOReadCompleted);
-			pOverlapBuff->SetupRead();
+			pPacket->SetOperation(IOReadCompleted);
+			pPacket->SetupRead();
 			if(m_bReadInOrder)
-				MakeOrderdRead(pContext,pOverlapBuff);
+				MakeOrderdRead(pContext,pPacket);
 			else
-			{
+			{//发起一个IO请求
 				DWORD dwIoSize=0;
 				ULONG ulFlags = MSG_PARTIAL;
 				UINT nRetVal = WSARecv(pContext->m_nSocket, 
-					pOverlapBuff->GetWSABuffer(),
+					pPacket->GetWSABuffer(),
 					1,
 					&dwIoSize, 
 					&ulFlags,
-					&pOverlapBuff->m_ol, 
+					&pPacket->m_ol, 
 					NULL);
 				if ( nRetVal == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING) 
 				{
@@ -1222,7 +1228,7 @@ void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff/*=NU
 						
 						}
 					}
-					ReleaseBuffer(pOverlapBuff);
+					ReleaseBuffer(pPacket);
 					TRACE(">OnRead(%x)\r\n",pContext);
 					DisconnectClient(pContext);
 					ReleaseClientContext(pContext);
@@ -1239,7 +1245,7 @@ void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff/*=NU
 **
 ** 输　入:  ClientContext * pContext
 ** 输　入:  DWORD dwIoSize
-** 输　入:  CSvrCommPacket * pOverlapBuff
+** 输　入:  CSvrCommPacket * pPacket
 **          
 ** 输　出:   void
 **         
@@ -1248,23 +1254,23 @@ void CUEServer::OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff/*=NU
 **
 ** 作　者:  LiJin
 ** 日　期:  2009年10月28日
-** 备  注:  
+** 备  注:  此时已经收到数据了
 **-------------------------------------------------------------------------------------------------------
 ** 修改人:
 ** 日　期:
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff/*=NULL*/)
+void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pPacket/*=NULL*/)
 {
-	ASSERT(pContext && pOverlapBuff);
+	ASSERT(pContext && pPacket);
 
-	if (dwIoSize == 0||pOverlapBuff==NULL)
+	if (dwIoSize == 0||pPacket==NULL)
 	{//出错了
 		TRACE(">OnReadCompleted1(%x)\r\n",pContext);
 		DisconnectClient(pContext);
 		ReleaseClientContext(pContext);
-		ReleaseBuffer(pOverlapBuff);
+		ReleaseBuffer(pPacket);
 		return;
 	}
 	if(pContext)
@@ -1279,29 +1285,29 @@ void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrComm
 		* system process scheduling.
 		* Comment and source code Added 9/10/2005
 		*/
-		//pContext->m_Lock.Lock(); 
 	
+		//此处可能是要重新组装一下数据，确保按照顺序
 		// Insure That the Packages arrive in order. 		
 		if(m_bReadInOrder)
-			pOverlapBuff=GetNextReadBuffer(pContext,pOverlapBuff);
+			pPacket=GetNextReadBuffer(pContext,pPacket);
 
-		while(pOverlapBuff!=NULL)
+		while(pPacket!=NULL)
 		{
-			//TRACE("R> %i\r\n",pOverlapBuff->GetSequenceNumber());
+			//TRACE("R> %i\r\n",pPacket->GetSequenceNumber());
 			// Mark that we are Using the buffer..
-			pOverlapBuff->Use(dwIoSize);
+			pPacket->Use(dwIoSize);
 #ifdef TRANSFERFILEFUNCTIONALITY
 			if(!pContext->m_bFileReceivedMode)
 #endif
-				ProcessPackage(pContext,dwIoSize,pOverlapBuff);
+				ProcessPackage(pContext,dwIoSize,pPacket);
 #ifdef TRANSFERFILEFUNCTIONALITY
 			else
-				AddToFile(pContext,dwIoSize,pOverlapBuff);
+				AddToFile(pContext,dwIoSize,pPacket);
 #endif
 			IncreaseReadSeqNum(pContext);
-			pOverlapBuff=NULL;
+			pPacket=NULL;
 			if(m_bReadInOrder)
-				pOverlapBuff=GetNextReadBuffer(pContext);
+				pPacket=GetNextReadBuffer(pContext);
 		}
 		ARead(pContext);
 	}
@@ -1446,7 +1452,7 @@ void CUEServer::OnPostedPackage(ClientContext *pContext, CSvrCommPacket *pOverla
 * Returns The in order Buffer or NULL if not processed. 
 * Same as GetReadBuffer
 */
-CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommPacket *pBuff/*=NULL*/)
+CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommPacket *pPacket/*=NULL*/)
 {
 	ASSERT(pContext);
 	// We must have a ClientContext to begin with. 
@@ -1457,17 +1463,17 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 
 	pContext->m_Lock.Lock();
 	// We have a buffer
-	if (pBuff!=NULL)
+	if (pPacket!=NULL)
 	{
 		// Is the Buffer inorder ? 
-		unsigned int iBufferSequenceNumber=pBuff->m_nSeqNum;
+		unsigned int iBufferSequenceNumber=pPacket->m_nSeqNum;
 		if (iBufferSequenceNumber==pContext->m_nCurReadSeqNum)
 		{
 			//TRACE("GetNextReadBuffer()_1: m_ReadSequenceNumber= %i, m_CurrentReadSequenceNumber=%i\r\n",pContext->m_ReadSequenceNumber,pContext->m_CurrentReadSequenceNumber); 
 			// Unlock the Context Lock. 
 			pContext->m_Lock.Unlock();
 			// return the Buffer to be processed. 
-			return pBuff;
+			return pPacket;
 		}
 		TRACE("OutOforderRead: SS: %i, CurrentS: %i, pkg: %i\r\n",pContext->m_nReadSeqNum,pContext->m_nCurReadSeqNum,iBufferSequenceNumber); 
 		// Check if we already have a such key. 		 
@@ -1475,14 +1481,14 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 		iter = pContext->m_ReadBufferMap.find( iBufferSequenceNumber );
 		if (iter != pContext->m_ReadBufferMap.end())
 		{//找到了，重复
-			ASSERT(FALSE);
+		//	ASSERT(FALSE);
 			pContext->m_Lock.Unlock();
 			return NULL;
 		}
 		//没有重复	 
 		// Add it to the Map. 
 		// What if this fail?
-		pContext->m_ReadBufferMap.insert(BUFFER_PAIR (iBufferSequenceNumber, pBuff) );
+		pContext->m_ReadBufferMap.insert(BUFFER_PAIR (iBufferSequenceNumber, pPacket) );
 	}
 
 	// return the Ordered Buffer. 
@@ -1490,9 +1496,11 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 	iter = pContext->m_ReadBufferMap.find( pContext->m_nCurReadSeqNum );
 	if (iter != pContext->m_ReadBufferMap.end())
 	{//找到
-		pContext->m_ReadBufferMap.erase(iter);
-		TRACE("GetNextReadBuffer()_2: m_ReadSequenceNumber= %i, m_CurrentReadSequenceNumber=%i\r\n",pContext->m_nReadSeqNum,pContext->m_nCurReadSeqNum); 
 		pRetBuff = iter->second;
+		ASSERT(pRetBuff);
+
+		pContext->m_ReadBufferMap.erase(iter);
+		TRACE("GetNextReadBuffer()_2: m_ReadSequenceNumber= %i, m_CurrentReadSequenceNumber=%i\r\n",pContext->m_nReadSeqNum,pContext->m_nCurReadSeqNum); 		
 	}
 	pContext->m_Lock.Unlock();
 	return pRetBuff;
@@ -1501,7 +1509,7 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 * Used to avoid inorder packaging. 
 * Returns The inorder Buffer or NULL if not processed. 
 */
-CSvrCommPacket* CUEServer::GetNextSendBuffer(ClientContext *pContext,CSvrCommPacket *pBuff)
+CSvrCommPacket* CUEServer::GetNextSendBuffer(ClientContext *pContext,CSvrCommPacket *pBuff/*=NULL*/)
 {
 	ASSERT(pContext);
 	// We must have a ClientContext to begin with. 
@@ -1669,7 +1677,7 @@ BOOL CUEServer::ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 ** 功能描述： Makes a asynchrony Read by posting a IORead message into completion port who invoces a Onread.  
 **
 ** 输　入:  ClientContext * pContext
-** 输　入:  CSvrCommPacket * pOverlapBuff
+** 输　入:  CSvrCommPacket * pPacket
 **          
 ** 输　出:   BOOL
 **         
@@ -1685,28 +1693,28 @@ BOOL CUEServer::ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-BOOL CUEServer::ARead(ClientContext *pContext, CSvrCommPacket *pOverlapBuff /*=NULL*/)
+BOOL CUEServer::ARead(ClientContext *pContext, CSvrCommPacket *pPacket /*=NULL*/)
 {
 	ASSERT(pContext);
 	if (pContext == NULL)
 		return FALSE;
 	ASSERT(pContext->m_nSocket!=INVALID_SOCKET && pContext->m_nSocket!=0);
 	if(pContext->m_nSocket!=INVALID_SOCKET && pContext->m_nSocket!=0)
-	{
-		if(pOverlapBuff==NULL) 
-			pOverlapBuff=AllocateBuffer(IORead);
+	{//从系统申请一个 报文缓冲区，然后投递给IO服务工作线程
+		if(pPacket==NULL) 
+			pPacket=AllocateBuffer(IORead);
 
-		if(pOverlapBuff==NULL) 
+		if(pPacket==NULL) 
 		{			
 			ReleaseClientContext(pContext);
 			return FALSE;
 		}
 
-		pOverlapBuff->SetOperation(IORead);
-		BOOL bSuccess = PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) pContext, &pOverlapBuff->m_ol);  	
+		pPacket->SetOperation(IORead);
+		BOOL bSuccess = PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) pContext, &pPacket->m_ol);  	
 		if ( (!bSuccess && GetLastError( ) != ERROR_IO_PENDING))
 		{            
-			ReleaseBuffer(pOverlapBuff);
+			ReleaseBuffer(pPacket);
 			TRACE(">ARead(%x)\r\n",pContext);
 			ReleaseClientContext(pContext);
 			return FALSE;
@@ -1715,7 +1723,7 @@ BOOL CUEServer::ARead(ClientContext *pContext, CSvrCommPacket *pOverlapBuff /*=N
 	else
 	{
 		TRACE(">ARead2(%x)\r\n",pContext);
-		ReleaseBuffer(pOverlapBuff);
+		ReleaseBuffer(pPacket);
 		ReleaseClientContext(pContext);// Take care of it.
 		return FALSE;
 	}
@@ -1749,7 +1757,7 @@ void CUEServer::FreeClientContext()
 			closesocket( pContext->m_nSocket );
 		}
 		pContext->m_nSocket = INVALID_SOCKET;
-		ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
+		ReleaseBuffer(pContext->m_pPacket);
 #ifdef TRANSFERFILEFUNCTIONALITY		
 		if (pContext->m_File.m_hFile != (unsigned int)INVALID_HANDLE_VALUE)
 		{
@@ -1826,7 +1834,7 @@ ClientContext* CUEServer::AllocateContext()
 	pContext->m_nNumberOfPendlingIO=0;
 	pContext->m_nSendSeqNum=pContext->m_nReadSeqNum=0;
 	pContext->m_nCurSendSeqNum=pContext->m_nCurReadSeqNum=0;
-	pContext->m_pBuffOverlappedPackage=NULL;
+	pContext->m_pPacket=NULL;
 
 	if ( !pContext->m_SendBufferMap.empty() )
 		pContext->m_SendBufferMap.clear();
@@ -1895,7 +1903,11 @@ inline BOOL CUEServer::ReleaseClientContext(ClientContext *pContext)
 
 			pContext->m_Lock.Lock();
 			NotifyContextRelease(pContext);
-			ReleaseBuffer(pContext->m_pBuffOverlappedPackage);
+			if (pContext->m_pPacket)
+			{
+				ReleaseBuffer(pContext->m_pPacket);
+			}
+			
 #ifdef TRANSFERFILEFUNCTIONALITY		
 			if (pContext->m_File.m_hFile != (unsigned int)INVALID_HANDLE_VALUE)
 			{
@@ -2128,7 +2140,7 @@ void CUEServer::NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,Cli
 
 
 
-void CUEServer::OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff)
+void CUEServer::OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff/*=NULL*/)
 {
 	ASSERT(pContext && pOverlapBuff);
 	if(pContext)
@@ -2171,7 +2183,7 @@ data. If the server knows that clients send data in bursts, then once the
 zero-byte receive completes, it may post one or more overlapped receives 
 in case the client sends a substantial amount of data 
 (greater than the per-socket receive buffer that is 8 KB by default). */
-void CUEServer::OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff)
+void CUEServer::OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff/*=NULL*/)
 {
 	ASSERT(pContext && pOverlapBuff);
 	if(pContext)
@@ -2377,7 +2389,7 @@ void CUEServer::DisconnectAll()
 			ASSERT(*iter);
 			if (*iter)
 			{
-				TRACE("pBuff(%x)->GetOperation()=%i\r\n",*iter,(*iter)->GetOperation());
+				TRACE("pPacket(%x)->GetOperation()=%i\r\n",*iter,(*iter)->GetOperation());
 			}
 		}	 
 	}
