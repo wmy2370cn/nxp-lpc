@@ -31,7 +31,7 @@
 #include <hash_map>
 #include <string>
 
-const int MAX_SEQ_NUM = 5001;
+const int MAX_SEQ_NUM = 10;
 
 struct ClientContext; 
 
@@ -53,11 +53,9 @@ public:
 		m_nNumberOfPendlingIO = 0;
 		m_nSendSeqNum = 0;
 		m_nCurSendSeqNum = 0;
-
 		m_nReadSeqNum  = 0;
 		m_nCurReadSeqNum  = 0;
-
-
+		m_pPacket = NULL;
 	}
 	 // The Connection socket. 
 	SOCKET				m_nSocket;
@@ -66,7 +64,7 @@ public:
 	// Reserved for DisconnectClient if needed. 
 	unsigned int			m_nID; 
 	// Very Important variable used with ReleaseClientContext. (Avoids Access Violation)
-	int					m_nNumberOfPendlingIO; 	 
+	unsigned int	    	m_nNumberOfPendlingIO; 	 
 	// Send in order variables. 
 	unsigned int					m_nSendSeqNum;
 	unsigned int					m_nCurSendSeqNum;
@@ -88,7 +86,7 @@ public:
 
 	// Package Overlapped Buffer..
 	// Used to get a complete package when we have several pending reads. 
-	CSvrCommPacket* m_pBuffOverlappedPackage;	
+	CSvrCommPacket* m_pPacket;	
 
 	// Extra info you can put what ever you whant here.. 
 	CString m_sReceived;
@@ -195,10 +193,7 @@ protected:
 	inline ClientContext* AllocateContext();
 
 
-	// Used to avoid SYSTEM Blocking Bugg. 
-	inline void OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
-	inline void OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
-
+	
 	// Process the internal messages. 
 	inline void ProcessIOMessage(CSvrCommPacket *pOverlapBuff, ClientContext* pContext, DWORD dwSize);	
 	// Process received Packages 
@@ -241,6 +236,8 @@ protected:
 
 	// Unlocks the memory used by the overlapped IO, to avoid WSAENOBUFS problem. 
 	inline BOOL AZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
+	
+	inline void OnPostedPackage(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
 
 	// Used by IO Workers. 
 	inline void OnWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
@@ -248,7 +245,9 @@ protected:
 	inline void OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
 	inline void OnRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
 	inline void OnInitialize(ClientContext* pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
-	inline void OnPostedPackage(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
+// Used to avoid SYSTEM Blocking Bugg. 
+	inline void OnZeroByteReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff=NULL);
+	inline void OnZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
 
 	// Do a Asyncorn Send. Never call this function outside of Notifyxxxx(...) functions. 
 	inline BOOL ASend(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
