@@ -94,6 +94,24 @@ enum IOType
 	IOPostedPackage, // Used to post Packages into IOCP port. 
 };
 
+class CIOWorkTask
+{
+public:
+	CIOWorkTask()
+	{
+		m_nId = 0;
+		m_pThread = NULL;
+		m_hTask = NULL;
+	}
+	~CIOWorkTask( )
+	{
+
+	}
+public:
+	unsigned int m_nId;
+	CWinThread *m_pThread;
+	HANDLE    m_hTask;
+};
 
 class CUEServer
 {
@@ -255,7 +273,7 @@ private:
 	HANDLE m_hListenHandle;
 
 	// IO Worker Thread list. 
-	std:: vector <CWinThread *> m_IOWorkerList;
+	std:: vector <CIOWorkTask *> m_IOWorkerList;
 	// Number of IOWorkers running..
 	unsigned int m_nIOWorkers;
 	// Number of IOWorker. 
