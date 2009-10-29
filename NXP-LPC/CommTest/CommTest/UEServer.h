@@ -31,7 +31,7 @@
 #include <hash_map>
 #include <string>
 
-const int MAX_SEQ_NUM = 10;
+const int MAX_SEQ_NUM = 6;
 
 struct ClientContext; 
 
@@ -191,6 +191,9 @@ protected:
 	inline BOOL AddClientContext(ClientContext* mp);
 	// Allocates a ClientContext and return a pointer ot it. 
 	inline ClientContext* AllocateContext();
+	// Used to clean up the Send and receive hash map. 
+	// Deletes the ClientContext or just put it in the FreeClientContext list. 
+	inline BOOL ReleaseClientContext(ClientContext *pContext);
 
 
 	
@@ -199,18 +202,12 @@ protected:
 	// Process received Packages 
 	inline void ProcessPackage(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
 
-	BOOL ReleaseBuffer(CSvrCommPacket *pBuff);
-
+	
 	// Release buffers. 
 	inline void ReleaseBufferMap(BUFFER_MAP *map);
 
-	// Used to clean up the Send and receive hash map. 
-	// Deletes the ClientContext or just put it in the FreeClientContext list. 
-	inline BOOL ReleaseClientContext(ClientContext *pContext);
-	// Aborts A socket without removing it from contextmap.	
-	inline void AbortiveClose(ClientContext *mp);
-
-
+		// Aborts A socket without removing it from contextmap.	
+	inline void AbortiveClose(ClientContext *mp); 
 
 	volatile unsigned int m_NumberOfActiveConnections;
 	// Called when a new connection have been established.. 
@@ -227,12 +224,10 @@ protected:
 	virtual void NotifyContextRelease(ClientContext *pContext);
 	// An Write have been Completed
 	virtual inline void NotifyWriteCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
-	// Used for log
-//	virtual void AppendLog(CString msg);
-
+ 
 	// Creates a new buffer or returns a buffer from the FreeBufferList and configure the buffer. 
 	CSvrCommPacket* AllocateBuffer(int nType);
-
+	BOOL ReleaseBuffer(CSvrCommPacket *pBuff);
 
 	// Unlocks the memory used by the overlapped IO, to avoid WSAENOBUFS problem. 
 	inline BOOL AZeroByteRead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff);
