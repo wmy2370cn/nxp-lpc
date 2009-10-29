@@ -51,10 +51,8 @@ public:
 		m_nSocket = INVALID_SOCKET;
 		m_nID = 0;
 		m_nNumberOfPendlingIO = 0;
-		m_nSendSeqNum = 0;
-		m_nCurSendSeqNum = 0;
-		m_nReadSeqNum  = 0;
-		m_nCurReadSeqNum  = 0;
+	 	m_nCurSendSeqNum = 0;
+	 	m_nCurReadSeqNum  = 0;
 		m_pPacket = NULL;
 	}
 	 // The Connection socket. 
@@ -66,15 +64,11 @@ public:
 	// Very Important variable used with ReleaseClientContext. (Avoids Access Violation)
 	unsigned int	    	m_nNumberOfPendlingIO; 	 
 	// Send in order variables. 
-	unsigned int					m_nSendSeqNum;
-	unsigned int					m_nCurSendSeqNum;
-	BUFFER_MAP						m_SendBufferMap;
-	 
+ 	unsigned int					m_nCurSendSeqNum;
+ 	 
 	// Read in order variables
- 	unsigned int					m_nReadSeqNum ;
-	unsigned int					m_nCurReadSeqNum ;
-	BUFFER_MAP						m_ReadBufferMap;
- 
+ 	unsigned int					m_nCurReadSeqNum ;
+  
 	// File transfer stuff. 
 #ifdef TRANSFERFILEFUNCTIONALITY	
 	CFile m_File;
@@ -204,7 +198,7 @@ protected:
 
 	
 	// Release buffers. 
-	inline void ReleaseBufferMap(BUFFER_MAP *map);
+//	inline void ReleaseBufferMap(BUFFER_MAP *map);
 
 		// Aborts A socket without removing it from contextmap.	
 	inline void AbortiveClose(ClientContext *mp); 
@@ -249,11 +243,7 @@ protected:
 	// Do a Asyncorn Read.
 	inline BOOL ARead(ClientContext *pContext,CSvrCommPacket *pOverlapBuff=NULL);
 
-		// Used to  avoid inorder packages (if you are useing more than one I/O Worker Thread)  
-	inline CSvrCommPacket * GetNextReadBuffer(ClientContext *pContext,CSvrCommPacket *pBuff=NULL);
-	// Used to  avoid inorder packages (if you are useing more than one I/O Worker Thread)  
-	inline CSvrCommPacket* GetNextSendBuffer(ClientContext *pContext,CSvrCommPacket *pBuff=NULL);
-	inline void IncreaseSendSeqNum(ClientContext *pContext);
+  	inline void IncreaseSendSeqNum(ClientContext *pContext);
 	inline void IncreaseReadSeqNum(ClientContext *pContext);
 
 	// Used to avoid inorder Read packages
@@ -314,7 +304,7 @@ private:
 	// Number of Pendling Reads, used for performance
 	int m_iNumberOfPendlingReads;
 	// When Set to TRUE Reads are processed In Order.. 
-	BOOL m_bReadInOrder;
+//	BOOL m_bReadInOrder;
 	// Make the sends in order. 
-	BOOL m_bSendInOrder;
+//	BOOL m_bSendInOrder;
 };
