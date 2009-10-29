@@ -77,6 +77,7 @@ CUEServer::~CUEServer()
 ********************************************************************************************************/
 void CUEServer::FreeBuffers()
 {
+	OutputDebugString(_T("回收报文内存.... \n"));
 	//Free the buffer in the Free buffer list.. 
 	CSvrCommPacket *pBuff=NULL;
 	std::list <CSvrCommPacket *> ::iterator iter;
@@ -821,8 +822,9 @@ void CUEServer::DisconnectClient(ClientContext *pContext, BOOL bGraceful/*=FALSE
 		pContext->m_Lock.Unlock();
 		// If we have an active  socket close it. 
 		if(bDisconnect)
-		{			
-			stdext::hash_map <SOCKET,ClientContext*>::iterator iter ;
+		{	
+			CONTEXT_ITER iter ;
+		//	stdext::hash_map <SOCKET,ClientContext*>::iterator iter ;
 			// Remove it From m_ContextMap. 
 			m_ContextMapLock.Lock();
 			//Remove it from the m_ContextMapLock,
@@ -1022,7 +1024,6 @@ void CUEServer::ProcessPackage(ClientContext *pContext, DWORD dwIoSize, CSvrComm
 	// First handle partial packages.  
 	CSvrCommPacket *pBuffPartialMessage=NULL;
 	pBuffPartialMessage=pContext->m_pPacket;
-	ASSERT(pBuffPartialMessage);
 	
 #if 0  //我们不在这里做应用层的组包，需要应用层的支持才可以实现，所以以下不会用到
 	// if we had a partial message in previous message process. 
@@ -1299,6 +1300,7 @@ void CUEServer::OnReadCompleted(ClientContext *pContext, DWORD dwIoSize,CSvrComm
 #ifdef TRANSFERFILEFUNCTIONALITY
 			if(!pContext->m_bFileReceivedMode)
 #endif
+				//收到的数据进行打包整理处理
 				ProcessPackage(pContext,dwIoSize,pPacket);
 #ifdef TRANSFERFILEFUNCTIONALITY
 			else
@@ -1447,11 +1449,30 @@ void CUEServer::OnPostedPackage(ClientContext *pContext, CSvrCommPacket *pOverla
 	}
 	ReleaseClientContext(pContext);// Exit IOLoop	
 }
-/*
-* Used to avoid in order packaging. 
-* Returns The in order Buffer or NULL if not processed. 
-* Same as GetReadBuffer
-*/
+/*********************************************************************************************************
+** 函数名称: GetNextReadBuffer
+** 函数名称: CUEServer::GetNextReadBuffer
+**
+** 功能描述：  
+**
+** 输　入:  ClientContext * pContext
+** 输　入:  CSvrCommPacket * pPacket
+**          
+** 输　出:   CSvrCommPacket *
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月29日
+** 备  注:  Used to avoid in order packaging. Returns The in order Buffer or NULL if not processed. 
+            Same as GetReadBuffer   
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommPacket *pPacket/*=NULL*/)
 {
 	ASSERT(pContext);
@@ -1466,32 +1487,31 @@ CSvrCommPacket * CUEServer::GetNextReadBuffer(ClientContext *pContext, CSvrCommP
 	if (pPacket!=NULL)
 	{
 		// Is the Buffer inorder ? 
-		unsigned int iBufferSequenceNumber=pPacket->m_nSeqNum;
-		if (iBufferSequenceNumber==pContext->m_nCurReadSeqNum)
-		{
+		unsigned int nBuffSeqNum=pPacket->m_nSeqNum;
+		if (nBuffSeqNum==pContext->m_nCurReadSeqNum)
+		{//如果当前读取的报文顺序号，与参数的顺序号是一致的
 			//TRACE("GetNextReadBuffer()_1: m_ReadSequenceNumber= %i, m_CurrentReadSequenceNumber=%i\r\n",pContext->m_ReadSequenceNumber,pContext->m_CurrentReadSequenceNumber); 
 			// Unlock the Context Lock. 
 			pContext->m_Lock.Unlock();
 			// return the Buffer to be processed. 
 			return pPacket;
 		}
-		TRACE("OutOforderRead: SS: %i, CurrentS: %i, pkg: %i\r\n",pContext->m_nReadSeqNum,pContext->m_nCurReadSeqNum,iBufferSequenceNumber); 
+		//没有按顺序读
+		TRACE("OutOforderRead: SS: %i, CurrentS: %i, pkg: %i\r\n",pContext->m_nReadSeqNum,pContext->m_nCurReadSeqNum,nBuffSeqNum); 
 		// Check if we already have a such key. 		 
 		pRetBuff=NULL;
-		iter = pContext->m_ReadBufferMap.find( iBufferSequenceNumber );
+		iter = pContext->m_ReadBufferMap.find( nBuffSeqNum );
 		if (iter != pContext->m_ReadBufferMap.end())
 		{//找到了，重复
-		//	ASSERT(FALSE);
+		 	ASSERT(FALSE);
 			pContext->m_Lock.Unlock();
 			return NULL;
 		}
-		//没有重复	 
-		// Add it to the Map. 
-		// What if this fail?
-		pContext->m_ReadBufferMap.insert(BUFFER_PAIR (iBufferSequenceNumber, pPacket) );
+		//没有重复	 添加到表中
+	 	pContext->m_ReadBufferMap.insert(BUFFER_PAIR (nBuffSeqNum, pPacket) );
 	}
 
-	// return the Ordered Buffer. 
+	// return the Ordered Buffer. 找下一个顺序号的包
 	pRetBuff=NULL;
 	iter = pContext->m_ReadBufferMap.find( pContext->m_nCurReadSeqNum );
 	if (iter != pContext->m_ReadBufferMap.end())
@@ -1608,7 +1628,11 @@ void CUEServer::MakeOrderdRead(ClientContext *pContext, CSvrCommPacket *pBuff)
 		}
 		else
 		{
-			pContext->m_nReadSeqNum=(pContext->m_nReadSeqNum+1)%MAX_SEQ_NUM;
+			pContext->m_nReadSeqNum ++;
+			if (pContext->m_nReadSeqNum > MAX_SEQ_NUM)
+			{
+				pContext->m_nReadSeqNum = 1;
+			}
 			//pContext->m_Lock.Unlock();
 		}
 	}
@@ -1780,7 +1804,7 @@ void CUEServer::FreeClientContext()
 	
 	for (iter_free = m_arrFreeContext.begin(); iter_free != m_arrFreeContext.end();++ iter_free)
 	{
-		(*iter_free)->m_nSocket = INVALID_SOCKET;
+	//	(*iter_free)->m_nSocket = INVALID_SOCKET;
 		delete *iter_free;
 	}
 	m_arrFreeContext.clear();
@@ -1832,8 +1856,8 @@ ClientContext* CUEServer::AllocateContext()
 	pContext->m_nID=0;
 	pContext->m_nSocket=INVALID_SOCKET;
 	pContext->m_nNumberOfPendlingIO=0;
-	pContext->m_nSendSeqNum=pContext->m_nReadSeqNum=0;
-	pContext->m_nCurSendSeqNum=pContext->m_nCurReadSeqNum=0;
+	pContext->m_nSendSeqNum=pContext->m_nReadSeqNum=1;
+	pContext->m_nCurSendSeqNum=pContext->m_nCurReadSeqNum=1;
 	pContext->m_pPacket=NULL;
 
 	if ( !pContext->m_SendBufferMap.empty() )
@@ -2237,7 +2261,12 @@ void CUEServer::IncreaseReadSeqNum(ClientContext *pContext)
 	{
 		pContext->m_Lock.Lock();
 		// increase or reset the sequence number 
-		pContext->m_nCurReadSeqNum=(pContext->m_nCurReadSeqNum+1)%MAX_SEQ_NUM;
+		//pContext->m_nCurReadSeqNum=(pContext->m_nCurReadSeqNum+1)%MAX_SEQ_NUM;
+		pContext->m_nCurReadSeqNum ++;
+		if (pContext->m_nCurReadSeqNum >  MAX_SEQ_NUM)
+		{
+			pContext->m_nCurReadSeqNum = 1;
+		}
 		pContext->m_Lock.Unlock();
 	}
 }
@@ -2249,7 +2278,12 @@ void CUEServer::IncreaseSendSeqNum(ClientContext *pContext)
 	{
 		pContext->m_Lock.Lock();
 		// increase or reset the sequence number 
-		pContext->m_nCurSendSeqNum=(pContext->m_nCurSendSeqNum+1)%MAX_SEQ_NUM;
+	//	pContext->m_nCurSendSeqNum=(pContext->m_nCurSendSeqNum+1)%MAX_SEQ_NUM;
+		pContext->m_nCurSendSeqNum ++;
+		if(pContext->m_nCurSendSeqNum >  MAX_SEQ_NUM)
+		{
+			pContext->m_nCurSendSeqNum = 1;
+		}
 		pContext->m_Lock.Unlock();
 	}
 }
@@ -2399,14 +2433,29 @@ void CUEServer::DisconnectAll()
 	}
 	m_BufferListLock.Unlock();
 #endif
-} 
-/*
-* Closes the Server and frees the memory. 
-* We are leaking some small amount of memory (OVERLAPPEDSTRUKTUR)
-*/
-
-// Error in Disconnect.. (some how we have to wait until the Competionport is finished with the data). 
-
+}  
+/*********************************************************************************************************
+** 函数名称: ShutDown
+** 函数名称: CUEServer::ShutDown
+**
+** 功能描述：  Closes the Server and frees the memory. 
+**            We are leaking some small amount of memory (OVERLAPPEDSTRUKTUR)  
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年10月29日
+** 备  注:  
+          Error in Disconnect.. (some how we have to wait until the Competionport is finished with the data). 
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void CUEServer::ShutDown()
 {
 	CString szLog;
