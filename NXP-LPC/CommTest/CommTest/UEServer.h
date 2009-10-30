@@ -208,9 +208,7 @@ protected:
 	virtual void NotifyNewClientContext(ClientContext *pContext);
 	// A client have Disconnected. 
 	virtual void NotifyDisconnectedClient(ClientContext *pContext);
-	// File send/Transefer Completed. 
-	virtual void NotifyFileCompleted(ClientContext *pcontext);
-	// A Package have arrived. 
+ 	// A Package have arrived. 
 	virtual inline void NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,ClientContext *pContext);
 	// An ClientContext is going to be deleted insert more cleanup code if nesseary.  
 	virtual void NotifyContextRelease(ClientContext *pContext);
