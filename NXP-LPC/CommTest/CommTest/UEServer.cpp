@@ -28,7 +28,6 @@
 #include "UEServer.h"
 #include <algorithm>
 #include "LogDataApi.h"
-#include  "boost/memory.hpp"
 #include "Common.h"
 
 CUEServer::CUEServer()
@@ -1581,7 +1580,6 @@ ClientContext* CUEServer::AllocateContext()
 		{
 			pContext = m_arrFreeContext.back();
 			m_arrFreeContext.pop_back();
-		//	pContext=(ClientContext *)m_FreeContextList.RemoveHead();
 		}
 		m_FreeContextListLock.Unlock();
 	}

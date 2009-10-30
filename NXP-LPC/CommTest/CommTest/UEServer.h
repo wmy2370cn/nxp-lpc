@@ -194,11 +194,7 @@ protected:
 	// Process received Packages 
 	inline void ProcessPackage(ClientContext *pContext, DWORD dwIoSize,CSvrCommPacket *pOverlapBuff);
 
-	
-	// Release buffers. 
-//	inline void ReleaseBufferMap(BUFFER_MAP *map);
-
-		// Aborts A socket without removing it from contextmap.	
+	// Aborts A socket without removing it from contextmap.	
 	inline void AbortiveClose(ClientContext *mp); 
 
 	volatile unsigned int m_NumberOfActiveConnections;
@@ -299,8 +295,4 @@ private:
 	BOOL m_bOneIPPerConnection;
 	// Number of Pendling Reads, used for performance
 	int m_iNumberOfPendlingReads;
-	// When Set to TRUE Reads are processed In Order.. 
-//	BOOL m_bReadInOrder;
-	// Make the sends in order. 
-//	BOOL m_bSendInOrder;
 };

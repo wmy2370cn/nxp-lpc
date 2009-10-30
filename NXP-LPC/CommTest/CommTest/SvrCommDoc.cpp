@@ -68,27 +68,23 @@ void CSvrCommDoc::Serialize(CArchive& ar)
 
 
 // CSvrCommDoc 命令
- void CSvrCommDoc::StartTask( )
-{
-	 
-}
 
-void CSvrCommDoc::StopTask( )
-{
-	m_SvrComm.ShutDown();
-}
 
 
 void CSvrCommDoc::OnCloseDocument()
 {
 	// TODO: 在此添加专用代码和/或调用基类
-	StopTask();
+	m_SvrComm.StopTask();
 
 	CDocument::OnCloseDocument();
 }
 
-void CSvrCommDoc::OpenSvrCommFrm( )
+void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 {
+	ASSERT(pClient);
+	if (pClient == NULL)
+		return;
+
 	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
 	ASSERT(pFrame);
 	if (pFrame == NULL)
@@ -133,7 +129,6 @@ void CSvrCommDoc::OpenSvrCommFrm( )
 	pChildWnd->SetHandles(hMenu,hAccelTable);
 
 	pChildWnd->InitialUpdateFrame(NULL, TRUE);		
-//	pDoc->m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
-//	pFrame->MDIActivate( pDoc->m_pDecodeFrm  ); 	
-
+	pClient->m_pFrm = (CSvrCommFrm *)pChildWnd; 
+ 	pFrame->MDIActivate( pClient->m_pFrm ); 	
 }

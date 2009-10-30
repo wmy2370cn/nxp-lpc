@@ -27,7 +27,14 @@ void CSvrListGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CBCGPGridCtrl::OnLButtonDblClk(nFlags, point);
 	if (GetParent() && GetParent()->IsKindOf(RUNTIME_CLASS(CSvrListView)))
 	{
-		((CSvrListView*)GetParent())->OnDblclkGrid( );
+		CBCGPGridRow* pSel = GetCurSel ();
+		if (pSel)
+		{
+			DWORD_PTR pData = pSel->GetData();
+			((CSvrListView*)GetParent())->OnDblclkGrid(pData);
+
+		}
+
 	}
 }
 
@@ -119,7 +126,7 @@ void CSvrListView::OnSize(UINT nType, int cx, int cy)
 	// TODO: 在此处添加消息处理程序代码
 }
 
-void CSvrListView::OnDblclkGrid( ) 
+void CSvrListView::OnDblclkGrid(DWORD_PTR pClient ) 
 {
 	CSvrCommDoc *pDoc = (CSvrCommDoc *)GetDocument();
 	ASSERT(pDoc);
@@ -127,8 +134,7 @@ void CSvrListView::OnDblclkGrid( )
 		return;
 
 	//TEST
-	pDoc->OpenSvrCommFrm();
-
+ 	pDoc->OpenSvrCommFrm((CClientNode *)pClient);
 }
 
 void CSvrListView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
