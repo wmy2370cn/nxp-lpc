@@ -20,6 +20,7 @@ public:
 	void StartTask( );
 	//Õ£÷π ’∑¢
 	void StopTask( );
+	void OpenSvrCommFrm( );
 private:
 
 
