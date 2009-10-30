@@ -207,15 +207,17 @@ BEGIN
     END
 END
 
-IDR_OUTPUT_POPUP MENU 
+IDR_POPUP_OUTPUT MENU 
 BEGIN
-    POPUP "弹出项"
+    POPUP "调试输出"
     BEGIN
-        MENUITEM "新建(&N)",                      ID_EDIT_NEW
-        MENUITEM "删除(&D)",                      ID_EDIT_DELETE
+        MENUITEM "复制",                          ID_OUTPUT_COPY
+        MENUITEM "剪切",                          ID_OUTPUT_CUT
+        MENUITEM "全部清除",                        ID_OUTPUT_CLEAR
         MENUITEM SEPARATOR
-        MENUITEM "全部展开(&X)",                    ID_TREE_EXPAND
-        MENUITEM "全部折叠(&L)",                    ID_TREE_COLLAPSE
+        MENUITEM "自动滚动",                        ID_OUTPUT_AUTOSCROLL
+        MENUITEM SEPARATOR
+        MENUITEM "另存为",                         ID_OUTPUT_SAVEAS
     END
 END
 
@@ -1012,6 +1014,15 @@ END
 STRINGTABLE 
 BEGIN
     IDR_PACKET_DECODE       "报文解码"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_OUTPUT_COPY          "复制选中的内容\n复制"
+    ID_OUTPUT_CUT           "剪切选中的内容\n剪切"
+    ID_OUTPUT_CLEAR         "清除全部内容\n清除"
+    ID_OUTPUT_AUTOSCROLL    "自动滚动\n滚动"
+    ID_OUTPUT_SAVEAS        "将所有内容另存到文本文件中\n另存为"
 END
 
 #endif    // 中文(中华人民共和国) resources

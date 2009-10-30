@@ -54,7 +54,7 @@
 #define IDR_MENU_IMAGES                 179
 #define IDB_MENU_IMAGES_24              180
 #define ID_TOOLS_MACRO                  181
-#define IDR_OUTPUT_POPUP                182
+#define IDR_POPUP_OUTPUT                182
 #define IDR_PROPERTIES                  183
 #define IDB_PROPERTIES_HC               184
 #define ID_WORKSPACE_NEW_TEST           185
@@ -164,6 +164,11 @@
 #define ID_MDI_MOVE_TO_PREV_GROUP       2840
 #define ID_MDI_CANCEL                   2841
 #define ID_MDI_MOVE_TO_NEXT_GROUP       2842
+#define ID_OUTPUT_COPY                  3000
+#define ID_OUTPUT_CUT                   3001
+#define ID_OUTPUT_CLEAR                 3002
+#define ID_OUTPUT_AUTOSCROLL            3003
+#define ID_OUTPUT_SAVEAS                3004
 #define XT_IDC_DRAGCOPY                 4133
 #define XT_IDC_DRAGMOVE                 4134
 #define XT_IDC_DRAGNONE                 4135
@@ -175,7 +180,6 @@
 #define ID_EDIT_DELETE                  32851
 #define ID_TREE_EXPAND                  32852
 #define ID_TREE_COLLAPSE                32853
-#define ID_POPUP_32856                  32856
 #define ID_PACKET_DECODE                32857
 #define ID_PACKET_DETAIL                32858
 
@@ -184,7 +188,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        325
-#define _APS_NEXT_COMMAND_VALUE         32859
+#define _APS_NEXT_COMMAND_VALUE         32864
 #define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           316
 #endif
