@@ -1799,15 +1799,7 @@ void CUEServer::NotifyContextRelease(ClientContext *pContext)
 {
 	// add some extra clean up here. 
 }
-
-void CUEServer::NotifyFileCompleted(ClientContext *pcontext)
-{
-	// pcontext is locked here. 
-#ifdef TRANSFERFILEFUNCTIONALITY
-	TRACE("FILE FINISHED"); 
-	TRACE("%s> %d of %d.\r\n",pcontext->m_File.GetFileTitle(),pcontext->m_iFileBytes,pcontext->m_iMaxFileBytes);
-#endif
-}
+ 
 /*
 *	Called when a write is completed, this function is ofen used
 *  for progressbars etc (e.g indicates how much is send in bytes) 

@@ -4,13 +4,12 @@
 #include "UEServer.h"
 
 class CSvrCommFrm;
-class CClientNode
+class CClientNode : public ClientContext
 {
 public: 
 	CClientNode( );
 	~CClientNode( );
 public:
-	ClientContext *m_pClientContext;
 	CSvrCommFrm   *m_pFrm;
 
 };

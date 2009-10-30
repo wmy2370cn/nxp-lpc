@@ -17,3 +17,13 @@ CSvrComm::~CSvrComm( )
 
 
 }
+
+void CSvrComm::NotifyNewConnection(ClientContext *pcontext)
+{
+
+}
+
+void CSvrComm::NotifyDisconnectedClient(ClientContext *pContext)
+{
+
+}
