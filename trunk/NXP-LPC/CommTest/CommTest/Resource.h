@@ -100,6 +100,7 @@
 #define ID_STRING_SVR_MODE              502
 #define ID_STRING_PING_MODE             503
 #define ID_STRING_COM                   504
+#define ID_SEVER_LIST                   506
 #define IDC_IPADDRESS_DEST              1000
 #define IDC_CB_PROTO_TYPE               1001
 #define IDC_RADIO_LOCAL_PORT1           1002

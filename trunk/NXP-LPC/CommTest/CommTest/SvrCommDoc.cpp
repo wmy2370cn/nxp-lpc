@@ -4,6 +4,9 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "SvrCommDoc.h"
+#include "MainFrm.h"
+#include "SvrCommFrm.h"
+#include "SvrRecvView.h"
 
 
 // CSvrCommDoc
@@ -86,5 +89,51 @@ void CSvrCommDoc::OnCloseDocument()
 
 void CSvrCommDoc::OpenSvrCommFrm( )
 {
+	CMainFrame *pFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+	ASSERT(pFrame);
+	if (pFrame == NULL)
+		return;	
+
+	CMDIChildWnd *pChildWnd = NULL;
+
+	CCreateContext context;
+	context.m_pCurrentDoc = this;
+	context.m_pCurrentFrame = pFrame;
+	context.m_pNewDocTemplate = (CDocTemplate*) theApp.m_pClientDocTemplate;
+	context.m_pNewViewClass = RUNTIME_CLASS(CSvrRecvView);
+
+	CRuntimeClass* pFrameClass = RUNTIME_CLASS(CSvrCommFrm);   		 
+
+	pChildWnd = (CMDIChildWnd*)pFrameClass->CreateObject();
+	if (pChildWnd == NULL)
+	{
+		TRACE(traceAppMsg, 0, "Warning: Dynamic create of frame %hs failed.\n",	pFrameClass->m_lpszClassName);
+		return  ;
+	}
+	ASSERT_KINDOF(CMDIChildWnd, pChildWnd);
+
+	if (context.m_pNewViewClass == NULL)
+		TRACE(traceAppMsg, 0, "Warning: creating frame with no default view.\n");
+
+	// create new from resource
+	if (!pChildWnd->LoadFrame(IDR_PACKET_DECODE,
+		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,   // default frame styles
+		NULL, &context))
+	{
+		TRACE(traceAppMsg, 0, "Warning: CDocTemplate couldn't create a frame.\n");
+		// frame will be deleted in PostNcDestroy cleanup
+		return  ;
+	}
+	HMENU hMenu = NULL;       // default menu resource for this frame
+	HACCEL hAccelTable = NULL;       // accelerator table
+	//	hAccelTable = ::LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
+	// 	//	ASSERT( hAccelTable );
+	hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
+	ASSERT(hMenu);
+	pChildWnd->SetHandles(hMenu,hAccelTable);
+
+	pChildWnd->InitialUpdateFrame(NULL, TRUE);		
+//	pDoc->m_pDecodeFrm = (CPacketDecodeFrm *)pChildWnd;
+//	pFrame->MDIActivate( pDoc->m_pDecodeFrm  ); 	
 
 }
