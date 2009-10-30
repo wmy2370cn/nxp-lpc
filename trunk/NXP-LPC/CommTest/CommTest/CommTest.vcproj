@@ -225,6 +225,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Clipboard.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CommMsg.cpp"
 				>
 			</File>
@@ -444,6 +448,10 @@
 			</File>
 			<File
 				RelativePath=".\ClientTabView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Clipboard.h"
 				>
 			</File>
 			<File

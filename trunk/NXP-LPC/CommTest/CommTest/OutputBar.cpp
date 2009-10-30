@@ -4,7 +4,8 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "outputbar.h"
-
+#include "Clipboard.h"
+#include <locale.h>
 
 #include "LogData.h"
 #include "LogDataApi.h"
@@ -24,13 +25,13 @@ COutputListCtrl::~COutputListCtrl()
 }
 
 BEGIN_MESSAGE_MAP(COutputListCtrl, CListCtrlEx)
-	ON_WM_CONTEXTMENU()
-	//	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
+//	ON_WM_CONTEXTMENU()
+//	ON_COMMAND(ID_OUTPUT_COPY, OnOutputCopy)
 	//	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	//	ON_COMMAND(ID_VIEW_OUTPUTWND, OnViewOutput)
 	//	ON_WM_WINDOWPOSCHANGING()
 END_MESSAGE_MAP()
-
+#if 0
 void COutputListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	CMenu menu;
@@ -38,7 +39,7 @@ void COutputListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	CMenu* pSumMenu = menu.GetSubMenu(0);
 
-	if (AfxGetMainWnd()->IsKindOf(RUNTIME_CLASS(CBCGPFrameWnd)))
+	if (AfxGetMainWnd()->IsKindOf(RUNTIME_CLASS(CBCGPMDIFrameWnd)))
 	{
 		CBCGPPopupMenu* pPopupMenu = new CBCGPPopupMenu;
 
@@ -51,6 +52,8 @@ void COutputListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	SetFocus();
 }
+
+#endif
 
 const int nBorderSize = 1;
 const int ID_LOG_STR = 1978;
@@ -91,6 +94,13 @@ BEGIN_MESSAGE_MAP(COutputBar, CBCGPDockingControlBar)
 	//}}AFX_MSG_MAP
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_OUTPUT_CLEAR, OnListCtrlClear)
+	ON_COMMAND(ID_OUTPUT_COPY, OnListCtrlCopy)
+	ON_COMMAND(ID_OUTPUT_CUT, OnListCtrlCut)
+	ON_COMMAND(ID_OUTPUT_SAVEAS, OnListCtrlSaveas)
+	ON_COMMAND(ID_OUTPUT_AUTOSCROLL,  OnListCtrlAutoscroll)
+	ON_UPDATE_COMMAND_UI(ID_OUTPUT_AUTOSCROLL,  OnUpdateListCtrlAutoScroll)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -202,6 +212,7 @@ void COutputBar::OnTimer(UINT_PTR nIDEvent)
 
 	CBCGPDockingControlBar::OnTimer(nIDEvent);
 }
+const int DEL_LINE_NUM = 200;
 void COutputBar::LoadDebugStr( )
 {
 	if (m_wndList.GetSafeHwnd() == NULL)
@@ -211,7 +222,7 @@ void COutputBar::LoadDebugStr( )
 	if (nItemCnt>=MAX_LOG_STR_LINE)
 	{
 		::SendMessage(m_wndList.m_hWnd, WM_SETREDRAW, FALSE, 0);
-		while (nItemCnt >= MAX_LOG_STR_LINE )
+		while (nItemCnt >= MAX_LOG_STR_LINE-DEL_LINE_NUM )
 		{
 			m_wndList.DeleteItem(0);
 			nItemCnt = m_wndList.GetItemCount();
@@ -233,17 +244,7 @@ int COutputBar::DispDebugStr(CLogStr *pLogData )
 	if (pLogData == NULL)
 		return -1;
 	int nItemCnt = m_wndList.GetItemCount();
-	// 	if (nItemCnt>=MAX_LOG_STR_LINE)
-	// 	{
-	// 		::SendMessage(m_wndList.m_hWnd, WM_SETREDRAW, FALSE, 0);
-	// 		while (nItemCnt >= MAX_LOG_STR_LINE )
-	// 		{
-	// 			m_wndList.DeleteItem(0);
-	// 			nItemCnt = m_wndList.GetItemCount();
-	// 		}
-	// 		::SendMessage(m_wndList.m_hWnd, WM_SETREDRAW, TRUE, 0);
-	// 	}
-
+	
 	nItemCnt = m_wndList.GetItemCount();
 
 	if (nItemCnt<0)
@@ -291,3 +292,219 @@ int COutputBar::DispDebugStr(CLogStr *pLogData )
 	return nItemCnt;
 } 
 
+
+void COutputBar::OnContextMenu(CWnd*  pWnd , CPoint point )
+{
+	// TODO: 在此处添加消息处理程序代码
+	CMenu menu;
+	VERIFY(menu.LoadMenu (IDR_POPUP_OUTPUT));
+	CMenu* pPopup = NULL;//menu.GetSubMenu(0);
+
+	m_wndList.SetFocus();
+	UINT nFlags = 0; 
+	CPoint curPoint;
+	GetCursorPos(&curPoint);
+	m_wndList.ScreenToClient(&curPoint);
+	//	HTREEITEM ItemSel = m_wndGrid.HitTest(curPoint, &nFlags);
+	pPopup =  menu.GetSubMenu(0);
+
+	ASSERT(pPopup != NULL);
+
+	if (pPopup == NULL)
+		return;		
+
+	UINT nResult = 	g_pContextMenuManager->TrackPopupMenu(pPopup->GetSafeHmenu(),point.x,point.y,this);
+	SendMessage(WM_COMMAND,nResult);
+}
+
+void COutputBar::OnListCtrlClear() 
+{
+	if (m_wndList.GetSafeHwnd() == NULL)
+		return;
+	m_wndList.DeleteAllItems( );
+}
+
+void COutputBar::OnListCtrlCopy() 
+{
+	if (m_wndList.GetSafeHwnd() == NULL)
+		return;
+
+	//	int nSelItem =m_wndList.GetSelectionMark();//用istat存放当前选定的是第几项
+	POSITION pos  = m_wndList.GetFirstSelectedItemPosition( );
+	int nSelItem = 0;
+	CString szTxt,szTmp;
+
+	if (pos == NULL)
+	{
+		TRACE0("No items were selected!\n");
+		return;
+	}
+	else
+	{
+		while (pos)
+		{
+			nSelItem = m_wndList.GetNextSelectedItem(pos);
+			TRACE1("Item %d was selected!\n", nSelItem);
+			szTmp = GetItemTxt( nSelItem) ;
+			if (!szTmp.IsEmpty())
+			{
+				if (szTxt.IsEmpty())
+				{
+					szTxt = szTmp;			
+				}
+				else
+				{
+					szTxt = szTxt + "\n" + szTmp;
+				}		
+			}		
+		}
+	}
+
+	if (!szTxt.IsEmpty())
+		CClipboard::SetText(szTxt);		
+}
+
+void COutputBar::OnListCtrlCut() 
+{
+	if (m_wndList.GetSafeHwnd() == NULL)
+		return;
+
+	int nSelItem = 0;
+	CString szTxt,szTmp;
+	POSITION pos  = m_wndList.GetFirstSelectedItemPosition( );
+
+	CArray <int ,int> arrSelItem;
+
+	if (pos == NULL)
+	{
+		TRACE0("No items were selected!\n");
+		return;
+	}
+	else
+	{
+		while (pos)
+		{
+			nSelItem = m_wndList.GetNextSelectedItem(pos);
+			TRACE1("Item %d was selected!\n", nSelItem);
+			szTmp = GetItemTxt( nSelItem) ;
+			if (szTxt.IsEmpty())
+			{
+				szTxt = szTmp;			
+			}
+			else
+			{
+				szTxt = szTxt + "\n" + szTmp;
+			}			
+			arrSelItem.Add( nSelItem );
+		}
+	}
+
+	INT_PTR i = 0;
+	INT_PTR nItemCnt =  arrSelItem.GetSize();
+	for (i = nItemCnt; i > 0; i--)
+	{
+		m_wndList.DeleteItem(arrSelItem.GetAt(i-1));
+	}
+
+	if (!szTxt.IsEmpty())
+		CClipboard::SetText(szTxt);	
+}
+
+void COutputBar::OnListCtrlSaveas() 
+{
+	if (m_wndList.GetSafeHwnd() == NULL)
+		return;
+
+	CString  szFileName =_T("c:\\日志信息.txt");
+	CFileDialog FileDlg(FALSE, NULL, szFileName, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT , _T("日志文件 (*.txt)|*.txt||"), theApp.m_pMainWnd);
+	FileDlg.m_ofn.lpstrTitle = _T("日志信息另存为");
+
+	if (szFileName.GetLength() == 0)
+		FileDlg.m_ofn.lpstrInitialDir = _T("C:");
+
+	CString szLogFile;
+	if (FileDlg.DoModal() == IDOK)
+	{
+		szLogFile = FileDlg.GetFileName() ;
+
+		CStdioFile stdFile;
+		try
+		{
+			setlocale( LC_CTYPE,  ("chs"));
+
+			if(!stdFile.Open(szLogFile, CFile::modeWrite|CFile::typeText,NULL))
+			{
+				if(!stdFile.Open(szLogFile,CFile::modeCreate|CFile::modeWrite|CFile::shareDenyRead|CFile::typeText,NULL))
+					return;
+			}
+
+			stdFile.SeekToEnd();
+			int nCnt = m_wndList.GetItemCount();
+			int i = 0;
+			CString szTxt;
+			CString szTmp;
+			for (i = 0; i < nCnt; i++)
+			{
+				szTmp = m_wndList.GetItemText(i,W_COLUMN_INDEX );
+				szTxt = _T("序号：") + szTmp;
+
+				szTmp = m_wndList.GetItemText(i,W_COLUMN_DATE );
+				szTxt += _T(" 日期：") + szTmp;
+
+				szTmp = m_wndList.GetItemText(i,W_COLUMN_TIME);
+				szTxt += _T(" 时间：") + szTmp;
+			 
+				szTmp = m_wndList.GetItemText(i,W_COLUMN_STR);
+				szTxt += _T(" 内容：") + szTmp;
+
+			 	// 	stdFile.Write(szTxt,szTxt.GetLength());
+			 	stdFile.WriteString( szTxt );
+			 	szTxt = _T("\n");
+			// 	stdFile.Write(szTxt,szTxt.GetLength());
+			 	stdFile.WriteString( szTxt );
+			}	
+	 		stdFile.Close();
+		}
+		catch(CFileException * pEx)
+		{
+			LPTSTR  szInfo = _T("Write Err") ;
+			pEx->GetErrorMessage(szInfo,128,NULL);
+		}
+	}			
+}
+
+CString COutputBar::GetItemTxt(int nSelItem) 
+{
+	CString	szTxt ;
+	if (nSelItem<0||nSelItem>m_wndList.GetItemCount())
+	{
+		return szTxt;
+	}
+	CString szTmp  ;
+
+	szTmp = m_wndList.GetItemText(nSelItem,W_COLUMN_INDEX );
+	szTxt = _T("序号：") + szTmp;
+
+	szTmp = m_wndList.GetItemText(nSelItem,W_COLUMN_DATE);
+	szTxt += _T(" 日期：") + szTmp;
+
+	szTmp = m_wndList.GetItemText(nSelItem,W_COLUMN_TIME);
+	szTxt += _T(" 时间：") + szTmp;
+
+	szTmp = m_wndList.GetItemText(nSelItem,W_COLUMN_STR );
+	szTxt += _T(" 内容：") + szTmp;
+
+	return szTxt;
+}
+
+void COutputBar::OnListCtrlAutoscroll()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_bAutoScroll  = !m_bAutoScroll;
+}
+
+void COutputBar::OnUpdateListCtrlAutoScroll(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(m_bAutoScroll);
+}

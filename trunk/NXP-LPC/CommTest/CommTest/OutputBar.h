@@ -14,7 +14,7 @@ public:
 	virtual ~COutputListCtrl();
 public:
 protected:
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+//	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -54,11 +54,19 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnPaint();
+	afx_msg void OnListCtrlClear();
+	afx_msg void OnListCtrlCopy();
+	afx_msg void OnListCtrlCut();
+	afx_msg void OnListCtrlSaveas();
+	afx_msg void OnListCtrlAutoscroll();
+	afx_msg void OnUpdateListCtrlAutoScroll(CCmdUI *pCmdUI);
+
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 /////////////////////////////////////////////////////////////////////////////
