@@ -52,7 +52,7 @@ protected:
 	virtual ~CSvrListView();
 public:
 	CSvrListGridCtrl m_wndGrid;
-	void OnDblclkGrid( );
+	void OnDblclkGrid( DWORD_PTR  pClient);
 
 public:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图

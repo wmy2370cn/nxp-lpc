@@ -16,11 +16,7 @@ public:
 public:
 	CSvrComm  m_SvrComm;
  
-	//开始收发
-	void StartTask( );
-	//停止收发
-	void StopTask( );
-	void OpenSvrCommFrm( );
+	void OpenSvrCommFrm( CClientNode *pClient );
 private:
 
 
