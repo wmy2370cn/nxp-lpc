@@ -14,10 +14,6 @@ typedef enum  PING_GRID_COL
 	PING_GRID_COLUMN_TXT,
 	PING_GRID_COLUMN_RTT,  //往返时间  --超时或者 ms
 	PING_GRID_COLUMN_REPLY_TM   //返回时间
-
-// 	PACKET_GRID_COLUMN_LEN , //长度
-// 	PACKET_GRID_COLUMN_PACKET   //报文
-	//	PACKET_GRID_COLUMN_COMMENT     //备注,可编辑
 };
 #ifdef _DEBUG
 class CBCGPGridRowEx : public CBCGPGridRow

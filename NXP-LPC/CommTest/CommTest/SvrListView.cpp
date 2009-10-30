@@ -4,8 +4,17 @@
 #include "stdafx.h"
 #include "CommTest.h"
 #include "SvrListView.h"
+#include "SvrCommDoc.h"
 
 
+typedef enum  SVR_GRID_COL
+{
+	SVR_GRID_COLUMN_IDX,  // 序号
+	SVR_GRID_COLUMN_IP,  // 
+	SVR_GRID_COLUMN_PORT , // 
+	SVR_GRID_COLUMN_RECV,
+	SVR_GRID_COLUMN_SEND  // 
+};
 // CSvrListView
 
 IMPLEMENT_DYNCREATE(CSvrListView, CView)
@@ -22,6 +31,10 @@ CSvrListView::~CSvrListView()
 BEGIN_MESSAGE_MAP(CSvrListView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_NOTIFY( NM_DBLCLK,ID_SEVER_LIST,OnDblclkGrid )
+	ON_WM_ERASEBKGND()
+	ON_WM_DESTROY()
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 
@@ -62,8 +75,21 @@ int CSvrListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect rectGrid;
 	rectGrid.SetRectEmpty();
 
-	m_wndGrid.Create (WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectGrid, this, (UINT)-1);
+	m_wndGrid.Create (WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectGrid, this, ID_SEVER_LIST);
 
+	m_wndGrid.SetSingleSel(TRUE);
+	m_wndGrid.SetWholeRowSel (TRUE);
+	m_wndGrid.EnableMarkSortedColumn (FALSE);
+	m_wndGrid.EnableMultipleSort(FALSE);
+	m_wndGrid.EnableHeader (TRUE,BCGP_GRID_HEADER_MOVE_ITEMS); 		 
+	m_wndGrid.EnableLineNumbers(TRUE);
+
+	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_IDX, _T("序号"), 70);
+	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_IP, _T("IP"), 160);
+	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_PORT, _T("端口号"), 80);
+// 	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_RECV, _T("  "),240);
+// 	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_RECV, _T("往返耗时"),100);
+ 
 	return 0;
 }
 
@@ -72,9 +98,50 @@ void CSvrListView::OnSize(UINT nType, int cx, int cy)
 	CView::OnSize(nType, cx, cy);
 	if ( m_wndGrid.GetSafeHwnd())
 	{
-		CRect rectClient;
-		GetClientRect (rectClient);
-	 	m_wndGrid.MoveWindow(rectClient);
+		 m_wndGrid.SetWindowPos (NULL, -1, -1, cx, cy,SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+	}
+	// TODO: 在此处添加消息处理程序代码
+}
+
+void CSvrListView::OnDblclkGrid(NMHDR* pNMHDR, LRESULT* pResult) 
+{
+	CSvrCommDoc *pDoc = (CSvrCommDoc *)GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	//TEST
+	pDoc->OpenSvrCommFrm();
+
+}
+
+void CSvrListView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+}
+
+BOOL CSvrListView::OnEraseBkgnd(CDC* pDC)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	return TRUE;
+	return CView::OnEraseBkgnd(pDC);
+}
+
+void CSvrListView::OnDestroy()
+{
+	m_wndGrid.DestroyWindow();
+	CView::OnDestroy();
+
+	// TODO: 在此处添加消息处理程序代码
+}
+
+void CSvrListView::OnSetFocus(CWnd* pOldWnd)
+{
+	CView::OnSetFocus(pOldWnd);
+	if (m_wndGrid.GetSafeHwnd() != NULL)
+	{
+		ASSERT_VALID (m_pWndGridCtrl);
+		m_wndGrid.SetFocus();
 	}
 	// TODO: 在此处添加消息处理程序代码
 }
