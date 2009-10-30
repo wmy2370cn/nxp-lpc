@@ -15,6 +15,23 @@ typedef enum  SVR_GRID_COL
 	SVR_GRID_COLUMN_RECV,
 	SVR_GRID_COLUMN_SEND  // 
 };
+
+BEGIN_MESSAGE_MAP(CSvrListGridCtrl, CBCGPGridCtrl)
+	ON_WM_LBUTTONDBLCLK()
+END_MESSAGE_MAP()
+
+void CSvrListGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CBCGPGridCtrl::OnLButtonDblClk(nFlags, point);
+	if (GetParent() && GetParent()->IsKindOf(RUNTIME_CLASS(CSvrListView)))
+	{
+		((CSvrListView*)GetParent())->OnDblclkGrid( );
+	}
+}
+
+
 // CSvrListView
 
 IMPLEMENT_DYNCREATE(CSvrListView, CView)
@@ -31,7 +48,6 @@ CSvrListView::~CSvrListView()
 BEGIN_MESSAGE_MAP(CSvrListView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_NOTIFY( NM_DBLCLK,ID_SEVER_LIST,OnDblclkGrid )
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -103,7 +119,7 @@ void CSvrListView::OnSize(UINT nType, int cx, int cy)
 	// TODO: 在此处添加消息处理程序代码
 }
 
-void CSvrListView::OnDblclkGrid(NMHDR* pNMHDR, LRESULT* pResult) 
+void CSvrListView::OnDblclkGrid( ) 
 {
 	CSvrCommDoc *pDoc = (CSvrCommDoc *)GetDocument();
 	ASSERT(pDoc);
@@ -140,7 +156,6 @@ void CSvrListView::OnSetFocus(CWnd* pOldWnd)
 	CView::OnSetFocus(pOldWnd);
 	if (m_wndGrid.GetSafeHwnd() != NULL)
 	{
-		ASSERT_VALID (m_pWndGridCtrl);
 		m_wndGrid.SetFocus();
 	}
 	// TODO: 在此处添加消息处理程序代码

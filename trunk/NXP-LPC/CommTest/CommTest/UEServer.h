@@ -54,9 +54,13 @@ public:
 	 	m_nCurSendSeqNum = 0;
 	 	m_nCurReadSeqNum  = 0;
 		m_pPacket = NULL;
+		ZeroMemory(&m_addr,sizeof(m_addr));
 	}
 	 // The Connection socket. 
 	SOCKET				m_nSocket;
+	//
+	struct sockaddr_in  m_addr;
+
 	 // The lock used to update and read variabels.
 	CCriticalSection m_Lock; 
 	// Reserved for DisconnectClient if needed. 
@@ -68,24 +72,18 @@ public:
  	 
 	// Read in order variables
  	unsigned int					m_nCurReadSeqNum ;
-  
-	// File transfer stuff. 
-#ifdef TRANSFERFILEFUNCTIONALITY	
-	CFile m_File;
-	unsigned int m_iMaxFileBytes;
-	unsigned int m_iFileBytes; 
-	BOOL m_bFileSendMode;
-	BOOL m_bFileReceivedMode;
-#endif
-
+   
 	// Package Overlapped Buffer..
 	// Used to get a complete package when we have several pending reads. 
 	CSvrCommPacket* m_pPacket;	
 
 	// Extra info you can put what ever you whant here.. 
-	CString m_sReceived;
-	int m_iNumberOfReceivedMsg;
-	BOOL m_bUpdate;
+	unsigned long m_nSendCnt; //次数
+	unsigned long m_nRecvCnt;
+
+	unsigned long m_nTotalSendLen; //字节长度
+	unsigned long m_nTotalRecvLen;
+ 
 };
 enum IOType 
 {

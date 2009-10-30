@@ -641,6 +641,7 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 	ASSERT(pContext);
 	if(pContext!=NULL)
 	{
+		CopyMemory(& pContext->m_addr,&from_addr,sizeof(from_addr));
 		pContext->m_nSocket = clientSocket;
 		// M_ID is Used for Delete(). Should we remove this soon ? 
 		pContext->m_nID=clientSocket;
@@ -677,15 +678,15 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 			// This is nessesary to avoid Access violation. 
 			
 			EnterIOLoop(pContext);
-			CSvrCommPacket *pOverlapBuff =AllocateBuffer(IOInitialize);
-			if(pOverlapBuff!=NULL)
+			CSvrCommPacket *pBuff =AllocateBuffer(IOInitialize);
+			if(pBuff!=NULL)
 			{
-				BOOL bSuccess = PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) pContext, &pOverlapBuff->m_ol);
+				BOOL bSuccess = PostQueuedCompletionStatus(m_hCompletionPort, 0, (DWORD) pContext, &pBuff->m_ol);
 
 				if ( (!bSuccess && GetLastError( ) != ERROR_IO_PENDING))
 				{          
-					ASSERT(pOverlapBuff);
-					ReleaseBuffer(pOverlapBuff);
+					ASSERT(pBuff);
+					ReleaseBuffer(pBuff);
 					DisconnectClient(pContext);
 					TRACE(">IOInitialize AcceptIncomingClient(%x)\r\n",pContext);
 					ReleaseClientContext(pContext);
@@ -710,6 +711,7 @@ BOOL CUEServer::AssociateIncomingClientWithContext(SOCKET clientSocket)
 		closesocket(clientSocket);
 		return FALSE;
 	}
+
 	return TRUE;
 }
 
