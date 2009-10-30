@@ -83,3 +83,8 @@ void CSvrCommDoc::OnCloseDocument()
 
 	CDocument::OnCloseDocument();
 }
+
+void CSvrCommDoc::OpenSvrCommFrm( )
+{
+
+}
