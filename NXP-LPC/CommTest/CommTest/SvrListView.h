@@ -38,6 +38,8 @@ public:
 	{
 		AddRow (CreateNewRow (), TRUE);
 	}
+	DECLARE_MESSAGE_MAP()
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 // CSvrListView 视图
@@ -50,6 +52,7 @@ protected:
 	virtual ~CSvrListView();
 public:
 	CSvrListGridCtrl m_wndGrid;
+	void OnDblclkGrid( );
 
 public:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图
@@ -65,7 +68,6 @@ protected:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnDblclkGrid(NMHDR* pNMHDR, LRESULT* pResult);
 protected:
 	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
 public:
