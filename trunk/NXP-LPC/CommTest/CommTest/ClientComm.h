@@ -11,7 +11,8 @@
 class CClientCommDoc;
 class CClientComm : public CEcBusSocket
 {
-	friend UINT  EthCommTask (LPVOID lpParam);	
+	friend UINT  TcpClientTask (LPVOID lpParam);	
+	friend UINT  UdpClientTask (LPVOID lpParam);	
 	friend class CClientCommDoc;
 public:
 	CClientComm( );
@@ -24,16 +25,14 @@ public:
 	//Õ£÷π ’∑¢
 	void StopTask( );
 
-	void Engine( );
+	void TcpEngine( );
 	CCommMsgContainer m_CommMsg;
 	CDataBuf  m_SendBuf;
 protected:
 	void ExecMsgCmd( CCommMsg & msg  );
-
 	
 	SOCKET  m_nSocket;
 	unsigned char *m_pRawBuf;
-
 
 	CClientCommDoc *m_pDocument;
 
@@ -44,5 +43,4 @@ protected:
 	CWinThread *m_pCommTsk;
 	HANDLE      m_hStopEvent;
 	HANDLE m_hTaskHandle;
-
 };

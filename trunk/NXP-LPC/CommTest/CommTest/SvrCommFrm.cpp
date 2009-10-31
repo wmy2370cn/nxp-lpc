@@ -5,6 +5,7 @@
 #include "CommTest.h" 
 #include "SvrCommFrm.h"
 #include "SvrRecvView.h"
+#include "SvrCommDoc.h"
  
 
 
@@ -74,15 +75,14 @@ BOOL CSvrCommFrm::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 void CSvrCommFrm::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-// 	CDocument *pDoc = GetActiveDocument();
-// 	if (pDoc->IsKindOf(RUNTIME_CLASS( CClientCommDoc )))
-// 	{
-// 		((CClientCommDoc*)pDoc)->m_pDecodeFrm = NULL;
-// 		DestroyWindow();
-// 		return;
-// 	}
-//	else
-
+	CDocument *pDoc = GetActiveDocument();
+	if (pDoc->IsKindOf(RUNTIME_CLASS( CSvrCommDoc )))
+	{
+	 	((CSvrCommDoc*)pDoc)->CloseFrm(this);
+		DestroyWindow();
+		return;
+	}
+ 
 
 	CBCGPMDIChildWnd::OnClose();
 }

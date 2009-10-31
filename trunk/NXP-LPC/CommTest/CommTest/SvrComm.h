@@ -18,6 +18,13 @@ public:
 	}
 public:
 	CSvrCommFrm   *m_pFrm;
+	void CopyData(ClientContext *pContext);
+private:
+	BOOL m_bOnline;
+	//在线时间累计
+//	COleDateTime m_dtLink;
+
+
 
 };
 

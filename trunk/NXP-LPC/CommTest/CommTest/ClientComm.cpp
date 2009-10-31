@@ -164,7 +164,7 @@ void CClientComm::StartTask( )
 	StopTask();
 	if (m_pCommTsk == NULL)
 	{
-		m_pCommTsk = AfxBeginThread( EthCommTask, (LPVOID)(this));
+		m_pCommTsk = AfxBeginThread( TcpClientTask, (LPVOID)(this));
 		m_pCommTsk->m_bAutoDelete = FALSE;
 		m_pCommTsk->ResumeThread();
 
@@ -256,7 +256,7 @@ void CClientComm::ExecMsgCmd( CCommMsg & msg  )
 ** 备  注: 	//3.如果收发过程中发现socket已被对端关闭掉,则通知界面
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void CClientComm::Engine( )
+void CClientComm::TcpEngine( )
 {
 	//1.先看看是否需要有发送，如果有发送，则发送数据
 	CCommMsg msg;
@@ -268,8 +268,8 @@ void CClientComm::Engine( )
 	//2.接收数据，并推送到界面
 	int nRet = RecvData_Event(m_nSocket,(char*)m_pRawBuf,MAX_DATA_LEN);
 
-	if (nRet == SOCKET_ERROR)
-	{
+	if (nRet == SOCKET_ERROR && (m_nSocket == INVALID_SOCKET || m_nSocket == 0 ))
+	{//出错了 socket已经断开了
 
 
 	}
@@ -282,9 +282,42 @@ void CClientComm::Engine( )
 	}
 }
 
+UINT  UdpClientTask (LPVOID lpParam)
+{
+	CClientComm *pComm = (CClientComm *)lpParam;
+	ASSERT(pComm);
+	if (pComm == NULL)
+		return 0x88;
 
+	CString szLog;
+	struct sockaddr_in dst_addr;		
+	memset((void*)&dst_addr,0,sizeof(dst_addr));
+	dst_addr.sin_addr.s_addr=htonl( pComm->m_dwDestIp ); 
+	szLog.Format(_T("%d.%d.%d.%d:%d UDP客户端线程启动。"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+		dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,pComm->m_nDestPortNum );
+	LogString(szLog.GetBuffer(szLog.GetLength()),ERR_STR );
+	szLog.ReleaseBuffer();
 
-UINT  EthCommTask (LPVOID lpParam)
+	Sleep(1000);
+
+	ResetEvent(pComm->m_hStopEvent);
+
+	while(1)
+	{
+		DWORD dwRtn = WaitForSingleObject(pComm->m_hStopEvent, 0);
+		if ( dwRtn == WAIT_OBJECT_0)
+		{   //	szLog = "退出函数..................\n";
+			OutputDebugString(_T("退出在线函数..................\n"));
+			return 0x88;
+		}	
+
+		pComm->TcpEngine();
+	}
+
+	return 0;
+}
+
+UINT  TcpClientTask (LPVOID lpParam)
 {	
 	CClientComm *pComm = (CClientComm *)lpParam;
 	ASSERT(pComm);
@@ -295,7 +328,7 @@ UINT  EthCommTask (LPVOID lpParam)
 	struct sockaddr_in dst_addr;		
 	memset((void*)&dst_addr,0,sizeof(dst_addr));
  	dst_addr.sin_addr.s_addr=htonl( pComm->m_dwDestIp ); 
-	szLog.Format(_T("%d.%d.%d.%d:%d收发线程启动。"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
+	szLog.Format(_T("%d.%d.%d.%d:%d TCP客户端线程启动。"),dst_addr.sin_addr.s_net ,dst_addr.sin_addr.s_host ,
 		dst_addr.sin_addr.s_lh ,dst_addr.sin_addr.s_impno,pComm->m_nDestPortNum );
 
  	LogString(szLog.GetBuffer(szLog.GetLength()),ERR_STR );
@@ -315,7 +348,7 @@ UINT  EthCommTask (LPVOID lpParam)
 			return 0x88;
 		}	
 
-		pComm->Engine();
+		pComm->TcpEngine();
 	}
 
 	return 0;

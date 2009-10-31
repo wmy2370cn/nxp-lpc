@@ -5,6 +5,7 @@
 #include "CommTest.h"
 #include "SvrListView.h"
 #include "SvrCommDoc.h"
+#include <algorithm>
 
 
 typedef enum  SVR_GRID_COL
@@ -58,6 +59,7 @@ BEGIN_MESSAGE_MAP(CSvrListView, CView)
 	ON_WM_ERASEBKGND()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -149,14 +151,6 @@ BOOL CSvrListView::OnEraseBkgnd(CDC* pDC)
 	return CView::OnEraseBkgnd(pDC);
 }
 
-void CSvrListView::OnDestroy()
-{
-	m_wndGrid.DestroyWindow();
-	CView::OnDestroy();
-
-	// TODO: 在此处添加消息处理程序代码
-}
-
 void CSvrListView::OnSetFocus(CWnd* pOldWnd)
 {
 	CView::OnSetFocus(pOldWnd);
@@ -164,5 +158,106 @@ void CSvrListView::OnSetFocus(CWnd* pOldWnd)
 	{
 		m_wndGrid.SetFocus();
 	}
+	// TODO: 在此处添加消息处理程序代码
+}
+
+void CSvrListView::UpdateClientInfo( )
+{
+	CSvrCommDoc *pDoc = (CSvrCommDoc *)GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	if (m_wndGrid.GetSafeHwnd() == NULL)
+		return;
+	int nRowCnt = m_wndGrid.GetRowCount();
+	int i = 0;
+	CBCGPGridRow *pRow = NULL;
+	CClientNode *pClient = NULL;
+	std::vector <CClientNode *> arrTmp ;
+	std::vector <CClientNode *> arrClientNode = pDoc->m_SvrComm.m_arrClientNode ; 
+	std::vector <CClientNode *>::iterator iter ,iter_tmp;
+	CString szTxt;
+
+	for (i = 0 ; i < nRowCnt;i++)
+	{
+		pRow = m_wndGrid.GetRow(i);
+		ASSERT(pRow);
+		if (pRow)
+		{
+			pClient = (CClientNode *)pRow->GetData();
+			ASSERT(pClient);
+			if (pClient)
+			{
+				//刷新界面
+				
+
+				arrTmp.push_back(pClient);
+
+				
+			}
+		}
+	}
+	if (!arrClientNode.empty() && arrTmp != arrClientNode)
+	{//添加新的节点
+		for (iter_tmp = arrTmp.begin(); iter_tmp != arrTmp.end(); ++iter_tmp)
+		{
+			iter = std::find(arrClientNode.begin(),arrClientNode.end(),(*iter_tmp));
+			if (iter != arrClientNode.end())
+			{
+				arrClientNode.erase(iter);
+			}
+		}
+		int nIdx = m_wndGrid.GetRowCount();
+		for (iter = arrClientNode.begin();iter != arrClientNode.end();++iter)
+		{
+			pRow = m_wndGrid.CreateNewRow ();
+			ASSERT(pRow);
+			if (pRow)
+			{
+
+			}
+		}	 
+	}
+}
+
+const UINT_PTR ID_CLIENT_NODE_EVENT = 200804;
+
+void CSvrListView::StartUpdateClientInfo( )
+{
+	SetTimer(ID_CLIENT_NODE_EVENT,1000,NULL);
+
+}
+void CSvrListView::StopUpdateClientInfo( )
+{
+	KillTimer(ID_CLIENT_NODE_EVENT);
+
+	//删除界面所有信息
+	if (m_wndGrid.GetSafeHwnd())
+	{
+		m_wndGrid.RemoveAll();
+	}
+}
+
+
+void CSvrListView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nIDEvent == ID_CLIENT_NODE_EVENT)
+	{
+		KillTimer(ID_CLIENT_NODE_EVENT);
+		UpdateClientInfo( );
+		SetTimer(ID_CLIENT_NODE_EVENT,1000,NULL);
+	}
+
+	CView::OnTimer(nIDEvent);
+}
+
+void CSvrListView::OnDestroy()
+{
+	KillTimer(ID_CLIENT_NODE_EVENT);
+	m_wndGrid.DestroyWindow();
+	CView::OnDestroy();
+
 	// TODO: 在此处添加消息处理程序代码
 }

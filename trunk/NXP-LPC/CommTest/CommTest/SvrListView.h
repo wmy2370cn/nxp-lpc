@@ -42,6 +42,7 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
+
 // CSvrListView 视图
 class CSvrListView : public CView
 {
@@ -53,6 +54,12 @@ protected:
 public:
 	CSvrListGridCtrl m_wndGrid;
 	void OnDblclkGrid( DWORD_PTR  pClient);
+
+	void StartUpdateClientInfo( );
+	void StopUpdateClientInfo( );
+
+private:
+	void UpdateClientInfo( );
 
 public:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图
@@ -74,6 +81,7 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 
