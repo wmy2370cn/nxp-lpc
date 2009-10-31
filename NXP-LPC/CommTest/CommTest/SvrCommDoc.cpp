@@ -7,6 +7,7 @@
 #include "MainFrm.h"
 #include "SvrCommFrm.h"
 #include "SvrRecvView.h"
+#include "SvrListView.h"
 
 
 // CSvrCommDoc
@@ -79,6 +80,25 @@ void CSvrCommDoc::OnCloseDocument()
 	CDocument::OnCloseDocument();
 }
 
+void CSvrCommDoc::CloseFrm(CSvrCommFrm *pFrm)
+{
+	ASSERT(pFrm);
+	if(pFrm == NULL)
+		return;
+	CClientNode *pNode = NULL;
+	std::vector <CClientNode *>::iterator iter = m_SvrComm.m_arrClientNode.begin();
+
+	for ( ; iter !=  m_SvrComm.m_arrClientNode.end(); ++iter )
+	{
+		if ( (*iter) && (*iter)->m_pFrm == pFrm  )
+		{
+			(*iter)->m_pFrm = NULL;
+			break;
+		}
+	}
+}
+
+
 void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 {
 	ASSERT(pClient);
@@ -131,4 +151,45 @@ void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 	pChildWnd->InitialUpdateFrame(NULL, TRUE);		
 	pClient->m_pFrm = (CSvrCommFrm *)pChildWnd; 
  	pFrame->MDIActivate( pClient->m_pFrm ); 	
+}
+
+BOOL CSvrCommDoc::StartTask( )
+{
+	BOOL bRet =  m_SvrComm.StartTask();
+	if (bRet)
+	{
+		POSITION pos = GetFirstViewPosition();
+		while (pos != NULL)
+		{
+			CView* pView = GetNextView(pos);
+			ASSERT_VALID(pView);
+			if (pView->IsKindOf(RUNTIME_CLASS(CSvrListView)))
+			{
+				CSvrListView *pListView = (CSvrListView *)pView;
+				pListView->StartUpdateClientInfo();
+				break;
+			}			 
+		}
+	}
+
+	return bRet;
+}
+
+void CSvrCommDoc::StopTask( )
+{
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		ASSERT_VALID(pView);
+		if (pView->IsKindOf(RUNTIME_CLASS(CSvrListView)))
+		{
+			CSvrListView *pListView = (CSvrListView *)pView;
+			pListView->StopUpdateClientInfo();
+			break;
+		}			 
+	}
+	m_SvrComm.StopTask();
+
+	//
 }

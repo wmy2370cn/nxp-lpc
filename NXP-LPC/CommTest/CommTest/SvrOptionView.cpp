@@ -78,7 +78,7 @@ void CSvrOptionView::OnBnClickedButtonSvrStart()
 
 	if (pDoc->m_SvrComm.m_bStart == FALSE)
 	{	 
-		pDoc->m_SvrComm.m_bStart = pDoc->m_SvrComm.StartTask();
+		pDoc->m_SvrComm.m_bStart = pDoc->StartTask();
 		if (pDoc->m_SvrComm.m_bStart)
 		{
 			pWnd->SetWindowText(_T("Í£Ö¹"));	
@@ -86,7 +86,7 @@ void CSvrOptionView::OnBnClickedButtonSvrStart()
 	}
 	else
 	{
-		pDoc->m_SvrComm.StopTask();
+		pDoc->StopTask();
 		pDoc->m_SvrComm.m_bStart = FALSE;
 		pWnd->SetWindowText(_T("¿ªÊ¼"));	
 	}

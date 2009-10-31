@@ -172,6 +172,7 @@ private:
 	inline void ShutDownWorkers();
 	// Closes The IO Workers
 	inline void ShutDownIOWorkers();
+	BOOL IsStart(){return m_bServerStarted;}
 protected:
 	static UINT WorkerThreadProc(LPVOID pParam);
 	static UINT ListnerThreadProc(LPVOID pParam);
