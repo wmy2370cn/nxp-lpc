@@ -187,8 +187,6 @@ protected:
 	// Used to clean up the Send and receive hash map. 
 	// Deletes the ClientContext or just put it in the FreeClientContext list. 
 	inline BOOL ReleaseClientContext(ClientContext *pContext);
-
-
 	
 	// Process the internal messages. 
 	inline void ProcessIOMessage(CSvrCommPacket *pOverlapBuff, ClientContext* pContext, DWORD dwSize);	
@@ -239,8 +237,6 @@ protected:
   	inline void IncreaseSendSeqNum(ClientContext *pContext);
 	inline void IncreaseReadSeqNum(ClientContext *pContext);
 
-	// Used to avoid inorder Read packages
-	inline void MakeOrderdRead(ClientContext *pContext,CSvrCommPacket *pBuff);
 	// Error Convertion.. 
 	CString ErrorCode2Text(DWORD dw);
 

@@ -76,8 +76,8 @@
 #define IDS_EDIT_MENU                   306
 #define IDB_WORKSPACE                   310
 #define IDB_BITMAP_LIST                 311
-#define IDD_DLG_SEND                    312
-#define IDD_DLG_RECV                    313
+#define IDD_DLG_CLIENT_SEND             312
+#define IDD_DLG_CLIENT_RECV             313
 #define IDD_DLG_NEW_CLIENT              314
 #define IDD_DLG_CLIENT_OPTIONS          317
 #define IDD_DLG_NEW_PING                318
@@ -88,6 +88,8 @@
 #define IDD_DLG_PACKET_DETAIL           323
 #define IDD_DLG_NEW_SVR                 324
 #define IDD_DLG_SVR_OPTIONS             325
+#define IDD_DLG_SVR_RECV                326
+#define IDD_DLG_SVR_SEND                327
 #define IDR_POPUP_TOOLBAR               350
 #define IDR_POPUP_MDITABS               351
 #define IDR_POPUP_DROP_MDITABS          352
@@ -145,7 +147,19 @@
 #define IDC_STATIC_PING_RTN_CNT         1042
 #define IDC_COMBO_HOST_IP_OPT           1043
 #define IDC_STATIC_PING_SND_CNT         1044
-#define IDC_EDIT_SVR_PORTNUM_OPT        1045
+#define IDC_EDIT_SVR_INT_TIME           1046
+#define IDC_CHECK_SVR_HEX               1047
+
+
+#define IDC_EDIT_SVR_SEND_TXT           1051
+#define IDC_EDIT_SVR_PORTNUM_OPT        1052
+#define IDC_CHECK_SVR_AUTO_SEND         1053
+#define IDC_BUTTON_SVR_SEND             1054
+#define IDC_BUTTON_SVR_STOP             1055
+#define IDC_BUTTON_SVR_CLEAR_SEND       1056
+#define IDC_BUTTON_SVR_ADV              1057
+#define IDC_BUTTON_SVR_DISP             1058
+#define IDC_BUTTON_SVR_CLEAR_RECV       1059
 #define ID_WORKSPACE_NEW                1200
 #define ID_WORKSPACE_DELETE             1201
 #define ID_VIEW_USER_TOOLBAR1           2793
@@ -190,7 +204,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        325
 #define _APS_NEXT_COMMAND_VALUE         32864
-#define _APS_NEXT_CONTROL_VALUE         1044
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif

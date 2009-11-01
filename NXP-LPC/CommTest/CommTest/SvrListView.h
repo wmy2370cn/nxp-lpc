@@ -44,6 +44,7 @@ public:
 
 
 // CSvrListView 视图
+class CClientNode;
 class CSvrListView : public CView
 {
 	DECLARE_DYNCREATE(CSvrListView)
@@ -60,6 +61,9 @@ public:
 
 private:
 	void UpdateClientInfo( );
+	void UpdateRowInfo( CBCGPGridRow *pRow, CClientNode *pInfo );
+	void CreateRow(int nIdx, CBCGPGridRow *pRow, CClientNode *pInfo );
+
 
 public:
 	virtual void OnDraw(CDC* pDC);      // 重写以绘制该视图

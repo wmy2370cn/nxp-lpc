@@ -5,6 +5,7 @@
 #include "CommTest.h" 
 #include "SvrCommFrm.h"
 #include "SvrRecvView.h"
+#include "SvrSendView.h"
 #include "SvrCommDoc.h"
  
 
@@ -65,7 +66,7 @@ BOOL CSvrCommFrm::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	CRect rectClient;
 	GetClientRect (rectClient);
 
-	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CSvrRecvView), CSize (0, rectClient.Width() / 2), pContext);
+	m_wndSplitter.CreateView (0, 0, RUNTIME_CLASS (CSvrSendView), CSize (0, rectClient.Width() / 2), pContext);
 	m_wndSplitter.CreateView (1,0, RUNTIME_CLASS (CSvrRecvView), CSize (0, rectClient.Width () / 2), pContext);
 
 	return TRUE;

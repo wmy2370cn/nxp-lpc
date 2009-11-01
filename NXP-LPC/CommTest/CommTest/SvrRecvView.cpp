@@ -8,9 +8,12 @@
 
 // CSvrRecvView
 
-IMPLEMENT_DYNCREATE(CSvrRecvView, CView)
+ 
+
+IMPLEMENT_DYNCREATE(CSvrRecvView, CBCGPFormView)
 
 CSvrRecvView::CSvrRecvView()
+: CBCGPFormView(CSvrRecvView::IDD)
 {
 
 }
@@ -19,17 +22,13 @@ CSvrRecvView::~CSvrRecvView()
 {
 }
 
-BEGIN_MESSAGE_MAP(CSvrRecvView, CView)
-END_MESSAGE_MAP()
-
-
-// CSvrRecvView 绘图
-
-void CSvrRecvView::OnDraw(CDC* pDC)
+void CSvrRecvView::DoDataExchange(CDataExchange* pDX)
 {
-	CDocument* pDoc = GetDocument();
-	// TODO: 在此添加绘制代码
+	CFormView::DoDataExchange(pDX);
 }
+
+BEGIN_MESSAGE_MAP(CSvrRecvView, CBCGPFormView)
+END_MESSAGE_MAP()
 
 
 // CSvrRecvView 诊断
@@ -37,13 +36,13 @@ void CSvrRecvView::OnDraw(CDC* pDC)
 #ifdef _DEBUG
 void CSvrRecvView::AssertValid() const
 {
-	CView::AssertValid();
+	CBCGPFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
 void CSvrRecvView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CBCGPFormView::Dump(dc);
 }
 #endif
 #endif //_DEBUG

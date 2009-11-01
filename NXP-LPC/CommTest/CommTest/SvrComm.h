@@ -19,15 +19,16 @@ public:
 public:
 	CSvrCommFrm   *m_pFrm;
 	void CopyData(ClientContext *pContext);
-private:
 	BOOL m_bOnline;
+private:
+
 	//在线时间累计
 //	COleDateTime m_dtLink;
 
 
 
 };
-
+ 
 class CSvrComm :public CUEServer
 {
  public:
@@ -43,9 +44,20 @@ class CSvrComm :public CUEServer
 	 // Called when a new connection have been established.. 
 	 virtual void NotifyNewConnection(ClientContext *pcontext);
 	 virtual void NotifyDisconnectedClient(ClientContext *pContext);
+	 virtual inline void NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,ClientContext *pContext);
 
-public:
-	 std::vector <CClientNode *> m_arrClientNode;
+	 std::vector <CClientNode *> & GetClientNodeArr( ) 
+	 {
+		 CSingleLock lock(&m_Lock,TRUE);
+		 return m_arrClientNode;
+	 }
+
+private:
+	CCriticalSection m_Lock; 
+
+	//可能需要加锁
+	stdext::hash_map <ClientContext *, CClientNode *> m_mapClients;
+	std::vector <CClientNode *> m_arrClientNode;
 private:
 	void FreeMem( );
 };

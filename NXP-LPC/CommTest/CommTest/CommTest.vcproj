@@ -405,6 +405,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SvrSendView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TimerEx.cpp"
 				>
 			</File>
@@ -628,6 +632,10 @@
 			</File>
 			<File
 				RelativePath=".\SvrRecvView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SvrSendView.h"
 				>
 			</File>
 			<File

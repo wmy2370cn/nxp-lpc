@@ -1,18 +1,19 @@
 #pragma once
 
 
-// CSvrRecvView 视图
 
-class CSvrRecvView : public CBCGPFormView
+// CSvrSendView 窗体视图
+
+class CSvrSendView : public CBCGPFormView
 {
-	DECLARE_DYNCREATE(CSvrRecvView)
+	DECLARE_DYNCREATE(CSvrSendView)
 
 protected:
-	CSvrRecvView();           // 动态创建所使用的受保护的构造函数
-	virtual ~CSvrRecvView();
+	CSvrSendView();           // 动态创建所使用的受保护的构造函数
+	virtual ~CSvrSendView();
 
 public:
-	enum { IDD = IDD_DLG_SVR_RECV };
+	enum { IDD = IDD_DLG_SVR_SEND };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

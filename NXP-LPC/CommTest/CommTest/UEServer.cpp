@@ -2369,11 +2369,6 @@ void CUEServer::ShutDownListenProc( )
 ********************************************************************************************************/
 BOOL CUEServer::Startup()
 {
-	// Some special cleanup 
-#if defined SIMPLESECURITY	
-	m_OneIPPerConnectionList.RemoveAll();
-	m_BanIPList.RemoveAll();
-#endif
 	CString szLog; 
 
 	m_NumberOfActiveConnections=0;   
