@@ -14,7 +14,7 @@ protected:
 	virtual ~CClientSendView();
 
 public:
-	enum { IDD = IDD_DLG_SEND };
+	enum { IDD = IDD_DLG_CLIENT_SEND };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

@@ -40,7 +40,7 @@ protected:
 	virtual ~CClientRecvView();
 
 public:
-	enum { IDD = IDD_DLG_RECV };
+	enum { IDD = IDD_DLG_CLIENT_RECV };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

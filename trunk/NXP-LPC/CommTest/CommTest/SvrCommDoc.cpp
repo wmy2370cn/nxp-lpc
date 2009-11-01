@@ -86,9 +86,10 @@ void CSvrCommDoc::CloseFrm(CSvrCommFrm *pFrm)
 	if(pFrm == NULL)
 		return;
 	CClientNode *pNode = NULL;
-	std::vector <CClientNode *>::iterator iter = m_SvrComm.m_arrClientNode.begin();
+	std::vector <CClientNode *> arrClientNode = m_SvrComm.GetClientNodeArr();
+	std::vector <CClientNode *>::iterator iter = arrClientNode.begin();
 
-	for ( ; iter !=  m_SvrComm.m_arrClientNode.end(); ++iter )
+	for ( ; iter !=  arrClientNode.end(); ++iter )
 	{
 		if ( (*iter) && (*iter)->m_pFrm == pFrm  )
 		{

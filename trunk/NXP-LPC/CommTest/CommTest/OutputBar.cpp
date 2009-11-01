@@ -58,7 +58,7 @@ void COutputListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 const int nBorderSize = 1;
 const int ID_LOG_STR = 1978;
 
-typedef enum  WColumn
+typedef enum  OUTPUT_COL
 {
 	W_COLUMN_TYPE, //
 	W_COLUMN_INDEX, //ÐòºÅ
