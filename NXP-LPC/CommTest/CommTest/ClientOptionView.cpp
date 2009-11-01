@@ -190,7 +190,7 @@ void CClientOptionView::OnBnClickedButtonStart()
 
 		if (bRet)
 		{
-			pWnd->SetWindowText(_T("断开连接"));
+ 			pWnd->SetWindowText(_T("断开连接"));
 		}
 		pWnd->EnableWindow();
 	}

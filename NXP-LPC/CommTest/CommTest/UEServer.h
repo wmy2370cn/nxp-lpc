@@ -55,6 +55,10 @@ public:
 	 	m_nCurReadSeqNum  = 0;
 		m_pPacket = NULL;
 		ZeroMemory(&m_addr,sizeof(m_addr));
+		m_nSendCnt = 0; //次数
+		m_nRecvCnt = 0;
+		m_nTotalSendLen = 0; //字节长度
+		m_nTotalRecvLen = 0;
 	}
 	 // The Connection socket. 
 	SOCKET				m_nSocket;

@@ -9,6 +9,7 @@ class CClientNode : public ClientContext
 public: 
 	CClientNode( )
 	{
+		__super::ClientContext();
 		m_pFrm = NULL;
 
 	}

@@ -97,6 +97,9 @@
 #define IDR_CLIENT_COMM                 402
 #define IDR_POPUP_SORT1                 403
 #define IDR_POPUP_WORKSPACE_TOOLBAR     404
+#define IDR_SVR_COMM                    405
+#define IDR_SVR_PANEL                   406
+#define IDR_SVR_COMM2                   406
 #define ID_STRING_ETH                   500
 #define ID_STRING_CLIENT_MODE           501
 #define ID_STRING_SVR_MODE              502
@@ -149,8 +152,6 @@
 #define IDC_STATIC_PING_SND_CNT         1044
 #define IDC_EDIT_SVR_INT_TIME           1046
 #define IDC_CHECK_SVR_HEX               1047
-
-
 #define IDC_EDIT_SVR_SEND_TXT           1051
 #define IDC_EDIT_SVR_PORTNUM_OPT        1052
 #define IDC_CHECK_SVR_AUTO_SEND         1053

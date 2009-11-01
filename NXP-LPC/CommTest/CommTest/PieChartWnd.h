@@ -22,7 +22,8 @@ public:
 protected:
 
 	//+ Added to the previous
-	enum pie_drawn_direction{		//Use to represent the drawing direction and position parameters for 3-D pir chart
+	enum pie_drawn_direction
+	{		//Use to represent the drawing direction and position parameters for 3-D pir chart
 		RIGHT_ANGLED,
 		LEFT_ANGELD,
 		PIE_LAST,
@@ -35,7 +36,8 @@ protected:
 	};
 
 	//The structure used to hold the data elements used in 3-D style drawing
-	struct pie_3d_properties{
+	struct pie_3d_properties
+	{
 		float f_InclineAngle;	//The transformed angle for 3-D pie chart
 		BYTE i_alphaVal;		//+ The alpha value to set transparency
 		Gdiplus::PointF pt_Start;		//+ The start location point 
@@ -43,7 +45,8 @@ protected:
 	};
 private:
 	//The basic data structure which holds the pie chart item data
-	struct pie_chart_element{
+	struct pie_chart_element
+	{
 		double d_value;
 		float f_percentage;
 		float f_angle;	
@@ -80,7 +83,8 @@ private:
 		CString sMaxLenString;
 	};
 //Background parameters
-	struct background_params{
+	struct background_params
+	{
 		Gdiplus::Color cr_backgrnd;
 		Gdiplus::Color cr_GradientL;
 		Gdiplus::Color cr_GradientD;
@@ -94,39 +98,39 @@ private:
 	};
 //Three pie chart styles
 public:
-	enum pie_chart_style {
+	enum pie_chart_style
+	{
       DoughnutStyle,
       TwoDStyle,
       ThreeDStyle,
    };
 
 private:
+	CScrollBar m_VscrollBar;
+	int i_elementIndex;	//The index value used in inserting elements
+	float fl_startAngle;	//Starting angle for the pie elements
+	float fl_startAngleIncline;	//Transformed starting angle for 3-D pie
+	float fl_InclineAngle;	//The inclination angle for 3-D pie
+	float f_depth;		//The height for the 3-D pie
+	double d_totalVal; //total value of all  pie items
+	COLORREF cr_parentClr;	//Set this color to paint the outline of the window in the same color of parent
+	label_size lb_param;
+	label_rect_info lb_info;
+	background_params bkg_params;
+	int i_pieElement_front;		//key of the front drawn element
+	int i_pieElement_last;		//key of the last drawn element
 
-CScrollBar m_VscrollBar;
-int i_elementIndex;	//The index value used in inserting elements
-float fl_startAngle;	//Starting angle for the pie elements
-float fl_startAngleIncline;	//Transformed starting angle for 3-D pie
-float fl_InclineAngle;	//The inclination angle for 3-D pie
-float f_depth;		//The height for the 3-D pie
-double d_totalVal; //total value of all  pie items
-COLORREF cr_parentClr;	//Set this color to paint the outline of the window in the same color of parent
-label_size lb_param;
-label_rect_info lb_info;
-background_params bkg_params;
-int i_pieElement_front;		//key of the front drawn element
-int i_pieElement_last;		//key of the last drawn element
-
-Gdiplus::Color cr_HighlightColor;
-CString s_saveImage;	//The image path to save the pie chart
-BOOL b_SaveFlag;	//Save flag set in to save the image
-BOOL b_ShowPercentages;
-std::map<int, pie_chart_element*> map_pChart;	//The std::map holds the pie elements
-ULONG_PTR m_gdiplusToken;
-pie_chart_style pie_ChartStyle;	
+	Gdiplus::Color cr_HighlightColor;
+	CString s_saveImage;	//The image path to save the pie chart
+	BOOL b_SaveFlag;	//Save flag set in to save the image
+	BOOL b_ShowPercentages;
+	std::map<int, pie_chart_element*> map_pChart;	//The std::map holds the pie elements
+	ULONG_PTR m_gdiplusToken;
+	pie_chart_style pie_ChartStyle;	
 
 protected:
 	DECLARE_MESSAGE_MAP()
-	
+
 private: //internal functions//
 	//Drawing functions for 3 different styles
 	void Draw2DStyle(CDC* pDc);	

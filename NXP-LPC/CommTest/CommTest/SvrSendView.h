@@ -1,5 +1,6 @@
-#pragma once
 
+#pragma once
+#include "afxwin.h"
 
 
 // CSvrSendView 窗体视图
@@ -25,6 +26,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 

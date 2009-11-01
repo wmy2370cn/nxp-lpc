@@ -14,7 +14,6 @@ typedef enum  SVR_GRID_COL
 	SVR_GRID_COLUMN_IP,  // 
 	SVR_GRID_COLUMN_PORT , // 
 	SVR_GRID_COLUMN_STATUS , //在线状态 
-
 	SVR_GRID_COLUMN_RECV, //收发次数
 	SVR_GRID_COLUMN_SEND  // 
 };
@@ -35,9 +34,7 @@ void CSvrListGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 		{
 			DWORD_PTR pData = pSel->GetData();
 			((CSvrListView*)GetParent())->OnDblclkGrid(pData);
-
 		}
-
 	}
 }
 
@@ -116,8 +113,8 @@ int CSvrListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_PORT, _T("端口号"), 70);
 	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_STATUS, _T("状态"), 70);
 
-  	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_RECV, _T("接收数据包"),140);
-  	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_SEND, _T("发送数据包"),120);
+  	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_RECV, _T("接收数据包"),80);
+  	m_wndGrid.InsertColumn (SVR_GRID_COLUMN_SEND, _T("发送数据包"),80);
  
 	return 0;
 }
@@ -182,22 +179,53 @@ void  CSvrListView::CreateRow(int nIdx, CBCGPGridRow *pRow, CClientNode *pInfo )
 	ASSERT(pItem); 
 	pItem->SetValue(_variant_t (szTxt),FALSE);
 
-	szTxt.Format(_T("%d"),pInfo->m_addr.sin_port );	
+//	szTxt.Format(_T("%d"),pInfo->m_addr.sin_port );	
 	pItem = pRow->GetItem(SVR_GRID_COLUMN_PORT);
+	ASSERT(pItem); 
+	pItem->SetValue(_variant_t ( htons(pInfo->m_addr.sin_port) ),FALSE);
+
+	if (pInfo->m_bOnline)
+	{
+		szTxt = _T("在线");
+	}
+	else
+	{
+		szTxt = _T("离线");
+	}
+	pItem = pRow->GetItem(SVR_GRID_COLUMN_STATUS);
 	ASSERT(pItem); 
 	pItem->SetValue(_variant_t (szTxt),FALSE);
 
-	pRow->SetData((DWORD_PTR)pInfo);
+	pRow->SetData((DWORD_PTR)pInfo); 
 } 
 void CSvrListView::UpdateRowInfo( CBCGPGridRow *pRow, CClientNode *pInfo )
 {
 	ASSERT(pRow && pInfo);
 	if (pInfo == NULL || pRow == NULL)
 		return;
+
 	CString szTxt;
+	CBCGPGridItem *pItem = NULL;
+	if (pInfo->m_bOnline)
+	{
+		szTxt = _T("在线");
+	}
+	else
+	{
+		szTxt = _T("离线");
+	}
+	pItem = pRow->GetItem(SVR_GRID_COLUMN_STATUS);
+	ASSERT(pItem); 
+	pItem->SetValue(_variant_t (szTxt),FALSE);
 
-	
+//	szTxt.Format(_T("%d"), pInfo->m_nRecvCnt);
+	pItem = pRow->GetItem(SVR_GRID_COLUMN_RECV);
+	ASSERT(pItem); 
+	pItem->SetValue(_variant_t (pInfo->m_nRecvCnt),FALSE);
 
+	pItem = pRow->GetItem(SVR_GRID_COLUMN_SEND);
+	ASSERT(pItem); 
+	pItem->SetValue(_variant_t (pInfo->m_nSendCnt),FALSE);
 }
 
 void CSvrListView::UpdateClientInfo( )
@@ -233,6 +261,7 @@ void CSvrListView::UpdateClientInfo( )
 			}
 		}
 	}
+	
 	if (!arrClientNode.empty() && arrTmp != arrClientNode)
 	{//添加新的节点
 		for (iter_tmp = arrTmp.begin(); iter_tmp != arrTmp.end(); ++iter_tmp)
@@ -251,10 +280,11 @@ void CSvrListView::UpdateClientInfo( )
 			if (pRow)
 			{
 				CreateRow(++nIdx,pRow,(*iter));
-				m_wndGrid.AddRow(pRow);
+				m_wndGrid.AddRow(pRow,FALSE);
 			}
 		}	 
 	}
+	m_wndGrid.AdjustLayout();
 }
 
 const UINT_PTR ID_CLIENT_NODE_EVENT = 200804;

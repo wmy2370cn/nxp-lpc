@@ -263,7 +263,7 @@ void CClientComm::TcpEngine( )
 	if(m_CommMsg.GetCommMsg(msg))
 	{
 		ExecMsgCmd(msg);
-		Sleep(50);
+	//	Sleep(50);
 	}
 	//2.接收数据，并推送到界面
 	int nRet = RecvData_Event(m_nSocket,(char*)m_pRawBuf,MAX_DATA_LEN);
@@ -275,7 +275,7 @@ void CClientComm::TcpEngine( )
 	}
 	else
 	{
-		if (m_pDocument)
+		if (m_pDocument && nRet != SOCKET_ERROR)
 		{
 			m_pDocument->m_PacketCtnr.PutData(m_pRawBuf,nRet);
 		}		
