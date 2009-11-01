@@ -6,7 +6,7 @@
 #include "SvrCommDoc.h"
 #include "MainFrm.h"
 #include "SvrCommFrm.h"
-#include "SvrRecvView.h"
+#include "SvrSendView.h"
 #include "SvrListView.h"
 
 
@@ -117,7 +117,7 @@ void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 	context.m_pCurrentDoc = this;
 	context.m_pCurrentFrame = pFrame;
 	context.m_pNewDocTemplate = (CDocTemplate*) theApp.m_pClientDocTemplate;
-	context.m_pNewViewClass = RUNTIME_CLASS(CSvrRecvView);
+	context.m_pNewViewClass = RUNTIME_CLASS(CSvrSendView);
 
 	CRuntimeClass* pFrameClass = RUNTIME_CLASS(CSvrCommFrm);   		 
 
@@ -133,7 +133,7 @@ void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 		TRACE(traceAppMsg, 0, "Warning: creating frame with no default view.\n");
 
 	// create new from resource
-	if (!pChildWnd->LoadFrame(IDR_PACKET_DECODE,
+	if (!pChildWnd->LoadFrame(IDR_SVR_PANEL,
 		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,   // default frame styles
 		NULL, &context))
 	{
@@ -144,8 +144,8 @@ void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 	HMENU hMenu = NULL;       // default menu resource for this frame
 	HACCEL hAccelTable = NULL;       // accelerator table
 	//	hAccelTable = ::LoadAccelerators(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
-	// 	//	ASSERT( hAccelTable );
-	hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_PACKET_DECODE));
+	//	ASSERT( hAccelTable );
+	hMenu = ::LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_SVR_PANEL));
 	ASSERT(hMenu);
 	pChildWnd->SetHandles(hMenu,hAccelTable);
 

@@ -145,7 +145,7 @@ BOOL CCommTestApp::InitInstance()
 
 	AddDocTemplate(m_pClientDocTemplate);
 
-	m_pSvrDocTemplate = new CMultiDocTemplate(IDR_CLIENT_COMM,
+	m_pSvrDocTemplate = new CMultiDocTemplate(IDR_SVR_COMM,
 		RUNTIME_CLASS(CSvrCommDoc),
 		RUNTIME_CLASS(CSvrChildFrame), // 自定义 MDI 子框架
 		RUNTIME_CLASS(CSvrOptionView));

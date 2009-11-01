@@ -98,6 +98,8 @@ BOOL CClientCommDoc::Connect( )
 		}		 		 
 	}
 
+	m_bConnected = TRUE;
+
 	return bRet;
 }
 void  CClientCommDoc::Disconnect( )
@@ -113,6 +115,7 @@ void  CClientCommDoc::Disconnect( )
 			((CClientSendView*)pView)->OnDisconnected();
 		}		 		 
 	}
+	m_bConnected = FALSE; 
 }
 
 void CClientCommDoc::OnCloseDocument()

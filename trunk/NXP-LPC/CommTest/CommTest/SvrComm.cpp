@@ -5,10 +5,11 @@
 
 #include "Common.h"
 #include "LogDataApi.h" 
+#include <utility>
 
 #include  "boost/memory.hpp"
 
-const int MAX_CLINENT_CNT = 128;
+const int MAX_CLINENT_CNT = 1024;
 
 /*********************************************************************************************************
 ** 函数名称: CopyData
@@ -106,6 +107,8 @@ void CSvrComm::NotifyNewConnection(ClientContext *pcontext)
 	ASSERT(pcontext->m_nID != 0 && pcontext->m_nID != INVALID_SOCKET);
 	bool bFind = false;
 	std::vector <CClientNode *>::iterator iter ;
+	stdext::hash_map <ClientContext *, CClientNode *>::iterator it_map;
+
 	CSingleLock lock(&m_Lock,TRUE);
 	int nSize = m_arrClientNode.size();
 	if (nSize >= MAX_CLINENT_CNT)
@@ -122,7 +125,7 @@ void CSvrComm::NotifyNewConnection(ClientContext *pcontext)
 // 			bFind = true;
 // 			break;
 // 		}
-		if (0 == memcmp( &((*iter)->m_addr ),&(pcontext->m_addr),sizeof(pcontext->m_addr) )
+		if (0 == memcmp( &((*iter)->m_addr ),&(pcontext->m_addr),sizeof(pcontext->m_addr)))
 		{
 			bFind = true;
 			break;
@@ -130,9 +133,21 @@ void CSvrComm::NotifyNewConnection(ClientContext *pcontext)
 	}
 
 	if (bFind)
-	{//找到了，更新之
-		ASSERT(FALSE);
-		(*iter)->CopyData(pcontext);		
+	{//找到了，更新之 同一个来源的断开重新联机
+		(*iter)->CopyData(pcontext);	
+		(*iter)->m_bOnline = TRUE;
+
+		it_map = m_mapClients.find( pcontext );
+		if (it_map != m_mapClients.end())
+		{
+			ASSERT(FALSE);
+			it_map->second = (*iter);
+		}
+		else
+		{
+			m_mapClients.insert(std::make_pair(pcontext,(*iter)));
+		} 
+
 		lock.Unlock();
 		return;
 	}
@@ -142,12 +157,40 @@ void CSvrComm::NotifyNewConnection(ClientContext *pcontext)
 	pClient->m_bOnline = TRUE;
 
 	m_arrClientNode.push_back(pClient);
+
+	it_map = m_mapClients.find( pcontext );
+	if (it_map != m_mapClients.end())
+	{
+		ASSERT(FALSE);
+		it_map->second = pClient;
+	}
+	else
+	{
+		m_mapClients.insert(std::make_pair(pcontext,pClient));
+	}
+
 	lock.Unlock();
 }
 
 void CSvrComm::NotifyDisconnectedClient(ClientContext *pContext)
 {
+	CClientNode *pClient = NULL;
+	stdext::hash_map <ClientContext *, CClientNode *>::iterator it_map;
 
+	CSingleLock lock(&m_Lock,TRUE);
+
+	it_map = m_mapClients.find( pContext );
+	if (it_map != m_mapClients.end())
+	{
+		it_map->second->m_bOnline = FALSE;
+		m_mapClients.erase(it_map);
+	}
+	else
+	{
+	//	ASSERT(FALSE);
+		OutputDebugString(_T("xxxxxxx\r\n"));
+	}
+	lock.Unlock();
 }
 
 /*********************************************************************************************************
@@ -183,7 +226,30 @@ void CSvrComm::NotifyReceivedPackage(CSvrCommPacket *pOverlapBuff,int nSize,Clie
 	if(pOverlapBuff == NULL || pContext == NULL || nSize <= 0 || nSize >= MAX_PACKAGE_SIZE)
 		return;
 
+	CClientNode *pClient = NULL;
+	stdext::hash_map <ClientContext *, CClientNode *>::iterator it_map;
 
+	CSingleLock lock(&m_Lock,TRUE);
+
+	it_map = m_mapClients.find( pContext );
+	if (it_map != m_mapClients.end())
+	{
+		pClient = it_map->second ;
+	}
+	else
+	{
+		ASSERT(FALSE);
+	}
+	ASSERT(pClient);
+	if (pClient==NULL)
+	{
+		lock.Unlock();
+		return;
+	}
+	pClient->m_nRecvCnt ++;
+	pClient->m_nTotalRecvLen += nSize;
+	lock.Unlock();
+	return;
 }
 
 void CSvrComm::FreeMem()
@@ -195,4 +261,5 @@ void CSvrComm::FreeMem()
 		delete (*iter);		 
 	}
 	m_arrClientNode.clear();
+	m_mapClients.clear();
 }

@@ -705,10 +705,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\idr_comm.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\list.bmp"
 				>
 			</File>
@@ -754,6 +750,10 @@
 			</File>
 			<File
 				RelativePath=".\res\sort_hc.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\svr_comm.ico"
 				>
 			</File>
 			<File

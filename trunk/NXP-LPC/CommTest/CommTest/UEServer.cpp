@@ -840,29 +840,6 @@ void CUEServer::DisconnectClient(ClientContext *pContext, BOOL bGraceful/*=FALSE
 			// Notify that we are going to Disconnect A client. 
 			NotifyDisconnectedClient(pContext);
 			pContext->m_Lock.Unlock();
-
-#ifdef SIMPLESECURITY
-			if(m_bOneIPPerConnection)
-			{		
-				//  Remove the IP address from list.. 
-				sockaddr_in sockAddr;
-				memset(&sockAddr, 0, sizeof(sockAddr));
-				int nSockAddrLen = sizeof(sockAddr);	
-				int iResult = getpeername(pContext->m_nSocket,(SOCKADDR*)&sockAddr, &nSockAddrLen);
-
-				if (iResult != INVALID_SOCKET)
-				{
-					void* pVoid=(void*)sockAddr.sin_addr.S_un.S_addr; 
-					m_OneIPPerConnectionLock.Lock();
-					POSITION pos=m_OneIPPerConnectionList.Find(pVoid);
-					if ( pos!=NULL )
-					{
-						m_OneIPPerConnectionList.RemoveAt(pos); 
-					}
-					m_OneIPPerConnectionLock.Unlock();	
-				}
-			}
-#endif	
 			// If we're supposed to abort the connection, set the linger value on the socket to 0.
 			if ( !bGraceful ) 
 			{

@@ -10,7 +10,8 @@
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
 #endif
-#include "afxres.h"
+#include "afxres.h"
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -259,7 +260,6 @@ IDR_PING_TEST MENU
 BEGIN
     POPUP "文件(&F)"
     BEGIN
-        MENUITEM SEPARATOR
         MENUITEM "退出(&X)",                      ID_APP_EXIT
     END
     POPUP "视图(&V)"
@@ -383,6 +383,76 @@ BEGIN
     END
 END
 
+IDR_SVR_COMM MENU 
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "退出(&X)",                      ID_APP_EXIT
+    END
+    POPUP "视图(&V)"
+    BEGIN
+        POPUP "工具栏和停靠窗口(&T)"
+        BEGIN
+            MENUITEM "<占位符>",                       ID_VIEW_TOOLBAR
+        END
+        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
+        POPUP "应用程序外观(&A)"
+        BEGIN
+            MENUITEM "Windows 2000(&2)",            ID_VIEW_APPLOOK_WIN_2000
+            MENUITEM "Office XP(&X)",               ID_VIEW_APPLOOK_OFF_XP
+            MENUITEM "Windows XP(&W)",              ID_VIEW_APPLOOK_WIN_XP
+            MENUITEM "Office 2003(&3)",             ID_VIEW_APPLOOK_OFF_2003
+            MENUITEM "Visual Studio.NET 2005(&5)",  ID_VIEW_APPLOOK_VS_2005
+            POPUP "Office 2007(&7)"
+            BEGIN
+                MENUITEM "蓝色样式(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
+                MENUITEM "黑色样式(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
+                MENUITEM "银色样式(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
+                MENUITEM "水绿色样式(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
+            END
+        END
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于(&A)",                      ID_APP_ABOUT
+    END
+END
+
+IDR_SVR_PANEL MENU 
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "退出(&X)",                      ID_APP_EXIT
+    END
+    POPUP "视图(&V)"
+    BEGIN
+        POPUP "工具栏和停靠窗口(&T)"
+        BEGIN
+            MENUITEM "<占位符>",                       ID_VIEW_TOOLBAR
+        END
+        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
+        POPUP "应用程序外观(&A)"
+        BEGIN
+            MENUITEM "Windows 2000(&2)",            ID_VIEW_APPLOOK_WIN_2000
+            MENUITEM "Office XP(&X)",               ID_VIEW_APPLOOK_OFF_XP
+            MENUITEM "Windows XP(&W)",              ID_VIEW_APPLOOK_WIN_XP
+            MENUITEM "Office 2003(&3)",             ID_VIEW_APPLOOK_OFF_2003
+            MENUITEM "Visual Studio.NET 2005(&5)",  ID_VIEW_APPLOOK_VS_2005
+            POPUP "Office 2007(&7)"
+            BEGIN
+                MENUITEM "蓝色样式(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
+                MENUITEM "黑色样式(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
+                MENUITEM "银色样式(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
+                MENUITEM "水绿色样式(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
+            END
+        END
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于(&A)",                      ID_APP_ABOUT
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -399,6 +469,8 @@ IDI_PROPERTIES_WND_HC   ICON                    "res\\properties_wnd_hc.ico"
 IDR_PING_TEST           ICON                    "res\\ping_test.ico"
 IDR_CLIENT_COMM         ICON                    "res\\ClientComm.ico"
 IDR_PACKET_DECODE       ICON                    "res\\packet_decode.ico"
+IDR_SVR_COMM            ICON                    "res\\svr_comm.ico"
+IDR_SVR_PANEL           ICON                    "res\\svr_panle.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -885,6 +957,9 @@ END
 STRINGTABLE 
 BEGIN
     IDR_PING_TEST           "PING测试"
+    IDR_CLIENT_COMM         "以太网测试"
+    IDR_SVR_COMM            "以太网测试"
+    IDR_SVR_PANEL           "以太网测试"
 END
 
 STRINGTABLE 
