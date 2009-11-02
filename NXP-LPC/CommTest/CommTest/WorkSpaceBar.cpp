@@ -434,7 +434,6 @@ void CWorkSpaceBar::OnNewTest()
 
 			pDoc->UpdateAllViews(NULL,UPDATA_VIEW_PING_NORMAL);
 		}
-
 	}
 	else if ( m_wndTree.GetParentItem(ItemSel) == m_hSvrMode || ItemSel == m_hSvrMode)
 	{
@@ -442,8 +441,8 @@ void CWorkSpaceBar::OnNewTest()
 		INT_PTR nRet = dlg.DoModal();
 		if (nRet != IDOK)
 			return;
-		szItem = _T("ddddd");
-		hItem = m_wndTree.InsertItem(szItem,83,83,m_hSvrMode);
+		szItem.Format(_T("%s:%d"),dlg.m_szLocalIp,dlg.m_nSvrPortNum) ;
+		hItem = m_wndTree.InsertItem(szItem,74,74,m_hSvrMode);
 		m_wndTree.Expand(m_hSvrMode,TVE_EXPAND);
 
 		CSvrCommDoc  *pSvrDoc = NULL;
@@ -455,6 +454,8 @@ void CWorkSpaceBar::OnNewTest()
 
 			pSvrDoc = (CSvrCommDoc *)pDoc;
 			//保存值到doc里面
+			pSvrDoc->m_SvrComm.m_dwLocalIp = htonl( inet_addr(CW2A(dlg.m_szLocalIp)));
+			pSvrDoc->m_SvrComm.m_nPortNumber = dlg.m_nSvrPortNum;
 			 
 	//		pDoc->UpdateAllViews(NULL,UPDATA_VIEW_PING_NORMAL);
 		}

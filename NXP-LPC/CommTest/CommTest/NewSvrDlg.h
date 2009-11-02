@@ -21,6 +21,8 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	UINT m_nSvrPortNum;
+	CString m_szLocalIp;
+//	DWORD m_dwLocalIp;
 protected:
 	virtual void OnOK();
 };

@@ -27,6 +27,7 @@ void CSvrSendView::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CSvrSendView, CBCGPFormView)
 	ON_WM_SIZE()
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -70,4 +71,15 @@ void CSvrSendView::OnSize(UINT nType, int cx, int cy)
 		rcEdit.bottom = rectClient.bottom - 3;
 		pEdit->MoveWindow(rcEdit);
 	}
+}
+
+int CSvrSendView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CBCGPFormView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  在此添加您专用的创建代码
+	EnableVisualManagerStyle();
+
+	return 0;
 }
