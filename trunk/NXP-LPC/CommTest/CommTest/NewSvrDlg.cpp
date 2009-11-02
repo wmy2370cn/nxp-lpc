@@ -14,7 +14,8 @@ CNewSvrDlg::CNewSvrDlg(CWnd* pParent /*=NULL*/)
 	: CBCGPDialog(CNewSvrDlg::IDD, pParent)
 	, m_nSvrPortNum(999)
 {
-
+//	m_dwLocalIp = 0;
+	m_szLocalIp = _T("127.0.0.1");
 }
 
 CNewSvrDlg::~CNewSvrDlg()
@@ -59,14 +60,17 @@ BOOL CNewSvrDlg::OnInitDialog()
 				pBox->AddString( szTxt  );
 			}
 		}
-		if (pBox->GetCount() <= 0)
-		{
-			szTxt = _T("127.0.0.1");
-			pBox->AddString( szTxt  );
-		}
+		szTxt = _T("0.0.0.0");
+		pBox->AddString( szTxt  );
+// 		if (pBox->GetCount() <= 0)
+// 		{
+// 			szTxt = _T("127.0.0.1");
+// 			pBox->AddString( szTxt  );
+// 		}
 		if (pBox->GetCount())
 		{
-			pBox->SetCurSel(pBox->GetCount()-1);
+//			pBox->SetCurSel(pBox->GetCount()-1);
+			pBox->SetCurSel( 0 );
 		}
 	}
 
@@ -80,6 +84,15 @@ BOOL CNewSvrDlg::OnInitDialog()
 void CNewSvrDlg::OnOK()
 {
 	// TODO: 在此添加专用代码和/或调用基类
+	UpdateData(TRUE);
+	CComboBox *pBox =(CComboBox *) GetDlgItem(IDC_COMBO_HOST_IP);
+	ASSERT(pBox);
+	if(pBox)
+	{	 
+		pBox->GetWindowText(m_szLocalIp);
+//		m_dwLocalIp = htonl( inet_addr(CW2A(szIp)));
+	}
+
 
 	CBCGPDialog::OnOK();
 }

@@ -75,9 +75,18 @@ void CSvrOptionView::OnBnClickedButtonSvrStart()
 	CWnd *pWnd = GetDlgItem(IDC_BUTTON_SVR_START);
 	ASSERT(pWnd);
 	pWnd->EnableWindow(FALSE);
+	UpdateData(TRUE);
+	CComboBox *pBox =(CComboBox *) GetDlgItem(IDC_COMBO_HOST_IP_OPT);
+	ASSERT(pBox);
 
 	if (pDoc->m_SvrComm.m_bStart == FALSE)
 	{	 
+		if (pBox)
+		{
+			CString szIp ;
+			pBox->GetWindowText(szIp);		
+			pDoc->m_SvrComm.m_dwLocalIp = htonl( inet_addr(CW2A(szIp)));
+		}
 		pDoc->m_SvrComm.m_bStart = pDoc->StartTask();
 		if (pDoc->m_SvrComm.m_bStart)
 		{
@@ -115,15 +124,16 @@ void CSvrOptionView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*p
 				pBox->AddString( szTxt  );
 			}
 		}
-		if (pBox->GetCount() <= 0)
-		{
-			szTxt = _T("127.0.0.1");
-			pBox->AddString( szTxt  );
-		}
+		szTxt = _T("0.0.0.0");
+		pBox->AddString( szTxt  );
+// 		if (pBox->GetCount() <= 0)
+// 		{
+// 			szTxt = _T("127.0.0.1");
+// 			pBox->AddString( szTxt  );
+// 		}
 		if (pBox->GetCount())
 		{
-			pBox->SetCurSel(pBox->GetCount()-1);
+			pBox->SetCurSel(0);
 		}
-	}
-
+	} 
 }

@@ -320,6 +320,16 @@ BOOL CUEServer::SetupListner()
 		return FALSE;
 	}
 
+	struct sockaddr_in from_addr;
+	int nLen = sizeof(from_addr);
+	int nRtn=getsockname(m_nListenSocket,(sockaddr*)&from_addr,&nLen);
+	CString szLog;
+ 	if (nRtn != SOCKET_ERROR)
+	{
+		szLog.Format(_T("%d.%d.%d.%d:%d正在等待连接。"),from_addr.sin_addr.s_net ,from_addr.sin_addr.s_host ,
+			from_addr.sin_addr.s_lh ,from_addr.sin_addr.s_impno, htons(from_addr.sin_port));
+		LogString(szLog,NORMAL_STR);
+	}
 	// Set the socket to listen
 	//nRet = listen(m_socListen, nConnections);
 	nRet=listen(m_nListenSocket, 5);
@@ -931,7 +941,7 @@ BOOL CUEServer::AZeroByteRead(ClientContext *pContext, CSvrCommPacket *pPacket)
 	if (pContext == NULL)
 		return FALSE;
 
-	ASSERT( pContext->m_nSocket!=INVALID_SOCKET && pContext->m_nSocket!= 0 );
+//	ASSERT( pContext->m_nSocket!=INVALID_SOCKET && pContext->m_nSocket!= 0 );
 	if(pContext->m_nSocket!=INVALID_SOCKET && pContext->m_nSocket!= 0)
 	{
 // 		if(pPacket==NULL) 

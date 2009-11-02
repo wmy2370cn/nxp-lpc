@@ -152,6 +152,12 @@ void CSvrCommDoc::OpenSvrCommFrm( CClientNode *pClient )
 	pChildWnd->InitialUpdateFrame(NULL, TRUE);		
 	pClient->m_pFrm = (CSvrCommFrm *)pChildWnd; 
  	pFrame->MDIActivate( pClient->m_pFrm ); 	
+
+	//БъЬт
+	CString szTitle;
+	szTitle.Format(_T("%d.%d.%d.%d:%d"),pClient->m_addr.sin_addr.s_net ,pClient->m_addr.sin_addr.s_host ,
+		pClient->m_addr.sin_addr.s_lh ,pClient->m_addr.sin_addr.s_impno, htons(pClient->m_addr.sin_port));
+	pChildWnd->SetWindowText(szTitle);
 }
 
 BOOL CSvrCommDoc::StartTask( )

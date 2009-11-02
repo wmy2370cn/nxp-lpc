@@ -139,11 +139,11 @@ public:
 	BOOL Start(int nPort=999,int nMaxNumConnections=128, int nOfWorkers=0,int nMaxNumberOfFreeBuffer=100,int iMaxNumberOfFreeContext=50,BOOL bOrderedSend=TRUE, BOOL bOrderedRead=TRUE,int nNumberOfPendlingReads=5);
 	CString GetHostIP();
 	DWORD m_dwLocalIp;
+	// Port number. 
+	unsigned int m_nPortNumber; 
 
 	// Disconnects all the clients. 
 	void DisconnectAll();
-
-
 private:
 	void ShutDownListenProc( );
 	// Starts the server. 
@@ -248,8 +248,6 @@ private:
 	HANDLE	m_hCompletionPort;
 	SOCKET	m_nListenSocket;   
 	HANDLE	m_hEvent; 
-	// Port number. 
-	unsigned int m_nPortNumber; 
 	// Maximum Number of Connections. 
 	unsigned int m_iMaxNumConnections;
 	// Number of Workers running intitially. 
