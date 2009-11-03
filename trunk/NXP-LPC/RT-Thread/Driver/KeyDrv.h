@@ -42,5 +42,4 @@ enum{
 void  InitKeyDriver (void);
 
 BOOLEAN  KeyHit (void);
-INT8U  GetKey (INT16U to);
- 
+INT8U  GetKey (INT16U to); 
