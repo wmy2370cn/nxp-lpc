@@ -169,7 +169,6 @@ typedef struct rt_object* rt_object_t;	/* Type for kernel objects. */
  *	- Process
  *	- Semaphore
  *	- Mutex
- *	- FastEvent
  *	- Event
  *	- MailBox
  *	- MessageQueue
@@ -187,9 +186,6 @@ enum rt_object_class_type
 #endif
 #ifdef RT_USING_MUTEX
 	RT_Object_Class_Mutex,		/* The object is a mutex. */
-#endif
-#ifdef RT_USING_FASTEVENT
-	RT_Object_Class_FastEvent,	/* The object is a fast event. */
 #endif
 #ifdef RT_USING_EVENT
 	RT_Object_Class_Event,		/* The object is a event. */
@@ -323,7 +319,7 @@ struct rt_thread
 #endif
 	rt_uint32_t	number_mask;
 
-#if defined(RT_USING_EVENT) || defined(RT_USING_FASTEVENT)
+#if defined(RT_USING_EVENT)
 	/* thread event */
 	rt_uint32_t event_set;
 	rt_uint8_t	event_info;
@@ -401,7 +397,7 @@ struct rt_semaphore
 {
 	struct rt_ipc_object parent;
 
-	rt_base_t value;				/* value of semaphore. */
+	rt_ubase_t value;				/* value of semaphore. */
 };
 typedef struct rt_semaphore* rt_sem_t;
 #endif
@@ -414,35 +410,20 @@ struct rt_mutex
 {
 	struct rt_ipc_object parent;
 
-	rt_base_t value;				/* value of mutex. */
+	rt_ubase_t value;				/* value of mutex. */
 
 	struct rt_thread* owner;		/* current owner of mutex. */
 	rt_uint8_t original_priority;	/* priority of last thread hold the mutex. */
 
-	rt_base_t hold;					/* numbers of thread hold the mutex. Only 0 or 1 is legal. */
+	rt_ubase_t hold;			 	/* numbers of thread hold the mutex. */
 };
 typedef struct rt_mutex* rt_mutex_t;
 #endif
 
-#if defined(RT_USING_EVENT) || defined(RT_USING_FASTEVENT)
+#if defined(RT_USING_EVENT)
 #define RT_EVENT_FLAG_AND		0x01
 #define RT_EVENT_FLAG_OR		0x02
 #define RT_EVENT_FLAG_CLEAR		0x04
-#endif
-
-#ifdef RT_USING_FASTEVENT
-/*
- * fast_event
- */
-struct rt_fast_event
-{
-	struct rt_object parent;
-
-	rt_uint32_t set;				/* event set. */
-
-	rt_list_t thread_list[RT_EVENT_LENGTH];	/* threads blocked on this resource. */
-};
-typedef struct rt_fast_event* rt_fast_event_t;
 #endif
 
 #ifdef RT_USING_EVENT

@@ -30,6 +30,7 @@
 #endif
 
 /* Device error codes */
+#define DFS_STATUS_OK			0		/* no error */
 #define DFS_STATUS_ENOENT		2		/* No such file or directory */
 #define DFS_STATUS_EIO		 	5		/* I/O error */
 #define DFS_STATUS_ENXIO		6		/* No such device or address */
@@ -132,9 +133,10 @@ struct dfs_stat
 #define stat dfs_stat
 
 /* File types */
-#define FT_REGULAR		0
-#define FT_SOCKET		1
-#define FT_DIRECTORY	2
+#define FT_REGULAR		0	/* regular file */
+#define FT_SOCKET		1	/* socket file  */
+#define FT_DIRECTORY	2	/* directory    */
+#define FT_USER			3	/* user defined */
 
 /* file descriptor */
 struct dfs_fd
