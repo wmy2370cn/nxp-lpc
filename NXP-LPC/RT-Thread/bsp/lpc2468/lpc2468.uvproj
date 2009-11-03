@@ -546,11 +546,6 @@
               <FilePath>..\..\app\main.c</FilePath>
             </File>
             <File>
-              <FileName>echo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\app\echo.c</FilePath>
-            </File>
-            <File>
               <FileName>ExtLib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\app\ExtLib.c</FilePath>
@@ -559,6 +554,16 @@
               <FileName>ExtLib.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\app\ExtLib.h</FilePath>
+            </File>
+            <File>
+              <FileName>udpecho.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\udpecho.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcpecho.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\tcpecho.c</FilePath>
             </File>
           </Files>
         </Group>

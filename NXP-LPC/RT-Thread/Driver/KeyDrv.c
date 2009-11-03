@@ -28,6 +28,7 @@
 #include "KeyDrv.h" 
 #include <rtthread.h>
 #include <rthw.h>
+#include "ExtLib.h"
 /*
 *********************************************************************************************************
 *                                            LOCAL CONSTANTS
@@ -51,17 +52,13 @@ static  INT8U     KeyBufOutIx;              /* Index into key buf where next sca
 static  INT16U    KeyDownTmr;               /* Counts how long key has been pressed                    */
 static  INT8U     KeyNRead;                 /* Number of keys read from the keyboard                   */
 
-static  INT8U     KeyRptStartDlyCtr;        /* Number of scan times before auto repeat is started      */
-static  INT8U     KeyRptDlyCtr;             /* Number of scan times before auto repeat executes again  */
-
-static  INT8U     KeyScanState;             /* Current state of key scanning function                  */
-
 #define  KEY_SCAN_TASK_STK_SIZE  200
 #define  PRIO_KEY_SCAN_TASK   60
 
 static  char  KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE];  /* Keyboard scanning task stack             */
 
 static struct rt_thread key_scan_thread;
+static struct rt_semaphore key_sem;
 
 //static  OS_EVENT *KeySemPtr;                               /* Pointer to keyboard semaphore            */
 
@@ -154,7 +151,8 @@ static  void  AddKey (INT8U code)
 		{        /* Adjust index to the next scan code to put in buffer*/
 			KeyBufInIx = 0;
 		}
-		OS_EXIT_CRITICAL();                       
+		OS_EXIT_CRITICAL();    
+		rt_sem_release(&key_sem);
 //		OSSemPost(KeySemPtr);                    /* Signal sem if scan code inserted in the buffer     */
 	}
 	else
@@ -231,9 +229,8 @@ INT8U  GetKey (INT16U to)
 	OS_CPU_SR  cpu_sr;
 
 	INT8U code;
-	INT8U err;
-
-
+	
+	rt_sem_take(&key_sem, to); 
 //	OSSemPend(KeySemPtr, to, &err);              /* Wait for a key to be pressed                       */
 	OS_ENTER_CRITICAL();                        
 	if (KeyNRead > 0)
@@ -358,6 +355,10 @@ static  void  ScanKeyTask (void *data)
 	INT16U CurKeyVal = KEY_NONE;
 	INT16U LastKeyVal = KEY_NONE ;
 
+	INT8U     KeyRptStartDlyCtr;        /* Number of scan times before auto repeat is started      */
+	INT8U     KeyRptDlyCtr;             /* Number of scan times before auto repeat executes again  */
+	INT8U     KeyScanState = KEY_STATE_UP;              /* Current state of key scanning function                  */
+ 
 	data = data;                                         
 	for (;;)
 	{
@@ -403,15 +404,23 @@ static  void  ScanKeyTask (void *data)
 					}
 				}
 			} 
-			else
+			else 
 			{
-				KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
+				if (CurKeyVal)
+				{ // CurKeyVal != LastKeyVal 已经换了一个按键按下，此时键与上次按键不一样，所以重新开始
+					KeyScanState = KEY_STATE_UP;
+				}
+				else
+				{//还没有按键按下，等待去抖
+					KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all  */
+				}
 			}
 			LastKeyVal = CurKeyVal;
 			break;
 
 		case KEY_STATE_RPT_DLY:
-			if (IsKeyDown())
+			CurKeyVal = IsKeyDown();
+			if (CurKeyVal && CurKeyVal == LastKeyVal)
 			{                     /* See if key is still pressed              */
 				if (KeyRptDlyCtr > 0)
 				{               /* See if we need to wait before repeat key */
@@ -425,8 +434,16 @@ static  void  ScanKeyTask (void *data)
 			} 
 			else
 			{
-				KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
+				if (CurKeyVal)
+				{ // CurKeyVal != LastKeyVal 已经换了一个按键按下，此时键与上次按键不一样，所以重新开始
+					KeyScanState = KEY_STATE_UP;
+				}
+				else
+				{//还没有按键按下，等待去抖
+					KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all  */
+				}
 			}
+			LastKeyVal = CurKeyVal;
 			break;
 		}
 	}
@@ -434,12 +451,17 @@ static  void  ScanKeyTask (void *data)
 
 extern void  InitKeyDriver (void)
 {
-	KeyScanState = KEY_STATE_UP;                 /* Keyboard should not have a key pressed             */
 	KeyNRead     = 0;                            /* Clear the number of keys read                      */
 	KeyDownTmr   = 0;
 	KeyBufInIx   = 0;                            /* Key codes inserted at  the beginning of the buffer */
 	KeyBufOutIx  = 0;                            /* Key codes removed from the beginning of the buffer */
 // 	KeySemPtr    = OSSemCreate(0);               /* Initialize the keyboard semaphore                  */
-// 
 // 	OSTaskCreate(ScanKeyTask , (void *)0, &KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE-1], PRIO_KEY_SCAN_TASK);
+	rt_sem_init(&key_sem, "key", 0, RT_IPC_FLAG_FIFO);
+
+	rt_thread_init(&key_scan_thread,"key_thread",ScanKeyTask, RT_NULL,	&KeyScanTaskStk[0], sizeof(KeyScanTaskStk),
+		PRIO_KEY_SCAN_TASK, 10);
+
+	rt_thread_startup(&key_scan_thread);
+
 }

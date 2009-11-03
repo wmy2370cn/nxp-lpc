@@ -576,10 +576,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\app\echo.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\app\ExtLib.c"
 				>
 			</File>
@@ -592,11 +588,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\app\tcpecho.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\app\TimerExt.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\app\TimerExt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\app\udpecho.c"
 				>
 			</File>
 		</Filter>
