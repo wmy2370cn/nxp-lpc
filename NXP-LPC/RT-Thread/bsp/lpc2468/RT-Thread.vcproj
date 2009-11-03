@@ -580,6 +580,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\app\ExtLib.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\app\ExtLib.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\app\main.c"
 				>
 			</File>
@@ -657,6 +665,18 @@
 			</File>
 			<File
 				RelativePath=".\nic_bsp.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Driver"
+			>
+			<File
+				RelativePath="..\..\Driver\KeyDrv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Driver\KeyDrv.h"
 				>
 			</File>
 		</Filter>

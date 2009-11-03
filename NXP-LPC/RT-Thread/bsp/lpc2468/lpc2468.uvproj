@@ -550,6 +550,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\app\echo.c</FilePath>
             </File>
+            <File>
+              <FileName>ExtLib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\ExtLib.c</FilePath>
+            </File>
+            <File>
+              <FileName>ExtLib.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\app\ExtLib.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -719,6 +729,21 @@
               <FileName>sys.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\net\lwip\src\core\sys.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>KeyDrv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\KeyDrv.c</FilePath>
+            </File>
+            <File>
+              <FileName>KeyDrv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\Driver\KeyDrv.h</FilePath>
             </File>
           </Files>
         </Group>

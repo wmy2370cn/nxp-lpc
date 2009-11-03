@@ -48,16 +48,53 @@
 #define  DEF_BIT_29                               0x20000000
 #define  DEF_BIT_30                               0x40000000
 #define  DEF_BIT_31                               0x80000000
+ 
 
-#if 0
+#ifndef BOOLEAN
 typedef unsigned char  BOOLEAN;
-typedef unsigned char  INT8U;                    /* Unsigned  8 bit quantity                           */
-typedef signed   char  INT8S;                    /* Signed    8 bit quantity                           */
-typedef unsigned short   INT16U;                   /* Unsigned 16 bit quantity                           */
-typedef signed   short   INT16S;                   /* Signed   16 bit quantity                           */
-typedef unsigned long  INT32U;                   /* Unsigned 32 bit quantity                           */
-typedef signed   long  INT32S;                   /* Signed   32 bit quantity                           */
-typedef float          FP32;                     /* Single precision floating point                    */
-typedef double         FP64;                     /* Double precision floating point                    */
+#endif
 
+#ifndef INT8U
+typedef unsigned char  INT8U;                    /* Unsigned  8 bit quantity                           */
+#endif
+
+#ifndef INT8S
+typedef signed   char  INT8S;                    /* Signed    8 bit quantity                           */
+#endif
+
+#ifndef INT16U
+typedef unsigned short   INT16U;                   /* Unsigned 16 bit quantity                           */
+#endif
+
+#ifndef INT16S
+typedef signed   short   INT16S;                   /* Signed   16 bit quantity                           */
+#endif
+
+#ifndef INT32U
+typedef unsigned long  INT32U;                   /* Unsigned 32 bit quantity                           */
+#endif
+
+#ifndef INT32S
+typedef signed   long  INT32S;                   /* Signed   32 bit quantity                           */
+#endif
+
+#ifndef FP32
+typedef float          FP32;                     /* Single precision floating point                    */
+#endif
+
+#ifndef FP64
+typedef double         FP64;                     /* Double precision floating point                    */
+#endif
+
+
+#ifndef OS_CPU_SR
+typedef unsigned int   OS_CPU_SR;                /* Define size of CPU status register (PSR = 32 bits) */
+#endif
+ 
+#ifndef OS_ENTER_CRITICAL
+#define  OS_ENTER_CRITICAL()  {cpu_sr = rt_hw_interrupt_disable();}
+#endif
+
+#ifndef OS_EXIT_CRITICAL
+#define  OS_EXIT_CRITICAL()   {rt_hw_interrupt_enable(cpu_sr);}
 #endif
