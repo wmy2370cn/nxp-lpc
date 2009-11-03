@@ -72,7 +72,6 @@ static struct rt_thread key_scan_thread;
 #define   KEY1_8 (*((volatile unsigned short *) 0x82000004))
 #define   KEY9 (*((volatile unsigned short *) 0x82000008))
 
-
 /*********************************************************************************************************
 ** 函数名称: GetKeyHdVal
 ** 函数名称: GetKeyHdVal
@@ -319,23 +318,18 @@ INT32U GetKeyDownTime (void)
 }
 
 
-static  BOOLEAN   IsKeyDown (void)
+static  INT16U   IsKeyDown (void)
 {                              
-	OS_CPU_SR  cpu_sr;
- 
-	INT16U key_now; 
+	OS_CPU_SR  cpu_sr; 
+	INT16U key_now = KEY_NONE; 
 	key_now = GetKeyHdVal();
 	if (KEY_NONE != key_now)
 	{         /* Key not pressed if 0                     */
 		OS_ENTER_CRITICAL();
 		KeyDownTmr++;                                      /* Update key down counter                  */
 		OS_EXIT_CRITICAL();
-		return (TRUE);
-	} 
-	else
-	{
-		return (FALSE);
 	}
+	return (key_now); 
 }
 /*********************************************************************************************************
 ** 函数名称: ScanKeyTask
@@ -361,7 +355,8 @@ static  BOOLEAN   IsKeyDown (void)
 ********************************************************************************************************/
 static  void  ScanKeyTask (void *data)
 {
-	INT16U code;
+	INT16U CurKeyVal = KEY_NONE;
+	INT16U LastKeyVal = KEY_NONE ;
 
 	data = data;                                         
 	for (;;)
@@ -370,38 +365,39 @@ static  void  ScanKeyTask (void *data)
 		switch (KeyScanState)
 		{
 		case KEY_STATE_UP:                             /* See if need to look for a key pressed    */
-			if (IsKeyDown())
+			CurKeyVal = IsKeyDown();
+			if (CurKeyVal != KEY_NONE)
 			{                     /* See if key is pressed                    */
 				KeyScanState = KEY_STATE_DEBOUNCE;    /* Next call we will have debounced the key */
 				KeyDownTmr   = 0;                     /* Reset key down timer                     */
 			}
+			LastKeyVal = CurKeyVal;
 			break;
-
 		case KEY_STATE_DEBOUNCE:                       /* Key pressed, get scan code and buffer    */
-			if (IsKeyDown())
-			{                     /* See if key is pressed                    */
-				code              = GetKeyHdVal();      /* Determine the key scan code              */
-				AddKey(code);                       /* Input scan code in buffer                */
+			CurKeyVal = IsKeyDown();
+			if (CurKeyVal && CurKeyVal == LastKeyVal)
+			{				 				 
+				AddKey(CurKeyVal);                       /* Input scan code in buffer                */
 				KeyRptStartDlyCtr = KEY_RPT_START_DLY;/* Start delay to auto-repeat function      */
-				KeyScanState      = KEY_STATE_RPT_START_DLY;
-			} 
+				KeyScanState      = KEY_STATE_RPT_START_DLY;				
+			}
 			else
 			{
-				//			KeySelRow(KEY_ALL_ROWS);              /* Select all row                           */
-				KeyScanState      = KEY_STATE_UP;     /* Key was not pressed after all!           */
+				KeyScanState  = KEY_STATE_UP;     /* Key was not pressed after all!           */
 			}
+			LastKeyVal = CurKeyVal;
 			break;
 
 		case KEY_STATE_RPT_START_DLY:
-			if (IsKeyDown())
+			CurKeyVal = IsKeyDown();
+			if (CurKeyVal && CurKeyVal == LastKeyVal)
 			{                     /* See if key is still pressed              */
 				if (KeyRptStartDlyCtr > 0)
 				{          /* See if we need to delay before auto rpt  */
 					KeyRptStartDlyCtr--;              /* Yes, decrement counter to start of rpt   */
 					if (KeyRptStartDlyCtr == 0)
 					{     /* If delay to auto repeat is completed ... */
-						code         = GetKeyHdVal();   /* Determine the key scan code              */
-						AddKey(code);               /* Input scan code in buffer                */
+					 	AddKey(CurKeyVal);               /* Input scan code in buffer                */
 						KeyRptDlyCtr = KEY_RPT_DLY;   /* Load delay before next repeat            */
 						KeyScanState = KEY_STATE_RPT_DLY;
 					}
@@ -411,6 +407,7 @@ static  void  ScanKeyTask (void *data)
 			{
 				KeyScanState = KEY_STATE_DEBOUNCE;    /* Key was not pressed after all            */
 			}
+			LastKeyVal = CurKeyVal;
 			break;
 
 		case KEY_STATE_RPT_DLY:
@@ -421,8 +418,7 @@ static  void  ScanKeyTask (void *data)
 					KeyRptDlyCtr--;                   /* Yes, dec. wait time to next key repeat   */
 					if (KeyRptDlyCtr == 0)
 					{          /* See if it's time to repeat key           */
-						code         = GetKeyHdVal();   /* Determine the key scan code              */
-						AddKey(code);               /* Input scan code in buffer                */
+				 		AddKey(CurKeyVal);               /* Input scan code in buffer                */
 						KeyRptDlyCtr = KEY_RPT_DLY;   /* Reload delay counter before auto repeat  */
 					}
 				}
