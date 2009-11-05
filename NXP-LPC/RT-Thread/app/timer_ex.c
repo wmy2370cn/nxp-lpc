@@ -215,7 +215,7 @@ void rt_timer_ex_init(rt_timer_t timer,
 	RT_ASSERT(timer != RT_NULL);
 
 	/* timer object init */
-// 	rt_object_init((rt_object_t)timer, RT_Object_Class_Timer, name);
+  	rt_object_init((rt_object_t)timer, RT_Object_Class_Timer, name);
 
 	_rt_timer_ex_init(timer, timeout, parameter, time, flag);
 }

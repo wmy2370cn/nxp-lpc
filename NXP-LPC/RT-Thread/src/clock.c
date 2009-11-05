@@ -65,6 +65,8 @@ void rt_tick_increase()
 		++rt_passed_second;
 	}
 
+	/**/
+	rt_timer_ex_tick_hook( );
 	/* check timer  */
 	rt_timer_check();
 
