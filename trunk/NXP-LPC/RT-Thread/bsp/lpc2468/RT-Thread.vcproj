@@ -172,6 +172,10 @@
 			Name="Kernel"
 			>
 			<File
+				RelativePath="..\..\src\clock.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\device.c"
 				>
 			</File>
@@ -592,6 +596,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\app\timer_ex.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\app\timer_ex.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\app\TimerExt.c"
 				>
 			</File>
@@ -683,6 +695,130 @@
 				RelativePath="..\..\Driver\KeyDrv.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="Mbx"
+			>
+			<File
+				RelativePath="..\..\UITC\Mbx\mb.c"
+				>
+			</File>
+			<Filter
+				Name="tcp"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\tcp\mbtcp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\tcp\mbtcp.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="rtu"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\rtu\mbcrc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\rtu\mbcrc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\rtu\mbrtu.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\rtu\mbrtu.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ascii"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\ascii\mbascii.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\ascii\mbascii.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="functions"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfunccoils.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfuncdiag.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfuncdisc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfuncholding.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfuncinput.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbfuncother.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\functions\mbutils.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mb.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbconfig.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbframe.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbfunc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbport.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbproto.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\include\mbutils.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Port"
+				>
+				<File
+					RelativePath="..\..\UITC\Mbx\Port\port.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
