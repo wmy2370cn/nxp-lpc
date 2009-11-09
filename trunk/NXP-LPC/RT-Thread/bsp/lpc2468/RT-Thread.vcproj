@@ -815,7 +815,23 @@
 				Name="Port"
 				>
 				<File
+					RelativePath="..\..\UITC\Mbx\Port\port.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\UITC\Mbx\Port\port.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\Port\portevent.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\Port\portserial.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\Port\porttimer.c"
 					>
 				</File>
 			</Filter>
