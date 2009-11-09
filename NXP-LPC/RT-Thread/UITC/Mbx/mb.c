@@ -29,8 +29,8 @@
  */
 
 /* ----------------------- System includes ----------------------------------*/
-#include "stdlib.h"
-#include "string.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
@@ -126,8 +126,7 @@ static MBFunctionHandler xFuncHandlers[MB_FUNC_HANDLERS_MAX] = {
 };
 
 /* ----------------------- Start implementation -----------------------------*/
-MBErrorCode
-MBInit( MBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBParity eParity )
+MBErrorCode MBInit( MBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBParity eParity )
 {
     MBErrorCode    eStatus = MB_ENOERR;
 
@@ -149,7 +148,7 @@ MBInit( MBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBPa
             pMBFrameStopCur = MBRTUStop;
             pMBFrameSendCur = MBRTUSend;
             pMBFrameReceiveCur = MBRTUReceive;
-            pMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+            pMBFrameCloseCur = MB_PORT_HAS_CLOSE ? MBPortClose : NULL;
             pMBFrameCBByteReceived = MBRTUReceiveFSM;
             pMBFrameCBTransmitterEmpty = MBRTUTransmitFSM;
             pMBPortCBTimerExpired = MBRTUTimerT35Expired;
@@ -163,7 +162,7 @@ MBInit( MBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBPa
             pMBFrameStopCur = MBASCIIStop;
             pMBFrameSendCur = MBASCIISend;
             pMBFrameReceiveCur = MBASCIIReceive;
-            pMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+            pMBFrameCloseCur = MB_PORT_HAS_CLOSE ? MBPortClose : NULL;
             pMBFrameCBByteReceived = MBASCIIReceiveFSM;
             pMBFrameCBTransmitterEmpty = MBASCIITransmitFSM;
             pMBPortCBTimerExpired = MBASCIITimerT1SExpired;
@@ -193,8 +192,7 @@ MBInit( MBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBPa
 }
 
 #if MB_TCP_ENABLED > 0
-MBErrorCode
-MBTCPInit( USHORT ucTCPPort )
+MBErrorCode MBTCPInit( USHORT ucTCPPort )
 {
     MBErrorCode    eStatus = MB_ENOERR;
 
@@ -222,8 +220,7 @@ MBTCPInit( USHORT ucTCPPort )
 }
 #endif
 
-MBErrorCode
-MBRegisterCB( UCHAR ucFunctionCode, pfnMBFunctionHandler pxHandler )
+MBErrorCode MBRegisterCB( UCHAR ucFunctionCode, pfnMBFunctionHandler pxHandler )
 {
     int             i;
     MBErrorCode    eStatus;
@@ -269,8 +266,7 @@ MBRegisterCB( UCHAR ucFunctionCode, pfnMBFunctionHandler pxHandler )
 }
 
 
-MBErrorCode
-MBClose( void )
+MBErrorCode MBClose( void )
 {
     MBErrorCode    eStatus = MB_ENOERR;
 
@@ -288,8 +284,7 @@ MBClose( void )
     return eStatus;
 }
 
-MBErrorCode
-MBEnable( void )
+MBErrorCode MBEnable( void )
 {
     MBErrorCode    eStatus = MB_ENOERR;
 
@@ -306,8 +301,7 @@ MBEnable( void )
     return eStatus;
 }
 
-MBErrorCode
-MBDisable( void )
+MBErrorCode MBDisable( void )
 {
     MBErrorCode    eStatus;
 
@@ -328,8 +322,7 @@ MBDisable( void )
     return eStatus;
 }
 
-MBErrorCode
-MBPoll( void )
+MBErrorCode MBPoll( void )
 {
     static UCHAR   *ucMBFrame;
     static UCHAR    ucRcvAddress;

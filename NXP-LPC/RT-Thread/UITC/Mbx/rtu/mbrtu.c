@@ -77,8 +77,7 @@ static volatile USHORT usSndBufferCount;
 static volatile USHORT usRcvBufferPos;
 
 /* ----------------------- Start implementation -----------------------------*/
-MBErrorCode
-MBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBParity eParity )
+MBErrorCode  MBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBParity eParity )
 {
     MBErrorCode    eStatus = MB_ENOERR;
     ULONG           usTimerT35_50us;
@@ -122,8 +121,7 @@ MBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MBParity eParit
     return eStatus;
 }
 
-void
-MBRTUStart( void )
+void MBRTUStart( void )
 {
     ENTER_CRITICAL_SECTION(  );
     /* Initially the receiver is in the state STATE_RX_INIT. we start
@@ -138,8 +136,7 @@ MBRTUStart( void )
     EXIT_CRITICAL_SECTION(  );
 }
 
-void
-MBRTUStop( void )
+void MBRTUStop( void )
 {
     ENTER_CRITICAL_SECTION(  );
     vMBPortSerialEnable( FALSE, FALSE );
@@ -147,8 +144,7 @@ MBRTUStop( void )
     EXIT_CRITICAL_SECTION(  );
 }
 
-MBErrorCode
-MBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
+MBErrorCode MBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
 {
     BOOL            xFrameReceived = FALSE;
     MBErrorCode    eStatus = MB_ENOERR;
@@ -183,8 +179,7 @@ MBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
     return eStatus;
 }
 
-MBErrorCode
-MBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
+MBErrorCode MBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
 {
     MBErrorCode    eStatus = MB_ENOERR;
     USHORT          usCRC16;
@@ -222,8 +217,7 @@ MBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
     return eStatus;
 }
 
-BOOL
-MBRTUReceiveFSM( void )
+BOOL MBRTUReceiveFSM( void )
 {
     BOOL            xTaskNeedSwitch = FALSE;
     UCHAR           ucByte;
@@ -246,7 +240,7 @@ MBRTUReceiveFSM( void )
          * damaged frame are transmitted.
          */
     case STATE_RX_ERROR:
-        vMBPortTimersEnable(  );
+        MBPortTimersEnable(  );
         break;
 
         /* In the idle state we wait for a new character. If a character
@@ -259,7 +253,7 @@ MBRTUReceiveFSM( void )
         eRcvState = STATE_RX_RCV;
 
         /* Enable t3.5 timers. */
-        vMBPortTimersEnable(  );
+        MBPortTimersEnable(  );
         break;
 
         /* We are currently receiving a frame. Reset the timer after
@@ -282,8 +276,7 @@ MBRTUReceiveFSM( void )
     return xTaskNeedSwitch;
 }
 
-BOOL
-MBRTUTransmitFSM( void )
+BOOL MBRTUTransmitFSM( void )
 {
     BOOL            xNeedPoll = FALSE;
 
@@ -311,7 +304,7 @@ MBRTUTransmitFSM( void )
             xNeedPoll = MBPortEventPost( EV_FRAME_SENT );
             /* Disable transmitter. This prevents another transmit buffer
              * empty interrupt. */
-            vMBPortSerialEnable( TRUE, FALSE );
+             MBPortSerialEnable( TRUE, FALSE );
             eSndState = STATE_TX_IDLE;
         }
         break;
@@ -320,8 +313,7 @@ MBRTUTransmitFSM( void )
     return xNeedPoll;
 }
 
-BOOL
-MBRTUTimerT35Expired( void )
+BOOL MBRTUTimerT35Expired( void )
 {
     BOOL            xNeedPoll = FALSE;
 
@@ -348,7 +340,7 @@ MBRTUTimerT35Expired( void )
                 ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_ERROR ) );
     }
 
-    vMBPortTimersDisable(  );
+    MBPortTimersDisable(  );
     eRcvState = STATE_RX_IDLE;
 
     return xNeedPoll;

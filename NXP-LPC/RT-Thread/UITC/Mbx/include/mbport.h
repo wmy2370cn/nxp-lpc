@@ -71,7 +71,7 @@ BOOL            MBPortEventGet(  /*@out@ */ MBEventType * eEvent );
 BOOL            MBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate,
                                    UCHAR ucDataBits, MBParity eParity );
 
-void            vMBPortClose( void );
+void            MBPortClose( void );
 
 void            MBPortSerialClose( void );
 

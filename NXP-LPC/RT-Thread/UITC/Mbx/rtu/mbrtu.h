@@ -34,8 +34,8 @@
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
-    MBErrorCode MBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate,
-                             MBParity eParity );
+   
+MBErrorCode MBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate,MBParity eParity );
 void            MBRTUStart( void );
 void            MBRTUStop( void );
 MBErrorCode    MBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength );
