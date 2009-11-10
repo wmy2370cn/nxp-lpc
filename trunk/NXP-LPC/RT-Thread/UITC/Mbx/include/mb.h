@@ -263,7 +263,7 @@ MBErrorCode    MBSetSlaveID( UCHAR ucSlaveID, BOOL xIsRunning,
  *   valid it returns MBErrorCode::MB_EINVAL.
  */
 MBErrorCode    MBRegisterCB( UCHAR ucFunctionCode, 
-                               pfnMBFunctionHandler pxHandler );
+                               fnMBFunctionHandler pxHandler );
 
 /* ----------------------- Callback -----------------------------------------*/
 

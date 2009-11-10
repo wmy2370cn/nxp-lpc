@@ -83,6 +83,7 @@ MBErrorCode  MBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MB
     ULONG           usTimerT35_50us;
 
     ( void )ucSlaveAddress;
+#if 0
     ENTER_CRITICAL_SECTION(  );
 
     /* Modbus RTU uses 8 Databits. */
@@ -118,6 +119,8 @@ MBErrorCode  MBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, MB
     }
     EXIT_CRITICAL_SECTION(  );
 
+#endif
+
     return eStatus;
 }
 
@@ -130,8 +133,8 @@ void MBRTUStart( void )
      * modbus protocol stack until the bus is free.
      */
     eRcvState = STATE_RX_INIT;
-    vMBPortSerialEnable( TRUE, FALSE );
-    vMBPortTimersEnable(  );
+   // vMBPortSerialEnable( TRUE, FALSE );
+   // MBPortTimersEnable(  );
 
     EXIT_CRITICAL_SECTION(  );
 }
@@ -139,8 +142,8 @@ void MBRTUStart( void )
 void MBRTUStop( void )
 {
     ENTER_CRITICAL_SECTION(  );
-    vMBPortSerialEnable( FALSE, FALSE );
-    vMBPortTimersDisable(  );
+ //   vMBPortSerialEnable( FALSE, FALSE );
+ //   vMBPortTimersDisable(  );
     EXIT_CRITICAL_SECTION(  );
 }
 
@@ -207,7 +210,7 @@ MBErrorCode MBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLe
 
         /* Activate the transmitter. */
         eSndState = STATE_TX_XMIT;
-        vMBPortSerialEnable( FALSE, TRUE );
+   //     vMBPortSerialEnable( FALSE, TRUE );
     }
     else
     {
@@ -225,7 +228,7 @@ BOOL MBRTUReceiveFSM( void )
     assert( eSndState == STATE_TX_IDLE );
 
     /* Always read the character. */
-    ( void )MBPortSerialGetByte( ( CHAR * ) & ucByte );
+ //   ( void )MBPortSerialGetByte( ( CHAR * ) & ucByte );
 
     switch ( eRcvState )
     {
@@ -233,14 +236,14 @@ BOOL MBRTUReceiveFSM( void )
          * wait until the frame is finished.
          */
     case STATE_RX_INIT:
-        vMBPortTimersEnable(  );
+  //      vMBPortTimersEnable(  );
         break;
 
         /* In the error state we wait until all characters in the
          * damaged frame are transmitted.
          */
     case STATE_RX_ERROR:
-        MBPortTimersEnable(  );
+ //       MBPortTimersEnable(  );
         break;
 
         /* In the idle state we wait for a new character. If a character
@@ -253,7 +256,7 @@ BOOL MBRTUReceiveFSM( void )
         eRcvState = STATE_RX_RCV;
 
         /* Enable t3.5 timers. */
-        MBPortTimersEnable(  );
+  //      MBPortTimersEnable(  );
         break;
 
         /* We are currently receiving a frame. Reset the timer after
@@ -270,7 +273,7 @@ BOOL MBRTUReceiveFSM( void )
         {
             eRcvState = STATE_RX_ERROR;
         }
-        vMBPortTimersEnable(  );
+  //      vMBPortTimersEnable(  );
         break;
     }
     return xTaskNeedSwitch;
@@ -288,23 +291,23 @@ BOOL MBRTUTransmitFSM( void )
          * idle state.  */
     case STATE_TX_IDLE:
         /* enable receiver/disable transmitter. */
-        vMBPortSerialEnable( TRUE, FALSE );
+   //     vMBPortSerialEnable( TRUE, FALSE );
         break;
 
     case STATE_TX_XMIT:
         /* check if we are finished. */
         if( usSndBufferCount != 0 )
         {
-            MBPortSerialPutByte( ( CHAR )*pucSndBufferCur );
+     //       MBPortSerialPutByte( ( CHAR )*pucSndBufferCur );
             pucSndBufferCur++;  /* next byte in sendbuffer. */
             usSndBufferCount--;
         }
         else
         {
-            xNeedPoll = MBPortEventPost( EV_FRAME_SENT );
+   //         xNeedPoll = MBPortEventPost( EV_FRAME_SENT );
             /* Disable transmitter. This prevents another transmit buffer
              * empty interrupt. */
-             MBPortSerialEnable( TRUE, FALSE );
+    //         MBPortSerialEnable( TRUE, FALSE );
             eSndState = STATE_TX_IDLE;
         }
         break;
@@ -321,13 +324,13 @@ BOOL MBRTUTimerT35Expired( void )
     {
         /* Timer t35 expired. Startup phase is finished. */
     case STATE_RX_INIT:
-        xNeedPoll = MBPortEventPost( EV_READY );
+ //       xNeedPoll = MBPortEventPost( EV_READY );
         break;
 
         /* A frame was received and t35 expired. Notify the listener that
          * a new frame was received. */
     case STATE_RX_RCV:
-        xNeedPoll = MBPortEventPost( EV_FRAME_RECEIVED );
+ //       xNeedPoll = MBPortEventPost( EV_FRAME_RECEIVED );
         break;
 
         /* An error occured while receiving the frame. */
@@ -340,7 +343,7 @@ BOOL MBRTUTimerT35Expired( void )
                 ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_ERROR ) );
     }
 
-    MBPortTimersDisable(  );
+//    MBPortTimersDisable(  );
     eRcvState = STATE_RX_IDLE;
 
     return xNeedPoll;

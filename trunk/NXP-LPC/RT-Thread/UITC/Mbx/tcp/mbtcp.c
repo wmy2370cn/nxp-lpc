@@ -89,20 +89,21 @@ MBTCPDoInit( USHORT ucTCPPort )
     return eStatus;
 }
 
-void
-MBTCPStart( void )
+void MBTCPStart( void )
 {
 }
+void MBTCPPortDisable( void )
+{
+//    prvvMBPortReleaseClient( pxPCBClient );
+}
 
-void
-MBTCPStop( void )
+void MBTCPStop( void )
 {
     /* Make sure that no more clients are connected. */
-    vMBTCPPortDisable( );
+    MBTCPPortDisable( );
 }
 
-MBErrorCode
-MBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
+MBErrorCode MBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 {
     MBErrorCode    eStatus = MB_EIO;
     UCHAR          *pucMBTCPFrame;
