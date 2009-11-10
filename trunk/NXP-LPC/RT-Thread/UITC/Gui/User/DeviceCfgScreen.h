@@ -1,6 +1,6 @@
 /****************************************Copyright (c)**************************************************
-**                                      液晶显示界面模块 【对外接口】
 **                                      
+**                                装置参数     
 **                                      
 **
 **                           
@@ -24,15 +24,19 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#pragma  once
-#ifndef GUI_H
-#define	GUI_H
+#ifndef DEV_CFG_SCREEN_H
+#define	DEV_CFG_SCREEN_H
+#include "ScreenBase.h"
 
+typedef struct CDevCfgScreen 
+{
+	CScreenBase  Base;
+
+}CDevCfgScreen;
  
 
-void InitGuiTask(void);
+extern CDevCfgScreen DeviceCfgScreen; //装置参数信息
 
-extern INT8U PostGuiTaskEvent( INT32U msg,INT32U WParam,INT32U LParam);
 
 
 #endif

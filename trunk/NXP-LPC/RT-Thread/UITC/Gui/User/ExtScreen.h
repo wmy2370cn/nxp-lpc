@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      液晶显示界面模块 【对外接口】
+**                                      
 **                                      
 **                                      
 **
@@ -25,14 +25,21 @@
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 #pragma  once
-#ifndef GUI_H
-#define	GUI_H
+ 
+//	描    述 :  
+//	功    能 : 显示实时测值
+typedef struct CRealTimeValScreen 
+{
+	CScreenBase  Base;
 
  
+ 
+	 
+}CRealTimeValScreen;
 
-void InitGuiTask(void);
-
-extern INT8U PostGuiTaskEvent( INT32U msg,INT32U WParam,INT32U LParam);
-
-
-#endif
+//
+extern void InitRealTimeValScreen(CRealTimeValScreen *pScreenExt ); 
+ 
+ 
+extern CRealTimeValScreen   RealTimeValScr;       //实时测值   
+  

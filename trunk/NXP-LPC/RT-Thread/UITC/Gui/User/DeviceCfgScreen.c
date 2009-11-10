@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      液晶显示界面模块 【对外接口】
+**                                      
 **                                      
 **                                      
 **
@@ -24,15 +24,32 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#pragma  once
-#ifndef GUI_H
-#define	GUI_H
+#include "includes.h"
+#include "DeviceCfgScreen.h" 
+#include "StringTable.h"
+#include "Message.h"
 
+extern CScreenMgr  g_ScreeLib;
+
+CDevCfgScreen DeviceCfgScreen;
+
+
+
+
+//按键处理函数 
+static void OnKeyDownDevCfgScreen(INT16U keyCode)   
+{	
+	 switch (keyCode)
+	 { 
+	 case KEY_2:
+		 {			 	 // 退出该窗口，进入父窗口
+			 SwitchScreen(&g_ScreeLib,DeviceCfgScreen.Base.ParentID);
+
+		 
+		 }
+		 break;
+	 default:
+		 break;
+	 }
+}
  
-
-void InitGuiTask(void);
-
-extern INT8U PostGuiTaskEvent( INT32U msg,INT32U WParam,INT32U LParam);
-
-
-#endif

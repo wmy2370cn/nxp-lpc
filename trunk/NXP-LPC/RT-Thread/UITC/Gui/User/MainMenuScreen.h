@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      液晶显示界面模块 【对外接口】
+**                                      
 **                                      
 **                                      
 **
@@ -25,14 +25,27 @@
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 #pragma  once
-#ifndef GUI_H
-#define	GUI_H
+
+#ifndef MAIN_MENU_H
+#define	MAIN_MENU_H
+
+#include "CtrlBase.h"
+
+//	描    述 : 启动画面中版本信息画面
+//	功    能 : 显示操作模块启动时显示公司版本信息和LOGO
+typedef struct CMainMenuScreen 
+{
+	CScreenBase  Base;
+	CLcdMenu  Menu;
 
  
-
-void InitGuiTask(void);
-
-extern INT8U PostGuiTaskEvent( INT32U msg,INT32U WParam,INT32U LParam);
+	 
+}CMainMenuScreen;
 
 
+extern CMainMenuScreen  MainMenuScreen;
+//
+extern void InitMainMenuScreen(CMainMenuScreen *pScreenExt ); 
+
+ 
 #endif
