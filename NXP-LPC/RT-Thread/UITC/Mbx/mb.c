@@ -72,11 +72,11 @@ static enum
 /* Functions pointer which are initialized in MBInit( ). Depending on the
  * mode (RTU or ASCII) the are set to the correct implementations.
  */
-static pfnMBFrameSend pMBFrameSendCur;
-static pfnMBFrameStart pMBFrameStartCur;
-static pfnMBFrameStop pMBFrameStopCur;
-static pfnMBFrameReceive pMBFrameReceiveCur;
-static pfnMBFrameClose pMBFrameCloseCur;
+static fnMBFrameSend pMBFrameSendCur;
+static fnMBFrameStart pMBFrameStartCur;
+static fnMBFrameStop pMBFrameStopCur;
+static fnMBFrameReceive pMBFrameReceiveCur;
+static fnMBFrameClose pMBFrameCloseCur;
 
 /* Callback functions required by the porting layer. They are called when
  * an external event has happend which includes a timeout or the reception
@@ -220,7 +220,30 @@ MBErrorCode MBTCPInit( USHORT ucTCPPort )
 }
 #endif
 
-MBErrorCode MBRegisterCB( UCHAR ucFunctionCode, pfnMBFunctionHandler pxHandler )
+/*********************************************************************************************************
+** 函数名称: MBRegisterCB
+** 函数名称: MBRegisterCB
+**
+** 功能描述： 注册功能码 
+**
+** 输　入:  UCHAR ucFunctionCode
+** 输　入:  fnMBFunctionHandler pxHandler
+**          
+** 输　出:   MBErrorCode
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月10日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+MBErrorCode MBRegisterCB( UCHAR ucFunctionCode, fnMBFunctionHandler pxHandler )
 {
     int             i;
     MBErrorCode    eStatus;
@@ -398,4 +421,62 @@ MBErrorCode MBPoll( void )
         }
     }
     return MB_ENOERR;
+}
+
+/* ----------------------- Defines ------------------------------------------*/
+#define REG_INPUT_START 1000
+#define REG_INPUT_NREGS 4
+static USHORT   usRegInputStart = REG_INPUT_START;
+static USHORT   usRegInputBuf[REG_INPUT_NREGS];
+
+MBErrorCode MBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+{
+	MBErrorCode    eStatus = MB_ENOERR;
+	int             iRegIndex;
+
+	if( ( usAddress >= REG_INPUT_START )
+		&& ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
+	{
+		iRegIndex = ( int )( usAddress - usRegInputStart );
+		while( usNRegs > 0 )
+		{
+			*pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
+			*pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+			iRegIndex++;
+			usNRegs--;
+		}
+	}
+	else
+	{
+		eStatus = MB_ENOREG;
+	}
+
+	return eStatus;
+}
+
+MBErrorCode MBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs,  MBRegisterMode eMode )
+{
+	( void )pucRegBuffer;
+	( void )usAddress;
+	( void )usNRegs;
+	( void )eMode;
+	return MB_ENOREG;
+}
+
+
+MBErrorCode MBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils,MBRegisterMode eMode )
+{
+	( void )pucRegBuffer;
+	( void )usAddress;
+	( void )usNCoils;
+	( void )eMode;
+	return MB_ENOREG;
+}
+
+MBErrorCode MBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+{
+	( void )pucRegBuffer;
+	( void )usAddress;
+	( void )usNDiscrete;
+	return MB_ENOREG;
 }
