@@ -280,7 +280,7 @@ static void GuiTask(void *pdata)
 
 static OS_STK  GUITaskStk [GUI_TASK_STK_SIZE]; 
 
-extern void InitGuiTask( )
+void InitGuiTask( void )
 {
 	//LCD≥ı ºªØ
 	InitLcd( );

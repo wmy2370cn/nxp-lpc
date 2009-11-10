@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      液晶显示界面模块 【对外接口】
+**                                    版本信息    
 **                                      
 **                                      
 **
@@ -24,15 +24,25 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#pragma  once
-#ifndef GUI_H
-#define	GUI_H
-
+#pragma once
+#ifndef VER_SCREEN_H
+#define	VER_SCREEN_H
  
+//	描    述 : 启动画面 版本信息画面
+//	功    能 : 显示 公司版本信息和LOGO
+typedef struct CVersionScreen 
+{
+	CScreenBase  Base;
+  
 
-void InitGuiTask(void);
+	 
+}CVersionScreen;
 
-extern INT8U PostGuiTaskEvent( INT32U msg,INT32U WParam,INT32U LParam);
-
+//
+extern void InitVersionScreen(CVersionScreen *pScreenExt ); 
+ 
+ 
+extern CVersionScreen      VersionScreen;       // 版本声明画面 
+ 
 
 #endif
