@@ -31,3 +31,24 @@ rt_uint8_t  rt_thread_delay_hmsm (rt_uint8_t   hours, rt_uint8_t  minutes,rt_uin
 	rt_thread_sleep(ticks);
 	return (RT_EOK);
 }
+
+#ifdef  _DEBUG
+/*******************************************************************************
+* Function Name  : assert_failed
+* Description    : Reports the name of the source file and the source line number
+*                  where the assert error has occurred.
+* Input          : - file: pointer to the source file name
+*                  - line: assert error line source number
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void assert_failed(rt_uint8_t* file, rt_uint32_t line)
+{ 
+	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
+	rt_kprintf("       file  %s\r\n", file);
+	rt_kprintf("       line  %d\r\n", line);
+
+	while (1) ;
+}
+#endif
+

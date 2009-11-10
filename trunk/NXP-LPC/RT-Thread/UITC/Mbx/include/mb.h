@@ -37,6 +37,8 @@
 PR_BEGIN_EXTERN_C
 #endif
 
+#include "extlib.h"
+
 #include "mbport.h"
 #include "mbproto.h"
 

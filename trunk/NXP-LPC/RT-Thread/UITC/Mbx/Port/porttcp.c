@@ -63,12 +63,8 @@ BOOL MBTCPPortInit( USHORT usTCPPort )
 }
 
  
-
-void  MBTCPPortDisable( void )
-{
-   
-}
  
+
 BOOL  MBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength )
 {
     *ppucMBTCPFrame = &aucTCPBuf[0];

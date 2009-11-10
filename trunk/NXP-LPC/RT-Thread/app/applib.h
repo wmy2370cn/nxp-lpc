@@ -3,6 +3,8 @@
 
 #pragma  once
 
+#include "rthw.h"
+
 #ifndef TRUE
 #define TRUE  1
 #endif

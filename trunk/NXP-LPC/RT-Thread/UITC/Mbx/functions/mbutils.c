@@ -51,8 +51,8 @@ void MBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits,UCHAR u
     USHORT          usNPreBits;
     USHORT          usValue = ucValue;
 
-    assert( ucNBits <= 8 );
-    assert( ( size_t )BITS_UCHAR == sizeof( UCHAR ) * 8 );
+    assert_param( ucNBits <= 8 );
+    assert_param( ( size_t )BITS_UCHAR == sizeof( UCHAR ) * 8 );
 
     /* Calculate byte offset for first byte containing the bit values starting
      * at usBitOffset. */
