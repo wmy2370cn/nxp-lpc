@@ -58,8 +58,7 @@ struct MBXComm
 {
 	UCHAR    ucMBAddress;
 	MBMode   MBCurrentMode;
-
-
+ 
  
 	fnMBFrameSend pfnMBFrameSend;
 	fnMBFrameStart pfnMBFrameStart;

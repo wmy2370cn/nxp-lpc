@@ -688,11 +688,27 @@
 			Name="Driver"
 			>
 			<File
+				RelativePath="..\..\Driver\DataQueue.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Driver\DataQueue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Driver\KeyDrv.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Driver\KeyDrv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Driver\uart.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Driver\uart.h"
 				>
 			</File>
 		</Filter>
@@ -701,6 +717,10 @@
 			>
 			<File
 				RelativePath="..\..\UITC\Mbx\mb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\UITC\Mbx\MBXComm.c"
 				>
 			</File>
 			<Filter
@@ -827,7 +847,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\UITC\Mbx\Port\portother.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\UITC\Mbx\Port\portserial.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\Port\porttcp.c"
 					>
 				</File>
 				<File

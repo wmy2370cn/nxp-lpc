@@ -55,7 +55,7 @@ static  INT8U     KeyNRead;                 /* Number of keys read from the keyb
 #define  KEY_SCAN_TASK_STK_SIZE  200
 #define  PRIO_KEY_SCAN_TASK   60
 
-static  char  KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE];  /* Keyboard scanning task stack             */
+static  INT8U  KeyScanTaskStk[KEY_SCAN_TASK_STK_SIZE];  /* Keyboard scanning task stack             */
 
 static struct rt_thread key_scan_thread;
 static struct rt_semaphore key_sem;

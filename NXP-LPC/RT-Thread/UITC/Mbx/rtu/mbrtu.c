@@ -153,7 +153,7 @@ MBErrorCode MBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pus
     MBErrorCode    eStatus = MB_ENOERR;
 
     ENTER_CRITICAL_SECTION(  );
-    assert( usRcvBufferPos < MB_SER_PDU_SIZE_MAX );
+    assert_param( usRcvBufferPos < MB_SER_PDU_SIZE_MAX );
 
     /* Length and CRC check */
     if( ( usRcvBufferPos >= MB_SER_PDU_SIZE_MIN )
@@ -225,7 +225,7 @@ BOOL MBRTUReceiveFSM( void )
     BOOL            xTaskNeedSwitch = FALSE;
     UCHAR           ucByte;
 
-    assert( eSndState == STATE_TX_IDLE );
+    assert_param( eSndState == STATE_TX_IDLE );
 
     /* Always read the character. */
  //   ( void )MBPortSerialGetByte( ( CHAR * ) & ucByte );
@@ -283,7 +283,7 @@ BOOL MBRTUTransmitFSM( void )
 {
     BOOL            xNeedPoll = FALSE;
 
-    assert( eRcvState == STATE_RX_IDLE );
+    assert_param( eRcvState == STATE_RX_IDLE );
 
     switch ( eSndState )
     {
@@ -339,7 +339,7 @@ BOOL MBRTUTimerT35Expired( void )
 
         /* Function called in an illegal state. */
     default:
-        assert( ( eRcvState == STATE_RX_INIT ) ||
+        assert_param( ( eRcvState == STATE_RX_INIT ) ||
                 ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_ERROR ) );
     }
 
