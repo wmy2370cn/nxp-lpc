@@ -4,6 +4,7 @@
 #include "applib.h"  
 #include "bsp.h"
 #include "nic.h"
+#include "gui.h"
  
 
 void FlickerLed( )
@@ -60,6 +61,8 @@ void main_app_thread_entry(void* parameter)
 {															  
 	int count = 0;
 	FlickerLed( );
+
+	InitGuiTask();
 
 	while (1)
 	{

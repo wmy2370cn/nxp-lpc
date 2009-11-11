@@ -65,3 +65,18 @@ CScreenBase * CreateScreen( INT32U nSize,scr_ctor ctor,scr_dtor dtor )
 	}
 	return pObj;
 }
+void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor )
+{
+	ASSERT(pScr);
+	if(pScr)
+	{
+		pScr->Ctor = ctor;
+		pScr->Dtor = dtor;
+		pScr->Size = 0; //¾²Ì¬
+
+		if(ctor)
+		{
+			ctor(pScr);
+		}
+	}
+}

@@ -24,18 +24,40 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#include "includes.h"
+#include "ScreenBase.h"
 #include "DeviceCfgScreen.h" 
 #include "StringTable.h"
-#include "Message.h"
 
-extern CScreenMgr  g_ScreeLib;
 
 CDevCfgScreen DeviceCfgScreen;
 
+static void DevCfgScrCtor( CScreenBase *pScr )
+{
+
+}
+
+static void DevCfgScrDtor(CScreenBase *pScr)
+{
+	ASSERT(pScr);
+
+}
+
+
+CScreenBase * InitDevCfgScreen(void)
+{
+//	INT32U nSize = sizeof(CDevCfgScreen);
+	CScreenBase *pScr = (CScreenBase *)&DeviceCfgScreen;
+
+	InitScreen(pScr,DevCfgScrCtor,DevCfgScrDtor);
+
+
+	return pScr;
+
+}
 
 
 
+#if 0
 //按键处理函数 
 static void OnKeyDownDevCfgScreen(INT16U keyCode)   
 {	
@@ -52,4 +74,5 @@ static void OnKeyDownDevCfgScreen(INT16U keyCode)
 		 break;
 	 }
 }
- 
+#endif
+

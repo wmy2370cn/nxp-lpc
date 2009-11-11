@@ -27,16 +27,21 @@
 #pragma once
 #ifndef VER_SCREEN_H
 #define	VER_SCREEN_H
+
  
 //	描    述 : 启动画面 版本信息画面
 //	功    能 : 显示 公司版本信息和LOGO
-typedef struct CVersionScreen 
+struct VER_SCREEN
 {
 	SCR_BASE_DEF
   
 
 	 
-}CVersionScreen;
+};
 
+typedef struct VER_SCREEN  CVersionScreen;
+
+
+CScreenBase * InitVerScreen( void );
 
 #endif

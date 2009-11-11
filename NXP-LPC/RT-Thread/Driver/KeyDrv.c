@@ -24,10 +24,10 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#include "applib.h"
-#include "KeyDrv.h" 
 #include <rtthread.h>
 #include <rthw.h>
+#include "applib.h"
+#include "KeyDrv.h" 
 #include "ExtLib.h"
 /*
 *********************************************************************************************************
@@ -449,7 +449,7 @@ static  void  ScanKeyTask (void *data)
 	}
 }
 
-extern void  InitKeyDriver (void)
+void  InitKeyDriver (void)
 {
 	KeyNRead     = 0;                            /* Clear the number of keys read                      */
 	KeyDownTmr   = 0;

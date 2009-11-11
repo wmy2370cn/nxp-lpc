@@ -137,3 +137,29 @@ extern void InitVersionScreen(CVersionScreen *pScreenExt )
 }
 #endif
  
+
+static void VerScrDtor(CScreenBase *pScr)
+{
+	ASSERT(pScr);
+
+}
+
+static void VerScrCtor( CScreenBase *pScr )
+{
+
+}
+
+CScreenBase * InitVerScreen(void)
+{
+	INT32U nSize = sizeof(CVersionScreen);
+	CScreenBase *pScr = NULL;
+
+	pScr = CreateScreen(nSize ,VerScrCtor,VerScrDtor );
+	ASSERT(pScr);
+
+
+
+
+
+	return pScr;
+}
