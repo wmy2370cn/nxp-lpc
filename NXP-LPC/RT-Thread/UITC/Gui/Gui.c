@@ -26,6 +26,61 @@
 ********************************************************************************************************/
 #include <stdlib.h>
 #include <string.h>
+#include "GuiList.h"
  
 #include "ScreenBase.h"  
 
+gui_list_t g_ScrLib;
+
+
+/*********************************************************************************************************
+** 函数名称: InitScreenLib
+** 函数名称: InitScreenLib
+**
+** 功能描述：  初始化所有的屏幕
+**
+**
+** 输　出:
+**
+** 全局变量:
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年1月11日
+** 备  注:
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注:
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void InitScreenLib( )
+{
+	INT8U i = 0;
+	CScreenBase *pScreen = NULL;
+
+	//初始化链表先
+	GuiListInit(&g_ScrLib);
+
+	//创建LOGO SCREEN
+	//pScreen = CreateScreen( );
+
+	//添加到链表中
+	GuiListAppend(&g_ScrLib,&(pScreen->List));
+
+
+
+//	InitScreenMgr(&g_ScreeLib);
+//	InitLogoScreen( &LogoScreen );
+// 	InitDefaultScreen(&DefScreen);
+//	InitMainMenuScreen(&MainMenuScreen);
+//
+//	InitRealTimeValScreen(&RealTimeValScr);
+//
+//	for ( i=0;i<sizeof(screens)/sizeof(CScreenBase * );i++)
+//	{
+//		AppendScreen(&g_ScreeLib, screens[i]);
+//	}
+//	//进入默认画面
+//	SwitchScreen(&g_ScreeLib, ID_START_SCREEN);
+}

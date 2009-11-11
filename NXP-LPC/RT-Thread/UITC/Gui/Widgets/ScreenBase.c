@@ -27,22 +27,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+
 #include "ScreenBase.h"
 
-static void * Screen_ctor (void * _self, va_list * app)
+
+void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nScreenName )
 {
-	CScreenBase * self = _self;
-//	const char * text = va_arg(* app, const char *);
-//
-//	self -> text = malloc(strlen(text) + 1);
-//	assert(self -> text);
-//	strcpy(self -> text, text);
-	return self;
+	if (pScreen)
+	{
+		pScreen->ParentID = ParentID;
+		pScreen->CurrentID = CurrentID;
+		pScreen->ScreenName = nScreenName;
+	}
 }
 
-static void * Screen_dtor (void * _self)
-{
-	CScreenBase * self = _self;
 
-	return self;
+//动态创建一个屏幕
+CScreenBase * CreateScreen( INT32U nSize,scr_ctor ctor,scr_dtor dtor )
+{
+	CScreenBase *pObj;
+
+	if (nSize <= 0 || nSize > MAX_SCR_SIZE)
+		return RT_NULL;
+
+	pObj = rt_malloc(nSize);
+	if (pObj == RT_NULL)
+		return RT_NULL;
+
+	pObj->Ctor = ctor;
+	pObj->Dtor = dtor;
+	pObj->Size = nSize;
+
+	if(ctor)
+	{
+		ctor(pObj);
+	}
+	return pObj;
 }
