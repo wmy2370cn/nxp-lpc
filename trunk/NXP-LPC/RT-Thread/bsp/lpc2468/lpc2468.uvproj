@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define>_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\Driver;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -944,6 +944,16 @@
               <FileName>AscII8_16.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Common\AscII8_16.c</FilePath>
+            </File>
+            <File>
+              <FileName>VersionScr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\VersionScr.c</FilePath>
+            </File>
+            <File>
+              <FileName>DeviceCfgScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\DeviceCfgScreen.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1887,6 +1897,16 @@
               <FileName>AscII8_16.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Common\AscII8_16.c</FilePath>
+            </File>
+            <File>
+              <FileName>VersionScr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\VersionScr.c</FilePath>
+            </File>
+            <File>
+              <FileName>DeviceCfgScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\DeviceCfgScreen.c</FilePath>
             </File>
           </Files>
         </Group>

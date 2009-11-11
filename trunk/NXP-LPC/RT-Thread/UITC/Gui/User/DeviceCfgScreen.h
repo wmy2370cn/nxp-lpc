@@ -24,19 +24,21 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
+#pragma once
 #ifndef DEV_CFG_SCREEN_H
 #define	DEV_CFG_SCREEN_H
-#include "ScreenBase.h"
 
-typedef struct CDevCfgScreen 
+
+struct DEVCFG_SCREEN
 {
-	CScreenBase  Base;
+	SCR_BASE_DEF
 
-}CDevCfgScreen;
- 
+};
+typedef struct DEVCFG_SCREEN CDevCfgScreen;
 
-extern CDevCfgScreen DeviceCfgScreen; //装置参数信息
+//extern CDevCfgScreen DeviceCfgScreen; //装置参数信息
 
 
+CScreenBase * InitDevCfgScreen( void );
 
 #endif
