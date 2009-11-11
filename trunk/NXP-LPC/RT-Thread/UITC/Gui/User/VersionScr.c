@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      
+**                                      版本声明画面
 **                                      
 **                                      
 **
@@ -26,17 +26,13 @@
 ********************************************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
-#include "includes.h"
 #include "ScreenBase.h" 
 #include "VersionScr.h"
 #include "StringTable.h"
-#include "Message.h"
-#include "DC.h"
-#include "ClockMgr.h"
 
-extern CScreenMgr  g_ScreeLib;
 
-CVersionScreen      VersionScreen;       // 版本声明画面 
+#if 0
+CVersionScreen      VersionScreen;
  
 
 static void OnMessageVersionScreen(INT32U msg, INT32U param)  
@@ -139,5 +135,5 @@ extern void InitVersionScreen(CVersionScreen *pScreenExt )
 	 
 	}
 }
-
+#endif
  

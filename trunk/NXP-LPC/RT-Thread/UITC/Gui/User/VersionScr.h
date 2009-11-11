@@ -32,17 +32,11 @@
 //	功    能 : 显示 公司版本信息和LOGO
 typedef struct CVersionScreen 
 {
-	CScreenBase  Base;
+	SCR_BASE_DEF
   
 
 	 
 }CVersionScreen;
 
-//
-extern void InitVersionScreen(CVersionScreen *pScreenExt ); 
- 
- 
-extern CVersionScreen      VersionScreen;       // 版本声明画面 
- 
 
 #endif
