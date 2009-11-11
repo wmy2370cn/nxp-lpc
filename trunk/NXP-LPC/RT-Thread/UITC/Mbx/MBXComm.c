@@ -68,3 +68,9 @@ struct MBXComm
 
 };
  
+
+INT8U InitMBX()
+{
+
+	return TRUE;
+}

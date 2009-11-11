@@ -27,7 +27,6 @@
 #ifndef GLOBAL_DEF_H
 #define	GLOBAL_DEF_H
 
-#include "LcdDriver.h"
 
 //×ø±êÎ»ÖÃ
 #ifndef LcdPos

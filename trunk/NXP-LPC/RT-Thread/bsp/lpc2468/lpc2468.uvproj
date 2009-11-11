@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define>_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -894,6 +894,56 @@
               <FileName>portevent.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\Port\portevent.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Gui</GroupName>
+          <Files>
+            <File>
+              <FileName>Gui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Gui.c</FilePath>
+            </File>
+            <File>
+              <FileName>GuiSystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiSystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>Tools.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\Tools.c</FilePath>
+            </File>
+            <File>
+              <FileName>ScreenBase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\ScreenBase.c</FilePath>
+            </File>
+            <File>
+              <FileName>AscII8_8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\AscII8_8.c</FilePath>
+            </File>
+            <File>
+              <FileName>StringTable.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\StringTable.c</FilePath>
+            </File>
+            <File>
+              <FileName>CnFontsLib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\CnFontsLib.c</FilePath>
+            </File>
+            <File>
+              <FileName>Icon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\Icon.c</FilePath>
+            </File>
+            <File>
+              <FileName>AscII8_16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\AscII8_16.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1787,6 +1837,56 @@
               <FileName>portevent.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\Port\portevent.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Gui</GroupName>
+          <Files>
+            <File>
+              <FileName>Gui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Gui.c</FilePath>
+            </File>
+            <File>
+              <FileName>GuiSystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiSystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>Tools.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\Tools.c</FilePath>
+            </File>
+            <File>
+              <FileName>ScreenBase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\ScreenBase.c</FilePath>
+            </File>
+            <File>
+              <FileName>AscII8_8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\AscII8_8.c</FilePath>
+            </File>
+            <File>
+              <FileName>StringTable.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\StringTable.c</FilePath>
+            </File>
+            <File>
+              <FileName>CnFontsLib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\CnFontsLib.c</FilePath>
+            </File>
+            <File>
+              <FileName>Icon.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\Icon.c</FilePath>
+            </File>
+            <File>
+              <FileName>AscII8_16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Common\AscII8_16.c</FilePath>
             </File>
           </Files>
         </Group>
