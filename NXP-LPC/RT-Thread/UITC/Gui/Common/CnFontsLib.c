@@ -8,7 +8,7 @@
 //	备    注 :
 //	历史记录 : 
 ///////////////////////////////////////////////////////////////
-#include "includes.h"
+#include "applib.h"
 #include "CnFontsLib.h"
 
 const CN_FONTS_LIB g_WordStock[CN_WORD_NUM]=
