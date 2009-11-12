@@ -31,7 +31,8 @@
 #include "keydrv.h"
  
 #include "ScreenBase.h"  
-
+#include "GuiEvent.h"
+#include "GuiConst.h"
 
 #include "versionScr.h"
 #include "devicecfgscreen.h"
@@ -43,19 +44,113 @@ struct SCREEN_MGR
 {
 	gui_list_t  ScrLib;  // 界面指针数组
 	INT16U 	    ScreensCnt;	 // 界面总数
+	INT8U       ActiveScrID; //当前激活的ID
 };
 
 typedef struct SCREEN_MGR CScreenMgr;
 
 static CScreenMgr g_ScreenLib;
 
-// 切换到序号ScreenID屏幕
+ 
+/*********************************************************************************************************
+** 函数名称: GetCurrentScreenPtr
+** 函数名称: GetCurrentScreenPtr
+**
+** 功能描述：  得到当前屏幕的指针
+**
+** 输　入:  CScreenMgr * pMgr
+**          
+** 输　出:   CScreenBase*
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月12日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+CScreenBase* GetCurrentScreenPtr(CScreenMgr *pMgr)
+{
+	CScreenBase *pScr = NULL ;
+	gui_list_t *n = NULL;
+	if(pMgr && GuiListIsEmpty(& pMgr->ScrLib ) )
+	{
+		ASSERT(pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID);
+		if ( pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID )
+		{//循环遍历
+			for ( n = pMgr->ScrLib.pNext ; n != & pMgr->ScrLib; n = n->pNext )
+			{
+				pScr = CONTAINING_RECORD(n, CScreenBase,List);
+				ASSERT(pScr);
+				if (pScr && pScr->CurrentID == pMgr->ActiveScrID )
+				{
+					return pScr;
+				}
+			}
+		}
+	}
+ 	return NULL;
+}  
+// 得到指向序号ScreenID屏幕的指针
+CScreenBase* GetScreenPtr(CScreenMgr *pMgr ,INT8U nScreenID)
+{
+// 	if(pMgr == NULL || (nScreenID >= MAXSCREEN) || (nScreenID == ID_SCREEN_NULL))
+// 		return NULL;
+// 	else
+// 		return (pMgr->m_ScreenArray[nScreenID]);
+	CScreenBase *pScr = NULL ;
+	gui_list_t *n = NULL;
+	if(pMgr && GuiListIsEmpty(& pMgr->ScrLib ) )
+	{
+		ASSERT(pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID);
+		if ( pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID )
+		{//循环遍历
+			for ( n = pMgr->ScrLib.pNext ; n != & pMgr->ScrLib; n = n->pNext )
+			{
+				pScr = CONTAINING_RECORD(n, CScreenBase,List);
+				ASSERT(pScr);
+				if (pScr && pScr->CurrentID == nScreenID )
+				{
+					return pScr;
+				}
+			}
+		}
+	}
+	return NULL;
+}
+/*********************************************************************************************************
+** 函数名称: SwitchScreen
+** 函数名称: SwitchScreen
+**
+** 功能描述： 切换到序号ScreenID屏幕 
+**
+** 输　入:  INT8U nScreenID
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月12日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void SwitchScreen(INT8U nScreenID)
 {
 	CScreenBase * pScreen = NULL ;
 	CScreenMgr *pMgr = &g_ScreenLib;
 
-//	pScreen=GetCurrentScreenPtr(pMgr);
+ 	pScreen=GetCurrentScreenPtr(pMgr);
 
 	//首先销毁原窗口
 	if(pScreen && pScreen->pfnDestory)
@@ -166,7 +261,42 @@ static INT8U HandleTaskEvent( )
 	return TRUE;
 }
 
+ 
+/*********************************************************************************************************
+** 函数名称: SendEventN
+** 函数名称: SendEventN
+**
+** 功能描述：  匿名发送，送给当前活动的窗口
+**
+** 输　入:  INT32U msg
+** 输　入:  INT32U param
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月12日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static INT8U SendEventN(INT32U msg,INT32U param)
+{
+	CScreenBase *pScreen = NULL;
+	CScreenMgr *pMgr = &g_ScreenLib;
 
+	pScreen = GetCurrentScreenPtr(pMgr);
+
+	if (pScreen == NULL)
+		return FALSE;
+
+	return SendScreenEvnent( pScreen ,msg,param );
+}
 static void GuiTask(void *pdata)
 {
 	INT16U  key = 0;
