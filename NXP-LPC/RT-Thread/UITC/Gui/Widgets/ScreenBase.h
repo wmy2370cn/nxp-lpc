@@ -45,7 +45,7 @@ typedef void (*scr_dtor)(CScreenBase *object);
 
 //消息函数
 //按键处理
-typedef  void  (*fnOnKeyDown)(CScreenBase *pScreen, INT16U keyCode);
+typedef  void  (*fnOnKeyDown)(CScreenBase *pScreen, INT32U keyCode);
 //消息处理虚函数
 typedef  void   (*fnOnMessage)(CScreenBase *pScreen,INT32U msg, INT32U param);
 //初始化窗口
