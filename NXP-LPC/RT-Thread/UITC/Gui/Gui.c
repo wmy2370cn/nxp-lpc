@@ -29,22 +29,33 @@
 #include "applib.h"
 #include "GuiList.h"
 #include "keydrv.h"
- 
-#include "ScreenBase.h"  
+
+#include "ScreenBase.h"
+#include "guisystem.h"
 #include "GuiEvent.h"
-#include "GuiConst.h"
+#include "ExtScreenDef.h"
 
 #include "versionScr.h"
 #include "devicecfgscreen.h"
+
+
+//CScreenBase * const screens[]=
+//{
+//	(CScreenBase*)&CVersionScreen, //顺序需要与ID对应
+//  (CScreenBase*)&CDevCfgScreen,
+//
+//};
 
 
 
 //界面管理
 struct SCREEN_MGR
 {
-	gui_list_t  ScrLib;  // 界面指针数组
+	struct GuiListNode  ScrHeadNode;  // 界面指针数组
 	INT16U 	    ScreensCnt;	 // 界面总数
 	INT8U       ActiveScrID; //当前激活的ID
+
+//	CScreenBase *ScreenArray[MAX_SCREEN_ID];   // 界面指针数组
 };
 
 typedef struct SCREEN_MGR CScreenMgr;
@@ -77,15 +88,16 @@ static CScreenMgr g_ScreenLib;
 CScreenBase* GetCurrentScreenPtr(CScreenMgr *pMgr)
 {
 	CScreenBase *pScr = NULL ;
-	gui_list_t *n = NULL;
-	if(pMgr && GuiListIsEmpty(& pMgr->ScrLib ) )
+	struct GuiListNode *pNode = NULL;
+	if(pMgr && GuiListIsEmpty(& pMgr->ScrHeadNode ) )
 	{
 		ASSERT(pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID);
 		if ( pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID )
 		{//循环遍历
-			for ( n = pMgr->ScrLib.pNext ; n != & pMgr->ScrLib; n = n->pNext )
+			GuiListForEach ( pNode,  & pMgr->ScrHeadNode)
+		//	for ( n = pMgr->ScrHeadNode.pNext ; n != & pMgr->ScrHeadNode; n = n->pNext )
 			{
-				pScr = CONTAINING_RECORD(n, CScreenBase,List);
+				pScr = CONTAINING_RECORD(pNode, CScreenBase,List);
 				ASSERT(pScr);
 				if (pScr && pScr->CurrentID == pMgr->ActiveScrID )
 				{
@@ -99,20 +111,17 @@ CScreenBase* GetCurrentScreenPtr(CScreenMgr *pMgr)
 // 得到指向序号ScreenID屏幕的指针
 CScreenBase* GetScreenPtr(CScreenMgr *pMgr ,INT8U nScreenID)
 {
-// 	if(pMgr == NULL || (nScreenID >= MAXSCREEN) || (nScreenID == ID_SCREEN_NULL))
-// 		return NULL;
-// 	else
-// 		return (pMgr->m_ScreenArray[nScreenID]);
 	CScreenBase *pScr = NULL ;
-	gui_list_t *n = NULL;
-	if(pMgr && GuiListIsEmpty(& pMgr->ScrLib ) )
+	struct GuiListNode *pNode = NULL;
+	if(pMgr && GuiListIsEmpty(& pMgr->ScrHeadNode ) )
 	{
 		ASSERT(pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID);
 		if ( pMgr->ActiveScrID > ID_SCREEN_NULL && pMgr->ActiveScrID < MAX_SCREEN_ID )
 		{//循环遍历
-			for ( n = pMgr->ScrLib.pNext ; n != & pMgr->ScrLib; n = n->pNext )
+			GuiListForEach ( pNode,  & pMgr->ScrHeadNode)
+		//	for ( n = pMgr->ScrHeadNode.pNext ; n != & pMgr->ScrHeadNode; n = n->pNext )
 			{
-				pScr = CONTAINING_RECORD(n, CScreenBase,List);
+				pScr = CONTAINING_RECORD(pNode, CScreenBase,List);
 				ASSERT(pScr);
 				if (pScr && pScr->CurrentID == nScreenID )
 				{
@@ -159,7 +168,7 @@ void SwitchScreen(INT8U nScreenID)
 	}
 
 	//切换到下一窗口
-//	pScreen=GetScreenPtr(pMgr,nScreenID);
+ 	pScreen=GetScreenPtr(pMgr,nScreenID);
 
 	if(pScreen == NULL)
 		return;
@@ -204,7 +213,7 @@ static void InitScreenLib( )
 	CScreenBase *pScreen = NULL;
 
 	//初始化链表先
-	GuiListInit(&(g_ScreenLib.ScrLib));
+	GuiListInit(&(g_ScreenLib.ScrHeadNode));
 
 	//创建LOGO SCREEN
 	//pScreen = ( );
@@ -212,11 +221,11 @@ static void InitScreenLib( )
 	pScreen = InitVerScreen();
 
 	//添加到链表中
-	GuiListAppend(&(g_ScreenLib.ScrLib),&(pScreen->List));
+	GuiListAppend(&(g_ScreenLib.ScrHeadNode),&(pScreen->List));
 	g_ScreenLib.ScreensCnt ++;
 
 	pScreen = InitDevCfgScreen();
-	GuiListAppend(&(g_ScreenLib.ScrLib),&(pScreen->List));
+	GuiListAppend(&(g_ScreenLib.ScrHeadNode),&(pScreen->List));
 	g_ScreenLib.ScreensCnt ++;
 
 
@@ -342,8 +351,9 @@ struct rt_thread Gui_Thread;
 
 void InitGuiTask( void  )
 {
+	InitGuiTimerMgr();
 	//初始化窗口消息队列
-	InitScrEventList(  );
+	InitScrEventList();
 	// 界面初始化
 	InitScreenLib();
 	//启动任务

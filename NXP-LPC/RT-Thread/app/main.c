@@ -57,12 +57,26 @@ void FlickerLed( )
 	}
 } 
 
+
+void time_cb_func(void *pdata)
+{
+	static INT8U nState = FALSE;
+
+	SetLed(1,nState);
+	nState = ! nState;
+}
+struct rt_timer tim2 ;
 void main_app_thread_entry(void* parameter)
 {															  
 	int count = 0;
-	FlickerLed( );
+	
+	
+//	FlickerLed( );
 
 	InitGuiTask();
+
+	rt_timer_init(&tim2,"soft_tim2",time_cb_func,RT_NULL,50,RT_TIMER_FLAG_PERIODIC|RT_TIMER_FLAG_SOFT_TIMER);
+	rt_timer_start(&tim2);
 
 	while (1)
 	{
