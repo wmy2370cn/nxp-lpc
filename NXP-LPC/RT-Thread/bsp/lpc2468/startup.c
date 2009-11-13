@@ -92,7 +92,7 @@ void rtthread_startup(void)
 	/*init all registed devices*/
 	rt_device_init_all();
 #endif
-	rt_soft_timer_thread_init( );
+	rt_timer_thread_init();
 
 	 /* init application */
 	rt_application_init();
