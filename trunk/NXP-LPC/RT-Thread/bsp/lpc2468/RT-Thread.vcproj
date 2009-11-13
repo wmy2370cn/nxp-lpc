@@ -596,14 +596,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\app\timer_ex.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\app\timer_ex.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\app\TimerExt.c"
 				>
 			</File>

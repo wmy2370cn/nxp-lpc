@@ -114,7 +114,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>1</UseSimulator>
+            <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -125,7 +125,7 @@
             <LimitSpeedToRealTime>1</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>0</UseTarget>
+            <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -135,7 +135,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>1</TargetSelection>
+          <TargetSelection>2</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -565,11 +565,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\app\tcpecho.c</FilePath>
             </File>
-            <File>
-              <FileName>timer_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\app\timer_ex.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -954,6 +949,11 @@
               <FileName>DeviceCfgScreen.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\User\DeviceCfgScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>GuiEvent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1518,11 +1518,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\app\tcpecho.c</FilePath>
             </File>
-            <File>
-              <FileName>timer_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\app\timer_ex.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -1907,6 +1902,11 @@
               <FileName>DeviceCfgScreen.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\User\DeviceCfgScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>GuiEvent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
             </File>
           </Files>
         </Group>

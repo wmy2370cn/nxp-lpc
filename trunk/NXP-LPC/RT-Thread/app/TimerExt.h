@@ -30,7 +30,7 @@
 #if !defined(TIMER_MGR_H)
 #define TIMER_MGR_H
 
-#define  EXT_TIMER_CNT  8 
+
 #define  EXT_TMR_CFG_TICKS_PER_SEC 10  
 
 #define  EXT_TIMER_CB_EN   0
@@ -47,17 +47,19 @@ typedef struct TIMER_MSG
 #endif //  EXT_TIMER_CB_EN
 
 
-typedef struct EXT_TIMER
+struct EXT_TIMER
 {
-	rt_uint32_t Count;		//时间计数器
-	rt_uint32_t TimeOut;		//触发点
-	rt_uint8_t  Enable; 	    //使能标志
-	rt_uint8_t  Flag ;       //是否已经超时标志
+	INT32U Count;		//时间计数器
+	INT32U TimeOut;		//触发点
+	INT8U  Enable; 	    //使能标志
+	INT8U  Flag ;       //是否已经超时标志
 #if  EXT_TIMER_CB_EN > 0
  	fnTimerProcess pFunc;
 	void   *pFuncParam;
 #endif //  EXT_TIMER_CB_EN
-}EXT_TIMER;
+} ;
+
+typedef struct EXT_TIMER TimerExt;
 
 void InitTimerMgr( void );
 
@@ -65,17 +67,17 @@ void InitTimerMgr( void );
 
 //设置定时器
 #if  EXT_TIMER_CB_EN > 0
-rt_uint16_t  SetTimer  (rt_uint16_t nTimerID, rt_uint32_t nTime,fnTimerProcess fnProc,void *pFuncParam );
+INT32U  SetTimer  (INT32U nTimerID, INT32U nTime,fnTimerProcess fnProc,void *pFuncParam );
 #else
-rt_uint16_t  SetTimer  (rt_uint16_t nTimerID, rt_uint32_t nTime);
+INT32U  SetTimer  (INT32U nTimerID, INT32U nTime);
 #endif
 // 关定时器
-rt_uint8_t   KillTimer (rt_uint16_t nTimerID);
+INT8U   KillTimer (INT32U nTimerID);
 
-rt_uint8_t  ResetTimer(rt_uint16_t nTimerID);
+INT8U ResetTimer(INT32U nTimerID);
 
 //
-rt_uint8_t IsTimeTo(rt_uint16_t TimerID ); 
+INT8U IsTimeTo(INT32U TimerID ); 
 //在TICK中断里面调用
 void   ExtTimerTick( void );
 

@@ -76,6 +76,6 @@ __inline int GuiListIsEmpty(const gui_list_t *l)
 #define CONTAINING_RECORD(node, type, member)	\
 	((type *)((char*)(node)-(unsigned long)(&((type *)0)->member)))
 
-#define gui_list_foreach(node, list)	\
+#define GuiListForEach(node, list)	\
 	for ((node) = (list)->pNext; (node) != RT_NULL; (node) = (node)->pNext)
 #endif

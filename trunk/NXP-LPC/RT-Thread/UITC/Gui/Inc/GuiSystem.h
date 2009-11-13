@@ -28,3 +28,6 @@
 #include <stdarg.h>
 #include "applib.h"
 
+void InitGuiTimerMgr( void );
+void SetGuiTimer(CScreenBase *pScr,INT32U nIdEvent,INT32U nMsTime);
+INT8U KillGuiTimer( CScreenBase *pScr,INT32U nIdEvent );
