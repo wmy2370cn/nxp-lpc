@@ -50,6 +50,7 @@ rt_err_t rt_object_is_systemobject(rt_object_t object);
  * clock & timer interface
  */
 void rt_system_tick_init(void);
+void rt_timer_thread_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_increase(void);
 rt_tick_t rt_tick_from_millisecond(rt_uint32_t ms);

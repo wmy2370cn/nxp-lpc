@@ -521,10 +521,10 @@ static void rt_thread_timer_entry(void* parameter)
 /**
  * @ingroup SystemInit
  *
- * This function will init system timer_ex
+ * This function will init system timer thread
  *
  */
-void rt_soft_timer_thread_init(void)
+void rt_timer_thread_init(void)
 {
 	rt_sem_init(&timer_sem, "timer", 1, RT_IPC_FLAG_FIFO);
 	timer_ex_cnt = 0;
