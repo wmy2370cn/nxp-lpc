@@ -5,6 +5,9 @@
 #include "bsp.h"
 #include "nic.h"
 #include "gui.h"
+
+//TODO: 以后把这块统一处理
+#include "memdata.h"
  
 
 void FlickerLed( )
@@ -71,7 +74,9 @@ void main_app_thread_entry(void* parameter)
 	int count = 0;
 	
 	
-//	FlickerLed( );
+ 	FlickerLed( );
+
+ 	InitMemData();
 
 	InitGuiTask();
 
