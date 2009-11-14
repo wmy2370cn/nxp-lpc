@@ -91,14 +91,14 @@ typedef struct MEMDB
 //P区的操作接口 在硬件驱动层里面调用
 
 //输入开关量 以bit方式输入 nIdx 从0开始
-extern void SetPIBit(INT8U Val, INT16U nIdx );
+void SetPIBit(INT8U Val, INT16U nIdx );
 //输入开关量 以字节方式输入
-extern void SetPIB( void );
+void SetPIB( void );
 //输入模拟量 以字方式输入
-extern void SetPIW( INT16U Val,INT16U nIdx);
+void SetPIW( INT16U Val,INT16U nIdx);
 
 //输入编码器的编码值 以双字方式输入
-extern void SetPID( INT32U Val, INT16U nIdx );
+void SetPID( INT32U Val, INT16U nIdx );
 
  
 //初始化所有变量，该接口在系统初始化时调用
@@ -156,9 +156,9 @@ INT8U SetSVal( INT16U OccNo, INT8U Val );
 INT16U GetSWVal( INT16U OccNo );
 INT8U SetSWValue( INT16U OccNo, INT16U Val );
 
-extern void TestMemData(void );
+void TestMemData(void );
 
-extern M_DEF * GetMDataPtr( void );
+M_DEF * GetMDataPtr( void );
 
 
 // 系统字寄存器

@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define>_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\Driver;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\Driver;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;..\..\uitc\mem;..\..\uitc\advapp;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -954,6 +954,21 @@
               <FileName>GuiEvent.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Mem</GroupName>
+          <Files>
+            <File>
+              <FileName>Func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mem\Func.c</FilePath>
+            </File>
+            <File>
+              <FileName>MemData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1907,6 +1922,21 @@
               <FileName>GuiEvent.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Mem</GroupName>
+          <Files>
+            <File>
+              <FileName>Func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mem\Func.c</FilePath>
+            </File>
+            <File>
+              <FileName>MemData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
             </File>
           </Files>
         </Group>
