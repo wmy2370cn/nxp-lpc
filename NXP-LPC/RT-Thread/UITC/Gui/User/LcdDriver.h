@@ -25,7 +25,7 @@
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
 
-
+#pragma once
 #ifndef LCDDRIVER_H_
 #define LCDDRIVER_H_
 
@@ -38,5 +38,17 @@
 void TurnOnLcd(void);
 
 void TurnOffLcd(void);
+
+void InitLcd(void);
+
+//以下需要配合
+void LCD_SetDisplayPos(INT8U page_address, INT8U col_address);
+void LCD_WriteDataApi(INT8U val);
+
+void LCD_ClearScreen(void);
+
+//对液晶写屏
+void LCD_WriteData(INT8U x, INT8U y, INT8U val);
+
 
 #endif /* LCDDRIVER_H_ */
