@@ -106,7 +106,7 @@ INT8U SendScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lPara 
 
 	switch (Msg)
 	{
-	case LCD_WM_KEYDOWN:
+	case G_EVENT_KEYDOWN:
 		ASSERT(pScr->pfnKeyDown);
 		if (pScr->pfnKeyDown)
 		{

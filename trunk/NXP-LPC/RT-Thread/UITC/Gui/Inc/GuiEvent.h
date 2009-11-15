@@ -30,10 +30,10 @@ enum GUI_EVENT_TYPE
 {
 	LCD_WM_INIT=10,                 // 初始化
 	LCD_WM_REFRASH,                // 画面重新刷新
-	LCD_WM_TIMER,                  // 定时器消息
+	G_EVENT_TIMER,                  // 定时器消息
 
 	
-	LCD_WM_KEYDOWN,                // 键盘消息
+	G_EVENT_KEYDOWN,                // 键盘消息
 
 	LCD_WM_PAINT,                   ///< 参数客户DC
 	LCD_WM_NCPAINT,                 ///< 参数窗口DC

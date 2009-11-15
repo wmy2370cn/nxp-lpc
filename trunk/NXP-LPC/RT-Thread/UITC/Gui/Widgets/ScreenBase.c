@@ -66,7 +66,6 @@ void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nS
 		pScreen->ScreenName = nScreenName;
 	}
 }
-  
 /*********************************************************************************************************
 ** 函数名称: CreateScreen
 ** 函数名称: CreateScreen
@@ -149,3 +148,65 @@ void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor )
 	}
 	return;
 }
+
+
+void DrawScreenCaption( CScreenBase *pScreen, INT16U nTotal, INT16U nCur)
+{
+	if (pScreen == NULL)
+		return;
+	if (pScreen->ScreenName)
+	{
+		//清空位置
+ //		ClrRectScreenBuf(&g_rcCaption,COLOR_BK);
+//		DrawStringById(LCD_WIDTH>>1,0,pScreen->Base.ScreenName,PEN_COPY,ALIGN_CENTER,LCD_EN_FONT_8_16);
+	}
+	if(nTotal)
+	{
+		char szTxt[8] = {0};
+		snprintf( szTxt,sizeof(szTxt),"%02d/%02d",nCur,nTotal) ;
+//		DrawStringByStr( LCD_WIDTH-1,0, szTxt,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
+	}
+#if 0
+	if(pStr)
+	{
+		//用标题文字画标题栏
+		pOldEnFont = SetEnFontID(&theScreenDC, EN_8_16_BMPFONT);
+
+		DrawText(&theScreenDC, pStr,strlen(pStr),&g_rcCaption,DT_CENTER|DT_VCENTER);
+	}
+	if(nTotal)
+	{
+		DrawString(&theScreenDC,GUI_LCM_XMAX-1,0,isprintf("%02d/%02d",nCur,nTotal),PEN_COPY,ALIGN_RIGHT);
+	}
+	//重置原先的字体
+	SetEnFont(&theScreenDC, pOldEnFont);
+	LCD_PutRectBuff2Scr(&g_rcCaption);
+#endif
+}
+
+void DrawScreenStatusBar( void )
+{
+	char szTxt[32] = "2009.8.8-14:32:34";
+	INT8U addr = 32;
+	FP32  val = 12.86;
+#if 0
+	//画线
+ 	 DrawLine(0, 100,LCD_WIDTH-1, 100, COLOR_FR);
+	 //时间及地址
+ 	 DrawStringByStr(0,104,szTxt,PEN_COPY,ALIGN_LEFT,LCD_EN_FONT_8_8);
+	 snprintf( szTxt,sizeof(szTxt),"ADD[ %d ]",addr) ;
+	 DrawStringByStr(LCD_WIDTH-1,104,szTxt,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_8);
+
+	 //闸门开度  ID_STRING_GATAGE
+	 DrawStringById(0,112,ID_STRING_GATAGE,PEN_COPY,ALIGN_LEFT,LCD_EN_FONT_8_16);
+	 snprintf( szTxt,sizeof(szTxt)," %0.2f ",val) ;
+	 DrawStringByStr(LCD_WIDTH-1-40-32-32-16,112,szTxt,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
+	 DrawStringById(LCD_WIDTH-1-40-32-16-16,112,ID_STRING_M,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
+
+	 //状态
+	 DrawStringById(LCD_WIDTH-1-40,112,ID_STRING_STATE,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
+	 DrawStringById(LCD_WIDTH-1,112,ID_STRING_STOP,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
+#endif
+}
+
+

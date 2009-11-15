@@ -987,6 +987,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\UITC\Gui\User\LcdDriver.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Gui\User\LcdDriver.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\UITC\Gui\User\LogoScreen.c"
 					>
 				</File>

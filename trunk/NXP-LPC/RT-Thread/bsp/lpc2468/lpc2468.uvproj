@@ -955,6 +955,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
             </File>
+            <File>
+              <FileName>GuiDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiDriver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1922,6 +1927,11 @@
               <FileName>GuiEvent.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
+            </File>
+            <File>
+              <FileName>GuiDriver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\GuiDriver.c</FilePath>
             </File>
           </Files>
         </Group>
