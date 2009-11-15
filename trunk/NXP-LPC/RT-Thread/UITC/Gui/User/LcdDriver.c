@@ -1,5 +1,5 @@
  /****************************************Copyright (c)**************************************************
-**							     
+**							     LCD 硬件驱动部分，这部分需要根据不同的硬件来实现
 **                                      
 **                                      
 **
@@ -7,10 +7,10 @@
 **
 **--------------文件信息--------------------------------------------------------------------------------
 **文   件   名:   LcdDriver.c
-**创   建   人:   Author: admin
-**最后修改日期: Created on: 2009-11-15
+**创   建   人:   Lijin
+**最后修改日期:   2009-11-15
 **描        述:   
-**备        注 :   RT-Thread
+**备        注 :   
 **--------------历史版本信息----------------------------------------------------------------------------
 ** 创建人:  
 ** 版  本:  
@@ -30,18 +30,33 @@
 #include "lcddriver.h"
 
 
+/*LCD部分  */
+#define   LCD_RESET (*((volatile unsigned short *) 0x82000010))
+#define   LCD_CS (*((volatile unsigned short *) 0x82000014))
+#define   LCD_WR (*((volatile unsigned short *) 0x82000018))
+#define   LCD_RD (*((volatile unsigned short *) 0x82000020))
+#define   LCD_DATA (*((volatile unsigned short *) 0x82000024))
+#define   LCD_ADDR (*((volatile unsigned short *) 0x82000028))
+#define   LCD_BACK (*((volatile unsigned short *) 0x82000030))
+
+
 //液晶灯状态
 static INT8U g_nLcdLed;
+
+//关液晶背光
+#define  LCD_BACK_OFF(ignore)  LCD_BACK =0x80;
+//开液晶背光
+#define  LCD_BACK_ON(ignore)  LCD_BACK =0x00;
 //点亮液晶灯
 void TurnOnLcd(void)
 {
-//	hd_LightLCD(TRUE);
+ 	LCD_BACK_ON( );
 	g_nLcdLed=TRUE;
 }
 //熄灭液晶灯
 void TurnOffLcd(void)
 {
-//	hd_LightLCD(FALSE);
+ 	LCD_BACK_OFF( );
 	g_nLcdLed=FALSE;
 }
 //定义空指令
@@ -86,15 +101,6 @@ void GuiDelayNS(INT16U ns)
 	}
 }
 
-/*LCD部分  */
-#define   LCD_RESET (*((volatile unsigned short *) 0x82000010))
-#define   LCD_CS (*((volatile unsigned short *) 0x82000014))
-#define   LCD_WR (*((volatile unsigned short *) 0x82000018))
-#define   LCD_RD (*((volatile unsigned short *) 0x82000020))
-#define   LCD_DATA (*((volatile unsigned short *) 0x82000024))
-#define   LCD_ADDR (*((volatile unsigned short *) 0x82000028))
-#define   LCD_BACK (*((volatile unsigned short *) 0x82000030))
-
 void LCD_Senddata(INT8U dat) //写数据
 {
 	LCD_CS=0x00;
@@ -118,11 +124,6 @@ void LCD_SendCmd(INT8U cmd) //写命令
 	GuiDelayNS(1);
 	LCD_WR = 0x80;
 }
-
-//关液晶背光
-#define  LCD_BACK_OFF(ignore)  LCD_BACK =0x80;
-//开液晶背光
-#define  LCD_BACK_ON(ignore)  LCD_BACK =0x00;
 
 //对液晶写屏
 void LCD_WriteData(INT8U x, INT8U y, INT8U val)
@@ -191,11 +192,31 @@ static void  LCD_Init(void)  //液晶初始化
 	LCD_SendCmd(0xc8);        //set Map Control:
 	LCD_SendCmd(0xaf);		  //Display Enable;
 }
-
+/*********************************************************************************************************
+** 函数名称: InitLcd
+** 函数名称: InitLcd
+**
+** 功能描述： 启动时调用 
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月15日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void InitLcd(void)
 {
 	//LCD初始化
-
 	LCD_Init();
 	LCD_ClearScreen();
 }

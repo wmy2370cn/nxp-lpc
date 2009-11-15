@@ -30,65 +30,6 @@
 #include "lcddriver.h"
 #include "GuiDriver.h"
 
-static const INT8U mask1[]={0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
-static const INT8U   DCB_HEX_TAB[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 
-//LCD 显存刷新标记
-typedef INT8U LCD_BUFF_FLAG[LCD_WIDTH][LCD_WIDTH>>3];
-
-static LCD_BUFF g_LcdBuff;
-
-static LCD_BUFF_FLAG g_LcdBuffFlag;
-
-
-
-//计算显示缓冲区长宽
-#define GetLCDBufferWidth(ignore) LCD_WIDTH
-#define GetLCDBufferHeight(ignore) (LCD_HEIGHT>>3)  // (128/8)=16
-
-//得到液晶的长宽
-#define GetLCDWidth(ignore) LCD_WIDTH
-#define GetLCDHeight(ignore) LCD_HEIGHT
-
-//根据 X 坐标位置，计算出缓冲区相应的索引
-#define GetXIndex(x) (x)
-//Y的索引
-#define GetYIndex(y)  (((LCD_POS)(y))>>3)
-// Y点在八位中的位
-#define GetYBitPos(y) (((INT8U)(y)) & 0x07)
-// Y点在八位中的Mask 0x10形式
-#define GetYBitMask(y) (1<<GetYBitPos(y))
-
-
-
-/*********************************************************************************************************
-** 函数名称: SetModify
-** 函数名称: SetModify
-**
-** 功能描述：
-**
-** 输　入:  LcdPos col 从0开始到239
-** 输　入:  LcdPos row
-**
-** 输　出:   void
-**
-** 全局变量:
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年6月30日
-** 备  注:
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注:
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-void SetModify(LCD_POS col, LCD_POS row )
-{
-	if (col>=GetLCDWidth() || row >= GetLCDHeight())
-		return;
-	g_LcdBuffFlag[col][row] = TRUE;
-}
 
 
