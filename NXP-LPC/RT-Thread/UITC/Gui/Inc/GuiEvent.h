@@ -42,20 +42,41 @@ enum GUI_EVENT_TYPE
 };
 typedef enum GUI_EVENT_TYPE GuiEventType;
 struct SCREEN_BASE;
+
 struct GUI_EVENT
 {
 	INT32U Msg;
 	INT32U WParam;
 	INT32U LParam;
 	INT32U Flag;
-
-	struct SCREEN_BASE *pScreen;
-
-	struct GuiListNode NextNode;
+	struct SCREEN_BASE *pScreen;	 
 };
 
 typedef struct GUI_EVENT GuiEvent;
+
+#ifndef GUI_EVENT_DEF
+#define  GUI_EVENT_DEF \
+	INT32U Msg;\
+	INT32U WParam;\
+	INT32U LParam;\
+	INT32U Flag;\
+struct SCREEN_BASE *pScreen;	
+#endif
+
+
+struct GUI_EVENT_NODE
+{
+	GUI_EVENT_DEF
+	struct GuiListNode NextNode;
+};
+
+typedef struct GUI_EVENT_NODE GuiEventNode;
   
+INT8U InitGuiEventMgr( void );
+
 INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam );
 INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
 INT8U HandleScreenEvent(struct SCREEN_BASE *pScr);
+
+INT8U PostEventToGuiTask(  GuiEvent * pEvent );
+INT8U GuiTaskEventRecv( GuiEvent * pEvent  );

@@ -342,9 +342,10 @@ struct rt_thread Gui_Thread;
 void InitGuiTask( void  )
 {
 	InitLcd();
-	InitGuiTimerMgr();
-	//初始化窗口消息队列
+	//初始化窗口及任务消息队列
 	InitGuiEventMgr();
+
+	InitGuiTimerMgr();
 	// 界面初始化
 	InitScreenLib();
 	//启动任务

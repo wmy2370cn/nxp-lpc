@@ -35,7 +35,7 @@
 
 struct GUI_EVENT_MGR
 {
-	GuiEvent *pEvent;
+	GuiEventNode *pEvent;
 	struct GuiListNode FreeListHead;
 	struct GuiListNode UsedListHead;
 };
@@ -44,6 +44,18 @@ typedef struct GUI_EVENT_MGR GuiEventMgr;
  //窗口的消息队列，属于同一个进程内，
 GuiEventMgr g_ScrEvent;
 
+
+static rt_mq_t g_mqTask ;
+
+static INT8U InitTaskEvent( void )
+{
+	//TODO: 用消息队列来实现比较合理
+	g_mqTask = rt_mq_create("GT_EVNT",sizeof(GuiEvent)*GUI_EVENT_CNT,GUI_EVENT_CNT,RT_IPC_FLAG_FIFO);
+	if (g_mqTask == RT_NULL)
+		return FALSE;
+
+	return TRUE;
+}
 /*********************************************************************************************************
 ** 函数名称: InitGuiEventMgr
 ** 函数名称: InitGuiEventMgr
@@ -68,8 +80,9 @@ GuiEventMgr g_ScrEvent;
 INT8U InitGuiEventMgr( void )
 {
 	INT16U i  = 0;
-	GuiEvent *pEvent = NULL;
-	g_ScrEvent.pEvent = rt_malloc( sizeof(GuiEvent) * GUI_EVENT_CNT );
+	GuiEventNode *pEvent = NULL;
+	InitTaskEvent();
+	g_ScrEvent.pEvent = rt_malloc( sizeof(GuiEventNode) * GUI_EVENT_CNT );
 	ASSERT(g_ScrEvent.pEvent );
 	if (g_ScrEvent.pEvent == NULL)
 		return FALSE;
@@ -160,7 +173,7 @@ INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 ********************************************************************************************************/
 INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck)
 {
-	GuiEvent *pEvent = NULL;
+	GuiEventNode *pEvent = NULL;
 	struct GuiListNode *pNode = NULL;
 	struct GuiListNode* pHead = NULL;
 	if(pScr == NULL)
@@ -173,7 +186,7 @@ INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 	{
 		GuiListForEach( pNode, & g_ScrEvent.UsedListHead )
 		{
-			pEvent = CONTAINING_RECORD(pNode, GuiEvent,NextNode);
+			pEvent = CONTAINING_RECORD(pNode, GuiEventNode,NextNode);
 			ASSERT(pEvent);
 			if(pEvent && pEvent->pScreen == pScr && pEvent->Msg == Msg && pEvent->WParam == wParam 
 				&& pEvent->LParam == lParam )
@@ -191,7 +204,7 @@ INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 		if (pHead)
 		{
 			GuiListAppend(  & g_ScrEvent.UsedListHead, pHead);
-			pEvent = CONTAINING_RECORD( pHead,GuiEvent,NextNode );
+			pEvent = CONTAINING_RECORD( pHead,GuiEventNode,NextNode );
 			ASSERT(pEvent);
 			if (pEvent)
 			{
@@ -228,7 +241,7 @@ INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static INT8U EventHandler( GuiEvent *pEvent )
+static INT8U EventHandler( GuiEventNode *pEvent )
 {
 	ASSERT(pEvent && pEvent->pScreen);
 	if (pEvent == NULL || pEvent->pScreen == NULL)
@@ -261,7 +274,7 @@ static INT8U EventHandler( GuiEvent *pEvent )
 ********************************************************************************************************/
 INT8U HandleScreenEvent(struct SCREEN_BASE *pScr)
 {
-	GuiEvent *pEvent = NULL;
+	GuiEventNode *pEvent = NULL;
 	struct GuiListNode *pNode = NULL;
 	INT8U bRet = FALSE;
 	if(pScr == NULL)
@@ -269,7 +282,7 @@ INT8U HandleScreenEvent(struct SCREEN_BASE *pScr)
 	//循环遍历消息列表，如果有属于本窗口的，则执行，并删除
 	GuiListForEach( pNode, & g_ScrEvent.UsedListHead )
 	{
-		pEvent = CONTAINING_RECORD(pNode, GuiEvent,NextNode);
+		pEvent = CONTAINING_RECORD(pNode, GuiEventNode,NextNode);
 		ASSERT(pEvent);
 		if(pEvent && pEvent->pScreen == pScr)
 		{
@@ -282,18 +295,6 @@ INT8U HandleScreenEvent(struct SCREEN_BASE *pScr)
 	}
 	return bRet;
 }
-
-static rt_mailbox_t g_mbTask ;
-
-INT8U InitTaskEvent( void )
-{
-// 	g_mbTask = rt_mb_create("TSK_ENT",sizeof(GuiEvent)*GUI_EVENT_CNT/4,RT_IPC_FLAG_FIFO);
-// 	if (g_mbTask == RT_NULL)
-// 		return FALSE;
-
-//TODO: 用消息队列来实现比较合理
-}
-
 /*********************************************************************************************************
 ** 函数名称: GuiTaskEventRecv
 ** 函数名称: GuiTaskEventRecv
@@ -315,10 +316,20 @@ INT8U InitTaskEvent( void )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U GuiTaskEventRecv( )
+INT8U GuiTaskEventRecv( GuiEvent * pEvent  )
 {
+	rt_err_t result;
+	 
+	if (g_mqTask == NULL || pEvent == NULL)
+		return FALSE;
+	result = rt_mq_recv(g_mqTask, (void*)pEvent, sizeof(GuiEvent), 0);
+	if (result == RT_EOK)
+	{
 
-	return TRUE;
+
+		return TRUE;
+	}
+	return FALSE;
 }
 /*********************************************************************************************************
 ** 函数名称: PostEventToGuiTask
@@ -341,8 +352,9 @@ INT8U GuiTaskEventRecv( )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U PostEventToGuiTask( )
+INT8U PostEventToGuiTask(  GuiEvent * pEvent )
 {
+	rt_mq_send(g_mqTask, (void*)pEvent, sizeof(GuiEvent));
 
 	return TRUE;
 }
