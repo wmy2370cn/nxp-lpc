@@ -50,7 +50,9 @@ typedef  void  (*fnOnKeyDown)(CScreenBase *pScreen, INT32U keyCode);
 //消息处理虚函数
 typedef  void   (*fnOnMessage)(CScreenBase *pScreen,INT32U msg, INT32U param);
 //初始化窗口
-typedef  void    (*fnInit)(CScreenBase *pScreen);
+typedef  void    (*fnInit)(CScreenBase *pScreen,INT32U wParam, INT32U lParam);
+//创建
+typedef  void    (*fnCreate)(CScreenBase *pScreen);
 //退出时处理
 typedef  void	(*fnDestory)(CScreenBase *pScreen);
 //消息通知-通知控件
@@ -69,10 +71,12 @@ struct SCREEN_BASE
 	scr_dtor Dtor;
 
 	//回调函数
+	fnInit      pfnInit;
+	fnCreate    pfnCreate;
+	fnDestory   pfnDestory;
+
 	fnOnKeyDown pfnKeyDown;
 	fnOnMessage pfnMessage;
-	fnInit      pfnInit;
-	fnDestory   pfnDestory;
 	fnOnNotify  pfnOnNotify;
 
 	/* size of type */
@@ -93,10 +97,11 @@ void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nS
 		gui_list_t    List;        \
 	 	scr_ctor Ctor; \
 		scr_dtor Dtor;\
+		fnInit      pfnInit;\
+		fnCreate    pfnCreate;\
+		fnDestory   pfnDestory;\
 		fnOnKeyDown pfnKeyDown;\
 		fnOnMessage pfnMessage;\
-		fnInit      pfnInit;\
-		fnDestory   pfnDestory;\
 		fnOnNotify  pfnOnNotify;\
 	 	INT32U  Size;
 #endif

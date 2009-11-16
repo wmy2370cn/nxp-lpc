@@ -27,8 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "applib.h"
-#include "GuiDef.h"
-#include "LcdDriver.h"
 #include "DC.h"
 #include "Func.h"
 #include "Icon.h"

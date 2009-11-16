@@ -37,6 +37,7 @@
 
 #include "versionScr.h"
 #include "devicecfgscreen.h"
+#include "lcddriver.h"
 
 
 //CScreenBase * const screens[]=
@@ -183,7 +184,7 @@ void SwitchScreen(INT8U nScreenID)
  //	if(nScreenID != ID_MODALDIALOG)
  //		ClearScreen();
 	if(pScreen != NULL && pScreen->pfnInit)
- 		pScreen->pfnInit(pScreen);// 界面默认初始化代码，比如建立资源
+ 		pScreen->pfnInit(pScreen,0,0);// 界面默认初始化代码，比如建立资源
 
 }
 /*********************************************************************************************************
@@ -351,6 +352,7 @@ struct rt_thread Gui_Thread;
 
 void InitGuiTask( void  )
 {
+	InitLcd();
 	InitGuiTimerMgr();
 	//初始化窗口消息队列
 	InitScrEventList();
