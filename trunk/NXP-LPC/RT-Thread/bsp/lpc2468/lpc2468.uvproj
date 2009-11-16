@@ -956,9 +956,14 @@
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
             </File>
             <File>
-              <FileName>GuiDriver.c</FileName>
+              <FileName>LcdDriver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\UITC\Gui\Utilities\GuiDriver.c</FilePath>
+              <FilePath>..\..\UITC\Gui\User\LcdDriver.c</FilePath>
+            </File>
+            <File>
+              <FileName>DC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\DC.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1929,9 +1934,14 @@
               <FilePath>..\..\UITC\Gui\Utilities\GuiEvent.c</FilePath>
             </File>
             <File>
-              <FileName>GuiDriver.c</FileName>
+              <FileName>LcdDriver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\UITC\Gui\Utilities\GuiDriver.c</FilePath>
+              <FilePath>..\..\UITC\Gui\User\LcdDriver.c</FilePath>
+            </File>
+            <File>
+              <FileName>DC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Utilities\DC.c</FilePath>
             </File>
           </Files>
         </Group>

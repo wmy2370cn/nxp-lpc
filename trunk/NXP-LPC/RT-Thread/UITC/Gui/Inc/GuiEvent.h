@@ -36,11 +36,12 @@ enum GUI_EVENT_TYPE
 	GUI_EVENT_TIMER,                  // 定时器消息
 
 	GUI_EVENT_KEYDOWN,                // 键盘消息
+	GUI_EVENT_MSGBOX,                 //
 	GUI_EVENT_COMMAND,              /* user command 		*/
 
 };
 typedef enum GUI_EVENT_TYPE GuiEventType;
-
+struct SCREEN_BASE;
 struct GUI_EVENT
 {
 	INT32U Msg;
@@ -48,7 +49,13 @@ struct GUI_EVENT
 	INT32U LParam;
 	INT32U Flag;
 
+	struct SCREEN_BASE *pScreen;
+
 	struct GuiListNode NextNode;
 };
 
 typedef struct GUI_EVENT GuiEvent;
+  
+INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam );
+INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
+INT8U HandleScreenEvent(struct SCREEN_BASE *pScr);

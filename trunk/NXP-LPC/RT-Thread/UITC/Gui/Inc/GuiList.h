@@ -100,7 +100,6 @@ __inline void GuiListInsert(gui_list_t *l, gui_list_t *n)
 	n->pNext = l->pNext;
 	l->pNext = n;
 }
-
 /*********************************************************************************************************
 ** 函数名称: GuiListRemove
 ** 函数名称: GuiListRemove
@@ -147,7 +146,7 @@ __inline gui_list_t* GuiListRemove(gui_list_t *l, gui_list_t *n)
 **
 ** 输　入:  gui_list_t * l
 **          
-** 输　出:   gui_list_t *
+** 输　出:   gui_list_t *  被删除掉的头部
 **         
 ** 全局变量:  
 ** 调用模块: 无
@@ -164,8 +163,57 @@ __inline gui_list_t* GuiListRemove(gui_list_t *l, gui_list_t *n)
 __inline  gui_list_t * GuiListRemoveHead(gui_list_t *l)
 {
 	struct GuiListNode* node = l;
+	if (l == (gui_list_t *)0)
+		return (gui_list_t *)0;
 
-	return (gui_list_t *)0;
+	node = l->pNext; 
+//	l->pNext = 	(gui_list_t *)0;
+	if (node != (gui_list_t *)0)
+	{
+		l->pNext = node->pNext;
+	}
+	return (gui_list_t *)node;
+}
+
+__inline  gui_list_t * GuiListTail(gui_list_t *l)
+{
+	struct GuiListNode* node = l;
+
+	for (;;)
+	{
+		if (l->pNext == (gui_list_t *)0)
+		{
+			node =l;
+			break;
+		}
+		else
+		{
+			l = l->pNext;
+			continue;
+		}
+	}
+	return node;
+}
+
+__inline  gui_list_t * GuiListRemoveTail(gui_list_t *l)
+{
+	struct GuiListNode* node = l;
+
+	for (;;)
+	{
+		if (l->pNext == (gui_list_t *)0)
+		{
+			break;
+		}
+		else
+		{
+			node =l;
+			l = l->pNext;
+			continue;
+		}
+	}
+	node->pNext = (gui_list_t *)0;
+	return node;
 }
 
 __inline int GuiListIsEmpty(const gui_list_t *l)

@@ -914,10 +914,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Gui\Inc\GuiDriver.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\UITC\Gui\Inc\GuiEvent.h"
 						>
 					</File>
@@ -991,10 +987,6 @@
 					</File>
 					<File
 						RelativePath="..\..\UITC\Gui\User\GuiConfig.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Gui\User\GuiConst.h"
 						>
 					</File>
 					<File
