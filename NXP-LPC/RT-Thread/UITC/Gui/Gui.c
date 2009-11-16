@@ -39,16 +39,6 @@
 #include "devicecfgscreen.h"
 #include "lcddriver.h"
 
-
-//CScreenBase * const screens[]=
-//{
-//	(CScreenBase*)&CVersionScreen, //顺序需要与ID对应
-//  (CScreenBase*)&CDevCfgScreen,
-//
-//};
-
-
-
 //界面管理
 struct SCREEN_MGR
 {
@@ -270,7 +260,6 @@ static INT8U HandleTaskEvent( )
 
 	return TRUE;
 }
-
  
 /*********************************************************************************************************
 ** 函数名称: SendEventN
@@ -295,7 +284,7 @@ static INT8U HandleTaskEvent( )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static INT8U SendEventN(INT32U msg,INT32U param)
+static INT8U SendEventN(INT32U msg,INT32U param,INT32U lParam)
 {
 	CScreenBase *pScreen = NULL;
 	CScreenMgr *pMgr = &g_ScreenLib;
@@ -305,7 +294,7 @@ static INT8U SendEventN(INT32U msg,INT32U param)
 	if (pScreen == NULL)
 		return FALSE;
 
-	return SendScreenEvnent( pScreen ,msg,param );
+	return SendScreenEvnent( pScreen ,msg,param ,lParam);
 }
 static void GuiTask(void *pdata)
 {
@@ -355,7 +344,7 @@ void InitGuiTask( void  )
 	InitLcd();
 	InitGuiTimerMgr();
 	//初始化窗口消息队列
-	InitScrEventList();
+	InitGuiEventMgr();
 	// 界面初始化
 	InitScreenLib();
 	//启动任务
