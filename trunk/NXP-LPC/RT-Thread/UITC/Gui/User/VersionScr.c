@@ -29,7 +29,9 @@
 #include "ScreenBase.h" 
 #include "VersionScr.h"
 #include "StringTable.h"
+#include "extscreendef.h"
 
+#include "dc.h"
 
 #if 0
 CVersionScreen      VersionScreen;
@@ -138,13 +140,75 @@ extern void InitVersionScreen(CVersionScreen *pScreenExt )
 #endif
  
 
+/*********************************************************************************************************
+** 函数名称: VerScrCtor
+** 函数名称: VerScrCtor
+**
+** 功能描述：  构造函数
+**
+** 输　入:  CScreenBase * pScr
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月16日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void VerScrCtor( CScreenBase *pScr )
+{
+
+}
+/*********************************************************************************************************
+** 函数名称: VerScrDtor
+** 函数名称: VerScrDtor
+**
+** 功能描述： 析构函数 
+**
+** 输　入:  CScreenBase * pScr
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月16日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 static void VerScrDtor(CScreenBase *pScr)
 {
 	ASSERT(pScr);
 
 }
 
-static void VerScrCtor( CScreenBase *pScr )
+//创建窗口时处理
+static void OnCreateVersionScreen( CScreenBase *pScr )
+{
+	ClearScreen();
+ 	DrawStringById(LCD_WIDTH>>1,0,ID_STRING_LOGO,PEN_COPY,ALIGN_CENTER,LCD_EN_FONT_8_8);
+ 	DrawStringById(LCD_WIDTH>>1,16,ID_STRING_LOGO,PEN_COPY,ALIGN_CENTER,LCD_EN_FONT_8_8);
+
+}
+//退出时处理
+static void OnDestoryVersionScreen( CScreenBase *pScr )
+{
+
+}
+
+static void OnInitVersionScreen( CScreenBase *pScr,INT32U wParam,INT32U lParam )
 {
 
 }
@@ -156,6 +220,11 @@ CScreenBase * InitVerScreen(void)
 
 	pScr = CreateScreen(nSize ,VerScrCtor,VerScrDtor );
 	ASSERT(pScr);
+	SetScreenInfo(pScr,ID_DEFAULT_SCREEN, ID_VER_SCREEN, ID_STRING_NONE);
+
+	pScr->pfnInit = OnInitVersionScreen;
+	pScr->pfnDestory = OnDestoryVersionScreen ;
+	pScr->pfnCreate = OnCreateVersionScreen;
 
 
 

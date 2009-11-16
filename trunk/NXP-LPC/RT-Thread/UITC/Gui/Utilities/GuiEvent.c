@@ -36,13 +36,13 @@
 struct SCR_EVENT_MGR
 {
 	GuiEvent *pEvent;
-	struct GuiListNode FreeList;
-	struct GuiListNode UsedList;
+	struct GuiListNode FreeListHead;
+	struct GuiListNode UsedListHead;
 };
 
 typedef struct SCR_EVENT_MGR ScreenEventMgr;
 
-ScreenEventMgr g_aScrEvent;
+ScreenEventMgr g_ScrEvent;
 
 /*********************************************************************************************************
 ** 函数名称: InitScrEventList
@@ -67,10 +67,22 @@ ScreenEventMgr g_aScrEvent;
 ********************************************************************************************************/
 INT8U InitScrEventList( void )
 {
-	g_aScrEvent.pEvent = rt_malloc( sizeof(GuiEvent) * GUI_SCR_EVENT_CNT );
-	ASSERT(g_aScrEvent.pEvent );
-	if (g_aScrEvent.pEvent == NULL)
+	INT16U i  = 0;
+	GuiEvent *pEvent = NULL;
+	g_ScrEvent.pEvent = rt_malloc( sizeof(GuiEvent) * GUI_SCR_EVENT_CNT );
+	ASSERT(g_ScrEvent.pEvent );
+	if (g_ScrEvent.pEvent == NULL)
 		return FALSE;
+
+	pEvent =g_ScrEvent.pEvent ;
+	GuiListInit( &g_ScrEvent.FreeListHead );
+	GuiListInit( &g_ScrEvent.UsedListHead );
+
+	//生成链表
+	for (i = 0; i < GUI_SCR_EVENT_CNT; i++)
+	{	
+		GuiListAppend( & g_ScrEvent.FreeListHead, & (pEvent[i].NextNode) );
+	}
 
 
 	return TRUE;
@@ -106,7 +118,7 @@ INT8U SendScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lPara 
 
 	switch (Msg)
 	{
-	case G_EVENT_KEYDOWN:
+	case GUI_EVENT_KEYDOWN:
 		ASSERT(pScr->pfnKeyDown);
 		if (pScr->pfnKeyDown)
 		{
@@ -133,7 +145,7 @@ INT8U SendScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lPara 
 ** 输　出:
 **
 ** 全局变量:
-** 调用模块: 无
+** 调用模块: 由任务内的窗口或者控件等来调用
 **
 ** 作　者:  LiJin
 ** 日　期:  2009年11月12日
@@ -144,11 +156,29 @@ INT8U SendScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lPara 
 ** 备  注:
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U PostScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lPara )
+INT8U PostScreenEvnent( CScreenBase *pScr,INT32U Msg,INT32U wParam,INT32U lParam )
 {
+	GuiEvent *pEvent = NULL;
+	
 	if(pScr == NULL)
 		return FALSE;
+
+	//检查 信息是否合法
+
+	//检查该消息是否有重复了
+
+	//从free 里面申请一个消息
+	if ( !GuiListIsEmpty(& g_ScrEvent.FreeListHead ) )
+	{
+
+	}
+
 
 	return TRUE;
 }
 
+INT8U HandleScreenEvent(CScreenBase *pScr)
+{
+
+	return TRUE;
+}
