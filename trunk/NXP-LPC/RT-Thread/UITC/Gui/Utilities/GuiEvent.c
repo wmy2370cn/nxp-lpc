@@ -358,3 +358,51 @@ INT8U PostEventToGuiTask(  GuiEvent * pEvent )
 
 	return TRUE;
 }
+/*********************************************************************************************************
+** 函数名称: HandleTaskEvent
+** 函数名称: HandleTaskEvent
+**
+** 功能描述：  处理任务级别的消息
+**
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月12日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+extern INT8U OnTaskTimer(INT32U nEventID,INT32U Param);
+INT8U HandleTaskEvent(  GuiEvent * pEvent )
+{
+	ASSERT(pEvent);
+	if(pEvent == NULL)
+		return FALSE;
+	switch(pEvent->Msg)
+	{
+		case GUI_EVENT_TIMER:
+			if (pEvent->pScreen == NULL)
+			{//任务级的定时消息
+				return OnTaskTimer(pEvent->WParam,pEvent->LParam);				
+			}
+			break;
+		default:
+			break;
+	}
+
+
+
+
+	if (pEvent->pScreen == NULL)
+	{//
+	}
+
+	return TRUE;
+}

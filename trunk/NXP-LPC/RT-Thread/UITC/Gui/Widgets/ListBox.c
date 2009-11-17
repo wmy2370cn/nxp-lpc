@@ -26,8 +26,7 @@
 ********************************************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h> 
-#include "GuiDef.h"
+#include <string.h>  
 #include "ListBox.h" 
 #include "DC.h"
 #include "icon.h"

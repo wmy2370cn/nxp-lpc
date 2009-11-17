@@ -185,8 +185,8 @@ INT8U KillGuiTimer( CScreenBase *pScr,INT32U nIdEvent )
 	struct GUI_TIMER *pGuiTimer = NULL;
 	gui_list_t *pNode = NULL;
 
-	if(pScr == NULL)
-		return FALSE;
+// 	if(pScr == NULL)
+// 		return FALSE;
 
 	GuiListForEach(pNode, &(g_lstGuiTimerHead.list))
 	{
