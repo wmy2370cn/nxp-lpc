@@ -141,11 +141,7 @@ void SetGuiTimer(CScreenBase *pScr,INT32U nIdEvent,INT32U nMsTime)
 		pGuiTimer = rt_malloc(sizeof(CGuiTimer));
 		ASSERT(pGuiTimer);
 		if (pGuiTimer)
-		{
-			pGuiTimer->pScreen = NULL;
-			pGuiTimer->nIDEvent = 0;
-			pGuiTimer->pSysTimer = NULL;
-
+		{		
 			//挂接到链表上面
 			GuiListAppend(&	(g_lstGuiTimerHead.list),&(pGuiTimer->list));
 
@@ -153,6 +149,9 @@ void SetGuiTimer(CScreenBase *pScr,INT32U nIdEvent,INT32U nMsTime)
 			pGuiTimer->pSysTimer = rt_timer_create("GuiTm", TimerCB, (void *) pGuiTimer, nMsTime,
 					RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 			ASSERT(pGuiTimer->pSysTimer);
+			pGuiTimer->pScreen = pScr;
+			pGuiTimer->nIDEvent = nIdEvent;
+		 
 			//启动定时器
 			rt_timer_start(pGuiTimer->pSysTimer);
 		}
