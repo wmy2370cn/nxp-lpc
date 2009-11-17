@@ -74,7 +74,7 @@ typedef         MBException( *fnMBFunctionHandler ) ( UCHAR * pucFrame, USHORT *
 typedef struct
 {
     UCHAR           ucFunctionCode;
-    fnMBFunctionHandler pxHandler;
+    fnMBFunctionHandler pfnHandler;
 } MBFunctionHandler;
 
 #ifdef __cplusplus
