@@ -168,7 +168,7 @@ void SwitchScreen(INT8U nScreenID)
  //	if(nScreenID == ID_PASSWORD || nScreenID == ID_MODALDIALOG)
  //		SetFatherID(& pScreen->Base,GetActiveWinID());
 
-//	SetActiveWinID(nScreenID);
+// 	SetActiveWinID(nScreenID);
 
  	//清除屏幕,模式对话框因为要保存上个界面的图形所有不进行清屏
  //	if(nScreenID != ID_MODALDIALOG)
@@ -232,35 +232,8 @@ static void InitScreenLib( )
 //		AppendScreen(&g_ScreeLib, screens[i]);
 //	}
 //	//进入默认画面
-//	SwitchScreen(&g_ScreeLib, ID_START_SCREEN);
-}
-/*********************************************************************************************************
-** 函数名称: HandleTaskEvent
-** 函数名称: HandleTaskEvent
-**
-** 功能描述：  处理任务级别的消息
-**
-**          
-** 输　出:   INT8U
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2009年11月12日
-** 备  注:  
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-static INT8U HandleTaskEvent( )
-{
-
-	return TRUE;
-}
- 
+	SwitchScreen( ID_START_SCREEN);
+} 
 /*********************************************************************************************************
 ** 函数名称: SendEventN
 ** 函数名称: SendEventN
@@ -296,10 +269,53 @@ static INT8U SendEventN(INT32U msg,INT32U param,INT32U lParam)
 
 	return SendScreenEvnent( pScreen ,msg,param ,lParam);
 }
+//匿名寄送，送给当前活动的窗口
+static INT8U PostEventN(INT32U msg,INT32U param)
+{
+	CScreenBase *pScreen = NULL;
+	CScreenMgr *pMgr = &g_ScreenLib;
+
+	pScreen = GetCurrentScreenPtr(pMgr);
+
+	if (pScreen == NULL)
+		return FALSE;
+
+	return PostScreenEvnent( pScreen ,msg,param,NULL,TRUE);
+}
+
+static void HandleCurScrEvent(void)
+{
+	CScreenBase *pScreen = NULL;
+	CScreenMgr *pMgr = &g_ScreenLib;
+
+	pScreen = GetCurrentScreenPtr(pMgr);
+
+	if (pScreen == NULL)
+		return;
+
+	HandleScreenEvent(  pScreen  )	;
+}
+
+#define  ID_CLOSE_LCD  100
+INT8U OnTaskTimer(INT32U nEventID,INT32U Param)
+{
+	if (nEventID == ID_CLOSE_LCD)
+	{
+		TurnOffLcd();
+		KillGuiTimer (NULL,ID_CLOSE_LCD);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 static void GuiTask(void *pdata)
 {
 	INT16U  key = 0;
-	INT32U  nTimerID = 0;
+	INT8U  bRet = FALSE;
+//	INT32U  nTimerID = 0;
+	GuiEvent TaskEvent;
 
 	pdata = pdata;
 
@@ -307,34 +323,41 @@ static void GuiTask(void *pdata)
 	TurnOnLcd();
 	//5秒后关闭液晶
 //	nTimerID = SetTimer(nTimerID,5000,NULL,NULL);
-	SetGuiTimer(NULL,nTimerID,5000);
+	SetGuiTimer(NULL,ID_CLOSE_LCD,5000);
 
 	while(TRUE)
 	{
+		HandleCurScrEvent( );
 		//获取按键
 		key = 0;
 		if (KeyHit())
 		{
+			//TODO: 长按解决办法就是重构 GetKey 接口,从中获取多个一样的值,
 			key = GetKey( 30 );
 			if (key != KEY_NONE)
 			{//有按键，点亮LCD的灯
-			 	TurnOnLcd();
-			//	nTimerID = SetTimer(nTimerID, 10000, NULL, NULL);
+				TurnOnLcd();
+				SetGuiTimer(NULL,ID_CLOSE_LCD,5000);
 
 				//1.看按键是否是重启等功能键
 
 				//2.按键消息
-			//	PostEventN(LCD_WM_KEYDOWN, key);
+				SendEventN(GUI_EVENT_KEYDOWN,NULL,NULL);
+			 	//PostEventN(GUI_EVENT_KEYDOWN, key);
 
 			}
 			else
-			{
+			{//没有按键
 				//关闭灯
 
 			}
 		}
 		//看看是否有其他任务发送过来的消息
-
+		bRet = GuiTaskEventRecv( &TaskEvent );
+		if(bRet)
+		{
+			HandleTaskEvent(&TaskEvent);
+		}
 
 	}
 

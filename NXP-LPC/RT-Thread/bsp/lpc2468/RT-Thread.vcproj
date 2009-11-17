@@ -870,6 +870,10 @@
 					RelativePath="..\..\UITC\Gui\Gui.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\UITC\Gui\Readme.txt"
+					>
+				</File>
 				<Filter
 					Name="Common"
 					>
@@ -914,6 +918,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\UITC\Gui\Inc\GuiDef.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Inc\GuiEvent.h"
 						>
 					</File>
@@ -937,6 +945,38 @@
 				<Filter
 					Name="Widgets"
 					>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\CtrlBase.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\CtrlBase.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\GridCtrl.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\GridCtrl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\ListBox.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\ListBox.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\MessageBox.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\MessageBox.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\UITC\Gui\Widgets\ScreenBase.c"
 						>

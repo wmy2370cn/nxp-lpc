@@ -33,8 +33,9 @@ enum GUI_EVENT_TYPE
 	GUI_EVENT_DESTROY,		   /* destroy a window 	*/
 
 	GUI_EVENT_REDRAW,                // 画面重新刷新
-	GUI_EVENT_TIMER,                  // 定时器消息
-
+	GUI_EVENT_TIMER,                 // 定时器消息
+	GUI_EVENT_PAINT,                 // 画客户区
+	GUI_EVENT_NCPAINT,               // 非客户区 ,比如标题
 	GUI_EVENT_KEYDOWN,                // 键盘消息
 	GUI_EVENT_MSGBOX,                 //
 	GUI_EVENT_COMMAND,              /* user command 		*/
@@ -80,3 +81,5 @@ INT8U HandleScreenEvent(struct SCREEN_BASE *pScr);
 
 INT8U PostEventToGuiTask(  GuiEvent * pEvent );
 INT8U GuiTaskEventRecv( GuiEvent * pEvent  );
+INT8U HandleTaskEvent(  GuiEvent * pEvent );
+

@@ -29,24 +29,13 @@
 #include "GuiDef.h"
 #include "CtrlBase.h"
 
+ 
 
-//定义菜单链接
-struct  LB_ITEM 
-{
-	INT16U		nMenuID;          //菜单ID号
-	INT16U		nResourceID;      //菜单项名字
-	INT32U		nItemData;		  //菜单附加项
-};
-
-typedef struct LB_ITEM CListBoxItem;
-
-
-struct LIST_BOX
+struct GRID_CTRL
 {
 	CTRL_BASE_DEF
-	INT16U     ItemCount;
-
-	INT16U     CurItem;
+	INT16U     RowCnt;
+	INT16U     ColCnt;
 
 	INT16U      MaxShowChars;           //该控件窗口中能显示的字符数
 	INT16U      MaxShowLines;           //该控件窗口中能显示的行数
@@ -57,8 +46,6 @@ struct LIST_BOX
 
 
 };
-typedef struct LIST_BOX CGuiListBox;
-
-void AddItem(void);
-
+typedef struct GRID_CTRL CGuiGridCtrl;
+ 
 #endif

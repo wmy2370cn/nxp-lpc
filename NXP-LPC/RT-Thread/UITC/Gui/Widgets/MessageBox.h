@@ -29,36 +29,15 @@
 #include "GuiDef.h"
 #include "CtrlBase.h"
 
+//消息对话框,只能显示已经预定义好的字符串 
 
-//定义菜单链接
-struct  LB_ITEM 
-{
-	INT16U		nMenuID;          //菜单ID号
-	INT16U		nResourceID;      //菜单项名字
-	INT32U		nItemData;		  //菜单附加项
-};
-
-typedef struct LB_ITEM CListBoxItem;
-
-
-struct LIST_BOX
+struct MSG_BOX
 {
 	CTRL_BASE_DEF
-	INT16U     ItemCount;
-
-	INT16U     CurItem;
-
-	INT16U      MaxShowChars;           //该控件窗口中能显示的字符数
-	INT16U      MaxShowLines;           //该控件窗口中能显示的行数
-
-	/*动态滚动条*/
-	CGuiRect ScrollBarRect;		//滚动条位置
-	INT8U    ShowScrollBar;		//是否显示滚动条
-
-
+	INT16U  TitleID;
+	INT16U  TxtID;
+	INT8U   MsgType;
 };
-typedef struct LIST_BOX CGuiListBox;
-
-void AddItem(void);
-
+typedef struct MSG_BOX CGuiMsgBox;
+ 
 #endif
