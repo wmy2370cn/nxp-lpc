@@ -255,11 +255,11 @@ MBErrorCode MBRegisterCB( UCHAR ucFunctionCode, fnMBFunctionHandler pxHandler )
         {
             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
             {
-                if( ( xFuncHandlers[i].pxHandler == NULL ) ||
-                    ( xFuncHandlers[i].pxHandler == pxHandler ) )
+                if( ( xFuncHandlers[i].pfnHandler == NULL ) ||
+                    ( xFuncHandlers[i].pfnHandler == pxHandler ) )
                 {
                     xFuncHandlers[i].ucFunctionCode = ucFunctionCode;
-                    xFuncHandlers[i].pxHandler = pxHandler;
+                    xFuncHandlers[i].pfnHandler = pxHandler;
                     break;
                 }
             }
@@ -272,7 +272,7 @@ MBErrorCode MBRegisterCB( UCHAR ucFunctionCode, fnMBFunctionHandler pxHandler )
                 if( xFuncHandlers[i].ucFunctionCode == ucFunctionCode )
                 {
                     xFuncHandlers[i].ucFunctionCode = 0;
-                    xFuncHandlers[i].pxHandler = NULL;
+                    xFuncHandlers[i].pfnHandler = NULL;
                     break;
                 }
             }
@@ -396,7 +396,7 @@ MBErrorCode MBPoll( void )
                 }
                 else if( xFuncHandlers[i].ucFunctionCode == ucFunctionCode )
                 {
-                    eException = xFuncHandlers[i].pxHandler( ucMBFrame, &usLength );
+                    eException = xFuncHandlers[i].pfnHandler( ucMBFrame, &usLength );
                     break;
                 }
             }
