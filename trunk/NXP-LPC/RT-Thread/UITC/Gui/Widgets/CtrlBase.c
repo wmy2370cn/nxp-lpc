@@ -28,12 +28,14 @@
 #include <stdio.h>
 #include <string.h> 
 #include "CtrlBase.h" 
+#include "dc.h"
 
 
 //²Á³ý±³¾°
 void EraseBackground(CCtrlBase *pCtrlbase)
 {
-//	DrawBlockRect(& pCtrlbase->Block,COLOR_BK);
+	SetScreenRect(& pCtrlbase->Block,GUI_COLOR_BK);
+ //	DrawBlockRect(& pCtrlbase->Block,GUI_COLOR_BK);
 }
 
 void InitCtrlBase( CCtrlBase *pBase )

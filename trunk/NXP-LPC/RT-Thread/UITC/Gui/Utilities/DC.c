@@ -1,7 +1,7 @@
 /****************************************Copyright (c)**************************************************
 **                                      
 **               绘图函数                       
-**                                      
+**                    感觉有些地方溢出了,待细查                  
 **
 **                           
 **
@@ -1411,7 +1411,7 @@ void ClearScreenEx(INT8U bClear)
 	}
 }
 
-void ClrRectScreenBuf(CGuiRect* rc,GUI_COLOR color)
+void SetScreenRect(CGuiRect* rc,GUI_COLOR color)
 {
 	//优化处理
 	INT16U i;
@@ -1430,6 +1430,7 @@ void ClrRectScreenBuf(CGuiRect* rc,GUI_COLOR color)
 	{
 		//按页清除可以整清的数据
 		memset(&g_LcdBuff[rc->left][i],color?0xff:0,nCrlLen);
+		//FIXME: 缺少 SetModify
 	}
 
 	//然后用按位清除的方式清除上下两边不是整数字节对齐的地方

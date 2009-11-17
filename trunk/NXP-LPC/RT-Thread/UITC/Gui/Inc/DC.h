@@ -105,7 +105,7 @@ void ClearScreen(void);
 void ClearScreenEx(INT8U bClear/* = FALSE*/);
 
 
-void ClrRectScreenBuf(CGuiRect* rc,GUI_COLOR color);
+void SetScreenRect(CGuiRect* rc,GUI_COLOR color);
 
 void InvalidateScreen( INT8U bErase );
 void UpdateScreen(  INT8U bErase);
