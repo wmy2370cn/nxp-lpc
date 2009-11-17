@@ -299,7 +299,15 @@ static INT8U SendEventN(INT32U msg,INT32U param,INT32U lParam)
 static void GuiTask(void *pdata)
 {
 	INT16U  key = 0;
+	INT32U  nTimerID = 0;
+
 	pdata = pdata;
+
+	//点亮液晶
+	TurnOnLcd();
+	//5秒后关闭液晶
+//	nTimerID = SetTimer(nTimerID,5000,NULL,NULL);
+	SetGuiTimer(NULL,nTimerID,5000);
 
 	while(TRUE)
 	{
@@ -310,7 +318,7 @@ static void GuiTask(void *pdata)
 			key = GetKey( 30 );
 			if (key != KEY_NONE)
 			{//有按键，点亮LCD的灯
-			//	TurnOnLcd();
+			 	TurnOnLcd();
 			//	nTimerID = SetTimer(nTimerID, 10000, NULL, NULL);
 
 				//1.看按键是否是重启等功能键

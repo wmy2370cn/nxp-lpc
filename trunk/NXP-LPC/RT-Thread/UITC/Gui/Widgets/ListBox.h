@@ -24,27 +24,36 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#pragma  once
+#ifndef CTRL_BASE_H
+#define	CTRL_BASE_H 
+#include "GuiDef.h"
+#include "CtrlBase.h"
 
-#ifndef MAIN_MENU_H
-#define	MAIN_MENU_H
 
-#include "ListBox.h"
-
-//	描    述 : 显示主菜单
-struct MAIN_SCR 
+//定义菜单链接
+struct  LB_ITEM 
 {
-	CScreenBase  Base;
-	CGuiListBox  Menu;
-
- 
-	 
+	INT16U		nMenuID;          //菜单ID号
+	INT16U		nResourceID;      //菜单项名字
+	INT32U		nItemData;		  //菜单附加项
 };
 
-typedef struct MAIN_SCR  CMainMenuScreen;
+typedef struct LB_ITEM CListBoxItem;
 
-//
-CScreenBase * InitMainScreen( void );
 
- 
+struct LIST_BOX
+{
+	CTRL_BASE_DEF
+	INT16U     ItemCount;
+
+	INT16U     CurItem;
+
+	INT16U      MaxShowChars;           //该控件窗口中能显示的字符数
+	INT16U      MaxShowLines;           //该控件窗口中能显示的行数
+
+};
+typedef struct LIST_BOX CGuiListBox;
+
+void AddItem(void);
+
 #endif

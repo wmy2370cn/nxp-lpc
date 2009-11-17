@@ -24,42 +24,31 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#include <stdlib.h>
-#include "includes.h"
+#include <stdlib.h> 
 #include "ScreenBase.h"
 #include "MainMenuScreen.h"
-#include "StringTable.h"
-#include "Message.h"
+#include "StringTable.h" 
+#include "ExtScreenDef.h"
 #include "DC.h"
-
-extern CScreenMgr  g_ScreeLib;
-
-CMainMenuScreen  MainMenuScreen;
-
+ 
+ 
 /************************************************************************
 * 用到的全局变量
 ************************************************************************/
  
-const CMenuData MainMenu[]=
+const CListBoxItem MainMenu[]=
 {
  	{ID_REALTIME_VAL,	ID_STRING_VALUE_TAB},  //实测值一览表
   	{ID_GATE_CTRL,		ID_STRING_GATE_CTRL }, //闸门操作
 	{ ID_DEVICE_CFG, ID_STRING_DEVICE_CFG  },   //装置参数
-
-// 	{ID_SYSSET,			ID_STRING_SYSSET},   //系统设置＋
-// 	{ID_PROJSET,		ID_STRING_PRJSET},  // 工程设置＋
-// 	{ID_SYSINFO,		ID_STRING_SYSINFO},  //系统信息
-// 	{ID_DEVICE,			ID_STRING_DEVICEMODEL},	//装置配置
-// 	{ID_DEVICEDEBUG,	ID_STRING_DEBUG},    //装置调试＋
-// 	{ID_OTHER,			ID_STRING_OTHER} 	 //其他设置＋
 	{ ID_RUN_STAT, ID_STRING_RUN_STAT }, //闸门运行统计
 	{ ID_VER_INFO, ID_STRING_VER_INFO } //版本信息
-
 };
 
 
 static void OnMessage(INT32U msg, INT32U param)  
 {
+#if 0
 	switch ( msg )
 	{
 	case LCD_WM_INI:
@@ -87,12 +76,16 @@ static void OnMessage(INT32U msg, INT32U param)
 		break;
 	}
 	OnCtrlMsg((CCtrl *) &MainMenuScreen.Menu,msg,param );
+
+#endif
+
 }
 
 
 //按键处理虚函数 
 static void OnKeyDown (INT16U keyCode)   
 {	
+#if 0
 	if(keyCode == KEY_3)
 		// 退出该窗口，进入下一级窗口
 		SwitchScreen(&g_ScreeLib,  GetCurrentMenuID(& MainMenuScreen.Menu) );
@@ -106,12 +99,15 @@ static void OnKeyDown (INT16U keyCode)
 // 		MainMenuScreen.Menu.Base.pfnKeyDown( &MainMenuScreen.Menu.Base,keyCode );
 // 	}
 	OnCtrlKeyDown((CCtrl *) &MainMenuScreen.Menu ,keyCode );
+
+#endif
+
 }
 
 static void OnInitScreen(void)
 {
 //	PostMessage(LCD_WM_INI,0);
-	PostEvent( & MainMenuScreen.Base,LCD_WM_INI,0 );
+//	PostEvent( & MainMenuScreen.Base,LCD_WM_INI,0 );
 }
 
 //退出时处理
@@ -126,20 +122,20 @@ static void SetupResource( CMainMenuScreen *pScreenExt )
 {
 	if (pScreenExt)
 	{
-		 CreateLcdMenu( & pScreenExt->Menu,(LCDRECT*)  & LCD_RECT_MENU,(LCDRECT*)  & LCD_RECT_VARBAR )	 ;
+//		 CreateLcdMenu( & pScreenExt->Menu,(LCDRECT*)  & LCD_RECT_MENU,(LCDRECT*)  & LCD_RECT_VARBAR )	 ;
 		// 菜单链接
 //		pScreenExt->Menu.AddItem( MainMenu, sizeof(MainMenu)/sizeof(CMenuData));
-		 AddMenuItems( & pScreenExt->Menu,MainMenu, sizeof(MainMenu)/sizeof(CMenuData));
+//		 AddMenuItems( & pScreenExt->Menu,MainMenu, sizeof(MainMenu)/sizeof(CMenuData));
 		// 聚焦当前选择的菜单
 //		pScreenExt->Menu.SetFocus();	
 	}
 
 }
-extern void InitMainMenuScreen(CMainMenuScreen *pScreenExt )  
+#if 0
+ void InitMainMenuScreen(CMainMenuScreen *pScreenExt )  
 { 
 	if (pScreenExt)
 	{	 
-		InitScreenBase( & pScreenExt->Base );
 		SetScreenInfo(& pScreenExt->Base,ID_MAIN_SCREEN,ID_MAIN_SCREEN,ID_STRING_MAIN_MENU);
 		pScreenExt->Base.pfnMessage = OnMessage;
 		pScreenExt->Base.pfnKeyDown = OnKeyDown;
@@ -154,5 +150,7 @@ extern void InitMainMenuScreen(CMainMenuScreen *pScreenExt )
 		SetupResource ( pScreenExt );
 	}
 }
+
+#endif
 
  
