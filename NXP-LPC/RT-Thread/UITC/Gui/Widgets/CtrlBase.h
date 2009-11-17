@@ -61,7 +61,7 @@ struct CTRL_BASE
 	fnOnMessageCtrl pfnMessage;	
 };
 
- 
+ void EraseBackground(CCtrlBase *pCtrlbase);
 
 #ifndef CTRL_BASE_DEF
 #define CTRL_BASE_DEF   \
