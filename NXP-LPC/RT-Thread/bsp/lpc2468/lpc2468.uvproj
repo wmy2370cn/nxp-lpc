@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define>_DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\Driver;..\..\uitc\mbx\include;..\..\uitc\mbx\port;..\..\uitc\mbx\ascii;..\..\uitc\mbx\tcp;..\..\uitc\mbx\rtu;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;..\..\uitc\mem;..\..\uitc\advapp;</IncludePath>
+              <IncludePath>.;..\..\include;..\..\src;..\..\libcpu\arm\lpc24xx;..\..\net\lwip\src\include;..\..\net\lwip\src;..\..\net\lwip\src\arch\include;..\..\net\lwip\src\include\ipv4;..\..\app;..\..\Driver;..\..\uitc\mbx;..\..\uitc\mbx\include;..\..\uitc\mbx\callback;..\..\uitc\gui\;..\..\uitc\gui\inc;..\..\uitc\gui\common;..\..\uitc\gui\utilities;..\..\uitc\gui\widgets;..\..\uitc\gui\user;..\..\uitc\mem;..\..\uitc\advapp;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -763,136 +763,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Mbx</GroupName>
-          <Files>
-            <File>
-              <FileName>mb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\mb.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbascii.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\ascii\mbascii.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbascii.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\ascii\mbascii.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbtcp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\tcp\mbtcp.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbtcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\tcp\mbtcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbcrc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbcrc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbrtu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbrtu.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbrtu.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbrtu.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbcrc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbcrc.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdiag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncdiag.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbutils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbutils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncinput.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncinput.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncholding.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncholding.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdisc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncdisc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunccoils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfunccoils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncother.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncother.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbproto.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbproto.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbframe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbframe.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbconfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbconfig.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbport.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbport.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbfunc.h</FilePath>
-            </File>
-            <File>
-              <FileName>mb.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mb.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbutils.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbutils.h</FilePath>
-            </File>
-            <File>
-              <FileName>porttcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\Port\porttcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>portevent.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\Port\portevent.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Gui</GroupName>
           <Files>
             <File>
@@ -965,6 +835,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\DC.c</FilePath>
             </File>
+            <File>
+              <FileName>CtrlBase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\CtrlBase.c</FilePath>
+            </File>
+            <File>
+              <FileName>ListBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\ListBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>MainMenuScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\MainMenuScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>MessageBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\MessageBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GridCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\GridCtrl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -979,6 +874,61 @@
               <FileName>MemData.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MBX</GroupName>
+          <Files>
+            <File>
+              <FileName>mbfuncdiag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncdiag.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncinput.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncinput.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncholding.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncholding.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncdisc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncdisc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfunccoils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfunccoils.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbutils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbutils.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncother.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncother.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbext.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbcbfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\callback\mbcbfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbxcbfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\callback\mbxcbfunc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1741,136 +1691,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Mbx</GroupName>
-          <Files>
-            <File>
-              <FileName>mb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\mb.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbascii.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\ascii\mbascii.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbascii.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\ascii\mbascii.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbtcp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\tcp\mbtcp.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbtcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\tcp\mbtcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbcrc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbcrc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbrtu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbrtu.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbrtu.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbrtu.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbcrc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\rtu\mbcrc.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdiag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncdiag.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbutils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbutils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncinput.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncinput.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncholding.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncholding.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdisc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncdisc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunccoils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfunccoils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncother.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\functions\mbfuncother.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbproto.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbproto.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbframe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbframe.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbconfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbconfig.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbport.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbport.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbfunc.h</FilePath>
-            </File>
-            <File>
-              <FileName>mb.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mb.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbutils.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\UITC\Mbx\include\mbutils.h</FilePath>
-            </File>
-            <File>
-              <FileName>porttcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\Port\porttcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>portevent.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mbx\Port\portevent.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Gui</GroupName>
           <Files>
             <File>
@@ -1943,6 +1763,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Gui\Utilities\DC.c</FilePath>
             </File>
+            <File>
+              <FileName>CtrlBase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\CtrlBase.c</FilePath>
+            </File>
+            <File>
+              <FileName>ListBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\ListBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>MainMenuScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\User\MainMenuScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>MessageBox.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\MessageBox.c</FilePath>
+            </File>
+            <File>
+              <FileName>GridCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Gui\Widgets\GridCtrl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1957,6 +1802,61 @@
               <FileName>MemData.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MBX</GroupName>
+          <Files>
+            <File>
+              <FileName>mbfuncdiag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncdiag.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncinput.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncinput.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncholding.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncholding.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncdisc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncdisc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfunccoils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfunccoils.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbutils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbutils.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbfuncother.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbfuncother.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\functions\mbext.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbcbfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\callback\mbcbfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>mbxcbfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\callback\mbxcbfunc.c</FilePath>
             </File>
           </Files>
         </Group>
