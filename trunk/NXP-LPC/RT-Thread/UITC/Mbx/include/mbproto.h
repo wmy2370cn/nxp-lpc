@@ -72,4 +72,3 @@ typedef struct
     UCHAR           ucFunctionCode;
     fnMBFunctionHandler pfnHandler;
 } MBFunctionHandler;
- 

@@ -71,4 +71,4 @@ typedef MBErrorCode( *fnMBFrameSend ) ( UCHAR slaveAddress,
                                          USHORT usLength );
 
 typedef void( *fnMBFrameClose ) ( void );
- 
+

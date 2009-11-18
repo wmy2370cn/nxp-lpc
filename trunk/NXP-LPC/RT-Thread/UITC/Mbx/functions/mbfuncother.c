@@ -26,19 +26,14 @@
 ********************************************************************************************************/
 
 /* ----------------------- System includes ----------------------------------*/
-#include "stdlib.h"
-#include "string.h"
-
-/* ----------------------- Platform includes --------------------------------*/
-#include "port.h"
-
+#include <stdlib.h>
+#include <string.h>
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbframe.h"
-#include "mbproto.h"
-#include "mbconfig.h"
- 
+#include "mbproto.h" 
 
+#define MB_FUNC_OTHER_REP_SLAVEID_BUF           ( 32 )
 /* ----------------------- Static variables ---------------------------------*/
 static UCHAR    ucMBSlaveID[MB_FUNC_OTHER_REP_SLAVEID_BUF];
 static USHORT   usMBSlaveIDLen;

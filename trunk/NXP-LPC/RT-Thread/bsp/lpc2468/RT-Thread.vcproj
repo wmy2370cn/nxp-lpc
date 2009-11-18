@@ -708,57 +708,53 @@
 			Name="Uitc"
 			>
 			<Filter
-				Name="Mbx"
+				Name="MBX"
 				>
 				<File
-					RelativePath="..\..\UITC\Mbx\mb.c"
+					RelativePath="..\..\UITC\Mbx\MBCommon.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\UITC\Mbx\MBXComm.c"
+					RelativePath="..\..\UITC\Mbx\MBCommon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\MBFunc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\MBFunc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\MBSlave.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\MODBUS.h"
 					>
 				</File>
 				<Filter
-					Name="tcp"
+					Name="Include"
 					>
 					<File
-						RelativePath="..\..\UITC\Mbx\tcp\mbtcp.c"
+						RelativePath="..\..\UITC\Mbx\include\mb.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\tcp\mbtcp.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="rtu"
-					>
-					<File
-						RelativePath="..\..\UITC\Mbx\rtu\mbcrc.c"
+						RelativePath="..\..\UITC\Mbx\include\mbframe.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\rtu\mbcrc.h"
+						RelativePath="..\..\UITC\Mbx\include\mbfunc.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\rtu\mbrtu.c"
+						RelativePath="..\..\UITC\Mbx\include\mbproto.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\rtu\mbrtu.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="ascii"
-					>
-					<File
-						RelativePath="..\..\UITC\Mbx\ascii\mbascii.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\ascii\mbascii.h"
+						RelativePath="..\..\UITC\Mbx\include\mbutils.h"
 						>
 					</File>
 				</Filter>
@@ -795,66 +791,18 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="include"
+					Name="callback"
 					>
 					<File
-						RelativePath="..\..\UITC\Mbx\include\mb.h"
+						RelativePath="..\..\UITC\Mbx\callback\callback.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\include\mbconfig.h"
+						RelativePath="..\..\UITC\Mbx\callback\mbcbfunc.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Mbx\include\mbframe.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\include\mbfunc.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\include\mbport.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\include\mbproto.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\include\mbutils.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Port"
-					>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\port.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\port.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\portevent.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\portother.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\portserial.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\porttcp.c"
-						>
-					</File>
-					<File
-						RelativePath="..\..\UITC\Mbx\Port\porttimer.c"
+						RelativePath="..\..\UITC\Mbx\callback\mbxcbfunc.c"
 						>
 					</File>
 				</Filter>
@@ -1065,6 +1013,30 @@
 			</Filter>
 			<Filter
 				Name="Mem"
+				>
+				<File
+					RelativePath="..\..\UITC\Mem\Func.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mem\Func.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mem\MemCNST.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mem\MemData.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mem\MemData.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="AdvApp"
 				>
 			</Filter>
 		</Filter>
