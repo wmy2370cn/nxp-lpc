@@ -50,12 +50,7 @@ typedef enum RS485_STATE
 	RS485_RECV  =0,	// 
 	RS485_SEND	=1	// 
 }RS485_STATE;
-
-//信号量定义，但是创建由任务创建
-//OS_EVENT *poeUart0ReviceSem = NULL;  
-//OS_EVENT *poeUart1ReviceSem = NULL;  
  
-
 /*********************************************************************************************************
    定义操作UART器件的结构体，有多个器件就需要声明多个结构体
 *********************************************************************************************************/
@@ -91,24 +86,24 @@ const INT32U    QueueSendFifoTab[UART_MAX_NUM] = {QUEUE0SENDFIFOLENFUN, QUEUE1SE
 /*********************************************************************************************************
    下面定义了UART0的软件FIFO数组
 *********************************************************************************************************/ 
-INT32U uiUatr0RxBuf[QUEUE0REVICEFIFOLENFUN];
-INT32U uiUatr0TxBuf[QUEUE0SENDFIFOLENFUN];    
+static INT8U Uatr0RxBuf[QUEUE0REVICEFIFOLENFUN];
+static INT8U Uatr0TxBuf[QUEUE0SENDFIFOLENFUN];    
 
 /*********************************************************************************************************
    下面定义了UART1的软件FIFO数组
 *********************************************************************************************************/ 
-INT32U uiUatr1RxBuf[QUEUE1REVICEFIFOLENFUN];
-INT32U uiUatr1TxBuf[QUEUE1SENDFIFOLENFUN];
+static INT8U Uatr1RxBuf[QUEUE1REVICEFIFOLENFUN];
+static INT8U Uatr1TxBuf[QUEUE1SENDFIFOLENFUN];
 /*********************************************************************************************************
    下面定义了UART2的软件FIFO数组
 *********************************************************************************************************/ 
-INT32U uiUatr2RxBuf[QUEUE2REVICEFIFOLENFUN];
-INT32U uiUatr2TxBuf[QUEUE2SENDFIFOLENFUN];
+static INT8U Uatr2RxBuf[QUEUE2REVICEFIFOLENFUN];
+static INT8U Uatr2TxBuf[QUEUE2SENDFIFOLENFUN];
 /*********************************************************************************************************
    下面使用指针数组来保存UART软件FIFO数组的首地址
 *********************************************************************************************************/ 
-const INT32U *UartReviceTab[UART_MAX_NUM] = {uiUatr0RxBuf, uiUatr1RxBuf, uiUatr2RxBuf};
-const INT32U *UartSendTab[UART_MAX_NUM] = {uiUatr0TxBuf, uiUatr1TxBuf, uiUatr2TxBuf}; 
+const INT8U *UartReviceTab[UART_MAX_NUM] = {Uatr0RxBuf, Uatr1RxBuf, Uatr2RxBuf};
+const INT8U *UartSendTab[UART_MAX_NUM] = {Uatr0TxBuf, Uatr1TxBuf, Uatr2TxBuf}; 
 
 /*********************************************************************************************************
 ** 函数名称: SetRS485Mode
@@ -229,7 +224,7 @@ static INT32S SetUartParam (UART_INFO *pUartInfo,  UART_PARAM *pUartParam)
 	return UART_OK;
 }                                                 
 /*********************************************************************************************************
-** Function name:			__uartInit
+** Function name:			UartCfgInit
 ** Descriptions:			初始化UART,此函数供UartInit调用,不提供给用户
 ** input parameters:		pUartInfo:          指向uart信息结构体的指针
 **                          uiParaData:         参数指针
@@ -239,7 +234,7 @@ static INT32S SetUartParam (UART_INFO *pUartInfo,  UART_PARAM *pUartParam)
 ** Returned value:			OPERATE_SUCCESS:    操作成功
 **                          OPERATE_FAIL:       操作失败
 *********************************************************************************************************/
-static INT32U __uartInit (UART_INFO *pUartInfo,  UART_PARAM *pUartParam, INT32U uiReBufSize,  INT32U uiSeBufSize)
+static INT32U UartCfgInit (UART_INFO *pUartInfo,  UART_PARAM *pUartParam, INT32U uiReBufSize,  INT32U uiSeBufSize)
 {
 //#if OS_CRITICAL_METHOD == 3                      /* Allocate storage for CPU status register           */
 //    OS_CPU_SR  cpu_sr = 0;
@@ -313,6 +308,9 @@ static INT32U __uartInit (UART_INFO *pUartInfo,  UART_PARAM *pUartParam, INT32U 
     
     return UART_OK;
 }
+void Uart0Isr (int vector);
+void Uart1Isr (int vector);
+void Uart2Isr (int vector);
 /*********************************************************************************************************
 ** Function name:           InitUart
 ** Descriptions:            串口初始化及中断设置
@@ -344,14 +342,30 @@ INT32S InitUart (INT32U uiId,  UART_PARAM *pUartParam, void *pRsv)
         UartInfoTab[uiId]->pDQSendBuf = (DataQueue *)UartSendTab[uiId];	       /*  记录发送缓存                */
                                                                         
         UartInfoTab[uiId]->uiUartId =  uiId;                      /*  记录下自己的ID号            */
-                                                                      
-  
-        if (__uartInit(UartInfoTab[uiId], pUartParam, QueueReviceFifoTab[uiId], QueueSendFifoTab[uiId]) == OPERATE_FAIL)
+     
+        if (UartCfgInit(UartInfoTab[uiId], pUartParam, QueueReviceFifoTab[uiId], QueueSendFifoTab[uiId]) == OPERATE_FAIL)
 		{
             return(UART_NOK);
         }
         else 
 		{
+			rt_sem_init( & (UartInfoTab[uiId]->RcvDataSem),"UART",0,RT_IPC_FLAG_FIFO);
+
+			if (uiId == 0)
+			{
+				rt_hw_interrupt_install(UART0_INT, Uart0Isr, RT_NULL);	
+				rt_hw_interrupt_umask(UART0_INT);
+			}
+			else if ( uiId == 1)
+			{
+				rt_hw_interrupt_install(UART1_INT, Uart1Isr, RT_NULL);	
+				rt_hw_interrupt_umask(UART1_INT);
+			}
+			else if ( uiId == 2)
+			{
+				rt_hw_interrupt_install(UART2_INT, Uart2Isr, RT_NULL);	
+				rt_hw_interrupt_umask(UART2_INT);
+			} 
             return(UART_OK);
         }                                                                                                                               
     }
@@ -360,7 +374,6 @@ INT32S InitUart (INT32U uiId,  UART_PARAM *pUartParam, void *pRsv)
         return(UART_NOK);
     } 
 }
-
 /*********************************************************************************************************
 ** Function name:           SetUartMode
 ** Descriptions:            设置串口的参数
@@ -811,27 +824,13 @@ static void __uartLine(UART_INFO *pUartInfo, volatile INT32U *puiAddrBase, INT32
     uiState = puiAddrBase[__B_UART_LSR << uiOffBase];
 }
 
-static void  (* const __uartFucTiom[16])(UART_INFO *pUartInfo,  volatile INT32U *puiAddrBase, 
+static void  (* const arrpfnUartTiom[16])(UART_INFO *pUartInfo,  volatile INT32U *puiAddrBase, 
                                          INT32U  uiOffBase) =
       {__uartNone,   __uartNone, __uartThre, __uartNone,  
        __uartRevice, __uartNone, __uartLine, __uartNone,
        __uartNone,   __uartNone, __uartNone, __uartNone,
        __uartRevice, __uartNone, __uartNone, __uartNone};
-
-void __uartIsr (UART_INFO *pUartInfo)
-{
-    volatile INT32U *puiAddrBase;
-	volatile INT32U  uiOffBase;
-	
-    INT8U uiState;
-    
-	puiAddrBase = pUartInfo->puiAddrBase;
-	uiOffBase   = pUartInfo->uiOffBase;
-
-    uiState = puiAddrBase[__B_UART_IIR << uiOffBase] & 0x0f;
-    __uartFucTiom[uiState](pUartInfo, puiAddrBase, uiOffBase);   
-}
-
+ 
 /*********************************************************************************************************
 ** Function name:           UartISR
 ** Descriptions:            UART中断服务程序
@@ -841,36 +840,64 @@ void __uartIsr (UART_INFO *pUartInfo)
 *********************************************************************************************************/
 static __inline void UartISR (INT32U uiId)
 {
+	volatile INT32U *puiAddrBase;
+	volatile INT32U  uiOffBase;
+
+	INT8U uiState;
+	UART_INFO *pUartInfo = NULL;
+
 	if (uiId < UART_MAX_NUM) 
 	{
-		__uartIsr(UartInfoTab[uiId]);
+		pUartInfo = UartInfoTab[uiId];
+		puiAddrBase = pUartInfo->puiAddrBase;
+		uiOffBase   = pUartInfo->uiOffBase;
+
+		uiState = puiAddrBase[__B_UART_IIR << uiOffBase] & 0x0f;
+		arrpfnUartTiom[uiState](pUartInfo, puiAddrBase, uiOffBase);   
     }
 }
-void uart0Isr (void)
+
+static __inline void Uart0Isr (int vector)
 {
 	UartISR(UART0);                                                     /*  UART中断管理函数           */                                                               
 
 	if (UartInfoTab[UART0]->uiUartState == 0)
 	{   /*  处于接收状态               */
-// 		if (poeUart0ReviceSem)
-// 			OSSemPost(poeUart0ReviceSem);                                   /*  发送UART0信号量            */  
+		rt_sem_release( & (UartInfoTab[UART0]->RcvDataSem) );
 	}                                                              
 
 	VICVectAddr = 0x00;                                                 /*  中断处理结束               */
 } 
-extern  void uart1Isr (void)
+static __inline void Uart1Isr (int vector)
 {
 	UartISR(UART1); 
 
 	if (UartInfoTab[UART1]->uiUartState == 0)
-	{                   /*  处于接收状态                */
-// 		if (poeUart1ReviceSem)       
-// 			OSSemPost(poeUart1ReviceSem);         /*  发送UART1信号量             */  
-	}    
+	{ /*  处于接收状态                */
+		rt_sem_release( & (UartInfoTab[UART1]->RcvDataSem) );
+ 	}    
 
 	VICVectAddr = 0x00;                                                 /*  中断处理结束                */
 }
+static __inline void Uart2Isr (int vector)
+{
+	UartISR(UART2); 
+
+	if (UartInfoTab[UART2]->uiUartState == 0)
+	{                   /*  处于接收状态                */
+		rt_sem_release( & (UartInfoTab[UART2]->RcvDataSem) );
+	}
+	VICVectAddr = 0x00;                                                 /*  中断处理结束                */
+}
  
+INT8U RecvDataPend(INT32U nUartId,INT32U nTick)
+{
+	if (  rt_sem_take(& (UartInfoTab[UART1]->RcvDataSem),nTick ) == RT_EOK )
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
 
 
 /*********************************************************************************************************
