@@ -35,6 +35,7 @@
 *********************************************************************************************************/
 #define UART0   0
 #define UART1   1
+#define UART2   2
 
 
 /*********************************************************************************************************
@@ -66,12 +67,12 @@
 /*********************************************************************************************************
    定义Uart器件数目
 *********************************************************************************************************/
-#define UART_MAX_NUM    2                                             /*  LPC22294有2个UART            */
+#define UART_MAX_NUM    3                                             /*  LPC22294有2个UART            */
 
 /*********************************************************************************************************
    UART器件信息结构结构体,用户不可修改
 *********************************************************************************************************/
-typedef struct UART_INFO 
+struct UART_INFO 
 {
                 INT32U      uiOffBase;                                  /*  uart寄存器间隔= 1 << OffBase*/                         
     volatile    INT32U     *puiAddrBase;                                /*  uart寄存器基地址            */  
@@ -88,9 +89,9 @@ typedef struct UART_INFO
                 
                 INT32U      uiUartId;                                   /*  用于记录自己的UART通道号    */
                 INT32U      uiUartState;                                /*  记录收发状态1表示发,0表示收 */
-}UART_INFO; 
-                            /*  定义类型                    */
-typedef UART_INFO   *__PUART_INFO;                              /*  定义指针                    */
+				struct rt_semaphore RcvDataSem;
+}; 
+typedef struct UART_INFO     UART_INFO;                    
 
 typedef  struct  UART_PARAM
 {  
@@ -113,7 +114,8 @@ typedef  struct  UART_PARAM
 #define UART0FIFOLENFUN  UARTFIFOLEN14                                /*  配置UART0的接收FIFO触发深度   */
 
 #define UART1FIFOLENFUN  UARTFIFOLEN8                                /*  配置UART1的接收FIFO触发深度   */
- 
+#define UART2FIFOLENFUN  UARTFIFOLEN8                                /*  配置UART1的接收FIFO触发深度   */
+
 /*********************************************************************************************************
    配置UART软件FIFO长度,用户可修改
 *********************************************************************************************************/  
@@ -127,6 +129,11 @@ typedef  struct  UART_PARAM
 #define QUEUE1REVICEFIFOLENFUN   QUEUE1REVICEFIFOLEN+28                 /*  用户不要修改                */
 #define QUEUE1SENDFIFOLENFUN     QUEUE1SENDFIFOLEN+28                   /*  用户不要修改                */
  
+#define QUEUE2REVICEFIFOLEN      256                                    /*  用户可在此修改接收软FIFO大小*/ 
+#define QUEUE2SENDFIFOLEN        256                                    /*  用户可在此修改发送软FIFO大小*/ 
+#define QUEUE2REVICEFIFOLENFUN   QUEUE1REVICEFIFOLEN+28                 /*  用户不要修改                */
+#define QUEUE2SENDFIFOLENFUN     QUEUE1SENDFIFOLEN+28                   /*  用户不要修改                */
+
 /*********************************************************************************************************
 ** Function name:           InitUart
 ** Descriptions:            串口初始化
@@ -139,7 +146,7 @@ typedef  struct  UART_PARAM
 ** Example:                 char pUart[]="BaudRate=9600,DataBits=8,StopBits=1,Parity=NONE,RtsControl=NONE"; 
 **                          InitUart(0,pUart,0); 
 *********************************************************************************************************/
-extern INT32S InitUart (INT32U uiId, UART_PARAM *pUartParam, void *pRsv);
+INT32S InitUart (INT32U uiId, UART_PARAM *pUartParam, void *pRsv);
 
 
 /*********************************************************************************************************
@@ -156,7 +163,7 @@ extern INT32S InitUart (INT32U uiId, UART_PARAM *pUartParam, void *pRsv);
 ** Example2:                char pUart[]="DataBits=8,StopBits=1,Parity=NONE,RtsControl=NONE";
 **                          SetUartMode( 0, CTMODE, pUart);  
 *********************************************************************************************************/
-extern INT32S SetUartMode (INT32U uiId,  INT32U uiCmd,   UART_PARAM *pParam);
+INT32S SetUartMode (INT32U uiId,  INT32U uiCmd,   UART_PARAM *pParam);
 
 /*********************************************************************************************************
 ** Function name:           uartGetState
@@ -167,7 +174,7 @@ extern INT32S SetUartMode (INT32U uiId,  INT32U uiCmd,   UART_PARAM *pParam);
 ** Returned value:			OPERATE_SUCCESS:    操作成功
 **                          OPERATE_FAIL:       操作失败
 *********************************************************************************************************/
-extern INT32S GetUartState (INT32U uiId, UART_PARAM *pParam);
+INT32S GetUartState (INT32U uiId, UART_PARAM *pParam);
 
 /*********************************************************************************************************
 ** Function name:           GetUartFifoStatus
@@ -176,7 +183,7 @@ extern INT32S GetUartState (INT32U uiId, UART_PARAM *pParam);
 **                          uiWhichFifo:    TX_FIFO-发送队列;RX_FIFO-接收队列
 ** Returned value:          发送队列中可操作的空间大小，或接收队列中可用数据个数
 *********************************************************************************************************/
-extern INT32S GetUartFifoStatus (INT32U uiId, INT32U uiWhichFifo);
+INT32S GetUartFifoStatus (INT32U uiId, INT32U uiWhichFifo);
 
 /*********************************************************************************************************
 ** Function name:           FlushUartFifo
@@ -187,7 +194,7 @@ extern INT32S GetUartFifoStatus (INT32U uiId, INT32U uiWhichFifo);
 ** Returned value:			OPERATE_SUCCESS:    操作成功
 **                          OPERATE_FAIL:       操作失败
 *********************************************************************************************************/
-extern INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo);
+INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo);
 
 /*********************************************************************************************************
 ** Function name:           ReadUart
@@ -199,7 +206,7 @@ extern INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo);
 ** Output parameters:       puiBuf:      读到的数据首地址      
 ** Returned value:          实际读取的数据个数
 *********************************************************************************************************/
-extern INT32S   ReadUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum, void *pRsv);
+INT32S   ReadUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum, void *pRsv);
 
 /*********************************************************************************************************
 ** Function name:           WriteUart
@@ -211,7 +218,7 @@ extern INT32S   ReadUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum, void *pRsv);
 ** Output parameters:       NONE
 ** Returned value:          实际发送的数据个数
 *********************************************************************************************************/
-extern INT32S    WriteUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum,  void *pRsv);
+INT32S    WriteUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum,  void *pRsv);
 
 /*********************************************************************************************************
 ** Function name:           DirectWriteUart
@@ -222,8 +229,8 @@ extern INT32S    WriteUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum,  void *pRs
 ** Output parameters:       NONE
 ** Returned value:          实际发送的数据个数(1或0);
 *********************************************************************************************************/
-extern INT32S  DirectWriteUart (INT32U uiId, INT8U uiData);
-extern INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen);
+INT32S  DirectWriteUart (INT32U uiId, INT8U uiData);
+INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen);
 
 /*********************************************************************************************************
 ** Function name:           uart0Isr
@@ -232,7 +239,7 @@ extern INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen);
 ** Output parameters:       NONE
 ** Returned value:          无
 ********************************************************************************************************/
-extern __PUART_INFO UartInfoTab[2];
+ 
  
 //extern OS_EVENT *poeUart0ReviceSem;                                    /*  接收UART0数据标志          */  
 void uart0Isr (void);
@@ -245,7 +252,7 @@ void uart0Isr (void);
 ** Returned value:          无
 *********************************************************************************************************/
 //extern OS_EVENT *poeUart1ReviceSem;                                    /*  接收UART1数据标志           */
-extern void uart1Isr (void);
+void uart1Isr (void);
  
 #endif                                                                  /*  __UART_H                    */
 /*********************************************************************************************************

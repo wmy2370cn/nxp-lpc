@@ -588,6 +588,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\app\Func.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\app\Func.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\app\main.c"
 				>
 			</File>
@@ -731,7 +739,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\UITC\Mbx\MODBUS.h"
+					RelativePath="..\..\UITC\Mbx\MBX.h"
 					>
 				</File>
 				<Filter
@@ -805,6 +813,22 @@
 						RelativePath="..\..\UITC\Mbx\callback\mbxcbfunc.c"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="Rtu"
+					>
+					<File
+						RelativePath="..\..\UITC\Mbx\rtu\MbxRtu.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Mbx\rtu\MBXRtu.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Tcp"
+					>
 				</Filter>
 			</Filter>
 			<Filter
