@@ -27,6 +27,8 @@
 #include <stdlib.h> 
 #include "applib.h"
 #include "board.h"
+#include <rtthread.h>
+#include <rthw.h>
 #include "uart.h" 
 #include <LPC24xx.H>
 
@@ -40,9 +42,8 @@
 #endif
 
 #define     UART0_BASE_ADDR		    0xE000C000
-
 #define     UART1_BASE_ADDR		    0xE0010000
-
+#define     UART2_BASE_ADDR		    0xE0078000
 
 typedef enum RS485_STATE
 {
@@ -58,34 +59,34 @@ typedef enum RS485_STATE
 /*********************************************************************************************************
    定义操作UART器件的结构体，有多个器件就需要声明多个结构体
 *********************************************************************************************************/
-static UART_INFO    UART0Info;                                      /*  定义UART0的一个结构体       */
+static UART_INFO    UART0Info;        /*  定义UART0的一个结构体       */
 static UART_INFO    UART1Info;
 static UART_INFO    UART2Info; 
 
 /*********************************************************************************************************
    下面使用指针数组来保存结构体指针,方便对该驱动的扩展
 *********************************************************************************************************/
-UART_INFO *  UartInfoTab[UART_MAX_NUM] = {&UART0Info, &UART1Info };
+UART_INFO *  UartInfoTab[UART_MAX_NUM] = {&UART0Info, &UART1Info,&UART2Info };
 
 /*********************************************************************************************************
    下面定义了UART基地址值，如果想增加UART器件可以在该位置添加相应的基地址即可
 *********************************************************************************************************/
-const INT32U    UartBaseAddrTab[UART_MAX_NUM] = {UART0_BASE_ADDR, UART1_BASE_ADDR };
+const INT32U    UartBaseAddrTab[UART_MAX_NUM] = {UART0_BASE_ADDR, UART1_BASE_ADDR,UART2_BASE_ADDR };
                                                          
 /*********************************************************************************************************
    下面定义了UART硬件FIFO值，如果想增加UART器件可以在该位置添加相应的值即可
 *********************************************************************************************************/
-const INT32U    UartFifoTab[UART_MAX_NUM] = {UART0FIFOLENFUN, UART1FIFOLENFUN };
+const INT32U    UartFifoTab[UART_MAX_NUM] = {UART0FIFOLENFUN, UART1FIFOLENFUN,UART2FIFOLENFUN };
                                                      
 /*********************************************************************************************************
    下面定义了UART软件接收FIFO大小值，如果有想增加UART器件可以在该位置添加相应的值即可
 *********************************************************************************************************/
-const INT32U    QueueReviceFifoTab[UART_MAX_NUM] = {QUEUE0REVICEFIFOLENFUN, QUEUE1REVICEFIFOLENFUN };  
+const INT32U    QueueReviceFifoTab[UART_MAX_NUM] = {QUEUE0REVICEFIFOLENFUN, QUEUE1REVICEFIFOLENFUN,QUEUE2REVICEFIFOLENFUN };  
 
 /*********************************************************************************************************
    下面定义了UART软件发送FIFO值，如果有想增加UART器件可以在该位置添加相应的值即可
 *********************************************************************************************************/
-const INT32U    QueueSendFifoTab[UART_MAX_NUM] = {QUEUE0SENDFIFOLENFUN, QUEUE1SENDFIFOLENFUN };  
+const INT32U    QueueSendFifoTab[UART_MAX_NUM] = {QUEUE0SENDFIFOLENFUN, QUEUE1SENDFIFOLENFUN, QUEUE2SENDFIFOLENFUN };  
                                                               
 /*********************************************************************************************************
    下面定义了UART0的软件FIFO数组
@@ -98,12 +99,16 @@ INT32U uiUatr0TxBuf[QUEUE0SENDFIFOLENFUN];
 *********************************************************************************************************/ 
 INT32U uiUatr1RxBuf[QUEUE1REVICEFIFOLENFUN];
 INT32U uiUatr1TxBuf[QUEUE1SENDFIFOLENFUN];
-
+/*********************************************************************************************************
+   下面定义了UART2的软件FIFO数组
+*********************************************************************************************************/ 
+INT32U uiUatr2RxBuf[QUEUE2REVICEFIFOLENFUN];
+INT32U uiUatr2TxBuf[QUEUE2SENDFIFOLENFUN];
 /*********************************************************************************************************
    下面使用指针数组来保存UART软件FIFO数组的首地址
 *********************************************************************************************************/ 
-const INT32U *UartReviceTab[UART_MAX_NUM] = {uiUatr0RxBuf, uiUatr1RxBuf  };
-const INT32U *UartSendTab[UART_MAX_NUM] = {uiUatr0TxBuf, uiUatr1TxBuf}; 
+const INT32U *UartReviceTab[UART_MAX_NUM] = {uiUatr0RxBuf, uiUatr1RxBuf, uiUatr2RxBuf};
+const INT32U *UartSendTab[UART_MAX_NUM] = {uiUatr0TxBuf, uiUatr1TxBuf, uiUatr2TxBuf}; 
 
 /*********************************************************************************************************
 ** 函数名称: SetRS485Mode
@@ -320,7 +325,7 @@ static INT32U __uartInit (UART_INFO *pUartInfo,  UART_PARAM *pUartParam, INT32U 
 ** Example:                 char pUart[]="BaudRate=9600,DataBits=8,StopBits=1,Parity=NONE,RtsControl=NONE"; 
 **                          InitUart(0,pUart,0); 
 *********************************************************************************************************/
-extern INT32S InitUart (INT32U uiId,  UART_PARAM *pUartParam, void *pRsv)
+INT32S InitUart (INT32U uiId,  UART_PARAM *pUartParam, void *pRsv)
 { 
     if ((uiId<UART_MAX_NUM) )
 	{        
@@ -372,7 +377,7 @@ extern INT32S InitUart (INT32U uiId,  UART_PARAM *pUartParam, void *pRsv)
 *********************************************************************************************************/
 #define BAUDRATE    0   
 #define CTMODE      1
-extern INT32S SetUartMode (INT32U uiId, INT32U uiCmd, UART_PARAM *pParam)
+INT32S SetUartMode (INT32U uiId, INT32U uiCmd, UART_PARAM *pParam)
 {
 	if ((uiId<UART_MAX_NUM))
 	{
@@ -397,7 +402,7 @@ extern INT32S SetUartMode (INT32U uiId, INT32U uiCmd, UART_PARAM *pParam)
 ** Returned value:			OPERATE_SUCCESS:    操作成功
 **                          OPERATE_FAIL:       操作失败
 *********************************************************************************************************/
-extern INT32S GetUartState (INT32U uiId, UART_PARAM *pParam)
+INT32S GetUartState (INT32U uiId, UART_PARAM *pParam)
 {
     volatile INT32U *puiAddrBase;
 	volatile INT32U  uiOffBase;
@@ -435,7 +440,7 @@ extern INT32S GetUartState (INT32U uiId, UART_PARAM *pParam)
 **                          uiWhichFifo:    TX_FIFO-发送队列;RX_FIFO-接收队列
 ** Returned value:          发送队列中可操作的空间大小，或接收队列中可用数据个数
 *********************************************************************************************************/
-extern INT32S GetUartFifoStatus (INT32U uiId,INT32U uiWhichFifo)
+INT32S GetUartFifoStatus (INT32U uiId,INT32U uiWhichFifo)
 {
 	UART_INFO *pUartInfo  =NULL;
 
@@ -467,7 +472,7 @@ extern INT32S GetUartFifoStatus (INT32U uiId,INT32U uiWhichFifo)
 ** Returned value:			OPERATE_SUCCESS:    操作成功
 **                          OPERATE_FAIL:       操作失败
 *********************************************************************************************************/
-extern INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo)
+INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo)
 {
 	if (uiId >UART_MAX_NUM) 
 	{
@@ -499,9 +504,7 @@ extern INT32S FlushUartFifo (INT32U uiId, INT32U uiWhichFifo)
 *********************************************************************************************************/
 static INT8U GetUartCh ( UART_INFO *pUartInfo, INT8U *uiRet)
 {
-#if OS_CRITICAL_METHOD == 3                      /* Allocate storage for CPU status register           */
     OS_CPU_SR  cpu_sr = 0;
-#endif
 
     INT32U uiErr;
 
@@ -524,9 +527,7 @@ static INT8U GetUartCh ( UART_INFO *pUartInfo, INT8U *uiRet)
 *********************************************************************************************************/
 extern INT32S   ReadUart (INT32U uiId,   INT8U *puiBuf,  INT32U uiNum, void *pRsv)
 {
-#if OS_CRITICAL_METHOD == 3                      /* Allocate storage for CPU status register           */
     OS_CPU_SR  cpu_sr = 0;
-#endif
 
 	INT32U i;
 	INT32U uiReviceNum = 0;	
@@ -620,7 +621,7 @@ static INT16U __uartWrite (UART_INFO *pUartInfo, INT8U *puiData, INT32U uiNumByt
 ** Output parameters:       NONE
 ** Returned value:          实际发送的数据个数
 *********************************************************************************************************/
-extern INT32S  WriteUart (INT32U uiId,   INT8U *puiBuf, INT32U uiNum,  void *pRsv)
+INT32S  WriteUart (INT32U uiId,   INT8U *puiBuf, INT32U uiNum,  void *pRsv)
 {
 	if (uiId < UART_MAX_NUM)
 	{
@@ -637,7 +638,7 @@ extern INT32S  WriteUart (INT32U uiId,   INT8U *puiBuf, INT32U uiNum,  void *pRs
 ** Output parameters:       NONE
 ** Returned value:          实际发送的数据个数(1或0);
 *********************************************************************************************************/
-extern INT32S   DirectWriteUart (INT32U uiId, INT8U uiData)
+INT32S   DirectWriteUart (INT32U uiId, INT8U uiData)
 {
     OS_CPU_SR  cpu_sr = 0;
 
@@ -668,7 +669,7 @@ extern INT32S   DirectWriteUart (INT32U uiId, INT8U uiData)
 	return UART_OK;
 }
 
-extern INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen)
+INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen)
 {
 	INT16U k;
 	volatile INT32U *puiAddrBase;

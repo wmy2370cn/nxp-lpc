@@ -565,6 +565,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\app\tcpecho.c</FilePath>
             </File>
+            <File>
+              <FileName>Func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\Func.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -866,11 +871,6 @@
           <GroupName>Mem</GroupName>
           <Files>
             <File>
-              <FileName>Func.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mem\Func.c</FilePath>
-            </File>
-            <File>
               <FileName>MemData.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
@@ -929,6 +929,11 @@
               <FileName>mbxcbfunc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\callback\mbxcbfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>MbxRtu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\rtu\MbxRtu.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1493,6 +1498,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\app\tcpecho.c</FilePath>
             </File>
+            <File>
+              <FileName>Func.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\app\Func.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1794,11 +1804,6 @@
           <GroupName>Mem</GroupName>
           <Files>
             <File>
-              <FileName>Func.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\UITC\Mem\Func.c</FilePath>
-            </File>
-            <File>
               <FileName>MemData.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mem\MemData.c</FilePath>
@@ -1857,6 +1862,11 @@
               <FileName>mbxcbfunc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\callback\mbxcbfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>MbxRtu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\rtu\MbxRtu.c</FilePath>
             </File>
           </Files>
         </Group>
