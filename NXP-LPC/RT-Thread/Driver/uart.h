@@ -26,9 +26,7 @@
 ********************************************************************************************************/
 #ifndef __UART_H
 #define __UART_H
-#include "DataQueue.h"
-
-
+#include "DataQueue.h" 
 
 /*********************************************************************************************************
    UART器件编号,用户不可修改
@@ -91,7 +89,7 @@ struct UART_INFO
                 INT32U      uiUartState;                                /*  记录收发状态1表示发,0表示收 */
 				struct rt_semaphore RcvDataSem;
 }; 
-typedef struct UART_INFO     UART_INFO;                    
+typedef struct UART_INFO  UART_INFO;                    
 
 typedef  struct  UART_PARAM
 {  
@@ -119,18 +117,18 @@ typedef  struct  UART_PARAM
 /*********************************************************************************************************
    配置UART软件FIFO长度,用户可修改
 *********************************************************************************************************/  
-#define QUEUE0REVICEFIFOLEN      256                                    /*  用户可在此修改接收软FIFO大小*/ 
-#define QUEUE0SENDFIFOLEN        256                                    /*  用户可在此修改发送软FIFO大小*/ 
+#define QUEUE0REVICEFIFOLEN      512                                    /*  用户可在此修改接收软FIFO大小*/ 
+#define QUEUE0SENDFIFOLEN        512                                    /*  用户可在此修改发送软FIFO大小*/ 
 #define QUEUE0REVICEFIFOLENFUN   QUEUE0REVICEFIFOLEN+28                 /*  用户不要修改                */
 #define QUEUE0SENDFIFOLENFUN     QUEUE0SENDFIFOLEN+28                   /*  用户不要修改                */
                                                 
-#define QUEUE1REVICEFIFOLEN      256                                    /*  用户可在此修改接收软FIFO大小*/ 
-#define QUEUE1SENDFIFOLEN        256                                    /*  用户可在此修改发送软FIFO大小*/ 
+#define QUEUE1REVICEFIFOLEN      512                                    /*  用户可在此修改接收软FIFO大小*/ 
+#define QUEUE1SENDFIFOLEN        512                                    /*  用户可在此修改发送软FIFO大小*/ 
 #define QUEUE1REVICEFIFOLENFUN   QUEUE1REVICEFIFOLEN+28                 /*  用户不要修改                */
 #define QUEUE1SENDFIFOLENFUN     QUEUE1SENDFIFOLEN+28                   /*  用户不要修改                */
  
-#define QUEUE2REVICEFIFOLEN      256                                    /*  用户可在此修改接收软FIFO大小*/ 
-#define QUEUE2SENDFIFOLEN        256                                    /*  用户可在此修改发送软FIFO大小*/ 
+#define QUEUE2REVICEFIFOLEN      512                                    /*  用户可在此修改接收软FIFO大小*/ 
+#define QUEUE2SENDFIFOLEN        512                                    /*  用户可在此修改发送软FIFO大小*/ 
 #define QUEUE2REVICEFIFOLENFUN   QUEUE1REVICEFIFOLEN+28                 /*  用户不要修改                */
 #define QUEUE2SENDFIFOLENFUN     QUEUE1SENDFIFOLEN+28                   /*  用户不要修改                */
 
@@ -147,7 +145,6 @@ typedef  struct  UART_PARAM
 **                          InitUart(0,pUart,0); 
 *********************************************************************************************************/
 INT32S InitUart (INT32U uiId, UART_PARAM *pUartParam, void *pRsv);
-
 
 /*********************************************************************************************************
 ** Function name:           SetUartMode
@@ -231,29 +228,7 @@ INT32S    WriteUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum,  void *pRsv);
 *********************************************************************************************************/
 INT32S  DirectWriteUart (INT32U uiId, INT8U uiData);
 INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen);
-
-/*********************************************************************************************************
-** Function name:           uart0Isr
-** Descriptions:            UART0中断入口函数
-** input parameters:        NONE
-** Output parameters:       NONE
-** Returned value:          无
-********************************************************************************************************/
- 
- 
-//extern OS_EVENT *poeUart0ReviceSem;                                    /*  接收UART0数据标志          */  
-void uart0Isr (void);
-
-/*********************************************************************************************************
-** Function name:           uart1Isr
-** Descriptions:            UART1中断入口函数
-** input parameters:        NONE
-** Output parameters:       NONE
-** Returned value:          无
-*********************************************************************************************************/
-//extern OS_EVENT *poeUart1ReviceSem;                                    /*  接收UART1数据标志           */
-void uart1Isr (void);
- 
+INT8U RecvDataPend(INT32U nUartId,INT32U nTick);
 #endif                                                                  /*  __UART_H                    */
 /*********************************************************************************************************
    END FILE

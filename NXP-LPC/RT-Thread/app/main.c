@@ -8,6 +8,8 @@
 
 //TODO: 以后把这块统一处理
 #include "memdata.h"
+
+#include "MBXComm.h"
  
 
 void FlickerLed( )
@@ -79,6 +81,8 @@ void main_app_thread_entry(void* parameter)
  	InitMemData();
 
 	InitGuiTask();
+
+	InitMBXTask();
 
 	rt_timer_init(&tim2,"soft_tim2",time_cb_func,RT_NULL,50,RT_TIMER_FLAG_PERIODIC|RT_TIMER_FLAG_SOFT_TIMER);
 	rt_timer_start(&tim2);

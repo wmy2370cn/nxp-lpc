@@ -739,7 +739,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\UITC\Mbx\MBX.h"
+					RelativePath="..\..\UITC\Mbx\MBXComm.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\Mbx\MBXComm.h"
 					>
 				</File>
 				<Filter
