@@ -396,12 +396,15 @@ static INT8U RecvData( CMBExt * pMbx )
 	INT16U nRecvNum = 0;
 	INT16U i = 0;
 	
-// 	if (pMbx == NULL || pMbx->pUartRecvSem == NULL)
-// 		return	FALSE; 
+	if (pMbx == NULL )
+		return	FALSE; 
 // 
-// 	//等待500ms超时
+	//等待500ms超时
 // 	OSSemPend(pMbx->pUartRecvSem, 50, &Err);
-// 
+	Err = UartRecvDataPend(pMbx->UartId,50);
+	if(Err == FALSE)
+		return FALSE;
+
 // 	//出错了
 // 	if (Err != OS_NO_ERR)
 // 		return FALSE;		
