@@ -31,7 +31,7 @@
 #define	MAX_PDU_LENGTH		 	(MAX_PDU_DATA_LENGTH+1)
 #define MAX_ADU_LENGTH  		(MAX_PDU_LENGTH+2)
 
-struct MBX
+struct MBX_RTU
 {
 	INT8U  Address;
 	INT8U  FuncCode;			//报文特征码	
@@ -41,7 +41,6 @@ struct MBX
 
 	INT8U Broadcast;           //广播报文  
 	INT8U Pad;
-
 
 	//接受
 	INT16U ModbusRxCRC;			//ModbusCRC校验
@@ -77,8 +76,8 @@ struct MBX
 //	CommSend pfnCommSend;
 } ;
 
-typedef struct MBX CMBExt;
+typedef struct MBX_RTU CMBExt;
 
 void ModbusMainCycle(CMBExt * pMBX);
 
-void InitMBX( CMBExt *pMBX );
+void InitMbxRtu( CMBExt *pMBX );

@@ -30,8 +30,8 @@
 
 //对外接口
 
-extern void ModbusMainCycle(MBX * pMBX);
+extern void ModbusMainCycle(MBX_RTU * pMBX);
 
-extern void InitMBX( MBX *pMBX );
+extern void InitMbxRtu( MBX_RTU *pMBX );
 
 #endif

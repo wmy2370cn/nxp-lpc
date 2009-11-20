@@ -37,13 +37,13 @@
 static OS_STK	DbgMbxTaskStk [DBGMBX_TASK_STK_SIZE];
 static OS_STK	CommMbxTaskStk [COMMMBX_TASK_STK_SIZE];
 
-static  MBX  DbgMbx; 
-static  MBX  CommMbx;
+static  MBX_RTU  DbgMbx; 
+static  MBX_RTU  CommMbx;
 
 void MBX_Task(void *pdata)
 {	
-	MBX * pMBX = NULL;
-	pMBX = (MBX *) pdata;
+	MBX_RTU * pMBX = NULL;
+	pMBX = (MBX_RTU *) pdata;
 
 	while (TRUE)
 	{
@@ -103,7 +103,7 @@ void SetDeviceAddr( INT8U Addr )
 ********************************************************************************************************/
 extern INT8U InitMBXTsk( void )
 {
-	InitMBX(&DbgMbx);
+	InitMbxRtu(&DbgMbx);
 //	DbgMbx.pUartRecvSem = OSSemCreate(0);
 	poeUart0ReviceSem  =  DbgMbx.pUartRecvSem ;
 	

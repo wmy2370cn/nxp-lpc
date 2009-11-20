@@ -228,7 +228,7 @@ INT32S    WriteUart (INT32U uiId, INT8U *puiBuf, INT32U uiNum,  void *pRsv);
 *********************************************************************************************************/
 INT32S  DirectWriteUart (INT32U uiId, INT8U uiData);
 INT32S  DirectWriteUartApi (INT32U uiId, INT8U *pBuf, INT16U nLen);
-INT8U RecvDataPend(INT32U nUartId,INT32U nTick);
+INT8U UartRecvDataPend(INT32U nUartId,INT32U nTick);
 #endif                                                                  /*  __UART_H                    */
 /*********************************************************************************************************
    END FILE

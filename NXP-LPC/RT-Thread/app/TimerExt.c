@@ -30,58 +30,7 @@
 
 static EXT_TIMER  g_Timer[EXT_TIMER_CNT];
 
-#if  EXT_TIMER_CB_EN > 0
-static OS_STK	TimerMgrTaskStk [EXT_TASK_TMR_STK_SIZE];
-static OS_EVENT *s_pTmrQeue = NULL;
-void *TmrFuncQeueTbl[EXT_TIMER_CNT];
-static OS_MEM  *s_pParamMem = NULL;
-static TIMER_MSG TimerMsgPartition[EXT_TIMER_CNT];
-#endif
-/*********************************************************************************************************
-** 函数名称: TimerFuncHandle_Task
-** 函数名称: TimerFuncHandle_Task
-**
-** 功能描述： 处理定时器里面的回调
-**
-** 输　入:  void * pdata
-**          
-** 输　出:  void
-**         
-** 全局变量:  
-** 调用模块: 无
-**
-** 作　者:  LiJin
-** 日　期:  2008年9月17日
-** 备  注: 
-**-------------------------------------------------------------------------------------------------------
-** 修改人:
-** 日　期:
-** 备  注: 
-**------------------------------------------------------------------------------------------------------
-********************************************************************************************************/
-#if  EXT_TIMER_CB_EN > 0
-void TimerFuncHandleTask(void *pdata)
-{	
-	TIMER_MSG  *pTimer = NULL;
-	INT8U err = 0;
-
-	pdata = pdata;
-	while (RT_TRUE)
-	{
-		pTimer = (TIMER_MSG *)OSQPend(s_pTmrQeue,0,&err);
-		if (err == OS_NO_ERR) 
-		{
-			if (pTimer && pTimer->pFunc)
-			{
-				pTimer->pFunc(  pTimer->pParam );
-				//释放消息所占用的内存
-				OSMemPut(s_pParamMem,pTimer);
-			}
-		}
-		OSTimeDlyHMSM(0,0,0,100);
-	}
-}    
-#endif
+ 
 /*********************************************************************************************************
 ** 函数名称: InitTimerMgr
 ** 函数名称: InitTimerMgr
@@ -116,20 +65,9 @@ void InitTimerMgr(void )
 		g_Timer[i].Count = 0;
 		g_Timer[i].TimeOut = 0;
 		g_Timer[i].Flag = RT_FALSE;
-#if  EXT_TIMER_CB_EN > 0
-		g_Timer[i].pFunc = NULL;
-		g_Timer[i].pFuncParam = NULL;
-#endif
+ 
 	}
-#if  EXT_TIMER_CB_EN > 0
-	//创建队列
-	s_pTmrQeue = OSQCreate(& TmrFuncQeueTbl[0] ,EXT_TIMER_CNT);
-	// 	//创建内存分区，用于保存回调函数参数
-	s_pParamMem = OSMemCreate(TimerMsgPartition,EXT_TIMER_CNT,sizeof(TIMER_MSG ),&err );
-	//启动任务
-	OSTaskCreate (TimerFuncHandleTask, (void *)0, 	&TimerMgrTaskStk[EXT_TASK_TMR_STK_SIZE-1], PRIO_TMR_MGR);
-#endif
-
+ 
 }
 /*********************************************************************************************************
 ** 函数名称: TimerMgrInMsInt
@@ -178,25 +116,7 @@ void ExtTimerTick(  )
 			{
 				g_Timer[i].Flag = RT_TRUE;
 				g_Timer[i].Count = 0;
-#if  EXT_TIMER_CB_EN > 0
-				if (g_Timer[i].pFunc)
-				{	
-					//申请一个内存
-					pTimerMsg = OSMemGet( s_pParamMem , &err);
-					if (pTimerMsg)
-					{
-						pTimerMsg->pFunc = g_Timer[i].pFunc;
-						pTimerMsg->pParam = g_Timer[i].pFuncParam;
-
-						//将消息的回调及参数post到队列里面
-						err = OSQPost(s_pTmrQeue,(void *)pTimerMsg );
-						if (err != OS_NO_ERR)
-						{//如果post不成功的话，则回收内存，防止内存用完
-							OSMemPut(s_pParamMem,pTimerMsg);
-						}
-					}
-				}	
-#endif
+ 
 			}
 		}	
 	}
@@ -228,11 +148,7 @@ void ExtTimerTick(  )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#if  EXT_TIMER_CB_EN > 0
-INT16U  SetTimer(INT16U TimerID, INT32U nTime,fnTimerProcess fnProc,void *pFuncParam )
-#else
 INT16U  SetTimer(INT16U TimerID, INT32U nTime )
-#endif
 {
                               
 	OS_CPU_SR  cpu_sr;
@@ -246,10 +162,7 @@ INT16U  SetTimer(INT16U TimerID, INT32U nTime )
 		g_Timer[TimerID-1].Enable = RT_TRUE;
 		g_Timer[TimerID-1].TimeOut = nTime;
 		g_Timer[TimerID-1].Count = 0;
-#if  EXT_TIMER_CB_EN > 0	
-		g_Timer[TimerID-1].pFunc = fnProc;
-		g_Timer[TimerID-1].pFuncParam = pFuncParam;
-#endif
+ 
 		OS_EXIT_CRITICAL();
 		return TimerID;
 	}
@@ -263,10 +176,7 @@ INT16U  SetTimer(INT16U TimerID, INT32U nTime )
 				g_Timer[i].Enable = RT_TRUE;
 				g_Timer[i].TimeOut = nTime;
 				g_Timer[i].Count = 0;
-#if  EXT_TIMER_CB_EN > 0
-				g_Timer[i].pFunc = fnProc;
-				g_Timer[i].pFuncParam = pFuncParam;
-#endif
+ 
 				OS_EXIT_CRITICAL();
 				return i+1;
 			}

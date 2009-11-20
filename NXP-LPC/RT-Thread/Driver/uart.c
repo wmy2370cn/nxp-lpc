@@ -890,7 +890,7 @@ static __inline void Uart2Isr (int vector)
 	VICVectAddr = 0x00;                                                 /*  中断处理结束                */
 }
  
-INT8U RecvDataPend(INT32U nUartId,INT32U nTick)
+INT8U UartRecvDataPend(INT32U nUartId,INT32U nTick)
 {
 	if (  rt_sem_take(& (UartInfoTab[UART1]->RcvDataSem),nTick ) == RT_EOK )
 	{
