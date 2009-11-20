@@ -833,6 +833,14 @@
 				<Filter
 					Name="Tcp"
 					>
+					<File
+						RelativePath="..\..\UITC\Mbx\tcp\MbxTcp.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Mbx\tcp\MbxTcp.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1066,6 +1074,34 @@
 			<Filter
 				Name="AdvApp"
 				>
+			</Filter>
+			<Filter
+				Name="FileData"
+				>
+				<File
+					RelativePath="..\..\UITC\FileData\FileDataApi.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\FileData\FileDataApi.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\FileData\FileDataDef.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\FileData\FileDataLoad.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\FileData\IAP.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\UITC\FileData\IAP.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>

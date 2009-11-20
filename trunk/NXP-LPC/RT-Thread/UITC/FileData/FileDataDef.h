@@ -30,19 +30,10 @@
 #define	_CFG_PARSER_H
 
 
-#define  MAX_CH_CNT   32    //每个模件最大的通道数量
-#define  MAX_MODULE_CNT  4  //本装置最大支持4个插件
 #define  MAX_GATAGE_CNT 64  //64段参数
 #define  FCB_FLAG   0x4C49
 
 
-
-//模拟量信号类型
-#define MAI_420mA   1 // 4～20mA
-#define MAI_020mA   2 // 0～20mA	
-#define MAI_010mA   3 // 0～10mA
-#define MAI_05V   4 // 0～5V	
-#define MAI_15V   5 // 1～5V	
  
 #pragma pack(push)
 #pragma pack(4)

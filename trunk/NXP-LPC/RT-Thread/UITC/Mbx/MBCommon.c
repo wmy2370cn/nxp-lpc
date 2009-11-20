@@ -63,7 +63,7 @@ typedef enum RECV_FRAME_STATE
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static INT8U GetOneFrame(MBX * pMbx, INT8U c)
+static INT8U GetOneFrame(MBX_RTU * pMbx, INT8U c)
 {
 	INT16U chkcrc = 0;
  
@@ -390,7 +390,7 @@ static INT8U GetOneFrame(MBX * pMbx, INT8U c)
 ** 备  注:  等待采用信号量超时方式。超时200ms
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static INT8U RecvData( MBX * pMbx )
+static INT8U RecvData( MBX_RTU * pMbx )
 {
 	INT8U  Err = 0;
 	INT16U nRecvNum = 0;
@@ -468,7 +468,7 @@ static INT8U RecvData( MBX * pMbx )
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static INT8U PasreMsg(MBX * pMbx)
+static INT8U PasreMsg(MBX_RTU * pMbx)
 {
 	MBException eException = MB_EX_NONE;
 	INT16U chkcrc = 0;
@@ -594,7 +594,7 @@ static INT8U PasreMsg(MBX * pMbx)
  	return TRUE; 
 }
 
-static void SendResponse(MBX *pMbx)
+static void SendResponse(MBX_RTU *pMbx)
 {
 	INT32U temp = 0;
 
@@ -633,7 +633,7 @@ static void SendResponse(MBX *pMbx)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-void ModbusMainCycle(MBX * pMBX)
+void ModbusMainCycle(MBX_RTU * pMBX)
 {
 	INT8U bRet = FALSE;
 
@@ -681,7 +681,7 @@ void ModbusMainCycle(MBX * pMBX)
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-extern void InitMBX( MBX *pMBX )
+extern void InitMbxRtu( MBX_RTU *pMBX )
 {
 	if (pMBX == NULL)
 		return;

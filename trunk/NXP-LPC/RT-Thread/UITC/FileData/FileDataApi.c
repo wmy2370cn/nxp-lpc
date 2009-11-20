@@ -828,9 +828,9 @@ INT8U SaveData( INT8U *err )
 INT32U CheckRam(INT32U nStart,INT32U nEnd)
 {
 	INT32U i = 0;
-	INT32U Val = 0;
+	INT8U Val = 0;
 
-	INT32U *pRam = (INT32U *)nStart;
+	INT8U *pRam = (INT8U *)nStart;
 
 	for ( ; ; )
 	{
@@ -839,9 +839,9 @@ INT32U CheckRam(INT32U nStart,INT32U nEnd)
 
 		Val = *pRam;
 
-		*pRam = 0xAAEE;
+		*pRam = 0xEA;
 		__asm{NOP}   ;
-		if ( *pRam != 0xAAEE )
+		if ( *pRam != 0xEA )
 		{
 			*pRam = Val;
 			return (INT32U)pRam;
