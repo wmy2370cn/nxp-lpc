@@ -938,6 +938,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\UITC\Gui\Widgets\Dialog.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\Dialog.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Widgets\GridCtrl.c"
 						>
 					</File>
