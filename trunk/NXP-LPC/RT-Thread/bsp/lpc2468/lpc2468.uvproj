@@ -940,6 +940,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\MBXComm.c</FilePath>
             </File>
+            <File>
+              <FileName>MbxTcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\tcp\MbxTcp.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FileData</GroupName>
+          <Files>
+            <File>
+              <FileName>FileDataApi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\FileDataApi.c</FilePath>
+            </File>
+            <File>
+              <FileName>IAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\IAP.c</FilePath>
+            </File>
+            <File>
+              <FileName>FileDataLoad.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\FileDataLoad.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -1877,6 +1902,31 @@
               <FileName>MBXComm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UITC\Mbx\MBXComm.c</FilePath>
+            </File>
+            <File>
+              <FileName>MbxTcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\Mbx\tcp\MbxTcp.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FileData</GroupName>
+          <Files>
+            <File>
+              <FileName>FileDataApi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\FileDataApi.c</FilePath>
+            </File>
+            <File>
+              <FileName>IAP.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\IAP.c</FilePath>
+            </File>
+            <File>
+              <FileName>FileDataLoad.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UITC\FileData\FileDataLoad.c</FilePath>
             </File>
           </Files>
         </Group>
