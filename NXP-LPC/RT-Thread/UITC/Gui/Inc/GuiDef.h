@@ -45,6 +45,8 @@ struct GUI_RECT
 };
 typedef struct GUI_RECT CGuiRect;
 
+typedef INT32U GUI_HANDLE;
+
 
 #define GUI_RECT_WIDTH(r)	((r).right - (r).left)
 #define GUI_RECT_HEIGHT(r)	((r).bottom - (r).top)

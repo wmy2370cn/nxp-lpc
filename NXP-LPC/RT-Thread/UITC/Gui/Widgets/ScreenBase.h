@@ -26,8 +26,8 @@
 ********************************************************************************************************/
 #pragma  once
 
-#include "applib.h"
 #include "guilist.h"
+#include "GuiDef.h"
 
 #define MAX_SCR_SIZE 1024
 
@@ -61,6 +61,7 @@ typedef  void	(*fnOnNotify)(CScreenBase *pScreen,INT32U nf);
  
 struct SCREEN_BASE
 {
+	GUI_HANDLE   Handle;
 	INT8U        ParentID;    //父窗口ID号
 	INT8U        CurrentID;   //本窗口ID号
 	INT16U       ScreenName; //本窗口名称  字符串的ID
@@ -89,8 +90,15 @@ CScreenBase * CreateScreen( INT32U nSize ,scr_ctor ctor,scr_dtor dtor);
 void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor );
 void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nScreenName );
 
+__inline GUI_HANDLE GetScreenHandle( CScreenBase *pScreen )
+{
+	return pScreen->Handle;
+}
+
+
 #ifndef SCR_BASE_DEF
 #define SCR_BASE_DEF   \
+		GUI_HANDLE   Handle;       \
 		INT8U        ParentID;     \
 		INT8U        CurrentID;    \
 		INT16U       ScreenName;   \
