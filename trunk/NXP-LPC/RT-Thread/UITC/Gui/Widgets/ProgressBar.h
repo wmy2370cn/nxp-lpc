@@ -30,36 +30,16 @@
 #include "CtrlBase.h"
 
 
-//定义菜单链接
-struct  LB_ITEM 
-{
-	INT16U		nMenuID;          //菜单ID号
-	INT16U		nResourceID;      //菜单项名字
-	INT32U		nItemData;		  //菜单附加项
-};
-
-typedef struct LB_ITEM CListBoxItem;
-
-
-struct LIST_BOX
+struct PROGRESS_BAR
 {
 	CTRL_BASE_DEF
-	INT16U     ItemCount;
-
-	INT16U     CurItem;
-
-	INT16U      MaxShowChars;           //该控件窗口中能显示的字符数
-	INT16U      MaxShowLines;           //该控件窗口中能显示的行数
-
-	/*动态滚动条*/
-	CGuiRect ScrollBarRect;		//滚动条位置
-	INT8U    ShowScrollBar;		//是否显示滚动条
-	INT8U    ItmeHeight;        //每行高
-
-
+	INT32U nMin;
+	INT32U nMax;
+	INT32U nPos;
+	INT32U nStepInc;
 };
-typedef struct LIST_BOX CGuiListBox;
+typedef struct PROGRESS_BAR CGuiProgressBar;
 
-void AddItem(void);
+
 
 #endif
