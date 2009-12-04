@@ -40,6 +40,10 @@ struct PROGRESS_BAR
 };
 typedef struct PROGRESS_BAR CGuiProgressBar;
 
+INT8U SetProgressBarRange( GUI_HANDLE hCtrl, INT32U Max,INT32U Min );
+INT8U SetProgressBarStep( GUI_HANDLE hCtrl,INT32U Step );
+INT8U SetProgressBarPos(GUI_HANDLE hCtrl,INT32U Pos);
+
 
 
 #endif

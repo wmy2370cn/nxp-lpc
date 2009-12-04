@@ -93,3 +93,10 @@ void OnCtrlMsg( CCtrlBase  *pCtrl,INT32U msg, INT32U param  )
 		pCtrl->pfnMessage( pCtrl,msg,param );
 	}
 } 
+
+
+INT8U DefaultControlProc (GUI_HANDLE hWnd, INT32U message, INT32U wParam, INT32U lParam)
+{
+
+	return TRUE;
+}

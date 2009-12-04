@@ -730,7 +730,7 @@ void DrawRectEx(LCD_POS x0, LCD_POS y0, LCD_POS x1, LCD_POS y1, GUI_COLOR cr/*=G
 		rect.top = y0; 
 		rect.right =x1;
 		rect.bottom = y1;
-		NormalizeRect(&rect);
+		NormalizeGuiRect(&rect);
 		DrawLineEx(rect.left, rect.top, rect.right, rect.top, cr, pen);
 		DrawLineEx(rect.right, rect.top+1, rect.right, rect.bottom,cr, pen);
 		DrawLineEx(rect.right-1, rect.bottom, rect.left, rect.bottom,cr, pen);

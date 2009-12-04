@@ -109,6 +109,7 @@ CScreenBase * CreateScreen( INT32U nSize,scr_ctor ctor,scr_dtor dtor )
 	{
 		ctor(pObj);
 	}
+	pObj->Handle = (GUI_HANDLE) pObj;
 	return pObj;
 }
 /*********************************************************************************************************
@@ -145,6 +146,7 @@ void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor )
 		{
 			ctor(pScr);
 		}
+		pScr->Handle = (GUI_HANDLE) pScr;
 	}
 	return;
 }
