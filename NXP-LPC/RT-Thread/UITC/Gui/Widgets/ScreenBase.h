@@ -61,15 +61,16 @@ typedef  void	(*fnOnNotify)(CScreenBase *pScreen,INT32U nf);
  
 struct SCREEN_BASE
 {
+	/* constructor and destructor */
+	scr_ctor Ctor;
+	scr_dtor Dtor;
+
 	GUI_HANDLE   Handle;
 	INT8U        ParentID;    //父窗口ID号
 	INT8U        CurrentID;   //本窗口ID号
 	INT16U       ScreenName; //本窗口名称  字符串的ID
 	gui_list_t    List;
 
-	/* constructor and destructor */
-	scr_ctor Ctor;
-	scr_dtor Dtor;
 
 	//回调函数
 	fnInit      pfnInit;
@@ -98,14 +99,14 @@ __inline GUI_HANDLE GetScreenHandle( CScreenBase *pScreen )
 
 #ifndef SCR_BASE_DEF
 #define SCR_BASE_DEF   \
+		scr_ctor Ctor; \
+		scr_dtor Dtor;\
 		GUI_HANDLE   Handle;       \
 		INT8U        ParentID;     \
 		INT8U        CurrentID;    \
 		INT16U       ScreenName;   \
 		gui_list_t    List;        \
-	 	scr_ctor Ctor; \
-		scr_dtor Dtor;\
-		fnInit      pfnInit;\
+	 	fnInit      pfnInit;\
 		fnCreate    pfnCreate;\
 		fnDestory   pfnDestory;\
 		fnOnKeyDown pfnKeyDown;\
