@@ -152,55 +152,53 @@ __inline INT8U UnionGuiRect(CGuiRect* pdrc, const CGuiRect* psrc1, const CGuiRec
     memcpy(&src2, psrc2, sizeof(CGuiRect));
 
     NormalizeGuiRect(&src1);
-    NormalizeGuiRect(&src2);
+	NormalizeGuiRect(&src2);
 
-    if (src1.left == src2.left
-        && src1.right == src2.right)
-    {
-        if (src1.top <= src2.top && src2.top <= src1.bottom)
-        {
-            pdrc->left = src1.left;
-            pdrc->right = src1.right;
-            pdrc->top = src1.top;
-            pdrc->bottom = MAX(src1.bottom, src2.bottom);
+	if (src1.left == src2.left && src1.right == src2.right)
+	{
+		if (src1.top <= src2.top && src2.top <= src1.bottom)
+		{
+			pdrc->left = src1.left;
+			pdrc->right = src1.right;
+			pdrc->top = src1.top;
+			pdrc->bottom = MAX(src1.bottom, src2.bottom);
 
-            return TRUE;
-        }
-        else if (src1.top >= src2.top && src2.bottom >= src1.top)
+			return TRUE;
+		}
+		else if (src1.top >= src2.top && src2.bottom >= src1.top)
         {
             pdrc->left = src1.left;
             pdrc->right = src1.right;
             pdrc->top = src2.top;
-            pdrc->bottom = MAX(src1.bottom, src2.bottom);
+			pdrc->bottom = MAX(src1.bottom, src2.bottom);
 
-            return TRUE;
-       }
-       return FALSE;
-    }
+			return TRUE;
+		}
+		return FALSE;
+	}
 
-    if (src1.top == src2.top
-        && src1.bottom == src2.bottom)
-    {
-        if (src1.left <= src2.left && src2.left <= src1.right)
-        {
-            pdrc->top = src1.top;
-            pdrc->bottom = src1.bottom;
-            pdrc->left = src1.left;
-            pdrc->right = MAX(src1.right, src2.right);
+	if (src1.top == src2.top && src1.bottom == src2.bottom)
+	{
+		if (src1.left <= src2.left && src2.left <= src1.right)
+		{
+			pdrc->top = src1.top;
+			pdrc->bottom = src1.bottom;
+			pdrc->left = src1.left;
+			pdrc->right = MAX(src1.right, src2.right);
 
-            return TRUE;
-        }
-        else if (src1.left >= src2.left && src2.right >= src1.left)
-        {
-            pdrc->top = src1.top;
-            pdrc->bottom = src1.bottom;
-            pdrc->left = src2.left;
-            pdrc->right = MAX(src1.right, src2.right);
+			return TRUE;
+		}
+		else if (src1.left >= src2.left && src2.right >= src1.left)
+		{
+			pdrc->top = src1.top;
+			pdrc->bottom = src1.bottom;
+			pdrc->left = src2.left;
+			pdrc->right = MAX(src1.right, src2.right);
 
-            return TRUE;
-       }
-       return FALSE;
-    }
+			return TRUE;
+		}
+		return FALSE;
+	}
 
     return FALSE;
 }
