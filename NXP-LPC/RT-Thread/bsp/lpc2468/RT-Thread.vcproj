@@ -990,6 +990,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GuiRect.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Utilities\GuiSystem.c"
 						>
 					</File>

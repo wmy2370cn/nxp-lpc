@@ -32,6 +32,7 @@
 #include "GuiList.h"
 #include "GuiEvent.h"
 #include "ScreenBase.h"
+#include "list.h" 
 
 struct GUI_EVENT_MGR
 {
