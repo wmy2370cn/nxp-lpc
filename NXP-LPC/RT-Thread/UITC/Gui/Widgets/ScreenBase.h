@@ -65,7 +65,7 @@ struct SCREEN_BASE
 	scr_ctor Ctor;
 	scr_dtor Dtor;
 
-	GUI_HANDLE   Handle;
+	GUI_HWND   Handle;
 	INT8U        ParentID;    //父窗口ID号
 	INT8U        CurrentID;   //本窗口ID号
 	INT16U       ScreenName; //本窗口名称  字符串的ID
@@ -91,7 +91,7 @@ CScreenBase * CreateScreen( INT32U nSize ,scr_ctor ctor,scr_dtor dtor);
 void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor );
 void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nScreenName );
 
-__inline GUI_HANDLE GetScreenHandle( CScreenBase *pScreen )
+__inline GUI_HWND GetScreenHandle( CScreenBase *pScreen )
 {
 	return pScreen->Handle;
 }
@@ -101,7 +101,7 @@ __inline GUI_HANDLE GetScreenHandle( CScreenBase *pScreen )
 #define SCR_BASE_DEF   \
 		scr_ctor Ctor; \
 		scr_dtor Dtor;\
-		GUI_HANDLE   Handle;       \
+		GUI_HWND   Handle;       \
 		INT8U        ParentID;     \
 		INT8U        CurrentID;    \
 		INT16U       ScreenName;   \

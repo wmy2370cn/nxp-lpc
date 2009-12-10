@@ -52,7 +52,7 @@ struct CTRL_BASE
 	ctrl_ctor Ctor;
 	ctrl_dtor Dtor;
 
-	GUI_HANDLE   Handle;
+	GUI_HWND   Handle;
 
  	CGuiRect	    Block;	    	//定义控件位置
 
@@ -63,7 +63,7 @@ struct CTRL_BASE
 	fnOnMessageCtrl pfnMessage;	
 };
 
-__inline GUI_HANDLE GetCtrlHandle( CCtrlBase *pCtrl )
+__inline GUI_HWND GetCtrlHandle( CCtrlBase *pCtrl )
 {
 	return pCtrl->Handle;
 }
@@ -74,7 +74,7 @@ void EraseBackground(CCtrlBase *pCtrlbase);
 #define CTRL_BASE_DEF   \
 	ctrl_ctor Ctor; \
 	ctrl_dtor Dtor;\
-	GUI_HANDLE   Handle; \
+	GUI_HWND   Handle; \
 	CGuiRect	    Block;     \
 	fnInitCtrl      pfnInit;\
 	fnCreateCtrl    pfnCreate;\
