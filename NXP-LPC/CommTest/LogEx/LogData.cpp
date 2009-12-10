@@ -411,32 +411,6 @@ bool CLogDataMgr::RegisterLog(TCHAR *szModuleName  )
 	LogString(szModuleName,szLog.GetBuffer(szLog.GetLength()) ,0);
 	szLog.ReleaseBuffer();
 
-	szTabName.Format(_T("%s_MSG"),szModuleName);
-//	szTabName.MakeUpper();
-	szSQL.Format(_T("select count(*) from sqlite_master where  type='table' and name='%s'" ),szTabName);
-	Temp = m_db.QuerySQL( szSQL );
-	//如果不存在，则创建表，格式如下：ID(关键字) TIME TYPE LOG_STRING
-	if (Temp.GetRowCount() )
-	{
-		Temp.GoRow(1);
-		CString szVal = Temp.GetValue( _T("count(*)"));
-		if (szVal == _T("0"))
-		{
-			szSQL.Format(_T("CREATE TABLE %s (id INTEGER PRIMARY KEY,msg_time TIMESTAMP,type INTEGER,log_str TEXT)"),szTabName);
-			rc = m_db.ExecuteSQL(szSQL);
-			if (rc != SQLITE_OK)
-				return false;
-		}
-		else
-		{//检查表格式是否完整
-
-		}	
-	}
-	else
-		return false;
-
-	//先写入一个记录
-
 	return true;
 }
 void CLogDataMgr::UnregisterLog( TCHAR *szModuleName  )

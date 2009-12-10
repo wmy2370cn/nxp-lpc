@@ -19,6 +19,10 @@ public:
 	~CClientComm( );
 public:
 	BOOL Connect ( DWORD dwTimeout = 2000);
+	BOOL ConnectToSvr ( DWORD dwTimeout = 2000);
+
+	BOOL m_bAutoClose;
+	unsigned int m_nAutoCloseTime;
 
 	//开始收发
 	void StartTask( );
@@ -28,6 +32,12 @@ public:
 	void TcpEngine( );
 	CCommMsgContainer m_CommMsg;
 	CDataBuf  m_SendBuf;
+
+	unsigned long m_nSendPacketCnt;
+	unsigned long m_nRecvPacketCnt;
+
+	unsigned long m_nSendByteCnt;
+	unsigned long m_nRecvByteCnt;
 protected:
 	void ExecMsgCmd( CCommMsg & msg  );
 	

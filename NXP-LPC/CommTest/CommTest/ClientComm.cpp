@@ -21,6 +21,14 @@ CClientComm::CClientComm( )
 	m_pCommTsk = NULL;
 	m_hTaskHandle = NULL;
 	m_hStopEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	m_bAutoClose = FALSE;
+
+	m_nSendPacketCnt = 0;
+	m_nRecvPacketCnt = 0;
+
+	m_nSendByteCnt = 0;
+	m_nRecvByteCnt = 0;
+
 	m_pRawBuf = new unsigned char [MAX_DATA_LEN];
 }
 
@@ -74,12 +82,43 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 		return FALSE;
 
 	m_nLocalPortNum = m_pDocument->m_nLocalPort;
-
+	
+	BOOL bRet = ConnectToSvr(dwTimeout);
+	if (bRet)
+	{
+		StartTask();
+	}
+	return bRet;
+} 
+/*********************************************************************************************************
+** 函数名称: ConnectToSvr
+** 函数名称: CClientComm::ConnectToSvr
+**
+** 功能描述： 连接到服务器
+**
+** 输　入:  DWORD dwTimeout
+**          
+** 输　出:   BOOL
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月10日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+BOOL CClientComm::ConnectToSvr ( DWORD dwTimeout )
+{		
 	if (m_nSocket != 0 && m_nSocket != INVALID_SOCKET)
 	{
 		CloseSocket(m_nSocket);
 		m_nSocket = INVALID_SOCKET;
-	//	return FALSE;
+		//	return FALSE;
 	}
 
 	m_nSocket = CreateSocket( );
@@ -121,7 +160,6 @@ BOOL CClientComm::Connect ( DWORD dwTimeout )
 			LogString(szLog.GetBuffer(szLog.GetLength()),NORMAL_STR );
 			szLog.ReleaseBuffer();
 
-			StartTask();
 			return TRUE;
 		}
 		else
@@ -199,11 +237,17 @@ void CClientComm::ExecMsgCmd( CCommMsg & msg  )
 {
 	if (msg.m_nMsgType == MSG_SEND_DATA)
 	{
-		if (m_nSocket == 0 || m_nSocket == INVALID_SOCKET )	
+		if (m_nSocket == 0 || m_nSocket == INVALID_SOCKET )		
 		{
+			if (m_bAutoClose)
+			{
+				BOOL bRet =	ConnectToSvr();
+				if (bRet == FALSE)
+					return;
+			}
 			return;
 		}
-
+	
 		unsigned int nLen = m_SendBuf.GetData(m_pRawBuf);
 		int nRetLen = 0;
 
@@ -212,7 +256,8 @@ void CClientComm::ExecMsgCmd( CCommMsg & msg  )
 			nRetLen = SendData_Event(m_nSocket,(const char *)m_pRawBuf,nLen);
 			if ( nRetLen == nLen )
 			{//发送成功
-
+				m_nSendPacketCnt ++;
+				m_nSendByteCnt += nLen;
 			}
 			else 
 			{//
@@ -279,6 +324,12 @@ void CClientComm::TcpEngine( )
 		{
 			m_pDocument->m_PacketCtnr.PutData(m_pRawBuf,nRet);
 		}		
+		if(m_bAutoClose)
+		{
+			CloseSocket(m_nSocket);
+			m_nSocket = INVALID_SOCKET;
+			ConnectToSvr();
+		}
 	}
 }
 
@@ -349,6 +400,7 @@ UINT  TcpClientTask (LPVOID lpParam)
 		}	
 
 		pComm->TcpEngine();
+		Sleep(10);
 	}
 
 	return 0;
