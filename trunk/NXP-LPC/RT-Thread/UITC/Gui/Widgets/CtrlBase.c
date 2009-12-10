@@ -95,7 +95,7 @@ void OnCtrlMsg( CCtrlBase  *pCtrl,INT32U msg, INT32U param  )
 } 
 
 
-INT8U DefaultControlProc (GUI_HANDLE hWnd, INT32U message, INT32U wParam, INT32U lParam)
+INT8U DefaultControlProc (GUI_HWND hWnd, INT32U message, INT32U wParam, INT32U lParam)
 {
 
 	return TRUE;
