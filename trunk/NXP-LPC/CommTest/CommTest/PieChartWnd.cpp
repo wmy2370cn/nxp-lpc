@@ -255,7 +255,7 @@ void CPieChartWnd::DrawDoughnutStyle(CDC* pDc)
 PIECHARTITEM CPieChartWnd::InsertItem(CString sElement, CString sLabel, double dValue, Gdiplus::Color crColor)
 {
 	
-	if (sElement.Compare(L"") && !HasElement(sElement) && dValue > 0){
+	if (sElement.Compare(_T("")) && !HasElement(sElement) && dValue > 0){
 		
 		pie_chart_element* element = new pie_chart_element;
 		element->s_element = sElement;

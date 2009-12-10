@@ -114,6 +114,7 @@
 #define IDC_EDIT_LOCAL_PORT             1005
 #define IDC_EDIT_DEST_PORT_OPT          1006
 #define IDC_CHECK_LOCAL_PORT            1007
+#define IDC_CHECK_AUTO_CLOSE            1008
 #define IDC_CHECK_HEX                   1009
 #define IDC_BUTTON_RESET                1010
 #define IDC_BUTTON_START                1011
@@ -123,6 +124,8 @@
 #define IDC_EDIT_LOCAL_PORT_OPT         1015
 #define IDC_CB_PROTO_TYPE_OPT           1016
 #define IDC_EDIT_SEND_TXT               1017
+#define IDC_EDIT_LOCAL_PORT_OPT2        1017
+#define IDC_EDIT_AUTO_TIME              1017
 #define IDC_BUTTON_SEND                 1018
 #define IDC_BUTTON_CLEAR_SEND           1019
 #define IDC_BUTTON_STOP                 1020

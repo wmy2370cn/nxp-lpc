@@ -757,6 +757,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\svr_panle.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Toolbar.bmp"
 				>
 			</File>

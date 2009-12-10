@@ -159,6 +159,7 @@ bool CListCtrlEx::SetBackgroundImage( UINT nID, int width /* = 128 */, int heigh
 	lv.hbm = bmp;
 	lv.xOffsetPercent = 100;
 	lv.yOffsetPercent = 100;
-	ListView_SetBkImage(hListCtrl, &lv);
+//	ListView_SetBkImage(hListCtrl, &lv);
+	SetBkImage(&lv);
 	return true;
 }

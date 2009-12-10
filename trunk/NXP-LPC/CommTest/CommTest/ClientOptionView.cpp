@@ -19,6 +19,8 @@ CClientOptionView::CClientOptionView()
 	, m_nProtocolType(0)
 	, m_nSendCnt(0)
 	, m_nRecvCnt(0)
+	, m_nAutoTime(800)
+	, m_bAutoClose(FALSE)
 {
 
 }
@@ -37,6 +39,8 @@ void CClientOptionView::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_CB_PROTO_TYPE_OPT, m_nProtocolType);
 	DDX_Text(pDX, IDC_STATIC_SND_CNT, m_nSendCnt);
 	DDX_Text(pDX, IDC_STATIC_RCV_CNT, m_nRecvCnt);
+	DDX_Text(pDX, IDC_EDIT_AUTO_TIME, m_nAutoTime);
+	DDX_Check(pDX, IDC_CHECK_AUTO_CLOSE, m_bAutoClose);
 }
 
 BEGIN_MESSAGE_MAP(CClientOptionView, CBCGPFormView)
@@ -44,6 +48,8 @@ BEGIN_MESSAGE_MAP(CClientOptionView, CBCGPFormView)
 	ON_BN_CLICKED(IDC_CHECK_LOCAL_PORT, &CClientOptionView::OnBnClickedCheckLocalPort)
 	ON_BN_CLICKED(IDC_BUTTON_START, &CClientOptionView::OnBnClickedButtonStart)
 	ON_BN_CLICKED(IDC_BUTTON_RESET, &CClientOptionView::OnBnClickedButtonReset)
+	ON_BN_CLICKED(IDC_CHECK_AUTO_CLOSE, &CClientOptionView::OnBnClickedCheckAutoClose)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -76,12 +82,13 @@ int CClientOptionView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-
+const int ID_DATA_FRESH = 1002;
 void CClientOptionView::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
 
 	// TODO: 在此添加专用代码和/或调用基类
+	SetTimer(ID_DATA_FRESH,1000,NULL);
 
 }
 
@@ -165,6 +172,14 @@ void CClientOptionView::OnBnClickedButtonStart()
 	if (pDoc == NULL)
 		return;
 
+	pDoc->m_ClientComm.m_bAutoClose = m_bAutoClose;
+	if (m_nAutoTime <= 500)
+	{
+		m_nAutoTime = 500;
+		UpdateData(FALSE);
+	}
+	pDoc->m_ClientComm.m_nAutoCloseTime = m_nAutoTime;
+
 	CWnd *pWnd = GetDlgItem(IDC_BUTTON_START);
 	ASSERT(pWnd);
 	pWnd->EnableWindow(FALSE);
@@ -210,4 +225,28 @@ void CClientOptionView::OnBnClickedButtonReset()
 	// TODO: 在此添加控件通知处理程序代码
 	m_nRecvCnt = m_nSendCnt = 0;
 	UpdateData(FALSE);
+}
+
+void CClientOptionView::OnBnClickedCheckAutoClose()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(TRUE);
+}
+
+void CClientOptionView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CClientCommDoc *pDoc = (CClientCommDoc *) GetDocument();
+	ASSERT(pDoc);
+	if (pDoc == NULL)
+		return;
+
+	if (nIDEvent == ID_DATA_FRESH)
+	{
+		m_nSendCnt = pDoc->m_ClientComm.m_nSendPacketCnt;
+		m_nRecvCnt = pDoc->m_ClientComm.m_nRecvPacketCnt;
+		UpdateData(FALSE);
+	}
+
+	CBCGPFormView::OnTimer(nIDEvent);
 }

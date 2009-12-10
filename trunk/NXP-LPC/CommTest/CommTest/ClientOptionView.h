@@ -43,6 +43,10 @@ public:
 	afx_msg void OnBnClickedButtonReset();
 	UINT m_nSendCnt;
 	UINT m_nRecvCnt;
+	UINT m_nAutoTime;
+	BOOL m_bAutoClose;
+	afx_msg void OnBnClickedCheckAutoClose();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 
