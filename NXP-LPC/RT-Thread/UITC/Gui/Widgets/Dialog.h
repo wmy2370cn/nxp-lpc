@@ -26,22 +26,20 @@
 ********************************************************************************************************/
 #ifndef CTRL_BASE_H
 #define	CTRL_BASE_H 
-#include "GuiDef.h"
-#include "CtrlBase.h"
+#include "GuiDef.h" 
 
 
  
 
-struct GIALOG
+struct DIALOG_BASE
 {
-	CTRL_BASE_DEF
-
+ 
 	INT8U  Style;
 	INT16U CaptionStrID; //±êÌâÀ¸×Ö·û´®µÄID
 
 	 
 
 };
-typedef struct GIALOG CGuiDialog;
+typedef struct DIALOG_BASE CGuiDialog;
  
 #endif

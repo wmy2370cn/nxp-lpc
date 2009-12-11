@@ -374,7 +374,7 @@ void InitGuiTask( void  )
 {
 	InitLcd();
 	//初始化窗口及任务消息队列
-	InitGuiEventMgr();
+	InitGuiEventQueue();
 
 	InitGuiTimerMgr();
 	// 界面初始化

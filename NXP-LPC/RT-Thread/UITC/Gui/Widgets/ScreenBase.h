@@ -44,6 +44,8 @@ typedef void (*scr_ctor)(CScreenBase *object);
 //析构
 typedef void (*scr_dtor)(CScreenBase *object);
 
+typedef INT32U (* SCREENPROC)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);
+
 //消息函数
 //按键处理
 typedef  void  (*fnOnKeyDown)(CScreenBase *pScreen, INT32U keyCode);
@@ -65,12 +67,17 @@ struct SCREEN_BASE
 	scr_ctor Ctor;
 	scr_dtor Dtor;
 
+	INT8U   WinType;          // the window type
+	INT8U   Style;
+	INT16U  ExStyle;
+
 	GUI_HWND   Handle;
 	INT8U        ParentID;    //父窗口ID号
 	INT8U        CurrentID;   //本窗口ID号
 	INT16U       ScreenName; //本窗口名称  字符串的ID
 	gui_list_t    List;
 
+	INT32U (*ScreenProc)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);
 
 	//回调函数
 	fnInit      pfnInit;
@@ -91,16 +98,25 @@ CScreenBase * CreateScreen( INT32U nSize ,scr_ctor ctor,scr_dtor dtor);
 void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor );
 void SetScreenInfo(CScreenBase *pScreen,INT8U ParentID,INT8U CurrentID,INT16U nScreenName );
 
+//设置标题
+void SetScreenTitle( );
+
+INT32U DefaultScreenProc (GUI_HWND hWnd, INT32U message, GUI_WPARAM wParam, GUI_LPARAM lParam);
+
 __inline GUI_HWND GetScreenHandle( CScreenBase *pScreen )
 {
 	return pScreen->Handle;
 }
 
+#define GET_SCREEN_PTR(hWnd)   ((CScreenBase)hWnd) 
 
 #ifndef SCR_BASE_DEF
 #define SCR_BASE_DEF   \
 		scr_ctor Ctor; \
 		scr_dtor Dtor;\
+		INT8U   WinType; \         // the window type
+		INT8U   Style;\
+		INT16U  ExStyle;\
 		GUI_HWND   Handle;       \
 		INT8U        ParentID;     \
 		INT8U        CurrentID;    \
