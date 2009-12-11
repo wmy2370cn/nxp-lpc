@@ -30,6 +30,7 @@
 #include "VersionScr.h"
 #include "StringTable.h"
 #include "extscreendef.h"
+#include "GuiEvent.h"
 
 #include "dc.h"
 
@@ -213,6 +214,50 @@ static void OnInitVersionScreen( CScreenBase *pScr,INT32U wParam,INT32U lParam )
 
 }
 
+static INT32U VersionScreenProc (GUI_HWND hWnd, INT32U message, GUI_WPARAM wParam, GUI_LPARAM lParam)
+{
+	switch (message) 
+	{
+	case GUI_EVENT_CREATE:
+		{
+// 				int timeout = (int)GetWindowAdditionalData (hWnd);
+// 				if (timeout >= 10)
+// 					SetTimer (hWnd, _ID_TIMER, timeout / 10);
+				break;
+		}
+
+	case GUI_EVENT_TIMER:
+		//	KillTimer (hWnd, _ID_TIMER);
+		//	ShowWindow (hWnd, SW_HIDE);
+		break;
+
+	case GUI_EVENT_PAINT:
+		{
+// 				HDC hdc;
+// 				const char* text;
+// 
+// 				hdc = BeginPaint (hWnd);
+// 
+// 				text = GetWindowCaption (hWnd);
+// 				SetBkMode (hdc, BM_TRANSPARENT);
+// 				SelectFont (hdc, GetSystemFont (SYSLOGFONT_WCHAR_DEF));
+// 				TabbedTextOut (hdc, _MARGIN, _MARGIN, text);
+// 
+// 				EndPaint (hWnd, hdc);
+			return 0;
+		}
+
+	case GUI_EVENT_DESTROY:
+		{
+		//	KillTimer (hWnd, _ID_TIMER);
+			return 0;
+		}	 
+	}
+
+	return DefaultScreenProc(hWnd, message, wParam, lParam);
+}
+
+
 CScreenBase * InitVerScreen(void)
 {
 	INT32U nSize = sizeof(CVersionScreen);
@@ -221,14 +266,6 @@ CScreenBase * InitVerScreen(void)
 	pScr = CreateScreen(nSize ,VerScrCtor,VerScrDtor );
 	ASSERT(pScr);
 	SetScreenInfo(pScr,ID_DEFAULT_SCREEN, ID_VER_SCREEN, ID_STRING_NONE);
-
-	pScr->pfnInit = OnInitVersionScreen;
-	pScr->pfnDestory = OnDestoryVersionScreen ;
-	pScr->pfnCreate = OnCreateVersionScreen;
-
-
-
-
-
+	pScr->ScreenProc = VersionScreenProc;
 	return pScr;
 }

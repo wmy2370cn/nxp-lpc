@@ -43,7 +43,38 @@ enum GUI_EVENT_TYPE
 
 };
 typedef enum GUI_EVENT_TYPE GuiEventType;
-struct SCREEN_BASE;
+
+
+#define QS_NOTIFYMSG        0x10000000
+ 
+#define QS_POSTMSG          0x40000000
+#define QS_QUIT             0x80000000
+#define QS_INPUT            0x01000000
+#define QS_PAINT            0x02000000
+#define QS_TIMER            0x0000FFFF
+#define QS_EMPTY            0x00000000
+
+ 
+/**
+ * \def PM_NOREMOVE
+ *
+ * \sa PeekMessage PeekMessageEx
+ */
+#define PM_NOREMOVE     0x0000
+
+/**
+ * \def PM_REMOVE
+ *
+ * \sa PeekMessage PeekMessageEx PeekPostMessage
+ */
+#define PM_REMOVE       0x0001
+
+/**
+ * \def PM_NOYIELD
+ *
+ * \sa PeekMessage PeekMessageEx PeekPostMessage
+ */
+#define PM_NOYIELD      0x0002
 
 struct GUI_EVENT
 {
@@ -57,6 +88,24 @@ struct GUI_EVENT
 
 typedef struct GUI_EVENT GuiEvent;
 
+
+//初始化消息队列
+INT8U InitGuiEventQueue( void );
+
+INT8U SendScreenEvnent( GUI_HWND hWnd,INT32U Msg,INT32U wParam,INT32U lParam );
+INT8U PostEvnent( GUI_HWND hWnd,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
+
+//用于控件向父窗口邮寄消息-通知消息
+INT32U SendNotifyEvent(GUI_HWND hScr,INT32U Msg,INT32U WParam,INT32U LParam);
+
+
+
+
+INT8U PostEventToGuiTask(  GuiEvent * pEvent );
+INT8U GuiTaskEventRecv( GuiEvent * pEvent  );
+INT8U HandleTaskEvent(  GuiEvent * pEvent );
+
+
 #ifndef GUI_EVENT_DEF
 #define  GUI_EVENT_DEF \
 	INT32U Msg;\
@@ -66,30 +115,3 @@ typedef struct GUI_EVENT GuiEvent;
 	GUI_HWND Handle;\
 	INT32U  Time;	
 #endif
-
-
-struct GUI_EVENT_NODE
-{
-	GUI_EVENT_DEF
-	struct GuiListNode NextNode;
-};
-
-typedef struct GUI_EVENT_NODE GuiEventNode;
-
-//初始化消息队列
-INT8U InitGuiEventQueue( void );
-
-INT8U SendScreenEvnent( GUI_HWND *pWnd,INT32U Msg,INT32U wParam,INT32U lParam );
-INT8U PostScreenEvnent( GUI_HWND *pWnd,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
-INT8U HandleScreenEvent(struct SCREEN_BASE *pScr);
-
-//用于控件向父窗口邮寄消息-通知消息
-INT8U SendNotifyEvent(GUI_HWND hScr,INT32U Msg,INT32U WParam,INT32U LParam);
-
-
-
-
-INT8U PostEventToGuiTask(  GuiEvent * pEvent );
-INT8U GuiTaskEventRecv( GuiEvent * pEvent  );
-INT8U HandleTaskEvent(  GuiEvent * pEvent );
-
