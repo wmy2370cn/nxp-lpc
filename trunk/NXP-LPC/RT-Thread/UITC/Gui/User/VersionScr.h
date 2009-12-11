@@ -27,6 +27,7 @@
 #pragma once
 #ifndef VER_SCREEN_H
 #define	VER_SCREEN_H
+ 
 
  
 //	描    述 : 启动画面 版本信息画面

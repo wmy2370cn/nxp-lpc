@@ -153,10 +153,10 @@ void SwitchScreen(INT8U nScreenID)
  	pScreen=GetCurrentScreenPtr(pMgr);
 
 	//首先销毁原窗口
-	if(pScreen && pScreen->pfnDestory)
-	{
-		pScreen->pfnDestory(pScreen);
-	}
+//	if(pScreen && pScreen->pfnDestory)
+//	{
+//		pScreen->pfnDestory(pScreen);
+//	}
 
 	//切换到下一窗口
  	pScreen=GetScreenPtr(pMgr,nScreenID);
@@ -173,8 +173,8 @@ void SwitchScreen(INT8U nScreenID)
  	//清除屏幕,模式对话框因为要保存上个界面的图形所有不进行清屏
  //	if(nScreenID != ID_MODALDIALOG)
  //		ClearScreen();
-	if(pScreen != NULL && pScreen->pfnInit)
- 		pScreen->pfnInit(pScreen,0,0);// 界面默认初始化代码，比如建立资源
+//	if(pScreen != NULL && pScreen->pfnInit)
+ //		pScreen->pfnInit(pScreen,0,0);// 界面默认初始化代码，比如建立资源
 
 }
 /*********************************************************************************************************
@@ -267,7 +267,7 @@ static INT8U SendEventN(INT32U msg,INT32U param,INT32U lParam)
 	if (pScreen == NULL)
 		return FALSE;
 
-	return SendScreenEvnent( pScreen ,msg,param ,lParam);
+	return SendScreenEvnent( pScreen->Handle ,msg,param ,lParam);
 }
 //匿名寄送，送给当前活动的窗口
 static INT8U PostEventN(INT32U msg,INT32U param)
@@ -280,7 +280,7 @@ static INT8U PostEventN(INT32U msg,INT32U param)
 	if (pScreen == NULL)
 		return FALSE;
 
-	return PostScreenEvnent( pScreen ,msg,param,NULL,TRUE);
+	return PostEvnent( pScreen->Handle ,msg,param,NULL,TRUE);
 }
 
 static void HandleCurScrEvent(void)

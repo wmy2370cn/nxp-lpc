@@ -27,10 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-
 #include "ScreenBase.h"
-
 
 /*********************************************************************************************************
 ** 函数名称: SetScreenInfo
@@ -252,4 +249,34 @@ INT32U DefaultScreenProc (GUI_HWND hWnd, INT32U message, GUI_WPARAM wParam, GUI_
 // 		return DefaultDialogProc (hWnd, message, wParam, lParam);
 // 	}
 	return 0;
+}
+/*********************************************************************************************************
+** 函数名称: IsScreen
+** 函数名称: IsScreen
+**
+** 功能描述：  判断该句柄是不是SCREEN
+**
+** 输　入:  GUI_HWND hWnd
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U IsScreen( GUI_HWND hWnd )
+{
+	CScreenBase *pScr = NULL;
+	if (hWnd == HWND_NULL || hWnd == HWND_INVALID )
+		return FALSE;
+	pScr = GET_SCREEN_PTR(hWnd);
+	return (pScr->WinType == TYPE_SCREEN);
 }

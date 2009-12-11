@@ -32,19 +32,26 @@
 #include "GuiList.h"
 #include "GuiEvent.h"
 #include "ScreenBase.h"
-#include "list.h" 
 
-struct GUI_EVENT_MGR
+struct GUI_EVENT_NODE
 {
+	GUI_EVENT_DEF
+	struct GuiListNode NextNode;
+};
+
+typedef struct GUI_EVENT_NODE GuiEventNode;
+
+struct GUI_EVENT_QUEUE
+{
+	INT32U State;
 	GuiEventNode *pEvent;
 	struct GuiListNode FreeListHead;
 	struct GuiListNode UsedListHead;
 };
 
-typedef struct GUI_EVENT_MGR GuiEventMgr;
+typedef struct GUI_EVENT_QUEUE GuiEventQueue;
  //窗口的消息队列，属于同一个进程内，
-GuiEventMgr g_ScrEvent;
-
+static GuiEventQueue g_ScrEvent;
 
 static rt_mq_t g_mqTask ;
 
@@ -83,6 +90,7 @@ INT8U InitGuiEventQueue( void )
 	INT16U i  = 0;
 	GuiEventNode *pEvent = NULL;
 	InitTaskEvent();
+	g_ScrEvent.State = 0;
 	g_ScrEvent.pEvent = rt_malloc( sizeof(GuiEventNode) * GUI_EVENT_CNT );
 	ASSERT(g_ScrEvent.pEvent );
 	if (g_ScrEvent.pEvent == NULL)
@@ -122,24 +130,24 @@ INT8U InitGuiEventQueue( void )
 ** 备  注:
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam )
+INT8U SendScreenEvnent(  GUI_HWND hWnd,INT32U Msg,INT32U wParam,INT32U lParam )
 {
-	if(pScr == NULL)
-		return FALSE;
-
-	switch (Msg)
-	{
-	case GUI_EVENT_KEYDOWN:
-		ASSERT(pScr->pfnKeyDown);
-		if (pScr->pfnKeyDown)
-		{
-			pScr->pfnKeyDown(pScr,wParam);
-		}
-		break;
-	default:
-		ASSERT(FALSE);
-		break;
-	}
+// 	if(pScr == NULL)
+// 		return FALSE;
+// 
+// 	switch (Msg)
+// 	{
+// 	case GUI_EVENT_KEYDOWN:
+// 		ASSERT(pScr->pfnKeyDown);
+// 		if (pScr->pfnKeyDown)
+// 		{
+// 			pScr->pfnKeyDown(pScr,wParam);
+// 		}
+// 		break;
+// 	default:
+// 		ASSERT(FALSE);
+// 		break;
+// 	}
  
 
 
@@ -147,8 +155,8 @@ INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 	return TRUE;
 }
 /*********************************************************************************************************
-** 函数名称: PostScreenEvnent
-** 函数名称: PostScreenEvnent
+** 函数名称: PostEvnent
+** 函数名称: PostEvnent
 **
 ** 功能描述：  寄送消息，暂存于任务队列中，然后在任务合适的时候执行
 **
@@ -172,24 +180,29 @@ INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck)
+INT8U PostEvnent(  GUI_HWND hWnd,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck)
 {
 	GuiEventNode *pEvent = NULL;
 	struct GuiListNode *pNode = NULL;
 	struct GuiListNode* pHead = NULL;
-	if(pScr == NULL)
-		return FALSE;
-
+ 
 	//检查 信息是否合法
-
+	if (hWnd == HWND_INVALID || hWnd == HWND_NULL)
+		return FALSE;
+	if (Msg == GUI_EVENT_PAINT) 
+	{
+		g_ScrEvent.State |= QS_PAINT;
+	 	return FALSE;
+	}
 	//检查该消息是否有重复了
+ 
 	if (bNoCheck == FALSE)
 	{
 		GuiListForEach( pNode, & g_ScrEvent.UsedListHead )
 		{
 			pEvent = CONTAINING_RECORD(pNode, GuiEventNode,NextNode);
 			ASSERT(pEvent);
-			if(pEvent && pEvent->pScreen == pScr && pEvent->Msg == Msg && pEvent->WParam == wParam 
+			if(pEvent && pEvent->Handle == hWnd && pEvent->Msg == Msg && pEvent->WParam == wParam 
 				&& pEvent->LParam == lParam )
 			{
 				pEvent->Flag ++;
@@ -209,7 +222,7 @@ INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 			ASSERT(pEvent);
 			if (pEvent)
 			{
-				pEvent->pScreen = pScr;
+				pEvent->Handle = hWnd;
 				pEvent->Msg = Msg;
 				pEvent->WParam = wParam;
 				pEvent->LParam = lParam;
@@ -217,7 +230,7 @@ INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U
 				return TRUE;
 			}
 		}
-	}
+	} 
 	return FALSE;
 }
 /*********************************************************************************************************
@@ -270,9 +283,9 @@ INT8U GetScrEvent( GuiEvent *pEvent )
 ********************************************************************************************************/
 static INT8U EventHandler( GuiEventNode *pEvent )
 {
-	ASSERT(pEvent && pEvent->pScreen);
-	if (pEvent == NULL || pEvent->pScreen == NULL)
-		return FALSE;
+//	ASSERT(pEvent && pEvent->pScreen);
+//	if (pEvent == NULL || pEvent->pScreen == NULL)
+//		return FALSE;
 
 
 	return TRUE;
@@ -306,6 +319,7 @@ INT8U HandleScreenEvent(struct SCREEN_BASE *pScr)
 	INT8U bRet = FALSE;
 	if(pScr == NULL)
 		return FALSE;
+#if 0
 	//循环遍历消息列表，如果有属于本窗口的，则执行，并删除
 	GuiListForEach( pNode, & g_ScrEvent.UsedListHead )
 	{
@@ -320,6 +334,7 @@ INT8U HandleScreenEvent(struct SCREEN_BASE *pScr)
 			GuiListAppend(  &g_ScrEvent.FreeListHead , pNode  );
 		}
 	}
+#endif
 	return bRet;
 }
 /*********************************************************************************************************
@@ -415,10 +430,10 @@ INT8U HandleTaskEvent(  GuiEvent * pEvent )
 	switch(pEvent->Msg)
 	{
 		case GUI_EVENT_TIMER:
-			if (pEvent->pScreen == NULL)
-			{//任务级的定时消息
-				return OnTaskTimer(pEvent->WParam,pEvent->LParam);				
-			}
+//			if (pEvent->pScreen == NULL)
+//			{//任务级的定时消息
+//				return OnTaskTimer(pEvent->WParam,pEvent->LParam);				
+//			}
 			break;
 		default:
 			break;
@@ -427,9 +442,154 @@ INT8U HandleTaskEvent(  GuiEvent * pEvent )
 
 
 
-	if (pEvent->pScreen == NULL)
-	{//
+//	if (pEvent->pScreen == NULL)
+//	{//
+//	}
+
+	return TRUE;
+}
+/*********************************************************************************************************
+** 函数名称: PeekEvent
+** 函数名称: PeekEvent
+**
+** 功能描述：  
+**
+** 输　入:  GuiEvent * pMsg
+** 输　入:  HWND hWnd
+** 输　入:  BOOL bWait
+** 输　入:  UINT uRemoveMsg
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U PeekEvent(GuiEvent *pMsg, GUI_HWND hWnd, INT8U bWait, INT8U uRemoveMsg)
+{
+	if (pMsg == NULL || !IsScreen(hWnd))
+		return FALSE;
+
+	memset (pMsg, 0, sizeof(GuiEvent));
+
+
+
+
+
+	return TRUE;
+}
+/*********************************************************************************************************
+** 函数名称: TranslateEvent
+** 函数名称: TranslateEvent
+**
+** 功能描述：  用来把虚拟键消息转换为字符消息
+**
+** 输　入:  GuiEvent * pMsg
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U TranslateEvent(GuiEvent* pMsg)
+{
+
+	return TRUE;
+}
+
+static __inline SCREENPROC GetScreenProc (GUI_HWND hWnd)
+{
+	return ((CScreenBase*)hWnd)->ScreenProc;
+}
+/*********************************************************************************************************
+** 函数名称: DispatchEvent
+** 函数名称: DispatchEvent
+**
+** 功能描述：  分发消息
+**
+** 输　入:  GuiEvent * pMsg
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT32U DispatchEvent(GuiEvent* pMsg)
+{
+	SCREENPROC ScrProc = NULL;
+	INT32U nRet = 0;
+ 	if (pMsg == NULL || pMsg->Handle == HWND_INVALID || pMsg->Handle == HWND_NULL)  
+	{ 
+		return FALSE;
+	} 
+
+	if (!(ScrProc = GetScreenProc (pMsg->Handle)))
+		return -1;
+
+ 	nRet = (*ScrProc)(pMsg->Handle, pMsg->Msg, pMsg->WParam, pMsg->LParam); 
+	return nRet;
+}
+
+
+INT32U SendNotifyEvent (GUI_HWND hWnd, INT32U nMsg, GUI_WPARAM wParam, GUI_LPARAM lParam)
+{
+#if 0
+	PMSGQUEUE pMsgQueue;
+	PQMSG pqmsg;
+
+	MG_CHECK_RET (MG_IS_WINDOW(hWnd), ERR_INV_HWND);
+
+	if (!(pMsgQueue = GetMsgQueue(hWnd)))
+		return ERR_INV_HWND;
+
+	pqmsg = QMSGAlloc();
+ 
+	/* queue the notification message. */
+	pqmsg->Msg.hwnd = hWnd;
+	pqmsg->Msg.message = iMsg;
+	pqmsg->Msg.wParam = wParam;
+	pqmsg->Msg.lParam = lParam;
+	pqmsg->next = NULL;
+
+	if (pMsgQueue->pFirstNotifyMsg == NULL)
+	{
+		pMsgQueue->pFirstNotifyMsg = pMsgQueue->pLastNotifyMsg = pqmsg;
 	}
+	else
+	{
+		pMsgQueue->pLastNotifyMsg->next = pqmsg;
+		pMsgQueue->pLastNotifyMsg = pqmsg;
+	}
+
+	g_ScrEvent.State |= QS_NOTIFYMSG;
+#endif
+
 
 	return TRUE;
 }
