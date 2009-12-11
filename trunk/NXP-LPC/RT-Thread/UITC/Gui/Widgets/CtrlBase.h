@@ -27,9 +27,10 @@
 
 #pragma once
 #include "GuiDef.h"
+#include "ScreenBase.h"
  
 typedef struct CTRL_BASE CCtrlBase;
-
+struct SCREEN_BASE;
 //构造
 typedef void (*ctrl_ctor)(CCtrlBase *object);
 //析构
@@ -51,8 +52,13 @@ struct CTRL_BASE
 	/* constructor and destructor */
 	ctrl_ctor Ctor;
 	ctrl_dtor Dtor;
+	INT8U DataType;          // the window type
+	INT8U   Style;
+ 	INT16U  ExStyle;
 
 	GUI_HWND   Handle;
+	struct SCREEN_BASE Screen;
+	struct CTRL_BASE *pParent;
 
  	CGuiRect	    Block;	    	//定义控件位置
 

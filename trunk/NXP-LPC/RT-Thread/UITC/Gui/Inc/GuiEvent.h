@@ -26,6 +26,8 @@
 ********************************************************************************************************/
 #pragma once
 
+#include "GuiDef.h"
+
 enum GUI_EVENT_TYPE
 {
 	GUI_EVENT_INIT=10,                 // 初始化
@@ -37,8 +39,7 @@ enum GUI_EVENT_TYPE
 	GUI_EVENT_PAINT,                 // 画客户区
 	GUI_EVENT_NCPAINT,               // 非客户区 ,比如标题
 	GUI_EVENT_KEYDOWN,                // 键盘消息
-	GUI_EVENT_MSGBOX,                 //
-	GUI_EVENT_COMMAND,              /* user command 		*/
+ 	GUI_EVENT_USER,              /* user command 		*/
 
 };
 typedef enum GUI_EVENT_TYPE GuiEventType;
@@ -47,10 +48,11 @@ struct SCREEN_BASE;
 struct GUI_EVENT
 {
 	INT32U Msg;
-	INT32U WParam;
-	INT32U LParam;
+	GUI_WPARAM WParam;
+	GUI_LPARAM LParam;
 	INT32U Flag;
-	struct SCREEN_BASE *pScreen;	 
+	GUI_HWND Handle;
+	INT32U  Time;
 };
 
 typedef struct GUI_EVENT GuiEvent;
@@ -58,10 +60,11 @@ typedef struct GUI_EVENT GuiEvent;
 #ifndef GUI_EVENT_DEF
 #define  GUI_EVENT_DEF \
 	INT32U Msg;\
-	INT32U WParam;\
-	INT32U LParam;\
+	GUI_WPARAM WParam;\
+	GUI_LPARAM LParam;\
 	INT32U Flag;\
-struct SCREEN_BASE *pScreen;	
+	GUI_HWND Handle;\
+	INT32U  Time;	
 #endif
 
 
@@ -72,12 +75,19 @@ struct GUI_EVENT_NODE
 };
 
 typedef struct GUI_EVENT_NODE GuiEventNode;
-  
-INT8U InitGuiEventMgr( void );
 
-INT8U SendScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam );
-INT8U PostScreenEvnent( struct SCREEN_BASE *pScr,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
+//初始化消息队列
+INT8U InitGuiEventQueue( void );
+
+INT8U SendScreenEvnent( GUI_HWND *pWnd,INT32U Msg,INT32U wParam,INT32U lParam );
+INT8U PostScreenEvnent( GUI_HWND *pWnd,INT32U Msg,INT32U wParam,INT32U lParam ,INT8U bNoCheck);
 INT8U HandleScreenEvent(struct SCREEN_BASE *pScr);
+
+//用于控件向父窗口邮寄消息-通知消息
+INT8U SendNotifyEvent(GUI_HWND hScr,INT32U Msg,INT32U WParam,INT32U LParam);
+
+
+
 
 INT8U PostEventToGuiTask(  GuiEvent * pEvent );
 INT8U GuiTaskEventRecv( GuiEvent * pEvent  );

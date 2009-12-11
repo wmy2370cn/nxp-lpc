@@ -104,12 +104,13 @@ CScreenBase * CreateScreen( INT32U nSize,scr_ctor ctor,scr_dtor dtor )
 	pObj->Ctor = ctor;
 	pObj->Dtor = dtor;
 	pObj->Size = nSize;
+	pObj->Handle = (GUI_HWND) pObj;
+	pObj->WinType = TYPE_SCREEN;
 
 	if(ctor)
 	{
 		ctor(pObj);
 	}
-	pObj->Handle = (GUI_HWND) pObj;
 	return pObj;
 }
 /*********************************************************************************************************
@@ -141,12 +142,13 @@ void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor )
 		pScr->Ctor = ctor;
 		pScr->Dtor = dtor;
 		pScr->Size = 0; //静态
+		pScr->Handle = (GUI_HWND) pScr;
+		pScr->WinType = TYPE_SCREEN;
 
 		if(ctor)
 		{
 			ctor(pScr);
 		}
-		pScr->Handle = (GUI_HWND) pScr;
 	}
 	return;
 }
@@ -209,6 +211,45 @@ void DrawScreenStatusBar( void )
 	 DrawStringById(LCD_WIDTH-1-40,112,ID_STRING_STATE,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
 	 DrawStringById(LCD_WIDTH-1,112,ID_STRING_STOP,PEN_COPY,ALIGN_RIGHT,LCD_EN_FONT_8_16);
 #endif
+} 
+/*********************************************************************************************************
+** 函数名称: DefaultWindowProc
+** 函数名称: DefaultWindowProc
+**
+** 功能描述：默认消息处理，  
+**
+** 输　入:  GUI_HWND hWnd
+** 输　入:  INT32U message
+** 输　入:  GUI_WPARAM wParam
+** 输　入:  GUI_LPARAM lParam
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月11日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT32U DefaultScreenProc (GUI_HWND hWnd, INT32U message, GUI_WPARAM wParam, GUI_LPARAM lParam)
+{
+// 	if (IsMainWindow(hWnd))
+// 	{
+// 		return DefaultMainWinProc (hWnd, message, wParam, lParam);
+// 	}
+// 	else if (IsControl(hWnd)) 
+// 	{
+// 		return DefaultControlProc (hWnd, message, wParam, lParam);
+// 	}
+// 	else if (IsDialog(hWnd))
+// 	{
+// 		return DefaultDialogProc (hWnd, message, wParam, lParam);
+// 	}
+	return 0;
 }
-
-

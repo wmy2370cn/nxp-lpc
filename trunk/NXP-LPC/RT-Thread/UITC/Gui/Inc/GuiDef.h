@@ -28,6 +28,14 @@
 
 #include "applib.h"
 
+typedef INT32U GUI_HWND;
+
+#define HWND_NULL        0
+#define HWND_INVALID       (INT32U)(-1)
+
+#define TYPE_SCREEN     0x11
+#define TYPE_CONTROL    0x12
+
 //×ø±êÎ»ÖÃ
 #ifndef LCD_POS
 #	define LCD_POS INT16U
@@ -45,7 +53,7 @@ struct GUI_RECT
 };
 typedef struct GUI_RECT CGuiRect;
 
-typedef INT32U GUI_HWND;
+
 
 #define GUI_RECT_WIDTH(r)	((r).right - (r).left)
 #define GUI_RECT_HEIGHT(r)	((r).bottom - (r).top)
@@ -117,3 +125,14 @@ typedef struct GUI_SIZE CGuiSize;
 #define ABS(x)              (((x)<0) ? -(x) : (x))
 #endif
 
+/**
+ * \var typedef unsigned int WPARAM
+ * \brief A type definition for the first message paramter.
+ */
+typedef INT32U    GUI_WPARAM;
+
+/**
+ * \var typedef unsigned long LPARAM
+ * \brief A type definition for the second message paramter.
+ */
+typedef INT32U   GUI_LPARAM;
