@@ -91,10 +91,8 @@ void InitScreen(CScreenBase *pScr, scr_ctor ctor,scr_dtor dtor );
 
 __inline GUI_HWND GetScreenHandle( CScreenBase *pScreen )
 {
-	if (pScreen)
-	{
-		return pScreen->Handle;
-	}
+	if (pScreen) 
+		return pScreen->Handle;	 
 	return HWND_NULL;
 }
 

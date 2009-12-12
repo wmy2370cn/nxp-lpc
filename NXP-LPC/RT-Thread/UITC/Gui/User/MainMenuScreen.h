@@ -29,13 +29,13 @@
 #ifndef MAIN_MENU_H
 #define	MAIN_MENU_H
 
-#include "ListBox.h"
+#include "ListMenu.h"
 
 //	Ãè    Êö : ÏÔÊ¾Ö÷²Ëµ¥
 struct MAIN_SCR 
 {
 	CScreenBase  Base;
-	CGuiListBox  Menu;
+	CGuiListMenu  Menu;
 
  
 	 
