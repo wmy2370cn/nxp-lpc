@@ -36,7 +36,7 @@
 * 用到的全局变量
 ************************************************************************/
  
-const CListBoxItem MainMenu[]=
+const CListMenuItem MainMenu[]=
 {
  	{ID_REALTIME_VAL,	ID_STRING_VALUE_TAB},  //实测值一览表
   	{ID_GATE_CTRL,		ID_STRING_GATE_CTRL }, //闸门操作

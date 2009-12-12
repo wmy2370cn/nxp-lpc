@@ -31,17 +31,17 @@
 
 
 //定义菜单链接
-struct  LB_ITEM 
+struct  LM_ITEM 
 {
 	INT16U		nMenuID;          //菜单ID号
 	INT16U		nResourceID;      //菜单项名字
 	INT32U		nItemData;		  //菜单附加项
 };
 
-typedef struct LB_ITEM CListBoxItem;
+typedef struct LM_ITEM CListMenuItem;
 
 
-struct LIST_BOX
+struct LIST_MENU
 {
 	CTRL_BASE_DEF
 	INT16U     ItemCount;
@@ -58,7 +58,7 @@ struct LIST_BOX
 
 
 };
-typedef struct LIST_BOX CGuiListBox;
+typedef struct LIST_MENU CGuiListMenu;
 
 void AddItem(void);
 

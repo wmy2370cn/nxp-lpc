@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>  
-#include "ListBox.h" 
+#include "ListMenu.h" 
 #include "DC.h"
 #include "icon.h"
 
@@ -59,7 +59,7 @@ static void OnPaintCtrl(CCtrlBase *pCtrl)
 {
 	INT8U i,start,end;
 	INT8U row = 0;
-	CGuiListBox *pListBox = (CGuiListBox *)pCtrl;
+	CGuiListMenu *pListBox = (CGuiListMenu *)pCtrl;
 	CGuiRect rcBlock;
 
 	char szTxt[16] = {0};
