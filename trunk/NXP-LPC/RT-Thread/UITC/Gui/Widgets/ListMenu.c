@@ -1,5 +1,5 @@
 /****************************************Copyright (c)**************************************************
-**                                      
+**                                     LIST MENU 菜单的实现 
 **                                      
 **                                      
 **
@@ -113,4 +113,87 @@ static void OnPaintCtrl(CCtrlBase *pCtrl)
 // 	}
 	InvalidateScreen(FALSE);
 }
- 
+static void ListMenuCtor( CCtrlBase *pCtrl )
+{
+
+}
+
+static void ListMenuDtor( CCtrlBase *pCtrl )
+{
+	ASSERT(pCtrl);
+
+}
+/*********************************************************************************************************
+** 函数名称: ListMenuCtrlProc
+** 函数名称: ListMenuCtrlProc
+**
+** 功能描述：  
+**
+** 输　入:  GUI_HWND hWnd
+** 输　入:  INT32U uMsg
+** 输　入:  GUI_WPARAM wParam
+** 输　入:  GUI_LPARAM lParam
+**          
+** 输　出:   INT32U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月13日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static INT32U ListMenuCtrlProc (GUI_HWND hWnd, INT32U uMsg, GUI_WPARAM wParam, GUI_LPARAM lParam)
+{
+
+	return 0;
+}
+/*********************************************************************************************************
+** 函数名称: InitListMenu
+** 函数名称: InitListMenu
+**
+** 功能描述：  
+**
+** 输　入:  CGuiListMenu * pMenu
+** 输　入:  INT32U ResID
+** 输　入:  CGuiRect * pRc
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月13日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U InitListMenu(CGuiListMenu *pMenu, INT32U ResID, CGuiRect *pRc )
+{
+	ASSERT(pMenu);
+	if(pMenu == NULL)
+		return FALSE;
+
+	InitControl((CCtrlBase*)pMenu,ListMenuCtor,ListMenuDtor);
+	pMenu->ControlProc = ListMenuCtrlProc;
+	pMenu->ID = ResID;
+	CopyGuiRect(& (pMenu->Block), pRc);
+
+
+
+
+
+
+	return TRUE;
+}
+
+

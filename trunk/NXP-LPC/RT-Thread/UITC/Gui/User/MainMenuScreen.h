@@ -44,7 +44,7 @@ struct MAIN_SCR
 typedef struct MAIN_SCR  CMainMenuScreen;
 
 //
-CScreenBase * InitMainScreen( void );
+ CScreenBase * InitMainMenuScreen(void);
 
  
 #endif

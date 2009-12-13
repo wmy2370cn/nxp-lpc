@@ -60,6 +60,12 @@ struct LIST_MENU
 };
 typedef struct LIST_MENU CGuiListMenu;
 
+//静态创建
+INT8U InitListMenu(CGuiListMenu *pMenu, INT32U ResID, CGuiRect *pRc );
+//动态创建
+void CreateListMenu( );
+
+
 void AddItem(void);
 
 #endif

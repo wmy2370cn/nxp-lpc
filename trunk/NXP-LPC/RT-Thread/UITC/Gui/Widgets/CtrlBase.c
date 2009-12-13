@@ -38,19 +38,6 @@ void EraseBackground(CCtrlBase *pCtrlbase)
  //	DrawBlockRect(& pCtrlbase->Block,GUI_COLOR_BK);
 }
 
-void InitCtrlBase( CCtrlBase *pBase )
-{
-	if (pBase)
-	{
- 		memset( &pBase->Block,0,sizeof(CGuiRect));	    	//定义控件位置
-
-// 		pBase->pfnCreate = NULL;
-// 		pBase->pfnDestory= NULL;
-// 		//回调函数
-// 		pBase->pfnKeyDown= NULL;
-// 		pBase->pfnMessage= NULL;
-	}
-}
 /*********************************************************************************************************
 ** 函数名称: CreateControl
 ** 函数名称: CreateControl
@@ -102,7 +89,7 @@ CCtrlBase * CreateControl( INT32U nSize,ctrl_ctor ctor,ctrl_dtor dtor )
 ** 函数名称: InitControl
 ** 函数名称: InitControl
 **
-** 功能描述：静态初始化一个控件  
+** 功能描述：静态初始化一个控件  在控件的继承类中调用
 **
 ** 输　入:  CCtrlBase * pObj
 ** 输　入:  ctrl_ctor ctor
