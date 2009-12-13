@@ -48,7 +48,7 @@ typedef struct CLogoScreen
 }CLogoScreen;
 
 //
-extern void InitLogoScreen(CLogoScreen *pScreenExt ); 
+void InitLogoScreen(CLogoScreen *pScreenExt ); 
 
 //	描    述 : 默认显示界面
 //	功    能 : 循环显示测量量及报告状况

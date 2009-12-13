@@ -46,6 +46,17 @@ const CListMenuItem MainMenu[]=
 };
 
 
+static void MainMenuScrCtor( CScreenBase *pScr )
+{
+
+}
+
+static void MainMenuScrDtor(CScreenBase *pScr)
+{
+	ASSERT(pScr);
+
+}
+
 static void OnMessage(INT32U msg, INT32U param)  
 {
 #if 0
@@ -153,4 +164,17 @@ static void SetupResource( CMainMenuScreen *pScreenExt )
 
 #endif
 
+
+ CMainMenuScreen MainMenuScreen;
+
+ CScreenBase * InitMainMenuScreen(void)
+ {
+	 //	INT32U nSize = sizeof(CDevCfgScreen);
+	 CScreenBase *pScr = (CScreenBase *)&MainMenuScreen;
+
+	 InitScreen(pScr,MainMenuScrCtor,MainMenuScrDtor);
+
+
+	 return pScr;
+ }
  

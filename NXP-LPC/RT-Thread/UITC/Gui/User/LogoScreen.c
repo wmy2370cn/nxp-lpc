@@ -139,7 +139,7 @@ static void LogoScreenTimer (void *ptmr, void *parg)
 	}
 }
 
-extern void InitLogoScreen(CLogoScreen *pScreenExt )
+void InitLogoScreen(CLogoScreen *pScreenExt )
 {
 	INT8U i = 0;
 	INT8U err = 0;

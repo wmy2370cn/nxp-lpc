@@ -39,19 +39,6 @@ typedef void (*ctrl_ctor)(CCtrlBase *object);
 //析构
 typedef void (*ctrl_dtor)(CCtrlBase *object);
 
-#if 0
-typedef  void    (*fnInitCtrl)(CCtrlBase *pCtrl,INT32U wParam, INT32U lParam);
-
-typedef  void    (*fnCreateCtrl)(CCtrlBase *pCtrl);
-
-//按键处理
-typedef  void  (*fnOnKeyDownCtrl)(CCtrlBase *pCtrl, INT16U keyCode);
-//消息处理虚函数
-typedef  void   (*fnOnMessageCtrl)(CCtrlBase *pCtrl,INT32U msg, INT32U param);
-//退出时处理
-typedef  void	(*fnDestoryCtrl)(CCtrlBase *pCtrl); 
-#endif
-
 struct CTRL_BASE 
 {
 	/* constructor and destructor */
@@ -61,6 +48,8 @@ struct CTRL_BASE
 	INT8U   Style;
  	INT16U  ExStyle;
 
+	INT32U  ID; //资源ID
+
 	GUI_HWND   Handle;
 	GUI_HWND   ScreenHandle;
 	GUI_HWND   ParentCtrlHandle;
@@ -69,7 +58,6 @@ struct CTRL_BASE
 	INT32U (*ControlProc)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);
 
 	INT32U  Size;
-
 };
 
 __inline GUI_HWND GetCtrlHandle( CCtrlBase *pCtrl )
@@ -99,10 +87,12 @@ void EraseBackground(CCtrlBase *pCtrlbase);
 	INT8U  WinType;  \
 	INT8U   Style; \
 	INT16U  ExStyle; \
+	INT32U  ID;\
 	GUI_HWND   Handle; \
 	GUI_HWND   ScreenHandle; \
 	GUI_HWND   ParentCtrlHandle; \
 	CGuiRect	    Block;     \
-	INT32U (*ControlProc)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);
+	INT32U (*ControlProc)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);\
+	INT32U  Size;
 #endif
  
