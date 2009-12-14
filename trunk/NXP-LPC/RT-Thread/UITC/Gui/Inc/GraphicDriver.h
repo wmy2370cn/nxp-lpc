@@ -28,12 +28,17 @@
 #pragma once 
 
 #include "applib.h" 
+#include "GuiDef.h"
 
 struct GUI_HW_DRIVER
 {
-	/* screen width and height */
-	INT32U width;
-	INT32U height;
+	/* screen Width and Height */
+	INT32U Width;
+	INT32U Height;
+
+	/* screen update */
+	void (*ScreenUpdate)(CGuiRect* rect);
+	INT8U *pFrameBuffer;
 
 	/* set and get pixel in (x, y) */
 	void (* SetPixel) (GUI_COLOR *c, INT32U x, INT32U y);
@@ -41,10 +46,7 @@ struct GUI_HW_DRIVER
 
 	void (*DrawHLine)(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y);
 	void (*DrawVLine)(GUI_COLOR *c, INT32U x , INT32U y1, INT32U y2);
-
-
 };
 
-typedef GUI_HW_DRIVER CGuiHwDriver;
-
-INT8U InitGraphicDriver( CGuiHwDriver *pDrv );
+typedef struct GUI_HW_DRIVER CGuiHwDriver;
+ 

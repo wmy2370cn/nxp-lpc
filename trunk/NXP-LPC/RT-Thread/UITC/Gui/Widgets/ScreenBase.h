@@ -44,26 +44,8 @@ typedef void (*scr_dtor)(CScreenBase *object);
 /** Casts the function pointer to an rtgui_constructor */
 #define SCR_DTOR(destructor)                 ((scr_dtor)(destructor))
 
-
 typedef INT32U (* SCREENPROC)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM);
-
-#if 0
-//消息函数
-//按键处理
-typedef  void  (*fnOnKeyDown)(CScreenBase *pScreen, INT32U keyCode);
-//消息处理虚函数
-typedef  void   (*fnOnMessage)(CScreenBase *pScreen,INT32U msg, INT32U param);
-//初始化窗口
-typedef  void    (*fnInit)(CScreenBase *pScreen,INT32U wParam, INT32U lParam);
-//创建
-typedef  void    (*fnCreate)(CScreenBase *pScreen);
-//退出时处理
-typedef  void	(*fnDestory)(CScreenBase *pScreen);
-//消息通知-通知控件
-typedef  void	(*fnOnNotify)(CScreenBase *pScreen,INT32U nf);
-#endif
-
- 
+  
 struct SCREEN_BASE
 {
 	/* constructor and destructor */
@@ -80,6 +62,7 @@ struct SCREEN_BASE
 	INT16U     ScreenName; //本窗口名称  字符串的ID
 	gui_list_t    List;
 	INT32U (*ScreenProc)(GUI_HWND, INT32U, GUI_WPARAM, GUI_LPARAM); 
+
 	/* size of type */
 	INT32U  Size;
 };
