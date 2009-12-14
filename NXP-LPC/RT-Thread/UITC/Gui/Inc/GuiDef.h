@@ -30,8 +30,12 @@
 
 typedef INT32U GUI_HWND;
 
+typedef INT32U GUI_HDC;
+
 #define HWND_NULL        0
 #define HWND_INVALID       (INT32U)(-1)
+
+#define HDC_INVALID      0
 
 #define TYPE_SCREEN     0x11
 #define TYPE_CONTROL    0x12
@@ -136,3 +140,14 @@ typedef INT32U    GUI_WPARAM;
  * \brief A type definition for the second message paramter.
  */
 typedef INT32U   GUI_LPARAM;
+
+
+
+//画笔颜色
+enum GUI_COLOR_DEF
+{
+	GUI_COLOR_BK	=0,		//背景色
+	GUI_COLOR_FR	=1		//前景色
+};
+
+typedef enum GUI_COLOR_DEF GUI_COLOR;

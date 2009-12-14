@@ -40,14 +40,7 @@ typedef enum LCD_EN_FONT
 	LCD_EN_FONT_8_16     // 英文字符大小8×16
 }LCD_EN_FONT;
 
-
-//画笔颜色
-typedef enum GUI_COLOR
-{
-	GUI_COLOR_BK	=0,		//背景色
-	GUI_COLOR_FR	=1		//前景色
-}GUI_COLOR;
-
+ 
 // 画笔模式
 typedef enum GUI_PEN
 {

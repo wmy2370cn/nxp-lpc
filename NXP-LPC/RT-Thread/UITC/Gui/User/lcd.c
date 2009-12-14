@@ -24,9 +24,9 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-
-
+#include <string.h>
 #include "applib.h" 
+#include "guidef.h"
 #include "GraphicDriver.h"
 
 
@@ -34,16 +34,27 @@
 #define LCD_WIDTH 240
 #define LCD_HEIGHT 128
 
+typedef INT8U FRAME_BUFF[LCD_WIDTH][LCD_WIDTH>>3];
+static FRAME_BUFF g_LcdBuff;
+
 static void  LcdSetPixel (GUI_COLOR *c, INT32U x, INT32U y);
-static void  LcdGetPixel (GUI_COLOR *c, INT32U x, INT32U y)
+static void  LcdGetPixel (GUI_COLOR *c, INT32U x, INT32U y);
+static void LcdDrawHLine(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y);
+static void LcdDrawVLine(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y);
+static void LcdUpdate(CGuiRect *rect);
+//static LCD_BUFF_FLAG g_LcdBuffFlag;
+
 
 static CGuiHwDriver LcdDrvier = 
 {
 	LCD_WIDTH,
 	LCD_HEIGHT,
+	LcdUpdate,
+	&g_LcdBuff[0][0],
 	LcdSetPixel,
 	LcdGetPixel,
-
+	LcdDrawHLine,
+	LcdDrawVLine	
 };
 
 //定义空指令
@@ -169,11 +180,50 @@ static void  LCD_Init(void)  //液晶初始化
 	LCD_SendCmd(0xc8);        //set Map Control:
 	LCD_SendCmd(0xaf);		  //Display Enable;
 }
+
+
+// Y点在八位中的位
+#define GetYBitPos(y) (((INT8U)(y)) & 0x07)
+// Y点在八位中的Mask 0x10形式
+#define GetYBitMask(y) (1<<GetYBitPos(y))
+/*********************************************************************************************************
+** 函数名称: WriteLcdBufData
+** 函数名称: WriteLcdBufData
+**
+** 功能描述：  写一个字节到液晶缓存
+**
+** 输　入:  LCD_POS col
+** 输　入:  LCD_POS row
+** 输　入:  INT8U data
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年6月30日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void WriteLcdBufData( LCD_POS col, LCD_POS row ,INT8U data )
+{
+	if (col>=LCD_WIDTH|| row >= LCD_HEIGHT)
+		return;
+// 	if( g_LcdBuff[col][row] != data)
+// 		g_LcdBuffFlag[col][row] = TRUE;
+
+	g_LcdBuff[col][row] = data;	
+}
 /*********************************************************************************************************
 ** 函数名称: LcdSetPixel
 ** 函数名称: LcdSetPixel
 **
-** 功能描述：  
+** 功能描述： 画一个点 
 **
 ** 输　入:  GUI_COLOR * c
 ** 输　入:  INT32U x
@@ -193,11 +243,116 @@ static void  LCD_Init(void)  //液晶初始化
 ** 备  注: 
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-static void  LcdSetPixel (GUI_COLOR *c, INT32U x, INT32U y)
+static void  LcdSetPixel (GUI_COLOR *pClr, INT32U x, INT32U y)
 {
-	LCD_WriteData(x,y,*c); 
+	INT8U b = 0 ; 
+
+	if(x>=LCD_WIDTH || y>= LCD_HEIGHT || pClr == NULL)
+		return;	 
+ 	b=g_LcdBuff[x][y>>3];
+
+	if (*pClr == GUI_COLOR_BK)
+	{
+		b &= ~ GetYBitMask(y);
+	}
+	else
+	{
+		b |= GetYBitMask(y);
+	}
+
+
+//	LCD_WriteData(x,y,*c); 
 }
 
-static void LcdGetPixel(GUI_COLOR *c, INT32U x, INT32U y)
+static void LcdGetPixel(GUI_COLOR *pClr, INT32U x, INT32U y)
 { 
+	if(x>=LCD_WIDTH || y>= LCD_HEIGHT || pClr == NULL)
+		return;	 
+
+}
+/*********************************************************************************************************
+** 函数名称: LcdDrawHLine
+** 函数名称: LcdDrawHLine
+**
+** 功能描述：  画水平线
+**
+** 输　入:  GUI_COLOR * c
+** 输　入:  INT32U x1
+** 输　入:  INT32U x2
+** 输　入:  INT32U y
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月14日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void LcdDrawHLine(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y)
+{
+	INT32U i  = 0;
+	INT8U page_address = y >> 3;
+
+	if ((x1 >= LCD_WIDTH) ||(x2 >= LCD_WIDTH) || (y >= LCD_HEIGHT))
+		return;
+
+	if(x1>x2)
+	{
+		i=x1;
+		x1=x2;
+		x2=i;
+	}
+
+	page_address = (y & 0x0f) | 0xb0;
+
+	LCD_SendCmd(page_address); //设置页地址
+	for (i=x1;i<x2;i++)
+	{
+		//列地址
+		LCD_SendCmd(i & 0x0f);
+		LCD_SendCmd(0x10 + (INT8U) ((i & 0xf0) >> 4));
+
+		LCD_Senddata(*c); //数值 
+	}  
+}
+/*********************************************************************************************************
+** 函数名称: LcdDrawVLine
+** 函数名称: LcdDrawVLine
+**
+** 功能描述：  垂直线
+**
+** 输　入:  GUI_COLOR * c
+** 输　入:  INT32U x
+** 输　入:  INT32U y1
+** 输　入:  INT32U y2
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月14日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void LcdDrawVLine(GUI_COLOR *c, INT32U x, INT32U y1, INT32U y2)
+{
+
+}
+
+static void LcdUpdate(CGuiRect *rect)
+{
+	/* nothing for none-DMA mode driver */
 }
