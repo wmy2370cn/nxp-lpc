@@ -29,6 +29,8 @@
 #include "applib.h"
 #include "lcddriver.h"
 
+#if 0
+
 
 /*LCD²¿·Ö  */
 #define   LCD_RESET (*((volatile unsigned short *) 0x82000010))
@@ -221,7 +223,7 @@ void InitLcd(void)
 	LCD_ClearScreen();
 }
 
-
+#endif
 
 
 

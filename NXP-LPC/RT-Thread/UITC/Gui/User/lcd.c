@@ -29,6 +29,14 @@
 #include "guidef.h"
 #include "GraphicDriver.h"
 
+/*LCD部分  */
+#define   LCD_RESET (*((volatile unsigned short *) 0x82000010))
+#define   LCD_CS (*((volatile unsigned short *) 0x82000014))
+#define   LCD_WR (*((volatile unsigned short *) 0x82000018))
+#define   LCD_RD (*((volatile unsigned short *) 0x82000020))
+#define   LCD_DATA (*((volatile unsigned short *) 0x82000024))
+#define   LCD_ADDR (*((volatile unsigned short *) 0x82000028))
+#define   LCD_BACK (*((volatile unsigned short *) 0x82000030))
 
 //定义液晶长宽
 #define LCD_WIDTH 240
@@ -43,6 +51,26 @@ static void LcdDrawHLine(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y);
 static void LcdDrawVLine(GUI_COLOR *c, INT32U x1, INT32U x2, INT32U y);
 static void LcdUpdate(CGuiRect *rect);
 //static LCD_BUFF_FLAG g_LcdBuffFlag;
+
+//液晶灯状态
+static INT8U g_nLcdLed;
+
+//关液晶背光
+#define  LCD_BACK_OFF(ignore)  LCD_BACK =0x80;
+//开液晶背光
+#define  LCD_BACK_ON(ignore)  LCD_BACK =0x00;
+//点亮液晶灯
+void TurnOnLcd(void)
+{
+	LCD_BACK_ON( );
+	g_nLcdLed=TRUE;
+}
+//熄灭液晶灯
+void TurnOffLcd(void)
+{
+	LCD_BACK_OFF( );
+	g_nLcdLed=FALSE;
+}
 
 
 static CGuiHwDriver LcdDrvier = 
@@ -78,16 +106,6 @@ void GuiDelayMS(INT16U ms)
 		NOP;
 	}
 }
-
-/*LCD部分  */
-#define   LCD_RESET (*((volatile unsigned short *) 0x82000010))
-#define   LCD_CS (*((volatile unsigned short *) 0x82000014))
-#define   LCD_WR (*((volatile unsigned short *) 0x82000018))
-#define   LCD_RD (*((volatile unsigned short *) 0x82000020))
-#define   LCD_DATA (*((volatile unsigned short *) 0x82000024))
-#define   LCD_ADDR (*((volatile unsigned short *) 0x82000028))
-#define   LCD_BACK (*((volatile unsigned short *) 0x82000030))
-
 
 void LCD_Senddata(INT8U dat) //写数据
 {
@@ -355,4 +373,33 @@ static void LcdDrawVLine(GUI_COLOR *c, INT32U x, INT32U y1, INT32U y2)
 static void LcdUpdate(CGuiRect *rect)
 {
 	/* nothing for none-DMA mode driver */
+}
+
+/*********************************************************************************************************
+** 函数名称: InitLcd
+** 函数名称: InitLcd
+**
+** 功能描述： 启动时调用 
+**
+** 输　入:  void
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年11月15日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+void InitLcd(void)
+{
+	//LCD初始化
+	LCD_Init();
+	LCD_ClearScreen();
 }
