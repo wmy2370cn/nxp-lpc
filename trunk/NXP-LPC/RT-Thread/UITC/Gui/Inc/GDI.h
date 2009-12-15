@@ -1,16 +1,16 @@
-/****************************************Copyright (c)**************************************************
-**                                      
+ /****************************************Copyright (c)**************************************************
+**						显示硬件适配驱动，只支持1个显示接口	     
 **                                      
 **                                      
 **
 **                           
 **
 **--------------文件信息--------------------------------------------------------------------------------
-**文   件   名:  
-**创   建   人:  
-**最后修改日期: 
-**描        述:  
-**
+**文   件   名:   LcdDriver.h
+**创   建   人:   Author: admin
+**最后修改日期: Created on: 2009-11-15
+**描        述:   
+**备        注 :    
 **--------------历史版本信息----------------------------------------------------------------------------
 ** 创建人:  
 ** 版  本:  
@@ -24,25 +24,31 @@
 **
 **------------------------------------------------------------------------------------------------------
 ********************************************************************************************************/
-#ifndef GUI_DC_H
-#define	GUI_DC_H 
-#pragma  once
-#include "GuiDef.h" 
 
-#define TYPE_SCRDC      0x81
-#define TYPE_GENDC      0x82
-#define TYPE_MEMDC      0x83
+#pragma once 
 
+#include "applib.h" 
+#include "GuiDef.h"
+#include "list.h"
 
-struct GUI_DC
+struct GUI_CLIPRECT
 {
-	INT8U DCType;
+	CGuiRect Rect;
+
+	list_t  ListNode;
+};
+
+typedef struct GUI_CLIPRECT CGuiClipRect;
+
+
+struct GUI_CLIPRGN
+{
+	CGuiRect RectBound; // The bounding rect of the region.
+
+	CGuiClipRect *pHead;
+	CGuiClipRect *pTail;
+
 
 };
 
-typedef struct GUI_DC  CGuiDC;
-
-
-
-#endif
-
+typedef struct GUI_CLIPRGN CGuiClipRgn;
