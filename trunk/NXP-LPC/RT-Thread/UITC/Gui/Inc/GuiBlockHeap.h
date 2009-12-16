@@ -1,4 +1,4 @@
- /****************************************Copyright (c)**************************************************
+/****************************************Copyright (c)**************************************************
 **						显示硬件适配驱动，只支持1个显示接口	     
 **                                      
 **                                      
@@ -28,33 +28,34 @@
 #pragma once 
 
 #include "applib.h" 
-#include "GuiDef.h" 
 
+#define BDS_FREE        0x0000
+#define BDS_SPECIAL     0x0001
+#define BDS_USED        0x0002
 
-typedef struct GUI_CLIPRECT CGuiClipRect;
-
-struct GUI_CLIPRECT
+ /**
+ * GUI's private block data heap.
+ *
+ * \sa InitBlockDataHeap, DestroyBlockDataHeap
+ */
+struct	GUI_BLOCK_HEAP
 {
-	CGuiRect Rect;
+    /**
+     * Size of one block element.
+     */
+    INT32U          bd_size;
+    /**
+     * Size of the heap in blocks.
+     */
+    INT32U          heap_size;
+    /**
+     * The first free element in the heap.
+     */
+    INT32U             free;
+    /**
+     * Pointer to the pre-allocated heap.
+     */
+    void*           heap;
+} ;
 
-	CGuiClipRect *pPrev;
-	CGuiClipRect *pNext; 
-};
-
-struct GUI_BLOCK_HEAP;
-struct GUI_CLIPRGN
-{
-	CGuiRect RectBound; // The bounding rect of the region.
-
-	CGuiClipRect *pHead;
-	CGuiClipRect *pTail;
-
-	struct GUI_BLOCK_HEAP *pHeap;
-};
-
-typedef struct GUI_CLIPRGN CGuiClipRgn;
-
-
-#define GUI_REGION_NULL      0x00
-#define GUI_REGION_SIMPLE    0x01
-#define GUI_REGION_COMPLEX   0x02
+typedef struct GUI_BLOCK_HEAP CGuiBlockHeap;
