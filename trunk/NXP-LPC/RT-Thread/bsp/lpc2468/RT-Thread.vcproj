@@ -902,6 +902,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\UITC\Gui\Inc\DCExt.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Inc\GDI.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Inc\GraphicDriver.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Inc\GuiBlockHeap.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Inc\GuiDef.h"
 						>
 					</File>
@@ -930,6 +946,14 @@
 					Name="Widgets"
 					>
 					<File
+						RelativePath="..\..\UITC\Gui\Widgets\Button.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Widgets\Button.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Widgets\CtrlBase.c"
 						>
 					</File>
@@ -954,11 +978,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Gui\Widgets\ListBox.c"
+						RelativePath="..\..\UITC\Gui\Widgets\ListMenu.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\UITC\Gui\Widgets\ListBox.h"
+						RelativePath="..\..\UITC\Gui\Widgets\ListMenu.h"
 						>
 					</File>
 					<File
@@ -982,7 +1006,27 @@
 					Name="Utilities"
 					>
 					<File
+						RelativePath="..\..\UITC\Gui\Utilities\clip.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Utilities\DC.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Utilities\DCExt.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GDI.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GraphicDriver.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GuiBlockHeap.c"
 						>
 					</File>
 					<File
@@ -994,7 +1038,15 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GuiRegion.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\UITC\Gui\Utilities\GuiSystem.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\Utilities\GuiWindow.c"
 						>
 					</File>
 					<File
@@ -1023,6 +1075,14 @@
 					</File>
 					<File
 						RelativePath="..\..\UITC\Gui\User\GuiConfig.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\User\lcd.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\UITC\Gui\User\lcd.h"
 						>
 					</File>
 					<File
