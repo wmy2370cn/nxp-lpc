@@ -28,6 +28,7 @@
 #include <string.h>
 #include "applib.h" 
 #include "GDI.h" 
+#include "GuiBlockHeap.h"
 
 /*  1 if two RECTs overlap.
  *  0 if two RECTs do not overlap.
