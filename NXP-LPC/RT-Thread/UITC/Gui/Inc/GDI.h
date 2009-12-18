@@ -31,28 +31,45 @@
 #include "GuiDef.h" 
 
 
-typedef struct GUI_CLIPRECT CGuiClipRect;
+typedef struct GUI_RECT_NODE CGuiRectNode;
 
-struct GUI_CLIPRECT
+struct GUI_RECT_NODE
 {
 	CGuiRect Rect;
 
-	CGuiClipRect *pPrev;
-	CGuiClipRect *pNext; 
+	CGuiRectNode *pPrev;
+	CGuiRectNode *pNext; 
 };
 
 struct GUI_BLOCK_HEAP;
-struct GUI_CLIPRGN
+struct GUI_REGION
 {
+	/**
+    * Type of the region, can be one of the following:
+    *   - NULLREGION\n
+    *     A null region.
+    *   - SIMPLEREGION\n
+    *     A simple region.
+    *   - COMPLEXREGION
+    *     A complex region.
+    *
+    * \note Only defined for _USE_NEWGAL.
+    */
+    INT8U      Type;
+   /**
+    * Reserved for alignment.
+    *
+    * \note Only defined for _USE_NEWGAL.
+    */
+    INT8U      Reserved[3];
 	CGuiRect RectBound; // The bounding rect of the region.
-
-	CGuiClipRect *pHead;
-	CGuiClipRect *pTail;
+	CGuiRectNode *pHead;
+	CGuiRectNode *pTail;
 
 	struct GUI_BLOCK_HEAP *pHeap;
 };
-
-typedef struct GUI_CLIPRGN CGuiClipRgn;
+typedef struct GUI_REGION CGuiRegion;
+typedef struct GUI_REGION CGuiClipRgn;
 
 
 #define GUI_REGION_NULL      0x00
