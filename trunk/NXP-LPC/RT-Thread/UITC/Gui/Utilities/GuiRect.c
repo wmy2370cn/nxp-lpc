@@ -59,9 +59,9 @@ void SetGuiRectEmpty(CGuiRect * pRect)
 	pRect->left=0;pRect->right=0;pRect->top=0;pRect->bottom=0;
 }
 
-void CopyGuiRect(CGuiRect* pdrc, const CGuiRect* psrc)
+void CopyGuiRect(CGuiRect* pDestRect, const CGuiRect* pSrcRect)
 {
-    memcpy(pdrc, psrc, sizeof(CGuiRect));
+    memcpy(pDestRect, pSrcRect, sizeof(CGuiRect));
 }
 
 INT8U IsGuiRectEmpty(const CGuiRect* prc)

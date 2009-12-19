@@ -59,3 +59,6 @@ struct	GUI_BLOCK_HEAP
 } ;
 
 typedef struct GUI_BLOCK_HEAP CGuiBlockHeap;
+
+void* BlockDataAlloc (CGuiBlockHeap * heap);
+void BlockDataFree (CGuiBlockHeap* heap, void* data);

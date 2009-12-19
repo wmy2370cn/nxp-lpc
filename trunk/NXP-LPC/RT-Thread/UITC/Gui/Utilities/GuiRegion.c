@@ -39,19 +39,19 @@ typedef void (*voidProcp2)(CGuiRegion *region, const CGuiRectNode *r, const CGui
 #define FreeRect(heap, cr)  BlockDataFree (heap, cr);
 
 /*
- * Allocate a new clipping rect and add it to the region.
+ * Allocate a new clipping pRect and add it to the pRegion.
  */
 
-#define NEW_RECT_NODE(region, rect) \
+#define NEW_RECT_NODE(pRegion, pRect) \
        {\
-            rect = AllocRect(region->heap);\
-            rect->next = NULL;\
-            rect->pPrevNode = region->tail;\
-            if (region->tail)\
-                region->tail->next = rect;\
-            region->tail = rect;\
-            if (region->head == NULL)\
-                region->head = rect;\
+            pRect = AllocRect(pRegion->pHeap);\
+            pRect->pNext = NULL;\
+            pRect->pPrev = pRegion->pTail;\
+            if (pRegion->pTail)\
+                pRegion->pTail->pNext = pRect;\
+            pRegion->pTail = pRect;\
+            if (pRegion->pHead == NULL)\
+                pRegion->pHead = pRect;\
        }
 
 
@@ -294,7 +294,7 @@ INT8U  ResetRegion (CGuiRegion*  pRgn, const CGuiRect* pRect)
 	EmptyRegion(pRgn);
 
 	// get a new clip pRect from free list
- 	pClipRect = AllocRect (pRgn->heap);
+ 	pClipRect = (CGuiRectNode*) AllocRect (pRgn->pHeap);
 	if (pClipRect == NULL)
 		return FALSE;
 
@@ -345,7 +345,7 @@ INT8U CopyRegion (CGuiRegion*  pDstRgn, const CGuiRegion*   pSrcRgn)
 	if (!(pRectNode = pSrcRgn->pHead))
 		return TRUE;
 
- 	pNewRect = AllocRect (pDstRgn->pHeap);
+ 	pNewRect = (CGuiRectNode*)AllocRect (pDstRgn->pHeap);
 
 	pDstRgn->pHead = pNewRect;
 	pNewRect->Rect = pRectNode->Rect;
@@ -353,7 +353,7 @@ INT8U CopyRegion (CGuiRegion*  pDstRgn, const CGuiRegion*   pSrcRgn)
 	pPrevNode = NULL;
 	while (pRectNode->pNext) 
 	{
-	 	pNewRect->pNext = AllocRect (pDstRgn->pHeap);
+	 	pNewRect->pNext =(CGuiRectNode*) AllocRect (pDstRgn->pHeap);
 		pNewRect->pPrev = pPrevNode;
 
 		pPrevNode = pNewRect;
@@ -371,6 +371,45 @@ INT8U CopyRegion (CGuiRegion*  pDstRgn, const CGuiRegion*   pSrcRgn)
 	pDstRgn->RectBound = pSrcRgn->RectBound; 
 
 	return TRUE;
+}
+
+/* Re-calculate the rcBound of a region */
+static void SetGuiRegionExtents (CGuiRegion *region)
+{
+    CGuiRectNode *cliprect;
+    CGuiRect *pExtents;
+
+    if (region->pHead == NULL) 
+	{
+        region->RectBound.left = 0; region->RectBound.top = 0;
+        region->RectBound.right = 0; region->RectBound.bottom = 0;
+        return;
+    }
+
+    pExtents = &region->RectBound;
+
+    /*
+     * Since head is the first rectangle in the region, it must have the
+     * smallest top and since tail is the last rectangle in the region,
+     * it must have the largest bottom, because of banding. Initialize left and
+     * right from head and tail, resp., as good things to initialize them
+     * to...
+     */
+    pExtents->left = region->pHead->Rect.left;
+    pExtents->top = region->pHead->Rect.top;
+    pExtents->right = region->pTail->Rect.right;
+    pExtents->bottom = region->pTail->Rect.bottom;
+
+    cliprect = region->pHead;
+    while (cliprect) 
+	{
+        if (cliprect->Rect.left < pExtents->left)
+            pExtents->left = cliprect->Rect.left;
+        if (cliprect->Rect.right > pExtents->right)
+            pExtents->right = cliprect->Rect.right;
+
+        cliprect = cliprect->pNext;
+    }
 }
 
 #ifdef _REGION_DEBUG
@@ -572,34 +611,46 @@ static CGuiRectNode* CoalesceRegion (
     }
     return (newStart);
 }
-
-/***********************************************************************
- *            RegionOp
- *
- *      Apply an operation to two regions. Called by Union,
- *      Xor, Subtract, Intersect...
- *
- * Results:
- *      None.
- *
- * Side Effects:
- *      The new region is overwritten.
- *
- * Notes:
- *      The idea behind this function is to view the two regions as sets.
- *      Together they cover a rectangle of area that this function divides
- *      into horizontal bands where points are covered only by one region
- *      or by both. For the first case, the nonOverlapFunc is called with
- *      each the band and the band's upper and lower rcBound. For the
- *      second, the overlapFunc is called to process the entire band. It
- *      is responsible for clipping the rectangles in the band, though
- *      this function provides the boundaries.
- *      At the end of each band, the new region is coalesced, if possible,
- *      to reduce the number of rectangles in the region.
- *
- */
-static void RegionOp(
-            CGuiRegion *newReg, /* Place to store result */
+/*********************************************************************************************************
+** 函数名称: RegionOperator
+** 函数名称: RegionOperator
+**
+** 功能描述： Apply an operation to two regions. Called by Union, Xor, Subtract, Intersect...
+**           The new region is overwritten.
+** 输　入:  CGuiRegion * newReg
+** 输　入:  const CGuiRegion * reg1
+** 输　入:  const CGuiRegion * reg2
+** 输　入:  voidProcp1 overlapFunc
+** 输　入:  voidProcp2 nonOverlap1Func
+** 输　入:  voidProcp2 nonOverlap2Func
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月19日
+** 备  注:  
+*  Notes:
+*      The idea behind this function is to view the two regions as sets.
+*      Together they cover a rectangle of area that this function divides
+*      into horizontal bands where points are covered only by one region
+*      or by both. For the first case, the nonOverlapFunc is called with
+*      each the band and the band's upper and lower rcBound. For the
+*      second, the overlapFunc is called to process the entire band. It
+*      is responsible for clipping the rectangles in the band, though
+*      this function provides the boundaries.
+*      At the end of each band, the new region is coalesced, if possible,
+*      to reduce the number of rectangles in the region.
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+static void RegionOperator(
+            CGuiRegion *pNewRegion, /* Place to store result */
             const CGuiRegion *reg1,   /* First region in operation */
             const CGuiRegion *reg2,   /* 2nd region in operation */
             voidProcp1 overlapFunc,     /* Function to call for over-lapping bands */
@@ -614,8 +665,8 @@ static void RegionOp(
     const CGuiRectNode *r2BandEnd;          /* End of current band in r2 */
     int ybot;                           /* Bottom of intersection */
     int ytop;                           /* Top of intersection */
-    CGuiRectNode* prevBand;                 /* start of previous band in newReg */
-    CGuiRectNode* curBand;                  /* start of current band in newReg */
+    CGuiRectNode* prevBand;                 /* start of previous band in pNewRegion */
+    CGuiRectNode* curBand;                  /* start of current band in pNewRegion */
     int top;                            /* Top of non-overlapping band */
     int bot;                            /* Bottom of non-overlapping band */
     
@@ -630,27 +681,27 @@ static void RegionOp(
     r2 = reg2->pHead;
 
     /*
-     * newReg may be one of the src regions so we can't empty it. We keep a 
+     * pNewRegion may be one of the src regions so we can't empty it. We keep a 
      * note of its rects pointer (so that we can free them later), preserve its
      * rcBound and simply set numRects to zero. 
      */
     /*
-    oldRects = newReg->rects;
-    newReg->numRects = 0;
+    oldRects = pNewRegion->rects;
+    pNewRegion->numRects = 0;
      */
 
     /* 
      * for implementation of MiniGUI, we create an empty region.
      */
-    if (newReg == reg1 || newReg == reg2)
+    if (pNewRegion == reg1 || pNewRegion == reg2)
 	{
-        InitRegion(&my_dst, newReg->pHeap);
+        InitRegion(&my_dst, pNewRegion->pHeap);
         pdst = &my_dst;
     }
     else 
 	{
-        EmptyRegion(newReg);
-        pdst = newReg;
+        EmptyRegion(pNewRegion);
+        pdst = pNewRegion;
     }
 
     /*
@@ -662,11 +713,11 @@ static void RegionOp(
      */
 
     /* for implementation of MiniGUI, dst always is an empty region.
-    newReg->size = MAX(reg1->numRects,reg2->numRects) * 2;
+    pNewRegion->size = MAX(reg1->numRects,reg2->numRects) * 2;
 
-    if (! (newReg->rects = malloc( sizeof(CLIPRECT) * newReg->size )))
+    if (! (pNewRegion->rects = malloc( sizeof(CLIPRECT) * pNewRegion->size )))
     {
-        newReg->size = 0;
+        pNewRegion->size = 0;
         return;
     }
      */    
@@ -726,8 +777,8 @@ static void RegionOp(
          */
         if (r1->Rect.top < r2->Rect.top)
 		{
-            top = MAX (r1->rc.top, ybot);
-            bot = MIN (r1->rc.bottom, r2->rc.top);
+            top = MAX (r1->Rect.top, ybot);
+            bot = MIN (r1->Rect.bottom, r2->Rect.top);
 
             if ((top != bot) && (nonOverlap1Func != NULL))
                 (* nonOverlap1Func) (pdst, r1, r1BandEnd, top, bot);
@@ -736,8 +787,8 @@ static void RegionOp(
         }
         else if (r2->Rect.top < r1->Rect.top) 
 		{
-            top = MAX (r2->rc.top, ybot);
-            bot = MIN (r2->rc.bottom, r1->rc.top);
+            top = MAX (r2->Rect.top, ybot);
+            bot = MIN (r2->Rect.bottom, r1->Rect.top);
 
             if ((top != bot) && (nonOverlap2Func != NULL))
                 (* nonOverlap2Func) (pdst, r2, r2BandEnd, top, bot);
@@ -763,7 +814,7 @@ static void RegionOp(
          * Now see if we've hit an intersecting band. The two bands only
          * intersect if ybot > ytop
          */
-        ybot = MIN (r1->rc.bottom, r2->rc.bottom);
+        ybot = MIN (r1->Rect.bottom, r2->Rect.bottom);
         curBand = pdst->pTail;
         if (ybot > ytop)
             (* overlapFunc) (pdst, r1, r1BandEnd, r2, r2BandEnd, ytop, ybot);
@@ -796,7 +847,7 @@ static void RegionOp(
 					r1BandEnd = r1BandEnd->pNext;
 				}
 				(* nonOverlap1Func) (pdst, r1, r1BandEnd,
-					MAX (r1->rc.top, ybot), r1->Rect.bottom);
+					MAX (r1->Rect.top, ybot), r1->Rect.bottom);
 				r1 = r1BandEnd;
 			} while (r1);
 		}
@@ -809,8 +860,7 @@ static void RegionOp(
 			{
                  r2BandEnd = r2BandEnd->pNext;
             }
-            (* nonOverlap2Func) (pdst, r2, r2BandEnd,
-                                MAX (r2->rc.top, ybot), r2->Rect.bottom);
+            (* nonOverlap2Func) (pdst, r2, r2BandEnd,MAX (r2->Rect.top, ybot), r2->Rect.bottom);
             r2 = r2BandEnd;
         } while (r2);
     }
@@ -851,10 +901,10 @@ static void RegionOp(
     }
     free( oldRects );
 #else
-    if (pdst != newReg)
+    if (pdst != pNewRegion)
 	{
-        EmptyRegion (newReg);
-        *newReg = my_dst;
+        EmptyRegion (pNewRegion);
+        *pNewRegion = my_dst;
     }
 #endif
 }
@@ -885,8 +935,8 @@ static void IntersectO (CGuiRegion *region, const CGuiRectNode *r1, const CGuiRe
 
     while ((r1 != r1End) && (r2 != r2End))
     {
-        left  = MAX (r1->rc.left, r2->rc.left);
-        right = MIN (r1->rc.right, r2->rc.right);
+        left  = MAX (r1->Rect.left, r2->Rect.left);
+        right = MIN (r1->Rect.right, r2->Rect.right);
 
         /*
          * If there's any overlap between the two rectangles, add that
@@ -960,7 +1010,26 @@ static void UnionNonO (CGuiRegion *region, const CGuiRectNode *r, const CGuiRect
     }
 }
 
-#define MERGE_RECT(r) \
+/***********************************************************************
+ *              UnionO
+ *
+ *      Handle an overlapping band for the union operation. Picks the
+ *      left-most rectangle each time and merges it into the region.
+ *
+ * Results:
+ *      None.
+ *
+ * Side Effects:
+ *      Rectangles are overwritten in region->rects and region->numRects will
+ *      be changed.
+ *
+ */
+static void UnionO(CGuiRegion *pRegion, const CGuiRectNode *r1, const CGuiRectNode *r1End,
+                           const CGuiRectNode *r2, const CGuiRectNode *r2End, INT32U top, INT32U bottom)
+{
+    CGuiRectNode *pNewClipRect;
+
+ #define MERGE_RECT(r) \
 	if ((pRegion->pHead) &&  \
 	(pRegion->pTail->Rect.top == top) &&  \
 	(pRegion->pTail->Rect.bottom == bottom) &&  \
@@ -980,25 +1049,7 @@ static void UnionNonO (CGuiRegion *region, const CGuiRectNode *r, const CGuiRect
 	pNewClipRect->Rect.right = r->Rect.right;  \
 }  \
 	r = r->pNext;
-/***********************************************************************
- *              UnionO
- *
- *      Handle an overlapping band for the union operation. Picks the
- *      left-most rectangle each time and merges it into the region.
- *
- * Results:
- *      None.
- *
- * Side Effects:
- *      Rectangles are overwritten in region->rects and region->numRects will
- *      be changed.
- *
- */
-static void UnionO(CGuiRegion *region, const CGuiRectNode *r1, const CGuiRectNode *r1End,
-                           const CGuiRectNode *r2, const CGuiRectNode *r2End, INT32U top, INT32U bottom)
-{
-    CGuiRectNode *newcliprect;
- 
+
     
     while ((r1 != r1End) && (r2 != r2End))
     {
@@ -1184,13 +1235,13 @@ INT8U  ClipRgnIntersect (CGuiRegion *dst, const CGuiRegion *src1, const CGuiRegi
 {
     /* check for trivial reject */
     if ( (!(src1->pHead)) || (!(src2->pHead))  ||
-        (!EXTENTCHECK(&src1->rcBound, &src2->rcBound)))
+        (!EXTENTCHECK(&src1->RectBound, &src2->RectBound)))
     {
         EmptyRegion(dst);
         return FALSE;
     }
     else
-        RegionOp (dst, src1, src2,IntersectO, NULL, NULL);
+        RegionOperator (dst, src1, src2,IntersectO, NULL, NULL);
     
     /*
      * Can't alter dst's rcBound before we call miRegionOp because
@@ -1199,7 +1250,7 @@ INT8U  ClipRgnIntersect (CGuiRegion *dst, const CGuiRegion *src1, const CGuiRegi
      * way there's no checking against rectangles that will be nuked
      * due to coalescing, so we have to examine fewer rectangles.
      */
-    SetExtents(dst);
+    SetGuiRegionExtents(dst);
     dst->Type = (dst->pHead) ? GUI_REGION_COMPLEX : GUI_REGION_NULL ;
 
     return TRUE;
@@ -1228,16 +1279,16 @@ INT8U  SubtractRegion (CGuiRegion *rgnD, const CGuiRegion *rgnM, const CGuiRegio
         return TRUE;
     }
  
-    RegionOp (rgnD, rgnM, rgnS, SubtractO, SubtractNonO1, NULL);
+    RegionOperator (rgnD, rgnM, rgnS, SubtractO, SubtractNonO1, NULL);
 
     /*
-     * Can't alter newReg's rcBound before we call miRegionOp because
+     * Can't alter pNewRegion's rcBound before we call miRegionOp because
      * it might be one of the source regions and miRegionOp depends
      * on the rcBound of those regions being the unaltered. Besides, this
      * way there's no checking against rectangles that will be nuked
      * due to coalescing, so we have to examine fewer rectangles.
      */
-    SetExtents (rgnD);
+    SetGuiRegionExtents (rgnD);
     rgnD->Type = (rgnD->pHead) ? GUI_REGION_COMPLEX : GUI_REGION_NULL;
 
     return TRUE;
@@ -1317,9 +1368,9 @@ INT8U  UnionRegion (CGuiRegion *pDestRgn, const CGuiRegion *pSrcRgn1, const CGui
         return TRUE;
     }
 
-    RegionOp (pDestRgn, pSrcRgn1, pSrcRgn2, UnionO, UnionNonO, UnionNonO);
+    RegionOperator (pDestRgn, pSrcRgn1, pSrcRgn2, UnionO, UnionNonO, UnionNonO);
 
-    SetExtents (pDestRgn);
+    SetGuiRegionExtents (pDestRgn);
     pDestRgn->Type = (pDestRgn->pHead) ? GUI_REGION_COMPLEX : GUI_REGION_NULL ;
 #if 0
     dst->rcBound.left = MIN (src1->rcBound.left, src2->rcBound.left);
@@ -1433,15 +1484,38 @@ INT8U AddRectToRegion (CGuiRegion* pRegion, const CGuiRect *pRect)
 
     return TRUE;
 }
-
-/* Intersect a rect with a region */
-BOOL IntersectClipRect (PCLIPRGN region, const RECT* rect)
+ 
+/*********************************************************************************************************
+** 函数名称: IntersectRect
+** 函数名称: IntersectRect
+**
+** 功能描述：  Intersect a rect with a region 
+**
+** 输　入:  CGuiRegion * region
+** 输　入:  const CGuiRect * rect
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月19日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U IntersectRect (CGuiRegion* region, const CGuiRect* rect)
 {
-    CLIPRGN my_region;
-    CLIPRECT my_cliprect;
+    CGuiRegion my_region;
+    CGuiRectNode  my_cliprect;
 
-    if (IsRectEmpty (rect)) {
-        EmptyClipRgn (region);
+    if (IsGuiRectEmpty (rect)) 
+	{
+        EmptyRegion (region);
         return TRUE;
     }
 
@@ -1451,15 +1525,15 @@ BOOL IntersectClipRect (PCLIPRGN region, const RECT* rect)
     dumpRegion (region);
 #endif
 
-    my_cliprect.rc = *rect;
-    my_cliprect.next = NULL;
-    my_cliprect.prev = NULL;
+    my_cliprect.Rect = *rect;
+    my_cliprect.pNext = NULL;
+    my_cliprect.pPrev = NULL;
 
-    my_region.type = SIMPLEREGION;
-    my_region.rcBound = *rect;
-    my_region.head = &my_cliprect;
-    my_region.tail = &my_cliprect;
-    my_region.heap = NULL;
+    my_region.Type = GUI_REGION_SIMPLE;
+    my_region.RectBound = *rect;
+    my_region.pHead = &my_cliprect;
+    my_region.pTail = &my_cliprect;
+    my_region.pHeap = NULL;
 
     ClipRgnIntersect (region, region, &my_region);
 
@@ -1470,35 +1544,56 @@ BOOL IntersectClipRect (PCLIPRGN region, const RECT* rect)
 
     return TRUE;
 }
-
-INT8U   SubtractClipRect (CGuiRegion* region, const CGuiRect* rect)
+/*********************************************************************************************************
+** 函数名称: SubtractRectFromRegion
+** 函数名称: SubtractRectFromRegion
+**
+** 功能描述：从区域中去除某个矩形  
+**
+** 输　入:  CGuiRegion * pRegion
+** 输　入:  const CGuiRect * pRect
+**          
+** 输　出:   INT8U
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月19日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
+INT8U   SubtractRectFromRegion (CGuiRegion* pRegion, const CGuiRect* pRect)
 {
-    CGuiRegion* my_region;
-    CGuiRectNode* my_cliprect;
+    CGuiRegion  my_region;
+    CGuiRectNode  my_cliprect;
 
-    if (IsRectEmpty (rect) || !DoesIntersect (&region->RectBound, rect))
+    if (IsGuiRectEmpty (pRect) || !DoesIntersect (&pRegion->RectBound, pRect))
         return FALSE;
 
 #ifdef _REGION_DEBUG
-    fprintf (stderr, "\n***************Before subtract by rect (%d, %d, %d, %d):\n",
-                    rect->left, rect->top, rect->right, rect->bottom);
-    dumpRegion (region);
+    fprintf (stderr, "\n***************Before subtract by pRect (%d, %d, %d, %d):\n",
+                    pRect->left, pRect->top, pRect->right, pRect->bottom);
+    dumpRegion (pRegion);
 #endif
 
-    my_cliprect.Rect = *rect;
-    my_cliprect.pNext  = NULL;
+	CopyGuiRect(& my_cliprect.Rect , pRect);
+	my_cliprect.pNext  = NULL;
     my_cliprect.pPrev = NULL;
-
     my_region.Type = GUI_REGION_SIMPLE;
-    my_region.RectBound = *rect;
+     my_region.RectBound = *pRect;
+	CopyGuiRect(&  my_region.RectBound  , pRect);
     my_region.pHead = &my_cliprect;
     my_region.pTail = &my_cliprect;
     my_region.pHeap = NULL;
-
-    SubtractRegion (region, region, &my_region);
+    SubtractRegion (pRegion, pRegion, &my_region);
 
 #ifdef _REGION_DEBUG
-    dumpRegion (region);
+    dumpRegion (pRegion);
     fprintf (stderr, "***************After subtraction\n");
 #endif
 
@@ -1516,7 +1611,7 @@ void OffsetRegionEx (CGuiRegion* region,
     if (!rcClient || !rcScroll)
         return;
 
-    if (!IntersectRect (&rc, rcClient, rcScroll))
+    if (!IntersectGuiRect (&rc, rcClient, rcScroll))
         return;
 
 #ifdef _REGION_DEBUG
@@ -1537,21 +1632,21 @@ void OffsetRegionEx (CGuiRegion* region,
         }
 
         /*not covered, recalculate cliprect*/
-        if (!IsCovered (&cliprect->Rect, &rc)) 
+        if (!IsGuiRectCovered (&cliprect->Rect, &rc)) 
 		{
-            CopyRect (&old_cliprc, &cliprect->Rect);
-            IntersectRect (&cliprect->Rect, &old_cliprc, &rc);
-            nCount = SubtractRect (rc_array, &rc, &old_cliprc);
+            CopyGuiRect (&old_cliprc, &cliprect->Rect);
+            IntersectGuiRect (&cliprect->Rect, &old_cliprc, &rc);
+            nCount = SubtractGuiRect (rc_array, &rc, &old_cliprc);
 #ifdef _REGION_DEBUG
             fprintf (stderr, "add new %d cliprect to region.\n", nCount);
 #endif
             for (i = 0; i < nCount; i++) 
 			{
-                AddClipRect (region, &rc_array[i]);
+                AddRectToRegion (region, &rc_array[i]);
             }
         }
 
-        OffsetRect (&cliprect->Rect, x, y);
+        OffsetGuiRect (&cliprect->Rect, x, y);
 #ifdef _REGION_DEBUG
         fprintf (stderr, "offset current cliprect. \n");
 #endif
@@ -1569,10 +1664,10 @@ void OffsetRegionEx (CGuiRegion* region,
         }
 
         /*if intersect, tune cliprect*/
-        if (!IsCovered (&cliprect->Rect, &rc)) 
+        if (!IsGuiRectCovered (&cliprect->Rect, &rc)) 
 		{
-            CopyRect (&old_cliprc, &cliprect->Rect);
-            IntersectRect (&cliprect->Rect, &old_cliprc, &rc);
+            CopyGuiRect (&old_cliprc, &cliprect->Rect);
+            IntersectGuiRect (&cliprect->Rect, &old_cliprc, &rc);
 #ifdef _REGION_DEBUG
             fprintf (stderr, "tune current cliprect. \n");
 #endif
@@ -1580,7 +1675,7 @@ void OffsetRegionEx (CGuiRegion* region,
 
         if (region->pHead)
 		{
-            SetExtents(region);
+            SetGuiRegionExtents(region);
         }
         cliprect = cliprect->pNext;
     }
@@ -1590,20 +1685,43 @@ void OffsetRegionEx (CGuiRegion* region,
     fprintf (stderr, "***************after OffsetRegionEx\n");
 #endif
 }
-
+/*********************************************************************************************************
+** 函数名称: OffsetRegion
+** 函数名称: OffsetRegion
+**
+** 功能描述：  偏移区域
+**
+** 输　入:  CGuiRegion * region
+** 输　入:  INT32U x
+** 输　入:  INT32U y
+**          
+** 输　出:   void
+**         
+** 全局变量:  
+** 调用模块: 无
+**
+** 作　者:  LiJin
+** 日　期:  2009年12月18日
+** 备  注:  
+**-------------------------------------------------------------------------------------------------------
+** 修改人:
+** 日　期:
+** 备  注: 
+**------------------------------------------------------------------------------------------------------
+********************************************************************************************************/
 void   OffsetRegion (CGuiRegion* region, INT32U x, INT32U y)
 {
-    CGuiRectNode* cliprect = region->pHead ;
+    CGuiRectNode* pRectNode = region->pHead ;
 
-    while (cliprect)
+    while (pRectNode)
 	{
-        OffsetRect (&cliprect->Rect, x, y);
-        cliprect = cliprect->pNext;
+        OffsetGuiRect (&pRectNode->Rect, x, y);
+        pRectNode = pRectNode->pNext;
     }
 
     if (region->pHead)
 	{
-        OffsetRect (&region->RectBound, x, y);
+        OffsetGuiRect (&region->RectBound, x, y);
     }
 }
 
@@ -1752,7 +1870,7 @@ append:
         UnionRegion (region, region, &newregion);
 #endif
 }
-
+#if 0
 INT8U InitCircleRegion (CGuiRegion* dst, INT32U x, INT32U y, INT32U r)
 {
     EmptyRegion (dst);
@@ -1814,4 +1932,4 @@ INT8U  InitPolygonRegion (CGuiRegion * dst, const CGuiPoint* pts, INT32U vertice
 ok:
    return TRUE;
 }
-
+#endif
