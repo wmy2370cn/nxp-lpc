@@ -75,3 +75,51 @@ typedef struct GUI_REGION CGuiClipRgn;
 #define GUI_REGION_NULL      0x00
 #define GUI_REGION_SIMPLE    0x01
 #define GUI_REGION_COMPLEX   0x02
+
+
+    /**
+     * \defgroup map_fns Mapping Operations
+     *
+     * The mapping mode defines the unit of measure used to transform 
+     * page-space units into device-space units, and also defines 
+     * the orientation of the device's x and y axes. 
+     *
+     * So far, MiniGUI support only two mapping mode: 
+     *
+     *      - MM_TEXT\n
+     *        Each logical unit is mapped to on device pixel. 
+     *        Positive x is to the right; positive y is down.
+     *      - MM_ANISOTROPIC\n
+     *        Logical units are mapped to arbitrary units with arbitrarily 
+     *        scaled axes; Use \a SetWindowExt and \a SetViewportExt functions 
+     *        to specify the units, orientation, and scaling required.
+     *
+     * The following formula shows the math involved in converting a point 
+     * from page space to device space:
+     *
+     * \code
+     *      Dx = ((Lx - WOx) * VEx / WEx) + VOx
+     * \endcode
+     *
+     * The following variables are involved:
+     *
+     *      - Dx    x value in device units
+     *      - Lx    x value in logical units (also known as page space units)
+     *      - WO    window x origin
+     *      - VO    viewport x origin
+     *      - WE    window x-extent
+     *      - VE    viewport x-extent
+     *
+     * The same equation with y replacing x transforms the y component of 
+     * a point. The formula first offsets the point from its coordinate origin. 
+     * This value, no longer biased by the  origin, is then scaled into 
+     * the destination coordinate system by the ratio of the extents. 
+     * Finally, the scaled value is offset by the destination origin to 
+     * its final mapping.
+     *
+     * @{
+     */
+
+#define MM_TEXT               0
+#define MM_ANISOTROPIC        1
+
