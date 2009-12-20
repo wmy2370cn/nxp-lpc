@@ -37,6 +37,9 @@
 struct GUI_DC
 {
 	INT8U DCType;
+	INT8U InUsed;
+
+	GUI_HWND HWnd;
 
 };
 

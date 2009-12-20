@@ -27,6 +27,6 @@
 #pragma  once 
 
 #define  GUI_EVENT_CNT 10
-
+#define  GUI_DC_SLOT_CNT 8
 
  

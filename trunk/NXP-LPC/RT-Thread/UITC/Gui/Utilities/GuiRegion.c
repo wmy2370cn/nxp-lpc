@@ -160,7 +160,6 @@ INT8U  PtInRegion (CGuiRegion *pRegion, INT32U x, INT32U y)
 INT8U RectInRegion (CGuiRegion *pRegion, const CGuiRect* pRect)
 {
 	INT8U ret = FALSE;
-
 	CGuiRectNode *pClipRect = pRegion->pHead;
 	
 	if (pClipRect && EXTENTCHECK (&pRegion->RectBound, pRect)) 
@@ -1009,7 +1008,6 @@ static void UnionNonO (CGuiRegion *region, const CGuiRectNode *r, const CGuiRect
         r = r->pNext;
     }
 }
-
 /***********************************************************************
  *              UnionO
  *
